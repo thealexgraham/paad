@@ -82,85 +82,84 @@ public class SCLang {
 	    });
 	    
 	    // Output Stream Process
-	    new Thread(new Runnable() {
-			
-			public void run() {
-				// TODO Auto-generated method stub
-				log("Started Thread");
-				BufferedReader inStreamReader = new BufferedReader(
-					    new InputStreamReader(scProcess.getInputStream())); 
-
-				String s;
-
-				try {
-					boolean command = false;
-					String[] splitString;
-					
-					while((s = inStreamReader.readLine()) != null){
-						
-						if (!command) {
-
-							if (s.equals("|")) {
-								command = true;
-							} else {
-								System.out.println("sc[ " + s);
-								
-								if (consoleText != null) {
-									consoleText.append(s+"\n"); // Write to the console window
-									consoleText.setCaretPosition(consoleText.getDocument().getLength());
-								}
-							}
-						} else {
-							command = false;
-							switch ((splitString = s.split(":"))[0]) {
-								case "avgCPU":
-									
-									break;
-								case "peakCPU":
-									
-									break;
-							}
-						}
-					
-						// Change to switch statement
-						
-						
-						// command
-//						if (s.substring(0, 1).equals("|")) {
-//							System.out.println("Found a commenad");
-//							
-//							switch (s = s.substring(1).split(":")[1]) {
-//								case "avgCPU":
-//									System.out.println("AvgCPU: " + s);
-//							}
-//						}
-						if (s.contains("receivePort:")) {
-				
-							// Set apps send port to supercollider's receive port
-							String port = s.split(":")[1];
-							setSendPort(Integer.valueOf(port));
-							log("set send port to " + sendPort);
-						}
-						if (s.equals("ready")) {
-							
-						}
-						if (s.equals("listener:/start/port")) {
-							sendMessage("/start/port", receivePort);
-						}
-
-
-					}
-				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		}).start();
+	    new Thread(new PostRunnable()).start();
 	}
+	class PostRunnable implements Runnable {
+		public void run() {
+			
+			// TODO Auto-generated method stub
+
+			BufferedReader inStreamReader = new BufferedReader(
+				    new InputStreamReader(scProcess.getInputStream())); 
+
+			String s;
+
+			try {
+				boolean command = false;
+				String[] splitString;
+				
+				while((s = inStreamReader.readLine()) != null){
+					
+					if (!command) {
+
+						if (s.equals("|")) {
+							command = true;
+						} else {
+							System.out.println("sc[ " + s);
+							
+							if (consoleText != null) {
+								consoleText.append(s+"\n"); // Write to the console window
+								consoleText.setCaretPosition(consoleText.getDocument().getLength());
+							}
+						}
+					} else {
+						command = false;
+						switch ((splitString = s.split(":"))[0]) {
+							case "avgCPU":
+								
+								break;
+							case "peakCPU":
+								
+								break;
+						}
+					}
+				
+					// Change to switch statement
+
+					// command
+//					if (s.substring(0, 1).equals("|")) {
+//						System.out.println("Found a commenad");
+//						
+//						switch (s = s.substring(1).split(":")[1]) {
+//							case "avgCPU":
+//								System.out.println("AvgCPU: " + s);
+//						}
+//					}
+					if (s.contains("receivePort:")) {
+			
+						// Set apps send port to supercollider's receive port
+						String port = s.split(":")[1];
+						setSendPort(Integer.valueOf(port));
+						log("set send port to " + sendPort);
+					}
+					if (s.equals("ready")) {
+						
+					}
+					if (s.equals("listener:/start/port")) {
+						sendMessage("/start/port", receivePort);
+					}
+				}
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+
 	
 	public void stopSCLang() {
 		running = false;
@@ -205,7 +204,9 @@ public class SCLang {
 	}
 	
 	public void createListener(String address, OSCListener listener) {
+//		receiver.addListener(address, listener {
 		receiver.addListener(address, listener);
+
 	}
 	
 	public static void log(String log) {

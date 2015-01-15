@@ -34,6 +34,7 @@ import javax.swing.event.ListSelectionListener;
 
 import AlexGraham.TestMaven.examples.ListDemo;
 import AlexGraham.TestMaven.supercollider.SCLang;
+import AlexGraham.TestMaven.supercollider.SynthDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;

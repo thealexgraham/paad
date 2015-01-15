@@ -31,8 +31,9 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import AlexGraham.TestMaven.SynthDef.Parameter;
 import AlexGraham.TestMaven.supercollider.SCLang;
+import AlexGraham.TestMaven.supercollider.SynthDef;
+import AlexGraham.TestMaven.supercollider.SynthDef.Parameter;
 
 public class SynthWindow extends JFrame {
 	

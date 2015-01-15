@@ -31,8 +31,8 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import AlexGraham.TestMaven.SynthDef.Parameter;
 import AlexGraham.TestMaven.supercollider.SCLang;
+import AlexGraham.TestMaven.supercollider.SynthDef.Parameter;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
