@@ -9,6 +9,19 @@ s.waitForBoot({
 
 	("receivePort:"++NetAddr.langPort).postln;
 
+	Routine { arg inval;
+		loop {
+			// thisThread refers to the routine.
+			/*postf("|\n");
+			postf("avgCPU:%\n", s.avgCPU);
+			postf("peakCPU:%\n", s.peakCPU);*/
+			javaCommand("peakCPU", s.peakCPU);
+			javaCommand("avgCPU", s.avgCPU);
+			0.5.yield;
+			nil;
+		}
+	}.play;
+
 	n = NetAddr("127.0.0.1", NetAddr.langPort);
 
 	r = OSCresponder(nil, '/testing', { arg time, resp, msg;
@@ -51,7 +64,7 @@ s.waitForBoot({
 	});*/
 
 	java = JavaHelper.new(1250);
-	{ SinOsc.ar(440, 0, 0.5) }.play();
+
 	"ready".postln;
 }, 100);
 

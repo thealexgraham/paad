@@ -67,6 +67,8 @@ public class SynthWindow extends JFrame {
 			addParameter(param.name, param.min, param.max, param.value);
 		}
 		
+		sc.sendMessage("/" + synthName + "/start", id.toString());
+		
 		setTitle(synthName);
 	}
 
@@ -95,7 +97,7 @@ public class SynthWindow extends JFrame {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		super.dispose();
-		
+
 		// Stop the synth at ID
     	sc.sendMessage("/" + synthName + "/stop", id.toString());
 	}

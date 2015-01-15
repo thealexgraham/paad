@@ -3,10 +3,13 @@ package AlexGraham.TestMaven;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.Hashtable;
@@ -16,6 +19,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JApplet;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -24,15 +28,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.Scrollable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import AlexGraham.TestMaven.examples.ListDemo;
 import AlexGraham.TestMaven.supercollider.SCLang;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
-public class SynthSelector extends JApplet implements ActionListener, FocusListener {
+public class SynthSelector extends JFrame implements ActionListener {
 	
 	final int IN_PORT = 1295;
 	
@@ -60,19 +66,15 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 	
 	int lastInt = 0;
 	
-	public void start() {
-		
+	public SynthSelector(SCLang sc) throws SocketException {
+		this.sc = sc;
+		start();
+		createListeners();
 		System.out.println("Starting");
-		
-		try {
-			sc = new SCLang(27320, IN_PORT);
-			sc.startSCLang();
-			createListeners();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+	}
+	
+	public void start() {
+				
 		// Create network sockets
 		
 		// Set up window
@@ -117,7 +119,13 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 		
 		synthListModel.addElement("Testing");
 		middlePanel.add(launchButton);
-
+		
+		JTextArea consoleArea = new JTextArea(15, 50);
+		JScrollPane consolePane = new JScrollPane();
+		consolePane.setViewportView(consoleArea);
+		sc.setConsoleArea(consoleArea);
+		
+		middlePanel.add(consolePane);
 	}
 	
 	public void createListeners() throws SocketException {
@@ -129,7 +137,8 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
     			SynthDef synth = new SynthDef(synthName);
     			synthdefs.put(synthName, synth);
     			synthListModel.addElement(synthName);
-    			System.out.println("Adding synth");
+    			
+    			pack();
     			// Also Add To The List
     		}
     	});
@@ -148,7 +157,7 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
     			SynthDef synth = synthdefs.get(synthName);
     			
     			synth.addParameter(paramName, min, max, value);
-    			System.out.println("Adding Parameter");
+    			
     		}
     		
     		private Float convertToFloat(Object number) {
@@ -220,19 +229,10 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 			}
 		}
 	}
-	public void stop() {
+	
+	public void dispose() {
+		System.out.println("Disposing");
     	sc.stopSCLang();
 	}
-
-	public void focusGained(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void focusLost(FocusEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 }

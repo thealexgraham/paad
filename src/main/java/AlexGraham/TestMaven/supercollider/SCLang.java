@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.sound.sampled.Port;
+import javax.swing.JTextArea;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -22,21 +23,37 @@ public class SCLang {
 	private int sendPort;
 	private int receivePort;
 	
-	//OSCPortIn sender;
+	OSCPortOut sender;
 	OSCPortIn receiver;
 	private Process scProcess;
 	
+	private JTextArea consoleText;
+	
 	private boolean running;
 	
-	public SCLang (int sendPort, int receivePort) throws SocketException {
+	public SCLang (int sendPort, int receivePort) throws SocketException, UnknownHostException {
 		running = false;
 		
 		this.sendPort = sendPort;
 		this.receivePort = receivePort;
 		
+		sender = new OSCPortOut(InetAddress.getLocalHost(), this.sendPort);
+		
 		// Create the receiver and start listening
 		receiver = new OSCPortIn(this.receivePort);
 		receiver.startListening();
+	}
+	
+	public void setConsoleArea(JTextArea area) {
+		consoleText = area;
+	}
+	
+	public void setSendPort(int port) throws SocketException, UnknownHostException {
+		// Need this so we can recreate the sender
+		this.sendPort = port;
+		
+		sender.close();
+		sender = new OSCPortOut(InetAddress.getLocalHost(), this.sendPort);
 	}
 	
 	public void startSCLang() throws IOException {
@@ -64,8 +81,7 @@ public class SCLang {
 	        }
 	    });
 	    
-	    // Get output stream for SuperCollider process
-	    
+	    // Output Stream Process
 	    new Thread(new Runnable() {
 			
 			public void run() {
@@ -77,15 +93,52 @@ public class SCLang {
 				String s;
 
 				try {
+					boolean command = false;
+					String[] splitString;
+					
 					while((s = inStreamReader.readLine()) != null){
-						System.out.println("sc[ " + s);
+						
+						if (!command) {
+
+							if (s.equals("|")) {
+								command = true;
+							} else {
+								System.out.println("sc[ " + s);
+								
+								if (consoleText != null) {
+									consoleText.append(s+"\n"); // Write to the console window
+									consoleText.setCaretPosition(consoleText.getDocument().getLength());
+								}
+							}
+						} else {
+							command = false;
+							switch ((splitString = s.split(":"))[0]) {
+								case "avgCPU":
+									
+									break;
+								case "peakCPU":
+									
+									break;
+							}
+						}
+					
+						// Change to switch statement
 						
 						
+						// command
+//						if (s.substring(0, 1).equals("|")) {
+//							System.out.println("Found a commenad");
+//							
+//							switch (s = s.substring(1).split(":")[1]) {
+//								case "avgCPU":
+//									System.out.println("AvgCPU: " + s);
+//							}
+//						}
 						if (s.contains("receivePort:")) {
-							
+				
 							// Set apps send port to supercollider's receive port
 							String port = s.split(":")[1];
-							sendPort = Integer.valueOf(port);
+							setSendPort(Integer.valueOf(port));
 							log("set send port to " + sendPort);
 						}
 						if (s.equals("ready")) {
@@ -124,12 +177,11 @@ public class SCLang {
 	}
 	
 	// create test for sending and receiving messages so I always know it works...
-		
 	public void sendMessage(int port, String address, Object... args) {
 		try {
 			
 			// Create OSC sending object for localhost (this might be better done for the class)
-			OSCPortOut sender = new OSCPortOut(InetAddress.getLocalHost(), port);
+			//OSCPortOut sender = new OSCPortOut(InetAddress.getLocalHost(), port);
 			
 			// Create the OSC Message from the arguments
 	    	List<Object> arguments = new ArrayList<Object>();
@@ -139,8 +191,6 @@ public class SCLang {
 	    	// Send the message
 	    	sender.send(msg);
 	    	log("sent msg: " + address + " " + arguments.toString());
-	    	
-	    	sender.close();
 	    	
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
