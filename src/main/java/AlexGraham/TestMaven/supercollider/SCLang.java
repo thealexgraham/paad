@@ -35,7 +35,9 @@ public class SCLang {
 	}
 	
 	public void startSCLang() throws IOException {
-		startSCLang("C:/Users/Alex/supercollider", sendPort, "run.scd");
+		//String pwd = System.getProperty("user.dir");
+		String scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src-sc/run.scd";
+		startSCLang("C:/Users/Alex/supercollider", sendPort, scFile);
 	}
 	
 	public void startSCLang(String scDir, int scPort, String runFile ) throws IOException {
@@ -51,6 +53,7 @@ public class SCLang {
 	    Runtime.getRuntime().addShutdownHook(new Thread() {
 	        public void run() {
 	        	log("Shutting down process");
+	        	sendMessage("/quit", 1);
 	            scProcess.destroy();
 	        }
 	    });
@@ -69,19 +72,21 @@ public class SCLang {
 
 				try {
 					while((s = inStreamReader.readLine()) != null){
-						System.out.println("sc: " + s);
+						System.out.println("sc[ " + s);
 						
-					    //do something with commandline output.
+						
 						if (s.contains("receivePort:")) {
+							
+							// Set apps send port to supercollider's receive port
 							String port = s.split(":")[1];
 							sendPort = Integer.valueOf(port);
 							log("set send port to " + sendPort);
 						}
 						if (s.equals("ready")) {
- 							log("sent receive port: " + receivePort);
+							
 						}
 						if (s.equals("listener:/start/port")) {
-							sendMessage("/start/port", new Object[] {receivePort});
+							sendMessage("/start/port", receivePort);
 						}
 
 
@@ -98,18 +103,34 @@ public class SCLang {
 		}).start();
 	}
 	
-	public void sendMessage(String address, Object[] args) {
+	public void stopSCLang() {
+		receiver.stopListening();
+		receiver.close();
+	}
+	
+	public void sendMessage(String address, Object... args) {
 		sendMessage(this.sendPort, address, args);
 	}
+	
+	// create test for sending and receiving messages so I always know it works...
 		
-	public void sendMessage(int port, String address, Object[] args) {
+	public void sendMessage(int port, String address, Object... args) {
 		try {
+			
+			// Create OSC sending object for localhost (this might be better done for the class)
 			OSCPortOut sender = new OSCPortOut(InetAddress.getLocalHost(), port);
+			
+			// Create the OSC Message from the arguments
 	    	List<Object> arguments = new ArrayList<Object>();
 	    	arguments.addAll(Arrays.asList(args));
 	    	OSCMessage msg = new OSCMessage(address, arguments);
+	    	
+	    	// Send the message
 	    	sender.send(msg);
 	    	log("sent msg: " + address + " " + arguments.toString());
+	    	
+	    	sender.close();
+	    	
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,6 +148,6 @@ public class SCLang {
 	}
 	
 	public static void log(String log) {
-		System.out.println("java: " + log);
+		System.out.println("java[ " + log);
 	}
 }

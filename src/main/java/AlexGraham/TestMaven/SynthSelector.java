@@ -72,9 +72,6 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 	
 	SCLang sc;
 	
-	OSCPortIn receiver;
-	OSCPortOut sender;
-	
 	int lastInt = 0;
 	
 	public void start() {
@@ -238,7 +235,7 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 		}
 	}
 	public void stop() {
-    	receiver.close();
+    	sc.stopSCLang();
 	}
 
 	public void focusGained(FocusEvent arg0) {

@@ -34,11 +34,6 @@ import javax.swing.event.ChangeListener;
 import AlexGraham.TestMaven.SynthDef.Parameter;
 import AlexGraham.TestMaven.supercollider.SCLang;
 
-import com.illposed.osc.OSCListener;
-import com.illposed.osc.OSCMessage;
-import com.illposed.osc.OSCPortIn;
-import com.illposed.osc.OSCPortOut;
-
 public class SynthWindow extends JFrame {
 	
 	JPanel topPanel;
@@ -60,40 +55,22 @@ public class SynthWindow extends JFrame {
 	UUID id;
 	
 	int lastInt = 0;
+	
+	public SynthWindow(SynthDef synth, SCLang sc) {
+		this.sc = sc;
+		this.synthName = synth.getSynthName();
+		this.id = UUID.randomUUID();
 		
-	public SynthWindow(SynthDef synth, OSCPortOut sender, OSCPortIn receiver) {
 		setupWindow();
-		synthName = synth.getSynthName();
-		this.sender = sender;
-		this.receiver = receiver;
-		id = UUID.randomUUID();
-		
+	
 		for (Parameter param : synth.getParameters()) {
 			addParameter(param.name, param.min, param.max, param.value);
 		}
 		
 		setTitle(synthName);
-
-		// Set up Synth Starter
-    	ArrayList<Object> arguments = new ArrayList<Object>();
-    	arguments.add(id.toString());
-    	OSCMessage msg = new OSCMessage("/" + synthName + "/start", arguments);
-    	
-    	// Send the message
-    	try {
-			sender.send(msg);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-	}
-	
-	public SynthWindow(SynthDef synth, SCLang sc) {
-		// TODO Auto-generated constructor stub
 	}
 
-	public void addParameter(final String name, float min, float max, float value) {
+	public void addParameter(final String paramName, float min, float max, float value) {
 
 		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 5, min, max, value);
 		
@@ -101,22 +78,15 @@ public class SynthWindow extends JFrame {
 			public void stateChanged(ChangeEvent e) {
 				
 				JSliderD source = (JSliderD)e.getSource();
-				
-		    	ArrayList<Object> arguments = new ArrayList<Object>();
-		    	arguments.add(id.toString());
-		    	arguments.add(source.getDoubleValue());
-		    	OSCMessage msg = new OSCMessage("/" + synthName + "/" + name, arguments);
 		    	
-		    	try {
-					sender.send(msg);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				// Send the parameter info to SuperCollider
+		    	sc.sendMessage("/" + synthName + "/" + paramName, 
+		    			id.toString(), source.getDoubleValue());
+		    	
 			}
 		});
 		
-		middlePanel.add(new JLabel(name));
+		middlePanel.add(new JLabel(paramName));
 		middlePanel.add(paramSlider);
 		middlePanel.revalidate();
 	}
@@ -126,18 +96,8 @@ public class SynthWindow extends JFrame {
 		// TODO Auto-generated method stub
 		super.dispose();
 		
-		// Set up Synth Starter
-    	ArrayList<Object> arguments = new ArrayList<Object>();
-    	arguments.add(id.toString());
-    	OSCMessage msg = new OSCMessage("/" + synthName + "/stop", arguments);
-    	
-    	// Send the message
-    	try {
-			sender.send(msg);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		// Stop the synth at ID
+    	sc.sendMessage("/" + synthName + "/stop", id.toString());
 	}
 
 	public void setupWindow() {
