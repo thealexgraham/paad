@@ -25,7 +25,7 @@ JavaHelper {
 			Server.quitAll;
 		}).add;
 
-		"listener:/start/port".postln;
+		javaCommand("setListener");
 
 		synthDefaults = [[\amp, 0.0, 1.0, 0.0], [\pan, -1.0, 0.0, 1.0]];
 
@@ -42,7 +42,6 @@ JavaHelper {
 		synthDefaults.do({ |item, i|
 			var contains = false;
 			var param = item[0];
-			("Checking"+param).postln;
 			params.do({ |item, i|
 				if (item[0] == param,
 					{ contains = true; }
@@ -64,6 +63,7 @@ JavaHelper {
 	*/
 	newSynth { |synthName, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
+		params = this.addDefaultParams(params);
 		net.sendMsg("/addsynth", synthName);
 
 		params.do({ |item, i|
@@ -90,48 +90,43 @@ JavaHelper {
 	* responsible for setting up OSC responders for this synth and creating a unique
 	* version of the synth
 	*/
-	startSynth { |synthName, params|
-		var paramsSynthFormat;
-
-		//n = NetAddr("127.0.0.1", 57120);
-
-		// Get just the parameters and the default values
-		paramsSynthFormat = Array.new(params.size * 2);
-		params.do({ |item, i|
-			paramsSynthFormat.add(params[i][0]);
-			paramsSynthFormat.add(params[i][3]);
-		});
-
-
+	createSynthListeners {
+		var defaultParams;
 
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
 		OSCresponder(nil, "/synth/start", { arg time, resp, msg;
-			var synthName
+			var synthName = msg[1];
 			var id = msg[2];
+
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+	
+			// The rest are the defaults
+
 			// Create synth defs at this location
-			synthName.toLower.asSymbol.envirGet.put(id, Synth.new(synthName, paramsSynthFormat));
+			synthName.asString.toLower.asSymbol.envirGet.put(id, Synth.new(synthName, msg));
 			("Synth connected, adding synths at" + id).postln;
 		}).add;
 
 		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/"++synthName++"/stop", { arg time, resp, msg;
+		OSCresponder(nil, "/synth/stop", { arg time, resp, msg;
 			// Free synth defs at this id
-			var id = msg[1];
-			synthName.toLower.asSymbol.envirGet.at(id).free;
+			var synthName = msg[1];
+			var id = msg[2];
+			synthName.asString.toLower.asSymbol.envirGet.at(id).free;
 			("Synth disconnected, freeing synths at" + id).postln;
 		}).add;
 
-		// Set up a listener for each parameter for this synth
-		params.do({|item, i|
-			OSCresponder(nil,"/"++synthName++"/"++item[0].asString, { arg time, resp, msg;
+		// [/synth/newparam, synthName, paramName, id, value]
+		OSCresponder(nil,"/synth/paramc", { arg time, resp, msg;
 				// Set float1
-				var id = msg[1], val = msg[2];
-				synthName.toLower.asSymbol.envirGet.at(id).set(item[0], val);
-				("Changing" + synthName + id + item[0] + val).postln;
-			}).add;
-			//("/"++synthName++"/"++item[0].asString).postln;
-		});
-		^("OSC Responders ready for" + synthName);
+			var synthName = msg[1], param = msg[2], id = msg[3], val = msg[4];
+				synthName.asString.toLower.asSymbol.envirGet.at(id).set(param, val);
+				("Changing" + synthName + id + param + val).postln;
+		}).add;
+
+		^("OSC Responders ready");
 	}
 
 	/*startSynth { |synthName, params|

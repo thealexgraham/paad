@@ -3,14 +3,21 @@ package AlexGraham.TestMaven.tests;
 import java.io.Console;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import AlexGraham.TestMaven.supercollider.OSC;
 
 public class MiscTest {
 
 	public static void main(String[] args) throws IllegalAccessException, 
 	IllegalArgumentException, InvocationTargetException, 
-	ClassNotFoundException, NoSuchMethodException, SecurityException {
-
-
+	ClassNotFoundException, NoSuchMethodException, SecurityException, SocketException, UnknownHostException {
+		
+		OSC.start(57120, 9000);
+		OSC.sendMessage("/testing", new Object[] {1, 2, 3, 4});
+		OSC.stop();
+		
 		doNumbers(((a, b) -> a + b));
 	    doSomething(t -> new StringBuilder(t).reverse().toString());
 		

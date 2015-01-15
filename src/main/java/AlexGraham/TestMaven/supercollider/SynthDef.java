@@ -2,6 +2,7 @@ package AlexGraham.TestMaven.supercollider;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SynthDef {
@@ -19,7 +20,18 @@ public class SynthDef {
 		
 	}
 	public void start() {
-		sc.sendMessage("/" + synthName + "/start", id.toString());
+	
+		// Create the arguments list for this Synth
+    	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(synthName);
+    	arguments.add(id.toString());
+    	
+    	// Add the current parameters for the synth's default startup
+    	for (Parameter param : parameters) {
+			arguments.add(param.name);
+			arguments.add(param.value);
+		}
+		sc.sendMessage("/synth/start", arguments.toArray());
 	}
 	
 	public void addParameter(String name, float min, float max, float value) {
@@ -27,7 +39,7 @@ public class SynthDef {
 	}
 	
 	public void changeParameter(String paramName, double value) {
-		sc.sendMessage("/" + synthName + "/" + paramName, id.toString(), value);
+		sc.sendMessage("/synth/paramc", synthName, paramName, id.toString(), value);
 	}
 
 	public String getSynthName() {
@@ -44,7 +56,7 @@ public class SynthDef {
 	
 	public void close() {
 		// Stop the synth at ID
-    	sc.sendMessage("/" + synthName + "/stop", id.toString());
+    	sc.sendMessage("/synth/stop", synthName, id.toString());
 	}
 	
 	public class Parameter {

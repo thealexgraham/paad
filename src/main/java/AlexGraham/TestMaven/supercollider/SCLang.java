@@ -40,8 +40,7 @@ public class SCLang {
 	JTextField peakCPUField;
 	
 	private BufferedWriter writer;
-	
-	
+
 	private boolean running;
 	
 	public SCLang (int sendPort, int receivePort) throws SocketException, UnknownHostException {
@@ -67,12 +66,24 @@ public class SCLang {
 		OSC.setSendPort(port);
 	}
 	
+	/**
+	 * Starts sclang.exe using default options
+	 * @throws IOException
+	 */
 	public void startSCLang() throws IOException {
 		//String pwd = System.getProperty("user.dir");
 		String scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src-sc/run.scd";
 		startSCLang("C:/Users/Alex/supercollider", sendPort, scFile);
 	}
 	
+	/**
+	 * Starts up an instance of sclang.exe using the port specified,
+	 * and runs a file. Sets up output and input streams as well.
+	 * @param scDir
+	 * @param scPort
+	 * @param runFile
+	 * @throws IOException
+	 */
 	public void startSCLang(String scDir, int scPort, String runFile ) throws IOException {
 		running = true;
 		
@@ -101,6 +112,10 @@ public class SCLang {
 	    sendCommand("\"" + runFile + "\"" + ".load.postln");
 	}
 	
+	/** 
+	 * Sends a command to the sclang.exe directly
+	 * @param command - the command 
+	 */
 	public void sendCommand(String command) {
 		try {
 			writer.write(command + "\n");
@@ -111,11 +126,11 @@ public class SCLang {
 		}
 
 	}
+	
 	class PostRunnable implements Runnable {
 		public void run() {
 			
-			// TODO Auto-generated method stub
-
+			// Get the input stream so we can output it
 			BufferedReader inStreamReader = new BufferedReader(
 				    new InputStreamReader(scProcess.getInputStream())); 
 
@@ -136,7 +151,7 @@ public class SCLang {
 							
 							if (consoleText != null) {
 								//((JTextArea)components.get("consoleArea")).append(s+"\n");
-								consoleArea.append(s+"\n"); // Write to the console window
+								consoleArea.append("  " + s+"\n"); // Write to the console window
 								consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
 							}
 						}
@@ -162,6 +177,11 @@ public class SCLang {
 								log("set send port to " + sendPort);
 								break;
 								
+							case "setListener":
+								// Send the Java listening port to supercollider so it knows where to send
+								OSC.sendMessage("/start/port", receivePort);
+								break;
+								
 							case "ready":
 								log("Server is ready.");
 								break;
@@ -169,10 +189,6 @@ public class SCLang {
 							default:
 								log("Unknown command: " + s);
 						}
-					}
-				
-					if (s.equals("listener:/start/port")) {
-						OSC.sendMessage("/start/port", receivePort);
 					}
 				}
 
@@ -189,8 +205,8 @@ public class SCLang {
 
 	public void stopSCLang() {
 		running = false;
-    	sendCommand("Server.local.quit");
-//    	OSC.sendMessage("/quit", 1);
+    	//sendCommand("Server.local.quit");
+    	OSC.sendMessage("/quit", 1);
     	// Sometimes the process gets destroyed before we have time to quit scsynth
     	try {
 			Thread.sleep(200);

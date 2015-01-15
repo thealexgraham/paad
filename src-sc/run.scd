@@ -43,6 +43,7 @@ s.waitForBoot({
 	}).add;
 
 	OSCFunc( { |msg|
+		java.createSynthListeners;
 		"Creating Synths".postln;
 		// [name, min, max, default]
 		~params = [[\mod_ratio1, 0.0, 5.0, 0.2],
@@ -53,9 +54,7 @@ s.waitForBoot({
 			[\pan, -1, 1, 1],
 		[\amp, 0.0, 1.0, 0]];
 
-		java.sendSynth("PanFM3OP", ~params);
-		java.startSynth("PanFM3OP", ~params);
-
+		java.newSynth("PanFM3OP", ~params);
 		java.newSynth("sinWave", []);
 
 	}, '/start/ready', recvPort:NetAddr.langPort);
