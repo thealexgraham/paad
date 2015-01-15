@@ -7,7 +7,8 @@ Server.default = s;
 s.waitForBoot({
 	"server ready".postln;
 
-	("receivePort:"++NetAddr.langPort).postln;
+	//("receivePort:"++NetAddr.langPort).postln;
+	javaCommand("receivePort", NetAddr.langPort);
 
 	Routine { arg inval;
 		loop {

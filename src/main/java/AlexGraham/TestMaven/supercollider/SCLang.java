@@ -9,10 +9,13 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.sound.sampled.Port;
+import javax.swing.JComponent;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -28,6 +31,12 @@ public class SCLang {
 	private Process scProcess;
 	
 	private JTextArea consoleText;
+	private Hashtable<String, JComponent> components;
+	
+	JTextArea consoleArea;
+	JTextField avgCPUField;
+	JTextField peakCPUField;
+	
 	
 	private boolean running;
 	
@@ -46,6 +55,14 @@ public class SCLang {
 	
 	public void setConsoleArea(JTextArea area) {
 		consoleText = area;
+	}
+	
+	public void setComponents(Hashtable<String, JComponent> comps) {
+		//TODO Merge instead of just reuse comps, is this really faster?
+		components = comps;
+		consoleArea = (JTextArea) components.get("consoleArea");
+		avgCPUField = (JTextField) components.get("avgCPUField");
+		peakCPUField = (JTextField) components.get("peakCPUField");
 	}
 	
 	public void setSendPort(int port) throws SocketException, UnknownHostException {
@@ -108,47 +125,47 @@ public class SCLang {
 							System.out.println("sc[ " + s);
 							
 							if (consoleText != null) {
-								consoleText.append(s+"\n"); // Write to the console window
-								consoleText.setCaretPosition(consoleText.getDocument().getLength());
+								//((JTextArea)components.get("consoleArea")).append(s+"\n");
+								consoleArea.append(s+"\n"); // Write to the console window
+								consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
 							}
 						}
-					} else {
+					} else {	
 						command = false;
 						switch ((splitString = s.split(":"))[0]) {
+						
 							case "avgCPU":
-								
+								avgCPUField.setText(Double.toString(
+										round(Double.valueOf(splitString[1])))
+										+ "%");
 								break;
+								
 							case "peakCPU":
-								
+								peakCPUField.setText(Double.toString(
+										round(Double.valueOf(splitString[1])))
+										+ "%");
 								break;
+								
+							case "receivePort:":
+								String port = splitString[1];
+								setSendPort(Integer.valueOf(port));
+								log("set send port to " + sendPort);
+								break;
+								
+							case "ready":
+								log("Server is ready.");
+								break;
+								
+							default:
+								log("Unknown command: " + s);
 						}
 					}
 				
-					// Change to switch statement
-
-					// command
-//					if (s.substring(0, 1).equals("|")) {
-//						System.out.println("Found a commenad");
-//						
-//						switch (s = s.substring(1).split(":")[1]) {
-//							case "avgCPU":
-//								System.out.println("AvgCPU: " + s);
-//						}
-//					}
-					if (s.contains("receivePort:")) {
-			
-						// Set apps send port to supercollider's receive port
-						String port = s.split(":")[1];
-						setSendPort(Integer.valueOf(port));
-						log("set send port to " + sendPort);
-					}
-					if (s.equals("ready")) {
-						
-					}
 					if (s.equals("listener:/start/port")) {
 						sendMessage("/start/port", receivePort);
 					}
 				}
+
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -160,7 +177,6 @@ public class SCLang {
 		}
 	}
 
-	
 	public void stopSCLang() {
 		running = false;
 		
@@ -203,10 +219,16 @@ public class SCLang {
 		}
 	}
 	
+	
+	
 	public void createListener(String address, OSCListener listener) {
 //		receiver.addListener(address, listener {
 		receiver.addListener(address, listener);
 
+	}
+	
+	public static double round(double val) {
+		return Math.round(val * 100.0) / 100.0;
 	}
 	
 	public static void log(String log) {

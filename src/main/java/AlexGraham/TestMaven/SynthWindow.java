@@ -36,7 +36,7 @@ public class SynthWindow extends JFrame {
 	JTextArea timeArea;
 	
 	SCLang sc;
-	
+	SynthDef synth;
 	String synthName;
 	UUID id;
 	
@@ -44,37 +44,32 @@ public class SynthWindow extends JFrame {
 	
 	public SynthWindow(SynthDef synth, SCLang sc) {
 		this.sc = sc;
-		this.synthName = synth.getSynthName();
-		this.id = UUID.randomUUID();
-		
+		//this.synthName = synth.getSynthName();
+		this.synth = synth;
 		setupWindow();
-	
+		
+		// Go through each parameter and add a slider for it
 		for (Parameter param : synth.getParameters()) {
-			addParameter(param.name, param.min, param.max, param.value);
+			addParameter(param);
 		}
 		
-		sc.sendMessage("/" + synthName + "/start", id.toString());
+		synth.start();
 		
-		setTitle(synthName);
+		setTitle(synth.getSynthName());
 	}
 
-	public void addParameter(final String paramName, float min, float max, float value) {
+	public void addParameter(final Parameter param) {
 
-		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 5, min, max, value);
+		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 5, param.min, param.max, param.value);
 		
 		paramSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				
 				JSliderD source = (JSliderD)e.getSource();
-		    	
-				// Send the parameter info to SuperCollider
-		    	sc.sendMessage("/" + synthName + "/" + paramName, 
-		    			id.toString(), source.getDoubleValue());
-		    	
+		    	synth.changeParameter(param.name, source.getDoubleValue());
 			}
 		});
 		
-		middlePanel.add(new JLabel(paramName));
+		middlePanel.add(new JLabel(param.name));
 		middlePanel.add(paramSlider);
 		middlePanel.revalidate();
 	}
@@ -83,9 +78,7 @@ public class SynthWindow extends JFrame {
 	public void dispose() {
 		// TODO Auto-generated method stub
 		super.dispose();
-
-		// Stop the synth at ID
-    	sc.sendMessage("/" + synthName + "/stop", id.toString());
+		synth.close();
 	}
 
 	public void setupWindow() {

@@ -54,6 +54,12 @@ public class SynthSelector extends JFrame implements ActionListener {
 	
 	JTextField stringField;
 	
+	JTextField avgCPUField;
+	JTextField peakCPUField;
+	JTextArea consoleArea;
+	JScrollPane consolePane;
+	
+	Hashtable<String, JComponent> scLangComponents;
 	JTextArea timeArea;
 	
 	JList<String> synthList;
@@ -77,6 +83,8 @@ public class SynthSelector extends JFrame implements ActionListener {
 	public void start() {
 				
 		// Create network sockets
+		JTextArea tester = new JTextArea();
+		tester.
 		
 		// Set up window
 		setSize(300, 150);
@@ -87,6 +95,9 @@ public class SynthSelector extends JFrame implements ActionListener {
 		
 		synthdefs = new Hashtable<String, SynthDef>();
 		
+		
+		// SynthList Setup
+		// -------------------
 		synthListModel = new DefaultListModel<String>();
 		synthList = new JList<String>(synthListModel);
 		synthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -105,8 +116,8 @@ public class SynthSelector extends JFrame implements ActionListener {
 			}
 		});
 		
+		// Add Srollplane to it
 		JScrollPane listScrollPane = new JScrollPane(synthList);
-		
 		middlePanel.add(listScrollPane);
 		
 		launchButton = new JButton("Launch Synth");
@@ -118,15 +129,33 @@ public class SynthSelector extends JFrame implements ActionListener {
 			}
 		});
 		
-		synthListModel.addElement("Testing");
-		middlePanel.add(launchButton);
+
 		
-		JTextArea consoleArea = new JTextArea(15, 50);
-		JScrollPane consolePane = new JScrollPane();
+		consoleArea = new JTextArea(15, 50);
+		consolePane = new JScrollPane();
 		consolePane.setViewportView(consoleArea);
 		sc.setConsoleArea(consoleArea);
 		
+		avgCPUField = new JTextField(10);
+		peakCPUField = new JTextField(10);
+		bottomPanel.add(avgCPUField);
+		
+		middlePanel.add(launchButton);
 		middlePanel.add(consolePane);
+		scLangComponents = new Hashtable<String, JComponent>();
+		scLangComponents.put("avgCPUField", avgCPUField);
+		scLangComponents.put("consoleArea", consoleArea);
+		scLangComponents.put("peakCPUField", peakCPUField);
+		sc.setComponents(scLangComponents);
+		
+//		scLangComponents = new Hashtable<String, Object>(); {
+//			{
+//				scLangComponents.put("avgCPUField", avgCPUField);
+//				scLangComponents.put("peakCPUField", peakCPUField);
+//				scLangComponents.put("consoleArea", consoleArea);
+//			}
+//		};
+
 	}
 	
 	public void createListeners() throws SocketException {
@@ -135,7 +164,7 @@ public class SynthSelector extends JFrame implements ActionListener {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
     			List<Object> arguments = message.getArguments();
     			final String synthName = (String) arguments.get(0);
-    			SynthDef synth = new SynthDef(synthName);
+    			SynthDef synth = new SynthDef(synthName, sc);
     			synthdefs.put(synthName, synth);
     			synthListModel.addElement(synthName);
     			
