@@ -24,8 +24,13 @@ public class SCLang {
 	
 	//OSCPortIn sender;
 	OSCPortIn receiver;
+	private Process scProcess;
+	
+	private boolean running;
 	
 	public SCLang (int sendPort, int receivePort) throws SocketException {
+		running = false;
+		
 		this.sendPort = sendPort;
 		this.receivePort = receivePort;
 		
@@ -41,20 +46,21 @@ public class SCLang {
 	}
 	
 	public void startSCLang(String scDir, int scPort, String runFile ) throws IOException {
+		running = true;
 		
 		// Create Process to run sclang 
 		ProcessBuilder pb=new ProcessBuilder(scDir + "/sclang.exe", "-u", String.valueOf(scPort), runFile);
 		pb.directory(new File(scDir));
 		pb.redirectErrorStream(true);
 		
-		final Process scProcess=pb.start();
+		scProcess=pb.start();
 
 		// Shut down the supercollider process when we stop
 	    Runtime.getRuntime().addShutdownHook(new Thread() {
 	        public void run() {
-	        	log("Shutting down process");
-	        	sendMessage("/quit", 1);
-	            scProcess.destroy();
+	        	if (running) {
+	        		stopSCLang();
+	        	}
 	        }
 	    });
 	    
@@ -104,8 +110,13 @@ public class SCLang {
 	}
 	
 	public void stopSCLang() {
+		running = false;
+		
 		receiver.stopListening();
 		receiver.close();
+		
+    	sendMessage("/quit", 1);
+    	scProcess.destroy();
 	}
 	
 	public void sendMessage(String address, Object... args) {
