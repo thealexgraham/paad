@@ -23,6 +23,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -120,6 +121,7 @@ public class SynthSelector extends JFrame implements ActionListener {
 		JScrollPane listScrollPane = new JScrollPane(synthList);
 		middlePanel.add(listScrollPane);
 		
+		// Launch Button
 		launchButton = new JButton("Launch Synth");
 		launchButton.addActionListener(new ActionListener() {
 			
@@ -129,16 +131,33 @@ public class SynthSelector extends JFrame implements ActionListener {
 			}
 		});
 		
-
+		// Test Button
+		JButton messageButton = new JButton("Send Message");
+		messageButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+		        String command = JOptionPane.showInputDialog("Enter command");
+				sc.sendCommand(command);	
+			}
+		});
 		
+		middlePanel.add(messageButton);
+
+		// Console Setup
+		// -------------------
 		consoleArea = new JTextArea(15, 50);
 		consolePane = new JScrollPane();
 		consolePane.setViewportView(consoleArea);
 		sc.setConsoleArea(consoleArea);
 		
-		avgCPUField = new JTextField(10);
-		peakCPUField = new JTextField(10);
+		// CPU Fields
+		avgCPUField = new JTextField(4);
+		peakCPUField = new JTextField(4);
+		bottomPanel.add(new JLabel("Avg CPU:"));
 		bottomPanel.add(avgCPUField);
+		bottomPanel.add(new JLabel("Peak CPU:"));
+		bottomPanel.add(peakCPUField);
 		
 		middlePanel.add(launchButton);
 		middlePanel.add(consolePane);
@@ -229,7 +248,7 @@ public class SynthSelector extends JFrame implements ActionListener {
 
 		//Bottom Panel//
 
-		bottomPanel = new JPanel(new FlowLayout());
+		bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);

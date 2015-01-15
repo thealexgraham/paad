@@ -1,9 +1,11 @@
 package AlexGraham.TestMaven.supercollider;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -37,20 +39,15 @@ public class SCLang {
 	JTextField avgCPUField;
 	JTextField peakCPUField;
 	
+	private BufferedWriter writer;
+	
 	
 	private boolean running;
 	
 	public SCLang (int sendPort, int receivePort) throws SocketException, UnknownHostException {
 		running = false;
-		
 		this.sendPort = sendPort;
 		this.receivePort = receivePort;
-		
-		sender = new OSCPortOut(InetAddress.getLocalHost(), this.sendPort);
-		
-		// Create the receiver and start listening
-		receiver = new OSCPortIn(this.receivePort);
-		receiver.startListening();
 	}
 	
 	public void setConsoleArea(JTextArea area) {
@@ -67,10 +64,7 @@ public class SCLang {
 	
 	public void setSendPort(int port) throws SocketException, UnknownHostException {
 		// Need this so we can recreate the sender
-		this.sendPort = port;
-		
-		sender.close();
-		sender = new OSCPortOut(InetAddress.getLocalHost(), this.sendPort);
+		OSC.setSendPort(port);
 	}
 	
 	public void startSCLang() throws IOException {
@@ -83,7 +77,7 @@ public class SCLang {
 		running = true;
 		
 		// Create Process to run sclang 
-		ProcessBuilder pb=new ProcessBuilder(scDir + "/sclang.exe", "-u", String.valueOf(scPort), runFile);
+		ProcessBuilder pb=new ProcessBuilder(scDir + "/sclang.exe", "-u", String.valueOf(scPort));//, runFile);
 		pb.directory(new File(scDir));
 		pb.redirectErrorStream(true);
 		
@@ -94,12 +88,28 @@ public class SCLang {
 	        public void run() {
 	        	if (running) {
 	        		stopSCLang();
+	            	OSC.stop();
 	        	}
 	        }
 	    });
 	    
 	    // Output Stream Process
 	    new Thread(new PostRunnable()).start();
+	    
+	    writer = new BufferedWriter
+	    		(new OutputStreamWriter(scProcess.getOutputStream()));
+	    sendCommand("\"" + runFile + "\"" + ".load.postln");
+	}
+	
+	public void sendCommand(String command) {
+		try {
+			writer.write(command + "\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	class PostRunnable implements Runnable {
 		public void run() {
@@ -118,7 +128,7 @@ public class SCLang {
 				while((s = inStreamReader.readLine()) != null){
 					
 					if (!command) {
-
+						s = s.replace("sc3> ", "");
 						if (s.equals("|")) {
 							command = true;
 						} else {
@@ -146,9 +156,9 @@ public class SCLang {
 										+ "%");
 								break;
 								
-							case "receivePort:":
+							case "receivePort":
 								String port = splitString[1];
-								setSendPort(Integer.valueOf(port));
+								OSC.setSendPort(Integer.valueOf(port));
 								log("set send port to " + sendPort);
 								break;
 								
@@ -162,7 +172,7 @@ public class SCLang {
 					}
 				
 					if (s.equals("listener:/start/port")) {
-						sendMessage("/start/port", receivePort);
+						OSC.sendMessage("/start/port", receivePort);
 					}
 				}
 
@@ -179,51 +189,25 @@ public class SCLang {
 
 	public void stopSCLang() {
 		running = false;
-		
-		receiver.stopListening();
-		receiver.close();
-		
-    	sendMessage("/quit", 1);
+    	sendCommand("Server.local.quit");
+//    	OSC.sendMessage("/quit", 1);
+    	// Sometimes the process gets destroyed before we have time to quit scsynth
+    	try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			Thread.currentThread().interrupt();
+		}
+
     	scProcess.destroy();
 	}
 	
 	public void sendMessage(String address, Object... args) {
-		sendMessage(this.sendPort, address, args);
+		OSC.sendMessage(this.sendPort, address, args);
 	}
-	
-	// create test for sending and receiving messages so I always know it works...
-	public void sendMessage(int port, String address, Object... args) {
-		try {
-			
-			// Create OSC sending object for localhost (this might be better done for the class)
-			//OSCPortOut sender = new OSCPortOut(InetAddress.getLocalHost(), port);
-			
-			// Create the OSC Message from the arguments
-	    	List<Object> arguments = new ArrayList<Object>();
-	    	arguments.addAll(Arrays.asList(args));
-	    	OSCMessage msg = new OSCMessage(address, arguments);
-	    	
-	    	// Send the message
-	    	sender.send(msg);
-	    	log("sent msg: " + address + " " + arguments.toString());
-	    	
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
-	
+
 	public void createListener(String address, OSCListener listener) {
-//		receiver.addListener(address, listener {
-		receiver.addListener(address, listener);
+		OSC.createListener(address, listener);
 
 	}
 	

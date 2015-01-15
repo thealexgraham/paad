@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import AlexGraham.TestMaven.examples.ListDemo;
+import AlexGraham.TestMaven.supercollider.OSC;
 import AlexGraham.TestMaven.supercollider.SCLang;
 
 import com.illposed.osc.*;
@@ -20,12 +21,14 @@ import com.illposed.osc.*;
 public class App 
 {
 	static final int SC_PORT = 53120;
-	static final int JAVA_PORT = 1291;
+	static final int JAVA_PORT = 1294;
 	
 	static SCLang sc;
 
     public static void main( String[] args ) throws IOException
     {
+		OSC.start(SC_PORT, JAVA_PORT);
+		
     	sc = new SCLang(SC_PORT, JAVA_PORT);
 		sc.startSCLang();
 		

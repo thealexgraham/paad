@@ -8,6 +8,7 @@ s.waitForBoot({
 	"server ready".postln;
 
 	//("receivePort:"++NetAddr.langPort).postln;
+	NetAddr.langPort.postln;
 	javaCommand("receivePort", NetAddr.langPort);
 
 	Routine { arg inval;
