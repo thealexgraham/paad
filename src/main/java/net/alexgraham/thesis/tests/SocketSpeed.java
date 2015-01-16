@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven.tests;
+package net.alexgraham.thesis.tests;
 
 import java.io.IOException;
 import java.net.InetAddress;

@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven;
+package net.alexgraham.thesis.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,9 +33,9 @@ import javax.swing.Scrollable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import AlexGraham.TestMaven.examples.ListDemo;
-import AlexGraham.TestMaven.supercollider.SCLang;
-import AlexGraham.TestMaven.supercollider.SynthDef;
+import net.alexgraham.thesis.examples.ListDemo;
+import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.SynthDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;

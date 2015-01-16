@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven;
+package net.alexgraham.thesis.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

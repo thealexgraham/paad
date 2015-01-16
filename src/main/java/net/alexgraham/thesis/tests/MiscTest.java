@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven.tests;
+package net.alexgraham.thesis.tests;
 
 import java.io.Console;
 import java.lang.reflect.InvocationTargetException;
@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import AlexGraham.TestMaven.supercollider.OSC;
+import net.alexgraham.thesis.supercollider.OSC;
 
 public class MiscTest {
 

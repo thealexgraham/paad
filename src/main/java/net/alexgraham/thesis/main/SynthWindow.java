@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven;
+package net.alexgraham.thesis.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,9 +16,9 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import AlexGraham.TestMaven.supercollider.SCLang;
-import AlexGraham.TestMaven.supercollider.SynthDef;
-import AlexGraham.TestMaven.supercollider.SynthDef.Parameter;
+import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 
 public class SynthWindow extends JFrame {
 	

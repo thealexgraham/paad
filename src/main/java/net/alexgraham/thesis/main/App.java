@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven;
+package net.alexgraham.thesis.main;
 
 import java.awt.List;
 import java.io.IOException;
@@ -11,9 +11,9 @@ import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import AlexGraham.TestMaven.examples.ListDemo;
-import AlexGraham.TestMaven.supercollider.OSC;
-import AlexGraham.TestMaven.supercollider.SCLang;
+import net.alexgraham.thesis.examples.ListDemo;
+import net.alexgraham.thesis.supercollider.OSC;
+import net.alexgraham.thesis.supercollider.SCLang;
 
 import com.illposed.osc.*;
 

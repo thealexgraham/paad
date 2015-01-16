@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven.supercollider;
+package net.alexgraham.thesis.supercollider;
 
 import java.io.IOException;
 import java.net.InetAddress;

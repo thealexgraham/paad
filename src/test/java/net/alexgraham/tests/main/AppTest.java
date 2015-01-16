@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven;
+package net.alexgraham.tests.main;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven.supercollider;
+package net.alexgraham.thesis.supercollider;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

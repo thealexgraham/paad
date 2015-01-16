@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven;
+package net.alexgraham.thesis.main;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;

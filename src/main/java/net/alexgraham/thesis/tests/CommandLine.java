@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven.tests;
+package net.alexgraham.thesis.tests;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
-import AlexGraham.TestMaven.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.SCLang;
 
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortOut;

@@ -1,4 +1,4 @@
-package AlexGraham.TestMaven.examples;
+package net.alexgraham.thesis.examples;
 
 import java.awt.*;
 import java.awt.event.*;
