@@ -80,7 +80,6 @@ public class SendOSC {
     	try {
 			sender.send(msg);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	

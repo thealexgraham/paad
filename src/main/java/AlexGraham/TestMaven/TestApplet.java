@@ -60,7 +60,6 @@ public class TestApplet extends JApplet implements ActionListener, FocusListener
 		try {
 			createListeners();
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
