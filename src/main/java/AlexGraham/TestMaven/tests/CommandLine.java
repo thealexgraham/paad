@@ -27,7 +27,6 @@ public class CommandLine {
 		String command = "cd";
 		
 		SCLang sc = new SCLang(SEND_PORT, RECEIVE_PORT);
-		// TODO Auto-generated method stub
 		sc.startSCLang();
 		
     	System.in.read();

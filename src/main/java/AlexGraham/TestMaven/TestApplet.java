@@ -67,10 +67,8 @@ public class TestApplet extends JApplet implements ActionListener, FocusListener
 		try {
 			sender = new OSCPortOut(InetAddress.getLocalHost(), 57120);
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -160,7 +158,6 @@ public class TestApplet extends JApplet implements ActionListener, FocusListener
         			    	try {
 								sender.send(msg);
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
         				}
@@ -184,7 +181,6 @@ public class TestApplet extends JApplet implements ActionListener, FocusListener
         			    	try {
 								sender.send(msg);
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
         				}
@@ -203,7 +199,6 @@ public class TestApplet extends JApplet implements ActionListener, FocusListener
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		// TODO Auto-generated method stub
 		
 		if(ev.getSource() == timeButton) {
 			timeArea.setText("Time is " + System.currentTimeMillis());
@@ -225,7 +220,6 @@ public class TestApplet extends JApplet implements ActionListener, FocusListener
 	}
 
 	public void focusGained(FocusEvent fv) {
-		// TODO Auto-generated method stub
 		if (fv.getSource() == stringField) {
 			stringField.setText("");
 		}
@@ -233,7 +227,6 @@ public class TestApplet extends JApplet implements ActionListener, FocusListener
 	}
 
 	public void focusLost(FocusEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 

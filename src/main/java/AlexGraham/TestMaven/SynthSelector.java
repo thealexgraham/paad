@@ -106,7 +106,6 @@ public class SynthSelector extends JFrame implements ActionListener {
 		synthList.addListSelectionListener(new ListSelectionListener() {
 			
 			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
 				JList theList = (JList)e.getSource();
 				if (theList.getSelectedIndex() == -1) {
 					// No selection, don't have launch button
@@ -261,7 +260,6 @@ public class SynthSelector extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		// TODO Auto-generated method stub
 		
 		if(ev.getSource() == timeButton) {
 			timeArea.setText("Time is " + System.currentTimeMillis());

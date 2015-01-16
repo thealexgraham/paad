@@ -14,7 +14,6 @@ import com.illposed.osc.OSCPortOut;
 public class SendOSC {
 	
 	public static void main(String[] args) throws SocketException, UnknownHostException {
-		// TODO Auto-generated method stub
 		OSCPortOut sender;
 		OSCPortIn receiver;
 		sender = new OSCPortOut(InetAddress.getLocalHost(), 57120);
@@ -28,7 +27,6 @@ public class SendOSC {
     	try {
 			sender.send(msg);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
     	
@@ -55,13 +53,11 @@ public class SendOSC {
 					
 					sender.send(msg);
 				} catch (SocketException e1) {
-					// TODO Auto-generated catch block
+
 					e1.printStackTrace();
 				} catch (UnknownHostException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -99,13 +95,10 @@ public class SendOSC {
 			
 			sender.send(msg);
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

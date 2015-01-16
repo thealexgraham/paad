@@ -19,7 +19,6 @@ public class SocketSpeed {
 
 	public static void main(String[] args) throws IOException {
 		int n = 20000;
-		// TODO Auto-generated method stub
 	
 		for (int j = 0; j < 10; j++) {
 			n = (int) Math.pow(10, j);

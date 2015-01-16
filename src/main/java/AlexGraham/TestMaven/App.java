@@ -39,7 +39,6 @@ public class App
                 try {
 					openSelectorWindow();
 				} catch (SocketException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
             }
@@ -57,7 +56,6 @@ public class App
         JFrame frame = new SynthSelector(sc) {
         	@Override
         	public void dispose() {
-        		// TODO Auto-generated method stub
         		super.dispose();
         		System.out.println("Disposing");
         	}

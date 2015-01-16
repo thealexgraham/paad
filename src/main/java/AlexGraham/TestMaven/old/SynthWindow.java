@@ -83,7 +83,6 @@ public class SynthWindow extends JFrame {
     	try {
 			sender.send(msg);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -110,7 +109,6 @@ public class SynthWindow extends JFrame {
 		    	try {
 					sender.send(msg);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}

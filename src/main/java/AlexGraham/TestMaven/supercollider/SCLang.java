@@ -121,7 +121,6 @@ public class SCLang {
 			writer.write(command + "\n");
 			writer.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -193,10 +192,8 @@ public class SCLang {
 				}
 
 			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -211,7 +208,6 @@ public class SCLang {
     	try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			Thread.currentThread().interrupt();
 		}
 
