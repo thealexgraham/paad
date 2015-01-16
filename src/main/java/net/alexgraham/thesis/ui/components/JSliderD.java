@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.main;
+package net.alexgraham.thesis.ui.components;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;

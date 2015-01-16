@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.main;
+package net.alexgraham.thesis.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
+import net.alexgraham.thesis.ui.components.JSliderD;
 
 public class SynthWindow extends JFrame {
 	

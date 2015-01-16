@@ -22,7 +22,7 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>src-sc/JavaHelper.sc</name>
+			<name>src/main/sc/JavaHelper.sc</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/supercollider/classes/JavaHelper.sc</locationURI>
 		</link>
