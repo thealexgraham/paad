@@ -170,7 +170,6 @@ public class SCLang {
 										round(Double.valueOf(splitString[1])))
 										+ "%");
 								break;
-								
 							case "receivePort":
 								String port = splitString[1];
 								OSC.setSendPort(Integer.valueOf(port));

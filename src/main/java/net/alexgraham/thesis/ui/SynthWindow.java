@@ -17,6 +17,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 import net.alexgraham.thesis.ui.components.JSliderD;
@@ -37,12 +38,13 @@ public class SynthWindow extends JFrame {
 	JTextArea timeArea;
 	
 	SCLang sc;
-	SynthDef synth;
+	Synth synth;
+	
 	String synthName;
 	
 	int lastInt = 0;
 	
-	public SynthWindow(SynthDef synth, SCLang sc) {
+	public SynthWindow(Synth synth, SCLang sc) {
 		this.sc = sc;
 		this.synth = synth;
 		

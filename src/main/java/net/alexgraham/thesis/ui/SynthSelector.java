@@ -35,6 +35,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.examples.ListDemo;
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
 
 import com.illposed.osc.OSCListener;
@@ -215,7 +216,6 @@ public class SynthSelector extends JFrame implements ActionListener {
     			if (number.getClass() == Float.class) {
     				toReturn = (Float) number;
     			} else if (number.getClass() == Integer.class) {
-    				
     				toReturn = (Float) ((Integer) number).floatValue();
     			}
     			return toReturn;
@@ -224,7 +224,9 @@ public class SynthSelector extends JFrame implements ActionListener {
 	}
 	
 	public void launchSynth(String synthName) {
-		SynthDef synth = synthdefs.get(synthName);
+		SynthDef synthDef = synthdefs.get(synthName);
+		Synth synth = new Synth(synthDef, sc);
+		
 		// JFrame Test
 		SynthWindow frame = new SynthWindow(synth, sc);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
