@@ -19,6 +19,7 @@ public class SynthDef {
 		parameters = new ArrayList<SynthDef.Parameter>(); // Blank array for params
 		
 	}
+	
 	public void start() {
 	
 		// Create the arguments list for this Synth

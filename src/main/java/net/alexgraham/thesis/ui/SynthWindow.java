@@ -39,14 +39,13 @@ public class SynthWindow extends JFrame {
 	SCLang sc;
 	SynthDef synth;
 	String synthName;
-	UUID id;
 	
 	int lastInt = 0;
 	
 	public SynthWindow(SynthDef synth, SCLang sc) {
 		this.sc = sc;
-		//this.synthName = synth.getSynthName();
 		this.synth = synth;
+		
 		setupWindow();
 		
 		// Go through each parameter and add a slider for it

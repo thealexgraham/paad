@@ -18,6 +18,7 @@ import javax.sound.sampled.Port;
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -72,7 +73,7 @@ public class SCLang {
 	 */
 	public void startSCLang() throws IOException {
 		//String pwd = System.getProperty("user.dir");
-		String scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src-sc/run.scd";
+		String scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src/main/sc/run.scd";
 		startSCLang("C:/Users/Alex/supercollider", sendPort, scFile);
 	}
 	

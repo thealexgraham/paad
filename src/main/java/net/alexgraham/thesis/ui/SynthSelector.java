@@ -160,6 +160,7 @@ public class SynthSelector extends JFrame implements ActionListener {
 		
 		middlePanel.add(launchButton);
 		middlePanel.add(consolePane);
+		
 		scLangComponents = new Hashtable<String, JComponent>();
 		scLangComponents.put("avgCPUField", avgCPUField);
 		scLangComponents.put("consoleArea", consoleArea);

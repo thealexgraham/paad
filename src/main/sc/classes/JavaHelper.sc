@@ -10,24 +10,28 @@ JavaHelper {
 	init { |sendPort|
 
 		this.sendPort = sendPort;
-
+		
+		// Java will send it's listen port here when ready
 		OSCresponder(nil, '/start/port', { arg time, resp, msg;
 			var port = msg[1];
 			var net = NetAddr("127.0.0.1", NetAddr.langPort);
 
 			this.sendPort = port;
 			("Set sendPort to "++port).postln;
-			net.sendMsg("/start/ready", 1);
+			net.sendMsg("/start/ready", 1); // run.scd on run function
 		}).add;
 
 		OSCresponder(nil, '/quit', { arg time, resp, msg;
 			"Quitting Server".postln;
 			Server.quitAll;
 		}).add;
-
+		
+		// Tell Java to send it's listening port
 		javaCommand("setListener");
 
 		synthDefaults = [[\amp, 0.0, 1.0, 0.0], [\pan, -1.0, 0.0, 1.0]];
+		
+		this.createSynthListeners;
 
 	}
 

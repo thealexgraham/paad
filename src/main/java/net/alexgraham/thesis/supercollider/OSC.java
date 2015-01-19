@@ -58,7 +58,7 @@ public class OSC {
 		try {
 			
 			// Create OSC sending object for localhost (this might be better done for the class)
-			//OSCPortOut sender = new OSCPortOut(InetAddress.getLocalHost(), port);
+			// OSCPortOut sender = new OSCPortOut(InetAddress.getLocalHost(), port);
 			
 			// Create the OSC Message from the arguments
 	    	List<Object> arguments = new ArrayList<Object>();
