@@ -36,9 +36,7 @@ import net.alexgraham.thesis.ui.SynthPanel.SynthPanelDelegate;
 import net.alexgraham.thesis.ui.components.ResizeCardLayout;
 
 public class RunningSynthsPanel extends JPanel implements SynthPanelDelegate {
-	
-	public class SynthCellRenderer implements ListCellRenderer<E>
-	
+		
 	JList<String> synthList;
 	DefaultListModel<String> synthListModel;
 	
