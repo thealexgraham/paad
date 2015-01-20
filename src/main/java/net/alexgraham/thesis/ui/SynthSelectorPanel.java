@@ -45,29 +45,14 @@ import net.alexgraham.thesis.supercollider.SynthDef;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
-public class SynthSelector extends JFrame implements ActionListener {
-	
-	final int IN_PORT = 1295;
-	
+public class SynthSelectorPanel extends JPanel {
+		
 	JPanel topPanel;
 	JPanel bottomPanel;
 	JPanel middlePanel;
 	
 	JLabel topLabel;
-	
-	JButton timeButton;
-	JButton stringButton;
-	
-	JTextField stringField;
-	
-	JTextField avgCPUField;
-	JTextField peakCPUField;
-	JTextArea consoleArea;
-	JScrollPane consolePane;
-	
-	Hashtable<String, JComponent> scLangComponents;
-	JTextArea timeArea;
-	
+
 	JList<String> synthList;
 	DefaultListModel<String> synthListModel;
 	
@@ -77,17 +62,13 @@ public class SynthSelector extends JFrame implements ActionListener {
 		
 	int lastInt = 0;
 	
-	public SynthSelector() throws SocketException {
+	public SynthSelectorPanel() throws SocketException {
 		start();
 		createListeners();
 		System.out.println("Starting");
 	}
 	
 	public void start() {
-				
-		// Create network sockets
-		JTextArea tester = new JTextArea();
-		tester.
 		
 		// Set up window
 		setSize(300, 150);
@@ -147,50 +128,7 @@ public class SynthSelector extends JFrame implements ActionListener {
 			}
 		});
 		
-		// Test Button
-		JButton messageButton = new JButton("Send Message");
-		messageButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-		        String command = JOptionPane.showInputDialog("Enter command");
-				App.sc.sendCommand(command);	
-			}
-		});
-		
-		middlePanel.add(messageButton);
-
-		// Console Setup
-		// -------------------
-		consoleArea = new JTextArea(15, 50);
-		consolePane = new JScrollPane();
-		consolePane.setViewportView(consoleArea);
-		App.sc.setConsoleArea(consoleArea);
-		
-		// CPU Fields
-		avgCPUField = new JTextField(4);
-		peakCPUField = new JTextField(4);
-		bottomPanel.add(new JLabel("Avg CPU:"));
-		bottomPanel.add(avgCPUField);
-		bottomPanel.add(new JLabel("Peak CPU:"));
-		bottomPanel.add(peakCPUField);
-		
 		middlePanel.add(launchButton);
-		middlePanel.add(consolePane);
-		
-		scLangComponents = new Hashtable<String, JComponent>();
-		scLangComponents.put("avgCPUField", avgCPUField);
-		scLangComponents.put("consoleArea", consoleArea);
-		scLangComponents.put("peakCPUField", peakCPUField);
-		App.sc.setComponents(scLangComponents);
-		
-//		scLangComponents = new Hashtable<String, Object>(); {
-//			{
-//				scLangComponents.put("avgCPUField", avgCPUField);
-//				scLangComponents.put("peakCPUField", peakCPUField);
-//				scLangComponents.put("consoleArea", consoleArea);
-//			}
-//		};
 
 	}
 	
@@ -204,7 +142,6 @@ public class SynthSelector extends JFrame implements ActionListener {
     			synthdefs.put(synthName, synth);
     			synthListModel.addElement(synthName);
     			
-    			pack();
     			// Also Add To The List
     		}
     	});
@@ -283,29 +220,6 @@ public class SynthSelector extends JFrame implements ActionListener {
 		add(topPanel, BorderLayout.NORTH);
 		add(middlePanel, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);
-	}
-
-	public void actionPerformed(ActionEvent ev) {
-		
-		if(ev.getSource() == timeButton) {
-			timeArea.setText("Time is " + System.currentTimeMillis());
-		} else if (ev.getSource() == stringButton) {
-			
-			try {
-				int numToMultiply = Integer.parseInt(stringField.getText());
-				lastInt = numToMultiply;
-				System.out.println(numToMultiply);
-				timeArea.setText(lastInt + " * 2 =" + String.valueOf(numToMultiply * 2));
-			} catch (NumberFormatException e) {
-				timeArea.setText("Input must be an integer!");
-				stringField.setText(String.valueOf(lastInt));
-			}
-		}
-	}
-	
-	public void dispose() {
-		System.out.println("Disposing");
-    	App.sc.stopSCLang();
 	}
 
 }

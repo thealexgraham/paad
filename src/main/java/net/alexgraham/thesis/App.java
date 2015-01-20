@@ -2,6 +2,7 @@ package net.alexgraham.thesis;
 
 import java.io.IOException;
 import java.net.SocketException;
+
 import javax.swing.JFrame;
 
 import net.alexgraham.thesis.supercollider.OSC;
@@ -14,7 +15,7 @@ public class App
 	static final int SC_PORT = 53120;
 	static final int JAVA_PORT = 1294;
 	
-	static SCLang sc;
+	public static SCLang sc;
 
     public static void main( String[] args ) throws IOException
     {
@@ -44,11 +45,11 @@ public class App
      */
     private static void openSelectorWindow() throws SocketException {
         //Create and set up the window.
-        JFrame frame = new SynthSelector(sc) {
+        JFrame frame = new SynthSelector() {
         	@Override
         	public void dispose() {
         		super.dispose();
-        		System.out.println("Disposing");
+            	App.sc.stopSCLang();
         	}
         };
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
