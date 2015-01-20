@@ -54,6 +54,16 @@ public class SCLang {
 		consoleText = area;
 	}
 	
+	public void setAvgCPUField(JTextField field) {
+		avgCPUField = field;
+	}
+	
+	public void setPeakCPUField(JTextField field) {
+		peakCPUField = field;
+	}
+	
+	// setComponents needs to be less specific
+	
 	public void setComponents(Hashtable<String, JComponent> comps) {
 		//TODO Merge instead of just reuse comps, is this really faster?
 		components = comps;
@@ -160,15 +170,17 @@ public class SCLang {
 						switch ((splitString = s.split(":"))[0]) {
 						
 							case "avgCPU":
-								avgCPUField.setText(Double.toString(
-										round(Double.valueOf(splitString[1])))
-										+ "%");
+								if (avgCPUField != null)
+									avgCPUField.setText(Double.toString(
+											round(Double.valueOf(splitString[1])))
+											+ "%");
 								break;
 								
 							case "peakCPU":
-								peakCPUField.setText(Double.toString(
-										round(Double.valueOf(splitString[1])))
-										+ "%");
+								if (peakCPUField != null)
+									peakCPUField.setText(Double.toString(
+											round(Double.valueOf(splitString[1])))
+											+ "%");
 								break;
 							case "receivePort":
 								String port = splitString[1];

@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.ui;
+package net.alexgraham.thesis.ui.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

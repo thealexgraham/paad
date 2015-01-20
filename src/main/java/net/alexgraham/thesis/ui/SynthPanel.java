@@ -3,6 +3,10 @@ package net.alexgraham.thesis.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import javax.swing.BoxLayout;
@@ -10,9 +14,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -22,11 +28,17 @@ import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 import net.alexgraham.thesis.ui.components.JSliderD;
 
+
 public class SynthPanel extends JPanel {
+	
+	public interface SynthPanelDelegate {
+		public void synthClosed(Synth synth, SynthPanel panel);
+	}
 	
 	JPanel topPanel;
 	JPanel bottomPanel;
 	JPanel middlePanel;
+	JScrollPane scrollPane;
 	
 	JLabel topLabel;
 	
@@ -37,16 +49,24 @@ public class SynthPanel extends JPanel {
 	
 	JTextArea timeArea;
 	
-	SCLang sc;
 	Synth synth;
 	
 	String synthName;
 	
 	int lastInt = 0;
 	
-	public SynthPanel(Synth synth, SCLang sc) {
-		this.sc = sc;
+	ArrayList<SynthPanelDelegate> delegates;
+	
+	
+	/**
+	 * Constructs a SynthPanel, note that this does NOT launch the synth!
+	 * @param synth
+	 * @param sc
+	 */
+	public SynthPanel(Synth synth) {
+
 		this.synth = synth;
+		delegates = new ArrayList<SynthPanel.SynthPanelDelegate>();
 		
 		setupWindow();
 		
@@ -55,7 +75,25 @@ public class SynthPanel extends JPanel {
 			addParameter(param);
 		}
 		
-		synth.start();
+		JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				synth.close();
+				
+				for (SynthPanelDelegate delegate : delegates) {
+					delegate.synthClosed(synth, SynthPanel.this);
+				}
+			}
+		});
+		
+		middlePanel.add(closeButton);
+		setPreferredSize(getPreferredSize());
+		revalidate();
+	}
+	
+	public void addDelegate(SynthPanelDelegate delegate) {
+		delegates.add(delegate);
 	}
 
 	public void addParameter(final Parameter param) {
@@ -89,6 +127,8 @@ public class SynthPanel extends JPanel {
 		//Middle Panel//
 		middlePanel = new JPanel();
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		scrollPane = new JScrollPane(middlePanel);
+		
 				
 		//Bottom Panel//
 
@@ -96,11 +136,11 @@ public class SynthPanel extends JPanel {
 
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);
-		middlePanel.setBackground(Color.GRAY);
+		//middlePanel.setBackground(Color.GRAY);
 		bottomPanel.setBackground(Color.GRAY);
 
 		add(topPanel, BorderLayout.NORTH);
-		add(middlePanel, BorderLayout.CENTER);
+		add(scrollPane, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);	
 	}
 

@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.ui;
+package net.alexgraham.thesis.ui.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,6 +41,7 @@ import net.alexgraham.thesis.examples.ListDemo;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.ui.SynthPanel;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;

@@ -37,10 +37,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.MainSplitLayout;
 import net.alexgraham.thesis.examples.ListDemo;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.ui.windows.SynthWindow;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -58,11 +60,14 @@ public class SynthSelectorPanel extends JPanel {
 	
 	Hashtable<String, SynthDef> synthdefs;
 	
+	SynthWindowDelegate delegate;
+	
 	JButton launchButton;
 		
 	int lastInt = 0;
 	
-	public SynthSelectorPanel() throws SocketException {
+	public SynthSelectorPanel(SynthWindowDelegate delegate) throws SocketException {
+		this.delegate = delegate;
 		start();
 		createListeners();
 		System.out.println("Starting");
@@ -178,6 +183,11 @@ public class SynthSelectorPanel extends JPanel {
 	
 	public void launchSynth(String synthName) {
 		SynthDef synthDef = synthdefs.get(synthName);
+		delegate.launchSynth(synthDef);
+	}
+	
+	public void launchSynthWindow(String synthName) {
+		SynthDef synthDef = synthdefs.get(synthName);
 		Synth synth = new Synth(synthDef, App.sc);
 		
 		// JFrame Test
@@ -187,7 +197,8 @@ public class SynthSelectorPanel extends JPanel {
 				synth.close();
 			}
 		};
-		frame.add(new SynthPanel(synth, App.sc));
+		
+		frame.add(new SynthPanel(synth));
 		frame.setTitle(synth.getSynthName());
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();

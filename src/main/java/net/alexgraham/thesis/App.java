@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 
 import net.alexgraham.thesis.supercollider.OSC;
 import net.alexgraham.thesis.supercollider.SCLang;
-import net.alexgraham.thesis.ui.SynthSelector;
+import net.alexgraham.thesis.ui.windows.SynthSelector;
 
 
 public class App 
@@ -45,7 +45,7 @@ public class App
      */
     private static void openSelectorWindow() throws SocketException {
         //Create and set up the window.
-        JFrame frame = new SynthSelector() {
+        JFrame frame = new MainWindow() {
         	@Override
         	public void dispose() {
         		super.dispose();
