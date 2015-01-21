@@ -47,5 +47,22 @@ public class SynthDef {
 			this.max = max;
 			this.value = value;
 		}
+		
+		public String getName() {
+			return name;
+		}
+
+		public float getMin() {
+			return min;
+		}
+
+		public float getMax() {
+			return max;
+		}
+
+		public float getValue() {
+			return value;
+		}
+	
 	}
 }

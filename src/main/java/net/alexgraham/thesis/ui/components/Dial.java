@@ -97,7 +97,7 @@ public class Dial extends JComponent {
   }
 
   public Dimension getPreferredSize() {
-    return new Dimension(100, 100);
+    return new Dimension(40, 40);
   }
 
   public void setValue( int value ) {

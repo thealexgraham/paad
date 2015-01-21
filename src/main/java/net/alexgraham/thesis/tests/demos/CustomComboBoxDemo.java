@@ -138,8 +138,8 @@ public class CustomComboBoxDemo extends JPanel {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
             } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
+            	setBackground(list.getBackground());
+            	setForeground(list.getForeground());
             }
 
             //Set the icon and text.  If icon was null, say so.

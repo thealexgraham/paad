@@ -32,10 +32,12 @@ import javax.swing.event.ListSelectionListener;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.ui.SynthInfoPanel.SynthInfoPanelDelegate;
 import net.alexgraham.thesis.ui.SynthPanel.SynthPanelDelegate;
 import net.alexgraham.thesis.ui.components.ResizeCardLayout;
 
-public class RunningSynthsPanel extends JPanel implements SynthPanelDelegate {
+public class RunningSynthsPanel extends JPanel implements SynthPanelDelegate, SynthInfoPanelDelegate
+{
 		
 	JList<String> synthList;
 	DefaultListModel<String> synthListModel;
@@ -134,8 +136,26 @@ public class RunningSynthsPanel extends JPanel implements SynthPanelDelegate {
 		selectedSynthPanel.add(panel, synth.getID());
 		
 		synths.put(synth.getID(), synth);
-		synthListModel.addElement(synth.getID());	
+		synthListModel.addElement(synth.getID());
+		
+		newSynthWindow(synth);
 	}
+	
+	public void newSynthWindow(Synth synth) {
+		// JFrame Test
+		JFrame frame = new JFrame() {
+			public void dispose() {
+				super.dispose();
+				synth.close();
+			}
+		};
+		frame.add(new SynthInfoPanel(synth));
+		frame.setTitle(synth.getSynthName());
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
 	
 	// Delegate Methods
 	@Override
@@ -143,6 +163,12 @@ public class RunningSynthsPanel extends JPanel implements SynthPanelDelegate {
 		synthListModel.removeElement(synth.getID());
 		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
 		c1.removeLayoutComponent(panel);
+	}
+
+	@Override
+	public void synthClosed(Synth synth, SynthInfoPanel panel) {
+		
+		
 	}
 	
 

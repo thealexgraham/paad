@@ -51,9 +51,26 @@ public class Synth {
     	sc.sendMessage("/synth/stop", synthDef.getSynthName(), id.toString());
 	}
 	
+	
+	/**
+	 *  Returns the parameter Name, null if not found
+	 * @param name
+	 * @return
+	 */
+	public Parameter getParameterWithName(String name) {
+		for (Parameter parameter : synthDef.getParameters()) {
+			if (parameter.getName().equals(name)) {
+				return parameter;
+			}
+		}
+		
+		return null;
+	}
+	
 	public ArrayList<Parameter> getParameters() {
 		return synthDef.getParameters();
 	}
+	
 	public String getSynthName() {
 		return synthDef.getSynthName();
 	}

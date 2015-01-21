@@ -1,5 +1,134 @@
 package net.alexgraham.thesis.ui;
 
-public class SynthInfoPanel {
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.BevelBorder;
+
+import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
+import net.alexgraham.thesis.ui.components.Dial;
+import net.alexgraham.thesis.ui.components.Dial.DialListener;
+import net.alexgraham.thesis.ui.components.DialD;
+import net.alexgraham.thesis.ui.components.Dial.DialEvent;
+
+public class SynthInfoPanel extends JPanel {
+	public interface SynthInfoPanelDelegate {
+		public void synthClosed(Synth synth, SynthInfoPanel panel);
+	}
+	
+	private Synth synth;
+	private SynthInfoPanelDelegate delegate;
+	
+	// Components
+	private JLabel nameLabel;
+	private JLabel synthdefLabel;
+	private JLabel idLabel;
+	private DialD ampDial;
+	private DialD panDial;
+	
+	private JButton closeButton;
+	
+	
+	public SynthInfoPanel (Synth synth) {
+		this.synth = synth;
+		
+		nameLabel = new JLabel(synth.getName());
+		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
+		
+		synthdefLabel = new JLabel(synth.getSynthName());
+		idLabel = new JLabel(synth.getID());
+		
+		closeButton = new JButton("X");
+		closeButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (delegate != null)
+					delegate.synthClosed(synth, SynthInfoPanel.this);
+			}
+		});
+		
+		Parameter amp = synth.getParameterWithName("amp");
+		Parameter pan = synth.getParameterWithName("pan");
+		ampDial = new DialD(4, amp.min, amp.max, amp.value);
+		panDial = new DialD(4, pan.min, pan.max, pan.value);
+		
+		
+		ampDial.addDialListener(new DialListener() {
+			@Override
+			public void dialAdjusted(DialEvent e) {
+				synth.changeParameter("amp", ampDial.getDoubleValue());
+			}
+		});
+		
+		panDial.addDialListener(new DialListener() {
+			@Override
+			public void dialAdjusted(DialEvent e) {
+				synth.changeParameter("pan", panDial.getDoubleValue());
+			}
+		});
+		
+		setupLayout();
+	}
+	
+	public void setDelegate(SynthInfoPanelDelegate delegate) {
+		this.delegate = delegate;
+	}
+	
+	public void setupLayout() {
+		setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(nameLabel, GroupLayout.PREFERRED_SIZE, 164, GroupLayout.PREFERRED_SIZE)
+						.addComponent(synthdefLabel)
+						.addComponent(idLabel))
+					.addPreferredGap(ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+					.addComponent(ampDial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(panDial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(closeButton)
+					.addContainerGap())
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(closeButton)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(panDial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(nameLabel)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(synthdefLabel)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(idLabel)
+							.addGap(81))
+						.addComponent(ampDial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(81))
+		);
+		setLayout(groupLayout);
+
+		setPreferredSize(new Dimension(490, 95));
+	}
 }
+	
+
+
