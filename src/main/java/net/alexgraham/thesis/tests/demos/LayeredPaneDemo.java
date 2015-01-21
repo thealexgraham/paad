@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.tests;
+package net.alexgraham.thesis.tests.demos;
 
 import javax.swing.*;
 import javax.swing.border.*;

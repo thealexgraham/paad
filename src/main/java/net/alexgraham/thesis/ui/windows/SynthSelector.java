@@ -37,10 +37,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.examples.ListDemo;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.tests.demos.ListDemo;
 import net.alexgraham.thesis.ui.SynthPanel;
 
 import com.illposed.osc.OSCListener;

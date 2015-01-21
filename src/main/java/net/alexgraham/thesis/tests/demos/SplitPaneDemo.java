@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.tests;
+package net.alexgraham.thesis.tests.demos;
 
 import java.awt.*;
 import java.awt.event.*;
