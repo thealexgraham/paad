@@ -7,6 +7,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import javax.swing.BoxLayout;
@@ -24,16 +25,13 @@ import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.Synth.SynthListener;
 import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 import net.alexgraham.thesis.ui.components.JSliderD;
 
 
-public class SynthPanel extends JPanel {
-	
-	public interface SynthPanelDelegate {
-		public void synthClosed(Synth synth, SynthPanel panel);
-	}
+public class SynthPanel extends JPanel implements SynthListener {
 	
 	JPanel topPanel;
 	JPanel bottomPanel;
@@ -53,9 +51,10 @@ public class SynthPanel extends JPanel {
 	
 	String synthName;
 	
-	int lastInt = 0;
+	Hashtable<String, JSliderD> sliders;
 	
-	ArrayList<SynthPanelDelegate> delegates;
+	int lastInt = 0;
+
 	
 	
 	/**
@@ -66,7 +65,8 @@ public class SynthPanel extends JPanel {
 	public SynthPanel(Synth synth) {
 
 		this.synth = synth;
-		delegates = new ArrayList<SynthPanel.SynthPanelDelegate>();
+		synth.addSynthListener(this);
+		sliders = new Hashtable<String, JSliderD>();
 		
 		setupWindow();
 		
@@ -80,10 +80,6 @@ public class SynthPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				synth.close();
-				
-				for (SynthPanelDelegate delegate : delegates) {
-					delegate.synthClosed(synth, SynthPanel.this);
-				}
 			}
 		});
 		
@@ -92,13 +88,13 @@ public class SynthPanel extends JPanel {
 		revalidate();
 	}
 	
-	public void addDelegate(SynthPanelDelegate delegate) {
-		delegates.add(delegate);
+	public Synth getSynth() {
+		return this.synth;
 	}
-
+	
 	public void addParameter(final Parameter param) {
 
-		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 5, param.min, param.max, param.value);
+		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 4, param.min, param.max, param.value);
 		
 		paramSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -110,6 +106,8 @@ public class SynthPanel extends JPanel {
 		middlePanel.add(new JLabel(param.name));
 		middlePanel.add(paramSlider);
 		middlePanel.revalidate();
+	
+		sliders.put(param.getName(), paramSlider);
 	}
 
 
@@ -142,6 +140,18 @@ public class SynthPanel extends JPanel {
 		add(topPanel, BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);	
+	}
+	
+	@Override
+	public void parameterChanged(String paramName, double value) {
+		JSliderD paramSlider = sliders.get(paramName);
+		paramSlider.setDoubleValue(value);
+	}
+
+	@Override
+	public void synthClosed(Synth synth) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

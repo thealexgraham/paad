@@ -26,6 +26,9 @@ import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
 public class SCLang {
+	
+	final static boolean logging = false;
+	
 	private int sendPort;
 	private int receivePort;
 	
@@ -240,6 +243,8 @@ public class SCLang {
 	}
 	
 	public static void log(String log) {
-		System.out.println("java[ " + log);
+		if (logging)
+			System.out.println("java[ " + log);
+
 	}
 }

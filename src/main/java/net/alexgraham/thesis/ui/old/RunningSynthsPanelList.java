@@ -1,18 +1,13 @@
-package net.alexgraham.thesis.ui;
+package net.alexgraham.thesis.ui.old;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.Console;
 import java.util.AbstractList;
 import java.util.Hashtable;
@@ -37,17 +32,14 @@ import javax.swing.event.ListSelectionListener;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
-import net.alexgraham.thesis.supercollider.Synth.SynthListener;
-import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
-import net.alexgraham.thesis.ui.components.Dial;
+import net.alexgraham.thesis.ui.SynthInfoPanel.SynthInfoPanelDelegate;
+import net.alexgraham.thesis.ui.SynthPanel.SynthPanelDelegate;
 import net.alexgraham.thesis.ui.components.ResizeCardLayout;
 
-public class RunningSynthsPanel extends JPanel implements SynthSelectListener, SynthListener {
+public class RunningSynthsPanelList extends JPanel implements SynthPanelDelegate, SynthInfoPanelDelegate {
 		
 	JList<String> synthList;
 	DefaultListModel<String> synthListModel;
-	
-	SynthInfoList synthInfoList;
 	
 	JSplitPane splitPane;
 
@@ -60,9 +52,12 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 	Hashtable<String, Synth> synths;
 	
 	private int synthCount = 0;
-
 	
-	public RunningSynthsPanel () {
+	SynthWindowDelegate delegate;
+	
+	public RunningSynthsPanelList (SynthWindowDelegate delegate) {
+		this.delegate = delegate;
+
 		// So it resizes
 		setSize(300, 150);
 		setLayout(new GridLayout());
@@ -86,25 +81,42 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 
 		synthListPanel = new JPanel();
 		synthListPanel.setLayout(new BoxLayout(synthListPanel, BoxLayout.Y_AXIS));
-		synthListPanel.setBackground(Color.DARK_GRAY);
 		
 		JLabel label = new JLabel("Running Instruments");
-		label.setForeground(Color.white);
 		label.setAlignmentX(CENTER_ALIGNMENT);
-		
 		synthListPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 		synthListPanel.add(label);
 		synthListPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 		
-		synthInfoList = new SynthInfoList();
-		synthInfoList.addListener(this);
+		synthListModel = new DefaultListModel<String>();
+		synthList = new JList<String>(synthListModel);
+		synthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		JScrollPane listScrollPane = new JScrollPane(synthInfoList);
+		JScrollPane listScrollPane = new JScrollPane(synthList);
 		synthListPanel.add(listScrollPane);
-		listScrollPane.setMinimumSize(SynthInfoPanel.getDefaultSize());		
+		
+		synthList.addListSelectionListener(new ListSelectionListener() {
+			
+			public void valueChanged(ListSelectionEvent e) {
+				JList theList = (JList)e.getSource();
+				if (theList.getSelectedIndex() != -1) {
+					
+					// Get the card layout and show the correct new card
+					CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
+					Synth theSynth = synths.get(synthList.getSelectedValue());
+					c1.show(selectedSynthPanel, theSynth.getID());
+					
+//					// Resize the top frame
+//					JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(RunningSynthsPanel.this);
+//					topFrame.pack();
+				}
+			}
+		});
+		
 	}
 
 	private void setupSelectedSynthPanel() {
+	
 		selectedSynthPanel = new JPanel(new CardLayout());
 		JPanel defaultCard = new JPanel();
 		defaultCard.add(new JLabel("No Synth Selected"), BorderLayout.CENTER);
@@ -116,29 +128,16 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		// Create the synth and its panel
 		Synth synth = new Synth(synthDef, App.sc);
 		synth.start();
-		synth.addSynthListener(this);
 		
 		// Create the SynthPanel and add it to the list of cards
 		SynthPanel panel = new SynthPanel(synth);
+		panel.addDelegate(this);
 		selectedSynthPanel.add(panel, synth.getID());
 		
 		synths.put(synth.getID(), synth);
+		synthListModel.addElement(synth.getID());
 		
-		synthInfoList.addSynthInfoPanel(synth);
-
-		
-		//newSynthWindow(synth);
-	}
-	
-	public void selectSynth(Synth synth) {
-		// Get the card layout and show the correct new card
-		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
-		c1.show(selectedSynthPanel, synth.getID());
-	}
-	
-	public void deselectSynth() {
-		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
-		c1.show(selectedSynthPanel, "No Synth Selected");
+		newSynthWindow(synth);
 	}
 	
 	public void newSynthWindow(Synth synth) {
@@ -157,32 +156,19 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 	}
 	
 	
-	// SynthListener
-	// ------------------------
+	// Delegate Methods
 	@Override
-	public void synthClosed(Synth synth) {
-
-		// Remove synth from info list
-		synthInfoList.removeSynth(synth);
-
-		// Remove synth from panels
+	public void synthClosed(Synth synth, SynthPanel panel) {
+		synthListModel.removeElement(synth.getID());
 		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
-		for (Component comp : selectedSynthPanel.getComponents()) {
-			// Make sure it isn't the default panel
-			if (comp.getClass().equals(SynthPanel.class)) {
-				SynthPanel panel = (SynthPanel) comp;
-				// If this is the right one, delete it
-				if (panel.getSynth() == synth) {
-					c1.removeLayoutComponent(panel);
-				}
-			}
-		}
+		c1.removeLayoutComponent(panel);
+	}
 
+	@Override
+	public void synthClosed(Synth synth, SynthInfoPanel panel) {
+		
+		
 	}
 	
-	@Override
-	public void parameterChanged(String paramName, double value) {
-
-	}
 
 }

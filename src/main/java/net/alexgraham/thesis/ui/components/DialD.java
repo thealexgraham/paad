@@ -11,7 +11,6 @@ public class DialD extends Dial {
 	
 	public DialD(int decimals, double min, double max, double value) {
 		super();
-		
 		// Modifier is what we multiply divide by
 		modifier = (int) Math.pow(10, decimals);
 		
@@ -23,7 +22,7 @@ public class DialD extends Dial {
 	}
 	
 	public void setDoubleValue(double value) {
-		setValue((int) (value * modifier));
+		this.setValue((int) (value * modifier));
 	}
 	
 	public double getDoubleValue() {

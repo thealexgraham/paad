@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.ui;
+package net.alexgraham.thesis.ui.old;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

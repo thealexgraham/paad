@@ -3,7 +3,8 @@ package net.alexgraham.thesis.ui.components;
 import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;
 
-@SuppressWarnings("serial")
+import org.omg.CORBA.portable.ValueBase;
+
 public class JSliderD extends JSlider {
 	private int modifier;
 	
@@ -19,8 +20,20 @@ public class JSliderD extends JSlider {
 		this.setValue((int)(value * modifier));
 		
 	}
+
 	
+	@Override
+	public void setValue(int n) {
+		// TODO Auto-generated method stub
+		super.setValue(n);
+	}
+
+
 	public double getDoubleValue() {
 		return this.getValue() / (double) modifier;
+	}
+	
+	public void setDoubleValue(double value) {
+		this.setValue((int)(value * modifier));
 	}
 }

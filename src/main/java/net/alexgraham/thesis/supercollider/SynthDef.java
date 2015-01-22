@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SynthDef {
+	
 	private String synthName;
 	private ArrayList<Parameter> parameters;
 	
@@ -21,6 +22,7 @@ public class SynthDef {
 	
 	public void addParameter(String name, float min, float max, float value) {
 		parameters.add(new Parameter(name, min, max, value));
+		
 	}
 
 	public String getSynthName() {

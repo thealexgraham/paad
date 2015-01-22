@@ -31,7 +31,11 @@ import net.alexgraham.thesis.supercollider.SynthDef;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
-public class SynthSelectorPanel extends JPanel {
+public class SynthLauncherPanel extends JPanel {
+	
+	public interface SynthLauncherDelegate {
+		void launchSynth(SynthDef synthDef);
+	}
 		
 	JPanel topPanel;
 	JPanel bottomPanel;
@@ -44,13 +48,13 @@ public class SynthSelectorPanel extends JPanel {
 	
 	Hashtable<String, SynthDef> synthdefs;
 	
-	SynthWindowDelegate delegate;
+	SynthLauncherDelegate delegate;
 	
 	JButton launchButton;
 		
 	int lastInt = 0;
 	
-	public SynthSelectorPanel(SynthWindowDelegate delegate) throws SocketException {
+	public SynthLauncherPanel(SynthLauncherDelegate delegate) throws SocketException {
 		this.delegate = delegate;
 		start();
 		createListeners();

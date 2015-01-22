@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 
+import javax.print.attribute.Size2DSyntax;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -15,19 +16,17 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.BevelBorder;
 
 import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.Synth.SynthListener;
 import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 import net.alexgraham.thesis.ui.components.Dial;
+import net.alexgraham.thesis.ui.components.JSliderD;
 import net.alexgraham.thesis.ui.components.Dial.DialListener;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.Dial.DialEvent;
 
-public class SynthInfoPanel extends JPanel {
-	public interface SynthInfoPanelDelegate {
-		public void synthClosed(Synth synth, SynthInfoPanel panel);
-	}
+public class SynthInfoPanel extends JPanel implements SynthListener {
 	
 	private Synth synth;
-	private SynthInfoPanelDelegate delegate;
 	
 	// Components
 	private JLabel nameLabel;
@@ -38,9 +37,16 @@ public class SynthInfoPanel extends JPanel {
 	
 	private JButton closeButton;
 	
+	private boolean selected = false;
+	
+	static public Dimension getDefaultSize() {
+		return new Dimension(495, 90);
+	}
 	
 	public SynthInfoPanel (Synth synth) {
 		this.synth = synth;
+		
+		synth.addSynthListener(this);
 		
 		nameLabel = new JLabel(synth.getName());
 		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -53,8 +59,7 @@ public class SynthInfoPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (delegate != null)
-					delegate.synthClosed(synth, SynthInfoPanel.this);
+				synth.close();
 			}
 		});
 		
@@ -81,8 +86,38 @@ public class SynthInfoPanel extends JPanel {
 		setupLayout();
 	}
 	
-	public void setDelegate(SynthInfoPanelDelegate delegate) {
-		this.delegate = delegate;
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+		
+		if (selected) {
+			setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		} else {
+			setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		}
+	}
+	public boolean getSelected() {
+		return selected;
+	}
+	
+	public Synth getSynth() {
+		return this.synth;
+	}
+	
+	// SynthListener
+	// ---------------------
+	@Override
+	public void parameterChanged(String paramName, double value) {
+		if (paramName.equals("amp")) {
+			ampDial.setDoubleValue(value);
+		} else if (paramName.equals("pan")) {
+			panDial.setDoubleValue(value);
+		}
+	}
+	
+	@Override
+	public void synthClosed(Synth synth) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void setupLayout() {
@@ -126,8 +161,9 @@ public class SynthInfoPanel extends JPanel {
 		);
 		setLayout(groupLayout);
 
-		setPreferredSize(new Dimension(490, 95));
+		setPreferredSize(getDefaultSize());
 	}
+
 }
 	
 
