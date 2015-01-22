@@ -29,7 +29,7 @@ JavaHelper {
 		// Tell Java to send it's listening port
 		javaCommand("setListener");
 
-		synthDefaults = [[\amp, 0.0, 1.0, 0.0], [\pan, -1.0, 0.0, 1.0]];
+		synthDefaults = [[\amp, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
 		
 		this.createSynthListeners;
 

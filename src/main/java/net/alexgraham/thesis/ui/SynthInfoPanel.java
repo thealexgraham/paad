@@ -66,7 +66,11 @@ public class SynthInfoPanel extends JPanel implements SynthListener {
 		Parameter amp = synth.getParameterWithName("amp");
 		Parameter pan = synth.getParameterWithName("pan");
 		ampDial = new DialD(4, amp.min, amp.max, amp.value);
+		ampDial.setBehavior(Dial.Behavior.NORMAL);
+		ampDial.setName("Amp");
 		panDial = new DialD(4, pan.min, pan.max, pan.value);
+		panDial.setBehavior(Dial.Behavior.CENTER);
+		panDial.setName("Pan");
 		
 		
 		ampDial.addDialListener(new DialListener() {

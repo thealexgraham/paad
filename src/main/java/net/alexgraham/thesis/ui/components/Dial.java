@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -24,14 +26,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-import sun.net.www.content.audio.x_aiff;
-
 
 public class Dial extends JComponent {
 	int minValue, nvalue, maxValue, value, radius;
 
 	public enum Movement {
 		EXACT, VERTICAL
+	}
+	
+	public enum Behavior {
+		CENTER, NORMAL
 	}
 
 	public interface DialListener extends java.util.EventListener {
@@ -52,13 +56,15 @@ public class Dial extends JComponent {
 	}
 
 	private Movement movementType = Movement.VERTICAL;
+	private Behavior behaviorType = Behavior.NORMAL;
 	private int startX = 0;
 	private int startY = 0;
 	private int pixelsMoved = 0;
 	private int lastValue = 0;
+	private String name = "";
 
 	public Dial() {
-		this(0, 100, 0);
+		this(-10, 10, 5);
 	}
 
 	public Dial(int minValue, int maxValue, int value) {
@@ -92,6 +98,7 @@ public class Dial extends JComponent {
 						break;
 					case VERTICAL:
 						getRootPane().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+						setBorder(BorderFactory.createEmptyBorder());
 						break;
 					default:
 						spin(e);
@@ -119,20 +126,26 @@ public class Dial extends JComponent {
 				}
 			}
 		});
+
 		setBorder(BorderFactory.createLineBorder(Color.black));
+	}
+	
+	public void setBehavior(Behavior behavior) {
+		this.behaviorType = behavior;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	protected void press(MouseEvent e) {
-		System.out.println("Pressed");
 		startX = e.getX();
 		startY = e.getY();
 		startX = e.getXOnScreen();
 		startY = e.getYOnScreen();
 		pixelsMoved = 0;
 		lastValue = getValue();
-		
-		System.out.println("started At + "+  startX + " X " + startY + " Y ");
-		
+				
 		// Transparent 16 x 16 pixel cursor image.
 		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 
@@ -141,9 +154,9 @@ public class Dial extends JComponent {
 		    cursorImg, new Point(0, 0), "blank cursor");
 
 		// Set the blank cursor to the JFrame.
-		
 		getRootPane().setCursor(blankCursor);
 		
+		setBorder(BorderFactory.createLineBorder(Color.black));		
 	}
 	
 	protected void difference(MouseEvent e) throws AWTException {
@@ -187,80 +200,122 @@ public class Dial extends JComponent {
 
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
+		
+		g.setFont(new Font("Arial", Font.PLAIN, 10));
+		
+		FontMetrics fontInfo = g2.getFontMetrics();
+		int stringWidth =  fontInfo.stringWidth(name);
+		int stringHeight = fontInfo.getHeight();
+		
+		
 		int tick = 0;
+		int offset = (int) (stringHeight / 2);
 		radius = Math.min(getSize().width, getSize().height) / 2 - tick;
+		radius -= offset;
 
 		g2.setPaint(getForeground().darker());
 		// 0 line
 		g2.drawLine(radius * 2 + tick / 2, radius, radius * 2 + tick, radius);
-
-		double th = getnValue() * (1.7 * Math.PI) / (maxValue - minValue);
-		double scale = (double) getnValue() / (maxValue - minValue);
 		
-		g2.setStroke(new BasicStroke(2));
-		draw3DCircle(g2, 0, 0, radius, scale, true);
+		int range = maxValue - minValue;
 
-
-		
+		double th = getnValue() * (1.7 * Math.PI) / range;
+		double scale = (double) getnValue() / range;
 		th += (Math.PI / 2) * 1.3; // Start at the bottom
-		
-//		System.out.println("Theta is " + Math.toDegrees(th));
-		//System.out.println("Theta is: " + Math.toDegrees(th - ((Math.PI / 2) * 1.3)));
-
-		Point center = new Point(getSize().width / 2 - tick, getSize().height
-				/ 2 - tick);
-
-		Point end = new Point((int) (Math.cos(th) * (radius)),
-				(int) (Math.sin(th) * (radius)));
-		
-		//g2.setColor(Color.BLUE);
-		//drawCircle(g2, center.x, center.y, (int) (radius * 0.6));
-
-		
-		//System.out.println(end.toString());
-		g2.setStroke(new BasicStroke(1));
-
+						
 		g2.setStroke(new BasicStroke(2));
-		g2.setPaint(getForeground().darker());
-		g2.drawLine(end.x + radius, end.y + radius, center.x, center.y);
+
+		Point center = new Point(getSize().width / 2 - tick, 
+				getSize().height / 2 - tick + offset);
+
+		Point end = new Point(center.x + (int) (Math.cos(th) * (radius)),
+				center.y + (int) (Math.sin(th) * (radius)));
+		
+		drawDial(g2, 0, 0, radius, center, scale, true);
+		
+		
+		g2.setStroke(new BasicStroke(2));
+		//g2.setPaint(getForeground().darker());
+		g2.setPaint(Color.black);
+		g2.drawLine(end.x, end.y, center.x, center.y);
+		
+		g.drawString(name, (getSize().width / 2) - (stringWidth / 2), 0 + (int)(stringHeight / 1.2));
+		
+		String stringValue = getValueString();
+		stringWidth =  fontInfo.stringWidth(stringValue);
+		g.drawString(stringValue, (getSize().width / 2) - (stringWidth / 2), getHeight()- (int)(stringHeight / 4));
+	}
+	
+	protected String getValueString() {
+		return String.valueOf(getValue());
 	}
 
-	private void draw3DCircle(Graphics g,
+	private void drawDial(Graphics g,
 			int x,
 			int y,
 			int radius,
+			Point center,
 			double scale,
 			boolean raised) {
 		
 		int start = 117;
 		
 		Color foreground = getForeground();
-		Color light = foreground.brighter();
-		Color dark = foreground.darker();
-		g.setColor(foreground);
-		g.fillOval(x, y, radius * 2, radius * 2);
+		
+		// Draw Bottom Circle
+		g.setColor(Color.BLACK);
+		fillCircle(g, center.x, center.y, radius);
+		
 
+		// Draw Filled in area 
 		g.setColor(Color.RED);
-		int arcAngle = (int) (scale * -(360 - (int) Math.floor(start / 2) + 4));
-		g.fillArc(0, 0, radius * 2, radius * 2, 360 - start, arcAngle);
 		
-//		g.setColor(Color.BLUE);
-//		g.fillOval(x, y,(int) (radius * 1.7), (int) (radius * 1.7));
-//		
-		g.setColor(Color.WHITE);
-		g.drawRect(0, 0, radius * 2, radius * 2);
-		g.fillArc(0, 0, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
+		if (behaviorType == Behavior.CENTER) {
+			
+			int range = maxValue - minValue;
+			int middle = maxValue - (range / 2);
+			scale = (double) getValue() / (maxValue - middle);
+			
+			int arcAngle = (int) (scale / 2 * -(360 - (int) Math.floor(start / 2) + 4));
+			g.fillArc(center.x - radius, center.y - radius, radius * 2, radius * 2, 90, arcAngle);	
+			
+		} else if (behaviorType == Behavior.NORMAL) {
+			int arcAngle = (int) (scale * -(360 - (int) Math.floor(start / 2) + 4));
+			g.fillArc(center.x - radius, center.y - radius, radius * 2, radius * 2, 360 - start, arcAngle);		
+		}
 		
-//		g.setColor(raised ? light : dark);
-//		g.drawArc(x, y, radius * 2, radius * 2, 45, 180);
-//		
-//		g.setColor(raised ? dark : light);
-//		g.drawArc(x, y, radius * 2, radius * 2, 225, 180);
+		// Draw outside line
+		((Graphics2D) g).setStroke(new BasicStroke(1));
+		g.setColor(Color.BLACK);
+		//drawCircle(g, center.x, center.y, (int) (radius * 1.01));
+
+		// Draw Center Cover
+		g.setColor(getBackground());
+		fillCircle(g, center.x, center.y, (int) (radius * 0.7));
+		
+		// Draw inside line
+		g.setColor(Color.BLACK);
+		drawCircle(g, center.x, center.y, (int) (radius * 0.7));
+		
+		// Draw empty area at bottom
+		g.setColor(getBackground());
+		g.fillArc(center.x - radius, center.y - radius, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
+		
+		g.fillArc(center.x - radius, center.y - radius + 2, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
+
+		g.drawArc(center.x - radius, center.y - radius, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
+		
 	}
 	
 	// Convenience method to draw from center with radius
 	public void drawCircle(Graphics cg, int xCenter, int yCenter, int r) {
 		cg.drawOval(xCenter-r, yCenter-r, 2*r, 2*r);
+	
+	}
+	
+	// Convenience method to draw from center with radius
+	public void fillCircle(Graphics cg, int xCenter, int yCenter, int r) {
+		cg.fillOval(xCenter-r, yCenter-r, 2*r, 2*r);
 	
 	}
 //	private void drawRotaryCircle(Graphics g,
@@ -285,7 +340,7 @@ public class Dial extends JComponent {
 //	}
 
 	public Dimension getPreferredSize() {
-		return new Dimension(80, 80);
+		return new Dimension(45, 45);
 	}
 
 	public void setValue(int value) {
@@ -349,6 +404,8 @@ public class Dial extends JComponent {
 		JFrame frame = new JFrame("Dial v1.0");
 		final JLabel statusLabel = new JLabel("Welcome to Dial v1.0");
 		final Dial dial = new Dial();
+		dial.setName("Amp");
+		dial.setBehavior(Dial.Behavior.CENTER);
 		frame.setLayout(new FlowLayout());
 		frame.getContentPane().add(dial);
 		frame.getContentPane().add(new Dial());

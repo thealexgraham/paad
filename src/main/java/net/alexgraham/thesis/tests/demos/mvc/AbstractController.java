@@ -5,15 +5,17 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import org.w3c.dom.views.AbstractView;
+
 
 public abstract class AbstractController implements PropertyChangeListener {
 
-    private ArrayList<abstractviewpanel> registeredViews;
+    private ArrayList<AbstractView> registeredViews;
     private ArrayList<abstractmodel> registeredModels;
 
     public AbstractController() {
-        registeredViews = new ArrayList<abstractviewpanel>();
-        registeredModels = new ArrayList<abstractmodel>();
+        registeredViews = new ArrayList<AbstractView>();
+        registeredModels = new ArrayList<AbstractModel>();
     }
 
 

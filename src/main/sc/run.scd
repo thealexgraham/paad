@@ -52,7 +52,7 @@ s.waitForBoot({
 			[\mod_index1, 0, 1000, 100],
 			[\mod_index2, 0, 1000, 200],
 			[\car_freq, 100, 1000, 200],
-			[\pan, -1, 1, 1],
+			[\pan, -1, 1, 0],
 		[\amp, 0.0, 1.0, 0]];
 
 		java.newSynth("PanFM3OP", ~params);

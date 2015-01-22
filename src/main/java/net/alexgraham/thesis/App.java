@@ -7,7 +7,6 @@ import javax.swing.JFrame;
 
 import net.alexgraham.thesis.supercollider.OSC;
 import net.alexgraham.thesis.supercollider.SCLang;
-import net.alexgraham.thesis.ui.windows.SynthSelector;
 
 
 public class App 

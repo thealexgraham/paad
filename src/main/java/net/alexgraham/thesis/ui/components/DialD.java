@@ -28,4 +28,9 @@ public class DialD extends Dial {
 	public double getDoubleValue() {
 		return this.getValue() / (double) modifier;
 	}
+	
+	@Override
+	protected String getValueString() {
+		return String.valueOf((double)((int)(getDoubleValue() * 100)) / 100);
+	}
 }
