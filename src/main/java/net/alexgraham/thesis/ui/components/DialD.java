@@ -31,6 +31,7 @@ public class DialD extends Dial {
 	
 	@Override
 	protected String getValueString() {
-		return String.valueOf((double)((int)(getDoubleValue() * 100)) / 100);
+		int tempMod = 100;
+		return String.valueOf((double)((int)(getDoubleValue() * tempMod)) / tempMod);
 	}
 }
