@@ -302,7 +302,7 @@ public class Dial extends JComponent {
 		g.setColor(getBackground());
 		g.fillArc(center.x - radius, center.y - radius, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
 		
-		g.fillArc(center.x - radius, center.y - radius + 2, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
+		//g.fillArc(center.x - radius, center.y - radius + 2, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
 
 		g.drawArc(center.x - radius, center.y - radius, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
 		
@@ -319,26 +319,6 @@ public class Dial extends JComponent {
 		cg.fillOval(xCenter-r, yCenter-r, 2*r, 2*r);
 	
 	}
-//	private void drawRotaryCircle(Graphics g,
-//			int x,
-//			int y,
-//			int radius,
-//			Dimension center,
-//			boolean raised) {
-//		Color foreground = getForeground();
-//		Color light = foreground.brighter();
-//		Color dark = foreground.darker();
-//		g.setColor(foreground);
-//		g.fillOval(x, y, radius * 2, radius * 2);
-//		
-//		g.setColor(Color.WHITE);
-//		g.fillArc(x, y, radius, radius, 45, 180);
-////		g.setColor(raised ? light : dark);
-////		g.drawArc(x, y, radius * 2, radius * 2, 45, 180);
-////		
-////		g.setColor(raised ? dark : light);
-////		g.drawArc(x, y, radius * 2, radius * 2, 225, 180);
-//	}
 
 	public Dimension getPreferredSize() {
 		return new Dimension(45, 45);
