@@ -201,7 +201,6 @@ public class Dial extends JComponent {
 		draw3DCircle(g2, 0, 0, radius, scale, true);
 
 
-
 		
 		th += (Math.PI / 2) * 1.3; // Start at the bottom
 		
@@ -213,6 +212,11 @@ public class Dial extends JComponent {
 
 		Point end = new Point((int) (Math.cos(th) * (radius)),
 				(int) (Math.sin(th) * (radius)));
+		
+		//g2.setColor(Color.BLUE);
+		//drawCircle(g2, center.x, center.y, (int) (radius * 0.6));
+
+		
 		//System.out.println(end.toString());
 		g2.setStroke(new BasicStroke(1));
 
@@ -235,17 +239,14 @@ public class Dial extends JComponent {
 		Color dark = foreground.darker();
 		g.setColor(foreground);
 		g.fillOval(x, y, radius * 2, radius * 2);
-		
-		
-		
 
 		g.setColor(Color.RED);
 		int arcAngle = (int) (scale * -(360 - (int) Math.floor(start / 2) + 4));
 		g.fillArc(0, 0, radius * 2, radius * 2, 360 - start, arcAngle);
 		
-		g.setColor(Color.BLUE);
-		g.fillOval(x, y,(int) (radius * 1.7), (int) (radius * 1.7));
-		
+//		g.setColor(Color.BLUE);
+//		g.fillOval(x, y,(int) (radius * 1.7), (int) (radius * 1.7));
+//		
 		g.setColor(Color.WHITE);
 		g.drawRect(0, 0, radius * 2, radius * 2);
 		g.fillArc(0, 0, radius * 2, radius * 2, 360 - start, (int) Math.floor(start / 2) - 4);
@@ -257,6 +258,11 @@ public class Dial extends JComponent {
 //		g.drawArc(x, y, radius * 2, radius * 2, 225, 180);
 	}
 	
+	// Convenience method to draw from center with radius
+	public void drawCircle(Graphics cg, int xCenter, int yCenter, int r) {
+		cg.drawOval(xCenter-r, yCenter-r, 2*r, 2*r);
+	
+	}
 //	private void drawRotaryCircle(Graphics g,
 //			int x,
 //			int y,
