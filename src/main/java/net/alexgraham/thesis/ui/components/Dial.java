@@ -11,6 +11,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -200,7 +201,7 @@ public class Dial extends JComponent {
 
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setFont(new Font("Arial", Font.PLAIN, 10));
 		
 		FontMetrics fontInfo = g2.getFontMetrics();
@@ -264,7 +265,7 @@ public class Dial extends JComponent {
 		
 		// Draw Bottom Circle
 		g.setColor(Color.BLACK);
-		fillCircle(g, center.x, center.y, radius);
+		fillCircle(g, center.x, center.y, (int)(radius));
 		
 
 		// Draw Filled in area 
@@ -294,8 +295,8 @@ public class Dial extends JComponent {
 		fillCircle(g, center.x, center.y, (int) (radius * 0.7));
 		
 		// Draw inside line
-		g.setColor(Color.BLACK);
-		drawCircle(g, center.x, center.y, (int) (radius * 0.7));
+//		g.setColor(Color.BLACK);
+//		drawCircle(g, center.x, center.y, (int) (radius * 0.7));
 		
 		// Draw empty area at bottom
 		g.setColor(getBackground());
