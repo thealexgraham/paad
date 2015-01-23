@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.sound.sampled.Port;
 import javax.swing.JComponent;
@@ -21,12 +22,14 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 
+import net.alexgraham.thesis.ChangeSender;
+
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
-public class SCLang {
+public class SCLang extends ChangeSender {
 	
 	public interface SCUpdateListener extends java.util.EventListener {
 		public void avgUpdate(double avgCPU);
@@ -59,7 +62,7 @@ public class SCLang {
 	     listenerList.remove(SCUpdateListener.class, l);
 	 }
 
-	 protected void fireAvgUpdate(double avgCPU) {
+	 protected void fireUpdate(double avgCPU) {
 	     // Guaranteed to return a non-null array
 	     Object[] listeners = listenerList.getListenerList();
 	     
@@ -70,8 +73,6 @@ public class SCLang {
 	     }
 	 }
 
-	
-	
 	public SCLang (int sendPort, int receivePort) throws SocketException, UnknownHostException {
 		running = false;
 		this.sendPort = sendPort;
@@ -186,6 +187,7 @@ public class SCLang {
 //									listener.avgUpdate(round(Double.valueOf(splitString[1])));
 //								}
 								fireAvgUpdate(round(Double.valueOf(splitString[1])));
+								firePropertyChange("avgCPU", 0, round(Double.valueOf(splitString[1])));
 								break;
 								
 							case "peakCPU":

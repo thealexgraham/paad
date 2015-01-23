@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Function;
 
 import net.alexgraham.thesis.supercollider.SCLang;
 
@@ -24,10 +25,22 @@ public class CommandLine {
 	static int SEND_PORT = 27320;
 
 	public static void main(String[] args) throws IOException {
-		String command = "cd";
+//		String command = "cd";
+//		
+//		SCLang sc = new SCLang(SEND_PORT, RECEIVE_PORT);
+//		sc.startSCLang();
 		
-		SCLang sc = new SCLang(SEND_PORT, RECEIVE_PORT);
-		sc.startSCLang();
+		Function<String, String> myFun = new Function<String, String>() {
+
+			@Override
+			public String apply(String t) {
+				// TODO Auto-generated method stub
+				return (t + " it worked");
+			}
+		};
+		
+		System.out.println(myFun.apply("Whatever"));
+		
 		
     	System.in.read();
 		System.out.println("Done.");

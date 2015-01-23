@@ -1,25 +1,20 @@
 package net.alexgraham.thesis;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.SocketException;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -86,6 +81,14 @@ public class MainWindow extends JFrame implements SCUpdateListener {
 		add(bottomWrapper, BorderLayout.PAGE_END);
 		App.sc.addListener(this);
 		App.sc.addUpdateListener(this);
+		App.sc.addPropertyChangeListener("avgCPU", new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				// TODO Auto-generated method stub
+				avgCPUField.setText(String.valueOf(evt.getNewValue()) + "%");
+			}
+		});
 
 	}
 
@@ -109,7 +112,7 @@ public class MainWindow extends JFrame implements SCUpdateListener {
 	@Override
 	public void avgUpdate(double avgCPU) {
 		// TODO Auto-generated method stub
-		avgCPUField.setText(Double.valueOf(avgCPU) + "%");
+		//avgCPUField.setText(Double.valueOf(avgCPU) + "%");
 	}
 
 	@Override
