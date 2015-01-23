@@ -19,6 +19,7 @@ import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
+import javax.swing.event.EventListenerList;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -26,6 +27,12 @@ import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
 public class SCLang {
+	
+	public interface SCUpdateListener extends java.util.EventListener {
+		public void avgUpdate(double avgCPU);
+		public void peakUpdate(double peakCPU);
+		public void consoleUpdate(String consoleLine);
+	}
 	
 	final static boolean logging = false;
 	
@@ -36,45 +43,47 @@ public class SCLang {
 	OSCPortIn receiver;
 	private Process scProcess;
 	
-	private JTextArea consoleText;
-	private Hashtable<String, JComponent> components;
-	
-	JTextArea consoleArea;
-	JTextField avgCPUField;
-	JTextField peakCPUField;
-	
+	private ArrayList<SCUpdateListener> listeners;
+		
 	private BufferedWriter writer;
 
 	private boolean running;
+	
+	 EventListenerList listenerList = new EventListenerList();
+
+	 public void addUpdateListener(SCUpdateListener l) {
+	     listenerList.add(SCUpdateListener.class, l);
+	 }
+
+	 public void removeUpdateListener(SCUpdateListener l) {
+	     listenerList.remove(SCUpdateListener.class, l);
+	 }
+
+	 protected void fireAvgUpdate(double avgCPU) {
+	     // Guaranteed to return a non-null array
+	     Object[] listeners = listenerList.getListenerList();
+	     
+	     for (int i = listeners.length-2; i>=0; i-=2) {
+	         if (listeners[i]==SCUpdateListener.class) {
+	             ((SCUpdateListener)listeners[i+1]).avgUpdate(avgCPU);
+	         }
+	     }
+	 }
+
+	
 	
 	public SCLang (int sendPort, int receivePort) throws SocketException, UnknownHostException {
 		running = false;
 		this.sendPort = sendPort;
 		this.receivePort = receivePort;
+		listeners = new ArrayList<SCLang.SCUpdateListener>();
 	}
 	
-	public void setConsoleArea(JTextArea area) {
-		consoleText = area;
+	public void addListener(SCUpdateListener listener) {
+		listeners.add(listener);
 	}
 	
-	public void setAvgCPUField(JTextField field) {
-		avgCPUField = field;
-	}
-	
-	public void setPeakCPUField(JTextField field) {
-		peakCPUField = field;
-	}
-	
-	// setComponents needs to be less specific
-	
-	public void setComponents(Hashtable<String, JComponent> comps) {
-		//TODO Merge instead of just reuse comps, is this really faster?
-		components = comps;
-		consoleArea = (JTextArea) components.get("consoleArea");
-		avgCPUField = (JTextField) components.get("avgCPUField");
-		peakCPUField = (JTextField) components.get("peakCPUField");
-	}
-	
+
 	public void setSendPort(int port) throws SocketException, UnknownHostException {
 		// Need this so we can recreate the sender
 		OSC.setSendPort(port);
@@ -161,29 +170,28 @@ public class SCLang {
 							command = true;
 						} else {
 							System.out.println("sc[ " + s);
-							
-							if (consoleText != null) {
-								//((JTextArea)components.get("consoleArea")).append(s+"\n");
-								consoleArea.append("  " + s+"\n"); // Write to the console window
-								consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
-							}
+							//((JTextArea)components.get("consoleArea")).append(s+"\n");
+//								consoleArea.append("  " + s+"\n"); // Write to the console window
+//								consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
+//							for (SCUpdateListener listener : listeners) {
+//								listener.consoleUpdate(s);
+//							}
 						}
 					} else {	
 						command = false;
 						switch ((splitString = s.split(":"))[0]) {
 						
 							case "avgCPU":
-								if (avgCPUField != null)
-									avgCPUField.setText(Double.toString(
-											round(Double.valueOf(splitString[1])))
-											+ "%");
+//								for (SCUpdateListener listener : listeners) {
+//									listener.avgUpdate(round(Double.valueOf(splitString[1])));
+//								}
+								fireAvgUpdate(round(Double.valueOf(splitString[1])));
 								break;
 								
 							case "peakCPU":
-								if (peakCPUField != null)
-									peakCPUField.setText(Double.toString(
-											round(Double.valueOf(splitString[1])))
-											+ "%");
+//								for (SCUpdateListener listener : listeners) {
+//									listener.peakUpdate(round(Double.valueOf(splitString[1])));
+//								}
 								break;
 							case "receivePort":
 								String port = splitString[1];

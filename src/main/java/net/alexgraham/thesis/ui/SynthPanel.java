@@ -3,35 +3,29 @@ package net.alexgraham.thesis.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Window;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.UUID;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.Synth.SynthListener;
-import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
-import net.alexgraham.thesis.ui.components.JSliderD;
+import net.alexgraham.thesis.ui.components.Dial;
+import net.alexgraham.thesis.ui.components.DialD;
 
 
-public class SynthPanel extends JPanel implements SynthListener {
+public class SynthPanel extends JPanel  {
 	
 	JPanel topPanel;
 	JPanel bottomPanel;
@@ -50,10 +44,24 @@ public class SynthPanel extends JPanel implements SynthListener {
 	Synth synth;
 	
 	String synthName;
-	
-	Hashtable<String, JSliderD> sliders;
+
 	
 	int lastInt = 0;
+	
+	class PopUpDemo extends JPopupMenu {
+	    JMenuItem anItem;
+	    public PopUpDemo(){
+	        anItem = new JMenuItem("Click Me!");
+	        anItem.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("It was done");
+				}
+			});
+	        add(anItem);
+	    }
+	}
 
 	
 	
@@ -65,8 +73,6 @@ public class SynthPanel extends JPanel implements SynthListener {
 	public SynthPanel(Synth synth) {
 
 		this.synth = synth;
-		synth.addSynthListener(this);
-		sliders = new Hashtable<String, JSliderD>();
 		
 		setupWindow();
 		
@@ -94,20 +100,40 @@ public class SynthPanel extends JPanel implements SynthListener {
 	
 	public void addParameter(final Parameter param) {
 
-		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 4, param.min, param.max, param.value);
+//		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 
+//				getSynth().getModelForParameterName(param.getName()));
+//		middlePanel.add(new JLabel(param.name));
+//		middlePanel.add(paramSlider);
 		
-		paramSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSliderD source = (JSliderD)e.getSource();
-		    	synth.changeParameter(param.name, source.getDoubleValue());
-			}
+		DialD paramDial = new DialD(getSynth().getModelForParameterName(param.getName()));
+		paramDial.setName(param.getName());
+		if (param.getName() == "pan") {
+			paramDial.setBehavior(Dial.Behavior.CENTER);
+		}
+		
+		paramDial.addMouseListener(new MouseAdapter() {
+		    public void mousePressed(MouseEvent e){
+		        if (e.isPopupTrigger())
+		            doPop(e);
+		    }
+
+		    public void mouseReleased(MouseEvent e){
+		        if (e.isPopupTrigger())
+		            doPop(e);
+		    }
+
+		    private void doPop(MouseEvent e){
+		        PopUpDemo menu = new PopUpDemo();
+		        menu.show(e.getComponent(), e.getX(), e.getY());
+		    }
+
 		});
 		
-		middlePanel.add(new JLabel(param.name));
-		middlePanel.add(paramSlider);
+		//middlePanel.add(paramDial);
+		middlePanel.add(paramDial);
 		middlePanel.revalidate();
 	
-		sliders.put(param.getName(), paramSlider);
+		//sliders.put(param.getName(), paramSlider);
 	}
 
 
@@ -124,7 +150,8 @@ public class SynthPanel extends JPanel implements SynthListener {
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
-		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		middlePanel.setLayout(new GridLayout(0, 2));
 		scrollPane = new JScrollPane(middlePanel);
 		
 				
@@ -140,18 +167,6 @@ public class SynthPanel extends JPanel implements SynthListener {
 		add(topPanel, BorderLayout.NORTH);
 		add(scrollPane, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);	
-	}
-	
-	@Override
-	public void parameterChanged(String paramName, double value) {
-		JSliderD paramSlider = sliders.get(paramName);
-		paramSlider.setDoubleValue(value);
-	}
-
-	@Override
-	public void synthClosed(Synth synth) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

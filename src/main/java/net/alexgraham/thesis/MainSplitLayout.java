@@ -26,8 +26,8 @@ import javax.xml.stream.events.StartDocument;
 import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.ui.RunningSynthsPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel;
-import net.alexgraham.thesis.ui.SynthWindowDelegate;
 import net.alexgraham.thesis.ui.SynthLauncherPanel.SynthLauncherDelegate;
+import net.alexgraham.thesis.ui.old.SynthWindowDelegate;
 
 public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 	

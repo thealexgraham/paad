@@ -38,8 +38,12 @@ s.waitForBoot({
 		Out.ar(0, Pan2.ar(fm * amp, pan));
 	}).add;
 
-	SynthDef(\sinWave, { | pan = 0, amp = 0.5 |
-		Out.ar(0, Pan2.ar(SinOsc.ar(220) * amp, pan));
+	SynthDef(\sinWave, { | freq = 440, pan = 0, amp = 0.5 |
+		Out.ar(0, Pan2.ar(SinOsc.ar(freq) * amp, pan));
+	}).add;
+	
+	SynthDef(\sawWave, { | freq = 440, pan = 0, amp = 0.5 |
+		Out.ar(0, Pan2.ar(Saw.ar(freq) * amp, pan));
 	}).add;
 	
 	// This function will run when the Java app is ready and listening
@@ -56,8 +60,8 @@ s.waitForBoot({
 		[\amp, 0.0, 1.0, 0]];
 
 		java.newSynth("PanFM3OP", ~params);
-		java.newSynth("sinWave", []);
-
+		java.newSynth("sinWave", [[\freq, 0, 1000, 440]]);
+		java.newSynth("sawWave", [[\freq, 0, 1000, 440]]);
 	}, '/start/ready', recvPort:NetAddr.langPort);
 	
 	// Create a new java helper at the default port

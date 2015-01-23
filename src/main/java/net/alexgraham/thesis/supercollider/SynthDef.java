@@ -20,7 +20,7 @@ public class SynthDef {
 		
 	}
 	
-	public void addParameter(String name, float min, float max, float value) {
+	public void addParameter(String name, double min, double max, double value) {
 		parameters.add(new Parameter(name, min, max, value));
 		
 	}
@@ -39,11 +39,11 @@ public class SynthDef {
 	
 	public class Parameter {
 		public String name;
-		public float min;
-		public float max;
-		public float value;
+		public double min;
+		public double max;
+		public double value;
 		
-		public Parameter(String name, float min, float max, float value) {
+		public Parameter(String name, double min, double max, double value) {
 			this.name = name;
 			this.min = min;
 			this.max = max;
@@ -54,15 +54,15 @@ public class SynthDef {
 			return name;
 		}
 
-		public float getMin() {
+		public double getMin() {
 			return min;
 		}
 
-		public float getMax() {
+		public double getMax() {
 			return max;
 		}
 
-		public float getValue() {
+		public double getValue() {
 			return value;
 		}
 	

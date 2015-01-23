@@ -5,9 +5,17 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 
+import javax.swing.BoundedRangeModel;
+import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.omg.CORBA.INITIALIZE;
 
+import com.sun.corba.se.spi.activation._ActivatorImplBase;
+
 import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
+import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 
 public class Synth {
 	
@@ -22,7 +30,8 @@ public class Synth {
 	private UUID id;
 	
 	private ArrayList<SynthListener> synthListeners;
-	private Hashtable<String, Double> parameters; 
+	private Hashtable<String, Double> parameters;
+	private Hashtable<String, BoundedRangeModel> parameterModels;
 	
 	public Synth(SynthDef synthDef, SCLang sc) {
 		this.synthDef = synthDef;
@@ -30,6 +39,8 @@ public class Synth {
 		id = UUID.randomUUID();
 		synthListeners = new ArrayList<Synth.SynthListener>();
 		parameters = new Hashtable<String, Double>();
+		parameterModels = new Hashtable<String, BoundedRangeModel>();
+		
 	}
 	
 	public Synth(SynthDef synthDef, SCLang sc, String name) {
@@ -52,21 +63,35 @@ public class Synth {
     	for (Parameter param : synthDef.getParameters()) {
 			arguments.add(param.name);
 			arguments.add(param.value);
-			
+
+			DoubleBoundedRangeModel model = 
+					new DoubleBoundedRangeModel(2, param.getMin(), param.getMax(), param.getValue());
+
+			model.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					// Update the SuperCollider
+					changeParameter(param.getName(), model.getDoubleValue());
+				}
+			});
+
+			parameterModels.put(param.getName(), model);
 			parameters.put(param.getName(), Double.valueOf(param.getValue()));
 		}
 		sc.sendMessage("/synth/start", arguments.toArray());
 	}
 	
 	public void changeParameter(String paramName, double value) {
-		if (value != parameters.get(paramName)) {
+		//if (value != parameters.get(paramName)) {
 			sc.sendMessage("/synth/paramc", synthDef.getSynthName(), paramName, id.toString(), value);
-			parameters.put(paramName, value);
-			
-			// Update Synth Listeners
-			for (SynthListener synthListener : synthListeners) {
-				synthListener.parameterChanged(paramName, value);
-			}			
+		//	parameters.put(paramName, value);		
+		//}
+	}
+	
+	public void updateParameter(String paramName, double value) {
+		DoubleBoundedRangeModel model = (DoubleBoundedRangeModel) getModelForParameterName(paramName);
+		if (value != model.getDoubleValue()) {
+			model.setDoubleValue(value);
 		}
 	}
 	
@@ -92,8 +117,17 @@ public class Synth {
 				return parameter;
 			}
 		}
-		
 		return null;
+	}
+	
+	/**
+	 *  Returns the model for the named parameter
+	 * @param name
+	 * @return
+	 */
+	public BoundedRangeModel getModelForParameterName(String name) {
+		System.out.println(parameterModels.get(name).toString());
+		return parameterModels.get(name);
 	}
 	
 	public ArrayList<Parameter> getParameters() {
