@@ -79,16 +79,7 @@ public class MainWindow extends JFrame implements SCUpdateListener {
 
 		
 		add(bottomWrapper, BorderLayout.PAGE_END);
-		App.sc.addListener(this);
 		App.sc.addUpdateListener(this);
-		App.sc.addPropertyChangeListener("avgCPU", new PropertyChangeListener() {
-			
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				// TODO Auto-generated method stub
-				avgCPUField.setText(String.valueOf(evt.getNewValue()) + "%");
-			}
-		});
 
 	}
 
@@ -97,7 +88,7 @@ public class MainWindow extends JFrame implements SCUpdateListener {
         //Create the dialog.
        consoleDialog = 
         		new ConsoleDialog(mainFrame, "Console Dialog");
-        App.sc.addListener(consoleDialog);
+        App.sc.addUpdateListener(consoleDialog);
         
         //Show it.
         consoleDialog.setSize(new Dimension(600, 300));
@@ -112,7 +103,7 @@ public class MainWindow extends JFrame implements SCUpdateListener {
 	@Override
 	public void avgUpdate(double avgCPU) {
 		// TODO Auto-generated method stub
-		//avgCPUField.setText(Double.valueOf(avgCPU) + "%");
+		avgCPUField.setText(Double.valueOf(avgCPU) + "%");
 	}
 
 	@Override

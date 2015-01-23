@@ -29,12 +29,16 @@ import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
-public class SCLang extends ChangeSender {
+public class SCLang {
 	
 	public interface SCUpdateListener extends java.util.EventListener {
 		public void avgUpdate(double avgCPU);
 		public void peakUpdate(double peakCPU);
 		public void consoleUpdate(String consoleLine);
+	}
+	
+	private enum Updates {
+		avgCPU, peakCPU, console
 	}
 	
 	final static boolean logging = false;
@@ -62,13 +66,18 @@ public class SCLang extends ChangeSender {
 	     listenerList.remove(SCUpdateListener.class, l);
 	 }
 
-	 protected void fireUpdate(double avgCPU) {
+	 protected void fireSCUpdate(Updates property, Object message) {
 	     // Guaranteed to return a non-null array
 	     Object[] listeners = listenerList.getListenerList();
 	     
 	     for (int i = listeners.length-2; i>=0; i-=2) {
 	         if (listeners[i]==SCUpdateListener.class) {
-	             ((SCUpdateListener)listeners[i+1]).avgUpdate(avgCPU);
+	        	 if (property.equals(Updates.console))
+	        		 ((SCUpdateListener)listeners[i+1]).consoleUpdate((String) message);
+	        	 if (property.equals(Updates.avgCPU))
+	        		 ((SCUpdateListener)listeners[i+1]).avgUpdate((Double) message);
+	        	 if (property.equals(Updates.peakCPU))
+	        		 ((SCUpdateListener)listeners[i+1]).peakUpdate((Double) message);	             
 	         }
 	     }
 	 }
@@ -171,29 +180,18 @@ public class SCLang extends ChangeSender {
 							command = true;
 						} else {
 							System.out.println("sc[ " + s);
-							//((JTextArea)components.get("consoleArea")).append(s+"\n");
-//								consoleArea.append("  " + s+"\n"); // Write to the console window
-//								consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
-//							for (SCUpdateListener listener : listeners) {
-//								listener.consoleUpdate(s);
-//							}
+							fireSCUpdate(Updates.console, s);
 						}
 					} else {	
 						command = false;
 						switch ((splitString = s.split(":"))[0]) {
 						
 							case "avgCPU":
-//								for (SCUpdateListener listener : listeners) {
-//									listener.avgUpdate(round(Double.valueOf(splitString[1])));
-//								}
-								fireAvgUpdate(round(Double.valueOf(splitString[1])));
-								firePropertyChange("avgCPU", 0, round(Double.valueOf(splitString[1])));
+								fireSCUpdate(Updates.avgCPU, round(Double.valueOf(splitString[1])));
 								break;
 								
 							case "peakCPU":
-//								for (SCUpdateListener listener : listeners) {
-//									listener.peakUpdate(round(Double.valueOf(splitString[1])));
-//								}
+								fireSCUpdate(Updates.peakCPU, round(Double.valueOf(splitString[1])));
 								break;
 							case "receivePort":
 								String port = splitString[1];

@@ -61,6 +61,7 @@ public class ConsoleDialog extends JDialog implements SCUpdateListener {
 	
 	public void openDialog() {
 		this.setVisible(true);
+		consoleArea.append(" ");
 		consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
 	}
 
