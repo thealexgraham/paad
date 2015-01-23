@@ -18,10 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import net.alexgraham.thesis.supercollider.SCLang.SCUpdateListener;
+import net.alexgraham.thesis.supercollider.SCLang.SCCPUListener;
+import net.alexgraham.thesis.supercollider.SCLang.SCConsoleListener;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
 
-public class MainWindow extends JFrame implements SCUpdateListener {
+public class MainWindow extends JFrame implements SCCPUListener {
 	JPanel mainPanel;
 	JPanel bottomPanel;
 	
@@ -68,6 +69,8 @@ public class MainWindow extends JFrame implements SCUpdateListener {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				consoleDialog.openDialog();
+				//App.sc.removeCPUUpdateListener(MainWindow.this);
+				App.sc.removeUpdateListener(SCCPUListener.class, MainWindow.this);
 			}
 		});
 		
@@ -76,11 +79,11 @@ public class MainWindow extends JFrame implements SCUpdateListener {
 		
 		bottomWrapper.add(bottomButtons);
 		bottomWrapper.add(bottomPanel);
-
-		
+				
 		add(bottomWrapper, BorderLayout.PAGE_END);
-		App.sc.addUpdateListener(this);
-
+		
+		//App.sc.addCPUUpdateListener(this);
+		App.sc.addUpdateListener(SCCPUListener.class, this);
 	}
 
 	public void createConsoleDialog() {
@@ -88,11 +91,14 @@ public class MainWindow extends JFrame implements SCUpdateListener {
         //Create the dialog.
        consoleDialog = 
         		new ConsoleDialog(mainFrame, "Console Dialog");
-        App.sc.addUpdateListener(consoleDialog);
+        App.sc.addUpdateListener(SCConsoleListener.class, consoleDialog);
         
         //Show it.
         consoleDialog.setSize(new Dimension(600, 300));
         consoleDialog.setLocationRelativeTo(mainFrame);
+        
+        //App.sc.removeUpdateListener(SCCPUListener.class, this);
+        
 	}
 	
 	public void nonModalDialog(JFrame frame) {
@@ -109,11 +115,6 @@ public class MainWindow extends JFrame implements SCUpdateListener {
 	@Override
 	public void peakUpdate(double peakCPU) {
 		peakCPUField.setText(Double.valueOf(peakCPU) + "%");		
-	}
-
-	@Override
-	public void consoleUpdate(String consoleLine) {
-		
 	}
 	
 }

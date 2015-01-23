@@ -16,9 +16,10 @@ import javax.swing.JTextArea;
 
 import com.sun.xml.internal.ws.wsdl.writer.document.OpenAtts;
 
+import net.alexgraham.thesis.supercollider.SCLang.SCConsoleListener;
 import net.alexgraham.thesis.supercollider.SCLang.SCUpdateListener;
 
-public class ConsoleDialog extends JDialog implements SCUpdateListener {
+public class ConsoleDialog extends JDialog implements SCConsoleListener {
 	private JTextArea consoleArea;
 	private JScrollPane consolePane;
 	
@@ -63,18 +64,6 @@ public class ConsoleDialog extends JDialog implements SCUpdateListener {
 		this.setVisible(true);
 		consoleArea.append(" ");
 		consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
-	}
-
-	@Override
-	public void avgUpdate(double avgCPU) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void peakUpdate(double peakCPU) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
@@ -29,7 +30,7 @@ public class Synth {
 	private String name;
 	private UUID id;
 	
-	private ArrayList<SynthListener> synthListeners;
+	private CopyOnWriteArrayList<SynthListener> synthListeners;
 	private Hashtable<String, Double> parameters;
 	private Hashtable<String, BoundedRangeModel> parameterModels;
 	
@@ -37,7 +38,7 @@ public class Synth {
 		this.synthDef = synthDef;
 		this.sc = sc;
 		id = UUID.randomUUID();
-		synthListeners = new ArrayList<Synth.SynthListener>();
+		synthListeners = new CopyOnWriteArrayList<Synth.SynthListener>();
 		parameters = new Hashtable<String, Double>();
 		parameterModels = new Hashtable<String, BoundedRangeModel>();
 		

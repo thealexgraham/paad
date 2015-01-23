@@ -1,17 +1,15 @@
 package net.alexgraham.thesis.ui;
 
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.SynthDef;
 
 public class SynthInfoList extends JPanel {
 	
@@ -20,11 +18,11 @@ public class SynthInfoList extends JPanel {
 		public void deselectSynth();
 	}
 	
-	private ArrayList<SynthSelectListener> listeners;
+	private CopyOnWriteArrayList<SynthSelectListener> listeners;
 	
 	public SynthInfoList() {
 		
-		listeners = new ArrayList<SynthInfoList.SynthSelectListener>();
+		listeners = new CopyOnWriteArrayList<SynthInfoList.SynthSelectListener>();
 				
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBackground(Color.WHITE);
