@@ -26,7 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -68,7 +70,7 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		setLayout(new GridLayout());
 		
 		synths = new Hashtable<String, Synth>();
-		
+			
 		// Setup Synth List Panel
 		setupSynthList();
 		

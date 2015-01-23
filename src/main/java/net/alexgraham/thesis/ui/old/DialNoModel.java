@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.ui.components;
+package net.alexgraham.thesis.ui.old;
 
 import java.awt.AWTException;
 import java.awt.BasicStroke;
@@ -18,161 +18,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.BorderFactory;
-import javax.swing.BoundedRangeModel;
-import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-
-import com.sun.xml.internal.ws.org.objectweb.asm.Label;
+import javax.swing.JSlider;
 
 
-public class Dial extends JComponent {
-	int radius;
-	
-    /**
-     * The data model that handles the numeric maximum value,
-     * minimum value, and current-position value for the slider.
-     */
-    protected BoundedRangeModel dialModel;
-    
-    /**
-     * The changeListener (no suffix) is the listener we add to the
-     * slider's model.  This listener is initialized to the
-     * {@code ChangeListener} returned from {@code createChangeListener},
-     * which by default just forwards events
-     * to {@code ChangeListener}s (if any) added directly to the slider.
-     *
-     * @see #addChangeListener
-     * @see #createChangeListener
-     */
-    protected ChangeListener changeListener = createChangeListener();
-    
-    /**
-     * We pass Change events along to the listeners with the
-     * the slider (instead of the model itself) as the event source.
-     */
-    private class ModelListener implements ChangeListener, Serializable {
-        public void stateChanged(ChangeEvent e) {
-            fireStateChanged();
-            repaint();
-        }
-    }
-    
-    /**
-     * Send a {@code ChangeEvent}, whose source is this {@code JSlider}, to
-     * all {@code ChangeListener}s that have registered interest in
-     * {@code ChangeEvent}s.
-     * This method is called each time a {@code ChangeEvent} is received from
-     * the model.
-     * <p>
-     * The event instance is created if necessary, and stored in
-     * {@code changeEvent}.
-     *
-     * @see #addChangeListener
-     * @see EventListenerList
-     */
-    protected void fireStateChanged() {
-        Object[] listeners = listenerList.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            if (listeners[i]==ChangeListener.class) {
-                if (changeEvent == null) {
-                    changeEvent = new ChangeEvent(this);
-                }
-                ((ChangeListener)listeners[i+1]).stateChanged(changeEvent);
-            }
-        }
-    }
-
-
-    /**
-     * Subclasses that want to handle {@code ChangeEvent}s
-     * from the model differently
-     * can override this to return
-     * an instance of a custom <code>ChangeListener</code> implementation.
-     * The default {@code ChangeListener} simply calls the
-     * {@code fireStateChanged} method to forward {@code ChangeEvent}s
-     * to the {@code ChangeListener}s that have been added directly to the
-     * slider.
-     * @see #changeListener
-     * @see #fireStateChanged
-     * @see javax.swing.event.ChangeListener
-     * @see javax.swing.BoundedRangeModel
-     */
-    protected ChangeListener createChangeListener() {
-        return new ModelListener();
-    }
-    
-    /**
-     * Only one <code>ChangeEvent</code> is needed per slider instance since the
-     * event's only (read-only) state is the source property.  The source
-     * of events generated here is always "this". The event is lazily
-     * created the first time that an event notification is fired.
-     *
-     * @see #fireStateChanged
-     */
-    protected transient ChangeEvent changeEvent = null;
-    
-    /**
-     * Returns the {@code BoundedRangeModel} that handles the slider's three
-     * fundamental properties: minimum, maximum, value.
-     *
-     * @return the data model for this component
-     * @see #setModel
-     * @see    BoundedRangeModel
-     */
-    public BoundedRangeModel getModel() {
-        return dialModel;
-    }
-    
-    /**
-     * Sets the {@code BoundedRangeModel} that handles the slider's three
-     * fundamental properties: minimum, maximum, value.
-     *<p>
-     * Attempts to pass a {@code null} model to this method result in
-     * undefined behavior, and, most likely, exceptions.
-     *
-     * @param  newModel the new, {@code non-null} <code>BoundedRangeModel</code> to use
-     *
-     * @see #getModel
-     * @see    BoundedRangeModel
-     * @beaninfo
-     *       bound: true
-     * description: The sliders BoundedRangeModel.
-     */
-    public void setModel(BoundedRangeModel newModel)
-    {
-        BoundedRangeModel oldModel = getModel();
-
-        if (oldModel != null) {
-            oldModel.removeChangeListener(changeListener);
-        }
-
-        dialModel = newModel;
-
-        if (newModel != null) {
-            newModel.addChangeListener(changeListener);
-        }
-
-        if (accessibleContext != null) {
-            accessibleContext.firePropertyChange(
-                                                AccessibleContext.ACCESSIBLE_VALUE_PROPERTY,
-                                                (oldModel == null
-                                                 ? null : Integer.valueOf(oldModel.getValue())),
-                                                (newModel == null
-                                                 ? null : Integer.valueOf(newModel.getValue())));
-        }
-
-        firePropertyChange("model", oldModel, dialModel);
-    }
+public class DialNoModel extends JComponent {
+	int minValue, nvalue, maxValue, value, radius;
 
 	public enum Movement {
 		EXACT, VERTICAL
@@ -189,7 +44,7 @@ public class Dial extends JComponent {
 	public class DialEvent extends java.util.EventObject {
 		int value;
 
-		DialEvent(Dial source, int value) {
+		DialEvent(DialNoModel source, int value) {
 			super(source);
 			this.value = value;
 		}
@@ -207,15 +62,15 @@ public class Dial extends JComponent {
 	private int lastValue = 0;
 	private String name = "";
 
-	public Dial() {
+	public DialNoModel() {
 		this(-10, 10, 5);
 	}
 
-	public Dial(int minValue, int maxValue, int value) {
-
+	public DialNoModel(int minValue, int maxValue, int value) {
+		setMinimum(minValue);
+		setMaximum(maxValue);
+		setValue(value);
 		setForeground(Color.lightGray);
-		
-		setModel(new DefaultBoundedRangeModel(value, 0, minValue, maxValue));
 
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -270,6 +125,8 @@ public class Dial extends JComponent {
 				}
 			}
 		});
+
+		setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 	
 	public void setBehavior(Behavior behavior) {
@@ -304,7 +161,7 @@ public class Dial extends JComponent {
 	protected void difference(MouseEvent e) throws AWTException {
 
 		float pixelRange = getPreferredSize().height / 0.25f;
-		int range = getMaximum() - getMinimum();
+		int range = maxValue - minValue;
 		
 		float mod = pixelRange / (float) range;
 		
@@ -315,33 +172,29 @@ public class Dial extends JComponent {
 	
 		int diff = startY - y;
 		
-		if ((getValue() == getMinimum() && diff < 0) ||
-				(getValue() == getMaximum() && diff > 0)) {
-			pixelsMoved = 0;
-			lastValue = getValue();
-		} else {
-			pixelsMoved += diff;
-			int change = (int) (pixelsMoved / mod);
-			setValue(lastValue + change);	
-		}
+		pixelsMoved += diff;
 		
 	    // Move the cursor
 	    Robot robot = new Robot();
 	    robot.mouseMove(startX, startY);
-
+		
+		int change = (int) (pixelsMoved / mod);
+		
+		setValue(lastValue + change);
+		//setValue(getValue() + change);
 	}
 
 	protected void spin(MouseEvent e) {
 		int y = e.getY();
 		int x = e.getX();
 		double th = Math.atan((1.0 * y - radius) / (x - radius));
-		int value = (int) (th / (2 * Math.PI) * (getMaximum() - getMinimum()));
+		int value = (int) (th / (2 * Math.PI) * (maxValue - minValue));
 		if (x < radius)
-			setValue(value + (getMaximum() - getMinimum()) / 2 + getMaximum());
+			setValue(value + (maxValue - minValue) / 2 + minValue);
 		else if (y < radius)
-			setValue(value + getMaximum());
+			setValue(value + maxValue);
 		else
-			setValue(value + getMinimum());
+			setValue(value + minValue);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -360,7 +213,7 @@ public class Dial extends JComponent {
 		radius -= offset;
 
 		
-		int range = getMaximum() - getMinimum();
+		int range = maxValue - minValue;
 
 		double th = getnValue() * (1.7 * Math.PI) / range;
 		double scale = (double) getnValue() / range;
@@ -379,7 +232,7 @@ public class Dial extends JComponent {
 		
 		g2.setStroke(new BasicStroke(2));
 		//g2.setPaint(getForeground().darker());
-		g2.setPaint(Color.BLACK);
+		g2.setPaint(Color.black);
 		g2.drawLine(end.x, end.y, center.x, center.y);
 		
 		g.drawString(name, (getSize().width / 2) - (stringWidth / 2), 0 + (int)(stringHeight / 1.2));
@@ -415,9 +268,9 @@ public class Dial extends JComponent {
 		
 		if (behaviorType == Behavior.CENTER) {
 			
-			int range = getMaximum() - getMinimum();
-			int middle = getMaximum() - (range / 2);
-			scale = (double) getValue() / (getMaximum() - middle);
+			int range = maxValue - minValue;
+			int middle = maxValue - (range / 2);
+			scale = (double) getValue() / (maxValue - middle);
 			
 			int arcAngle = (int) (scale / 2 * -(360 - (int) Math.floor(start / 2) + 4));
 			g.fillArc(center.x - radius, center.y - radius, radius * 2, radius * 2, 90, arcAngle);	
@@ -468,44 +321,44 @@ public class Dial extends JComponent {
 
 	public void setValue(int value) {
 
-        BoundedRangeModel m = getModel();
-        int oldValue = m.getValue();
-        if (oldValue == value) {
-            return;
-        }
-        m.setValue(value);
-        
-        repaint();
-        fireEvent();
+		if (value == this.value) {
+			return;
+		}
+		
+		if (value > maxValue)
+			value = maxValue;
+		if (value < minValue)
+			value = minValue;
+		
+		this.value = value;
+		repaint();
+		fireEvent();
+
 	}
 
 	public int getValue() {
-		return getModel().getValue();
+		return value;
 	}
 	
 	private int getnValue() {
-		return getValue() - getModel().getMinimum();
+		return value - minValue;
 	}
 
-    public void setMinimum(int minimum) {
-        int oldMin = getModel().getMinimum();
-        getModel().setMinimum(minimum);
-        firePropertyChange( "minimum", Integer.valueOf( oldMin ), Integer.valueOf( minimum ) );
-    }
+	public void setMinimum(int minValue) {
+		this.minValue = minValue;
+	}
 
 	public int getMinimum() {
-		return getModel().getMinimum();
+		return minValue;
 	}
 
-    public void setMaximum(int maximum) {
-        int oldMax = getModel().getMaximum();
-        getModel().setMaximum(maximum);
-        firePropertyChange( "maximum", Integer.valueOf( oldMax ), Integer.valueOf( maximum ) );
-    }
+	public void setMaximum(int maxValue) {
+		this.maxValue = maxValue;
+	}
 
-    public int getMaximum() {
-        return getModel().getMaximum();
-    }
+	public int getMaximum() {
+		return maxValue;
+	}
 
 	public void addDialListener(DialListener listener) {
 		listenerList.add(DialListener.class, listener);
@@ -526,15 +379,12 @@ public class Dial extends JComponent {
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Dial v1.0");
 		final JLabel statusLabel = new JLabel("Welcome to Dial v1.0");
-		final Dial dial = new DialD(2, -1, 1, 0);
+		final DialNoModel dial = new DialNoModel();
 		dial.setName("Amp");
-		dial.setBehavior(Dial.Behavior.CENTER);
+		dial.setBehavior(DialNoModel.Behavior.CENTER);
 		frame.setLayout(new FlowLayout());
 		frame.getContentPane().add(dial);
-		
-		Dial dial2 = new DialD(dial.getModel());
-
-		frame.getContentPane().add(dial2);
+		frame.getContentPane().add(new DialNoModel());
 		frame.getContentPane().add(statusLabel);
 
 		dial.addDialListener(new DialListener() {

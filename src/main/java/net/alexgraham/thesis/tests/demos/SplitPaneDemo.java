@@ -2,8 +2,12 @@ package net.alexgraham.thesis.tests.demos;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.*;
 import javax.swing.event.*;
+
 import java.util.*;
 
 //SplitPaneDemo itself is not a visible component.
@@ -45,6 +49,7 @@ public class SplitPaneDemo extends JPanel
       //Provide a preferred size for the split pane.
       splitPane.setPreferredSize(new Dimension(400, 200));
       updateLabel(imageNames[list.getSelectedIndex()]);
+      
   }
   
   //Listens to the list

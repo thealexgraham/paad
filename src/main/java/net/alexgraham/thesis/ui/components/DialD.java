@@ -7,26 +7,27 @@ import java.util.*;
 import javax.swing.*;
 
 public class DialD extends Dial {
-	private int modifier;
+	public DialD() {
+		super();
+		setModel(new DoubleBoundedRangeModel(4, 0, 1, 0));
+	}
 	
 	public DialD(int decimals, double min, double max, double value) {
 		super();
-		// Modifier is what we multiply divide by
-		modifier = (int) Math.pow(10, decimals);
-		
-		// Set up the values
-		this.setMinimum((int)(min * modifier));
-		this.setMaximum((int)(max * modifier));
-		this.setValue((int)(value * modifier));
-		
+		setModel(new DoubleBoundedRangeModel(decimals, min, max, value));
+	}
+	
+	public DialD(BoundedRangeModel model) {
+		super();
+		setModel(model);
 	}
 	
 	public void setDoubleValue(double value) {
-		this.setValue((int) (value * modifier));
+		((DoubleBoundedRangeModel)getModel()).setDoubleValue(value);
 	}
 	
 	public double getDoubleValue() {
-		return this.getValue() / (double) modifier;
+		return ((DoubleBoundedRangeModel)getModel()).getDoubleValue();
 	}
 	
 	@Override

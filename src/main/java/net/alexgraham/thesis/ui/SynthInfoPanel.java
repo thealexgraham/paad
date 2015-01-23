@@ -24,7 +24,7 @@ import net.alexgraham.thesis.ui.components.Dial.DialListener;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.Dial.DialEvent;
 
-public class SynthInfoPanel extends JPanel implements SynthListener {
+public class SynthInfoPanel extends JPanel {
 	
 	private Synth synth;
 	
@@ -45,9 +45,7 @@ public class SynthInfoPanel extends JPanel implements SynthListener {
 	
 	public SynthInfoPanel (Synth synth) {
 		this.synth = synth;
-		
-		synth.addSynthListener(this);
-		
+				
 		nameLabel = new JLabel(synth.getName());
 		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
 		
@@ -55,38 +53,24 @@ public class SynthInfoPanel extends JPanel implements SynthListener {
 		idLabel = new JLabel(synth.getID());
 		
 		closeButton = new JButton("X");
+		
 		closeButton.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				synth.close();
 			}
 		});
 		
-		Parameter amp = synth.getParameterWithName("amp");
-		Parameter pan = synth.getParameterWithName("pan");
-		ampDial = new DialD(4, amp.min, amp.max, amp.value);
+
+
+		ampDial = new DialD(synth.getModelForParameterName("amp"));
 		ampDial.setBehavior(Dial.Behavior.NORMAL);
 		ampDial.setName("Amp");
-		panDial = new DialD(4, pan.min, pan.max, pan.value);
+		
+		panDial = new DialD(synth.getModelForParameterName("pan"));
 		panDial.setBehavior(Dial.Behavior.CENTER);
 		panDial.setName("Pan");
-		
-		
-		ampDial.addDialListener(new DialListener() {
-			@Override
-			public void dialAdjusted(DialEvent e) {
-				synth.changeParameter("amp", ampDial.getDoubleValue());
-			}
-		});
-		
-		panDial.addDialListener(new DialListener() {
-			@Override
-			public void dialAdjusted(DialEvent e) {
-				synth.changeParameter("pan", panDial.getDoubleValue());
-			}
-		});
-		
+
 		setupLayout();
 	}
 	
@@ -105,23 +89,6 @@ public class SynthInfoPanel extends JPanel implements SynthListener {
 	
 	public Synth getSynth() {
 		return this.synth;
-	}
-	
-	// SynthListener
-	// ---------------------
-	@Override
-	public void parameterChanged(String paramName, double value) {
-		if (paramName.equals("amp")) {
-			ampDial.setDoubleValue(value);
-		} else if (paramName.equals("pan")) {
-			panDial.setDoubleValue(value);
-		}
-	}
-	
-	@Override
-	public void synthClosed(Synth synth) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public void setupLayout() {
