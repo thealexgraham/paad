@@ -1,114 +1,62 @@
 package net.alexgraham.thesis.supercollider;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EventListener;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.function.Function;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.sound.sampled.Port;
-import javax.swing.JComponent;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 
-import sun.misc.JavaAWTAccess;
-import sun.nio.ch.SelChImpl;
 import net.alexgraham.thesis.ChangeSender;
-import net.alexgraham.thesis.supercollider.SCLang.SCCPUListener;
+import net.alexgraham.thesis.ui.components.ConsoleDialog;
 
 import com.illposed.osc.OSCListener;
-import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
 
 public class SCLang extends ChangeSender {
 	
 	public interface SCUpdateListener extends java.util.EventListener {
 
 	}
-
-	public interface SCCPUListener extends SCUpdateListener {
-		public void peakUpdate(double peakCPU);
-		public void avgUpdate(double avgCPU);
-	}
-
 	public interface SCConsoleListener extends SCUpdateListener {
 		public void consoleUpdate(String consoleLine);
 	}
 	
-	public class SCLangUpdates {
-		final static String CONSOLE = "console";
-		final static String avgCPU = "avgCPU";
-		final static String peakCPU = "peakCPU";
+	public class SCLangProperties {
+		public final static String avgCPU = "avgCPU";
+		public final static String peakCPU = "peakCPU";
 	}
-
 
 	final static boolean logging = false;
 
 	private int sendPort;
 	private int receivePort;
-
 	OSCPortOut sender;
 	OSCPortIn receiver;
+	
 	private Process scProcess;
-
 	private BufferedWriter writer;
 
 	private boolean running;
 
-	EventListenerList listenerList = new EventListenerList();
+	private double avgCPU;
+	private double peakCPU;
 	
-	public <T extends SCUpdateListener> void addUpdateListener(Class <T> type, T listener) {
-		listenerList.add(type, listener);
-	}
+	private EventListenerList listenerList = new EventListenerList();
 
-	public <T extends SCUpdateListener> void removeUpdateListener(Class <T> type, T listener) {
-		listenerList.remove(type, listener);
-	}
+	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
-	public void removeCPUUpdateListener(SCCPUListener l) {
-		listenerList.remove(SCCPUListener.class, l);
-	}
-
-	protected void fireAvgCPUUpdate(double avgCPU) {
-		Object[] listeners = listenerList.getListenerList();
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == SCCPUListener.class) {
-				((SCCPUListener) listeners[i + 1]).avgUpdate(avgCPU);
-			}
-		}
-	}
-
-	protected void firePeakCPUUpdate(double peakCPU) {
-		Object[] listeners = listenerList.getListenerList();
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == SCCPUListener.class) {
-				((SCCPUListener) listeners[i + 1]).peakUpdate(peakCPU);
-			}
-		}
-	}
+	private CopyOnWriteArrayList<SCConsoleListener> consoleListeners = 
+			new CopyOnWriteArrayList<SCLang.SCConsoleListener>(); 
 	
-	protected void fireConsoleUpdate(String line) {
-		Object[] listeners = listenerList.getListenerList();
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == SCConsoleListener.class) {
-				((SCConsoleListener) listeners[i + 1]).consoleUpdate(line);
-			}
-		}
-	}
 
 	public SCLang(int sendPort, int receivePort) throws SocketException,
 			UnknownHostException {
@@ -218,16 +166,13 @@ public class SCLang extends ChangeSender {
 						switch ((splitString = s.split(":"))[0]) {
 
 							case "avgCPU":
-								fireAvgCPUUpdate(
-										round(Double.valueOf(splitString[1])));
-								firePropertyChange(SCLangUpdates.avgCPU, 0, receivePort);
-								
+								setAvgCPU(round(Double.valueOf(splitString[1])));
 								break;
 
 							case "peakCPU":
-								firePeakCPUUpdate(
-										round(Double.valueOf(splitString[1])));
+								setPeakCPU(round(Double.valueOf(splitString[1])));
 								break;
+								
 							case "receivePort":
 								String port = splitString[1];
 								OSC.setSendPort(Integer.valueOf(port));
@@ -282,6 +227,55 @@ public class SCLang extends ChangeSender {
 		OSC.createListener(address, listener);
 
 	}
+	
+	// Getters / Setters
+	// -----------------------------
+	
+	public double getAvgCPU() { return avgCPU; }
+	public void setAvgCPU(double avgCPU) {
+		double oldValue = this.avgCPU;
+		this.avgCPU = avgCPU;
+		this.pcs.firePropertyChange(SCLangProperties.avgCPU, oldValue, this.avgCPU);
+	}
+
+	public double getPeakCPU() { return peakCPU; }
+	public void setPeakCPU(double peakCPU) {
+		this.pcs.firePropertyChange(SCLangProperties.peakCPU, this.peakCPU, peakCPU);
+		this.peakCPU = peakCPU;
+	}
+	
+	// Property Changes
+	// -----------------------------
+
+	// Property Change Listener
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		this.pcs.addPropertyChangeListener(propertyName, listener);
+	}
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		this.pcs.removePropertyChangeListener(propertyName, listener);
+	}
+	
+	// Update Listeners
+	// -----------------------------
+	public <T extends SCUpdateListener> void addUpdateListener(Class <T> type, T listener) {
+		listenerList.add(type, listener);
+	}
+
+	public <T extends SCUpdateListener> void removeUpdateListener(Class <T> type, T listener) {
+		listenerList.remove(type, listener);
+	}
+	
+	protected void fireConsoleUpdate(String line) {
+		Object[] listeners = listenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == SCConsoleListener.class) {
+				((SCConsoleListener) listeners[i + 1]).consoleUpdate(line);
+			}
+		}
+	}
+	
+	// Tools 
+	// ---------------------
 
 	public static double round(double val) {
 		return Math.round(val * 100.0) / 100.0;

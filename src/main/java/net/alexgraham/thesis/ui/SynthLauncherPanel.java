@@ -24,7 +24,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.InstDef;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
 
@@ -35,6 +37,7 @@ public class SynthLauncherPanel extends JPanel {
 	
 	public interface SynthLauncherDelegate {
 		void launchSynth(SynthDef synthDef);
+		void addInstrument(InstDef instdef);
 	}
 		
 	JPanel topPanel;
@@ -100,7 +103,8 @@ public class SynthLauncherPanel extends JPanel {
 					if (r != null && r.contains(evt.getPoint()))
 					{ 
 						int index = list.locationToIndex(evt.getPoint());
-						launchSynth(synthList.getSelectedValue());
+						String synthName = synthList.getSelectedValue().replace("(inst)", "");
+						launchSynth(synthName);
 					}
 
 				}
@@ -138,40 +142,52 @@ public class SynthLauncherPanel extends JPanel {
     			// Also Add To The List
     		}
     	});
-
-    	App.sc.createListener("/addparam", new OSCListener() {
+    	
+    	App.sc.createListener("/instdef/add", new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+    			List<Object> arguments = message.getArguments();
+    			final String synthName = (String) arguments.get(0);
+    			//SynthDef synth = new SynthDef(synthName, App.sc);
+    			InstDef synth = new InstDef(synthName, App.sc);
+    			
+    			synthdefs.put(synthName, synth);
+    			synthListModel.addElement(synthName + "(inst)");
+    			
+    			// Also Add To The List
+    		}
+    	});
+    	
+    	OSCListener paramlistener = new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
 
     			List<Object> arguments = message.getArguments();
     			final String synthName = (String) arguments.get(0);
     			final String paramName = (String) arguments.get(1);
     			
-    			final float min = convertToFloat(arguments.get(2));
-    			final float max = convertToFloat(arguments.get(3));
-    			final float value = convertToFloat(arguments.get(4));
+    			final float min = AGHelper.convertToFloat(arguments.get(2));
+    			final float max = AGHelper.convertToFloat(arguments.get(3));
+    			final float value = AGHelper.convertToFloat(arguments.get(4));
        			
     			SynthDef synth = synthdefs.get(synthName);
     			
     			synth.addParameter(paramName, min, max, value);
     			
     		}
-    		
-    		private Float convertToFloat(Object number) {
-    			Float toReturn = 0.0f;
-    			
-    			if (number.getClass() == Float.class) {
-    				toReturn = (Float) number;
-    			} else if (number.getClass() == Integer.class) {
-    				toReturn = (Float) ((Integer) number).floatValue();
-    			}
-    			return toReturn;
-    		}
-    	});
+    	};
+    	
+    	App.sc.createListener("/addparam", paramlistener);
+    	App.sc.createListener("/instdef/param", paramlistener);
 	}
 	
 	public void launchSynth(String synthName) {
 		SynthDef synthDef = synthdefs.get(synthName);
-		delegate.launchSynth(synthDef);
+		System.out.println("Synth is a " + synthDef.getClass());
+		if (synthDef.getClass() == SynthDef.class) {
+			delegate.launchSynth(synthDef);			
+		} else if (synthDef.getClass() == InstDef.class) {
+			delegate.addInstrument( (InstDef)synthDef );
+		}
+
 	}
 	
 	public void launchSynthWindow(String synthName) {

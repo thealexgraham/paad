@@ -7,15 +7,9 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BoundedRangeModel;
-import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.omg.CORBA.INITIALIZE;
-
-import com.sun.corba.se.spi.activation._ActivatorImplBase;
-
-import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 
 public class Synth {
@@ -27,21 +21,26 @@ public class Synth {
 	
 	private SynthDef synthDef;
 	private SCLang sc;
-	private String name;
+	protected String name;
 	private UUID id;
 	
-	private CopyOnWriteArrayList<SynthListener> synthListeners;
-	private Hashtable<String, Double> parameters;
-	private Hashtable<String, BoundedRangeModel> parameterModels;
+	private CopyOnWriteArrayList<SynthListener> synthListeners = 
+			new CopyOnWriteArrayList<Synth.SynthListener>();
+	
+	private Hashtable<String, Double> parameters = 
+			new Hashtable<String, Double>();
+	
+	private Hashtable<String, BoundedRangeModel> parameterModels = 
+			new Hashtable<String, BoundedRangeModel>();
+	
+	protected String startCommand = "/synth/start";
+	protected String paramChangeCommand = "/synth/paramc";
+	protected String closeCommand = "/synth/stop";
 	
 	public Synth(SynthDef synthDef, SCLang sc) {
 		this.synthDef = synthDef;
 		this.sc = sc;
-		id = UUID.randomUUID();
-		synthListeners = new CopyOnWriteArrayList<Synth.SynthListener>();
-		parameters = new Hashtable<String, Double>();
-		parameterModels = new Hashtable<String, BoundedRangeModel>();
-		
+		id = UUID.randomUUID();		
 	}
 	
 	public Synth(SynthDef synthDef, SCLang sc, String name) {
@@ -79,12 +78,13 @@ public class Synth {
 			parameterModels.put(param.getName(), model);
 			parameters.put(param.getName(), Double.valueOf(param.getValue()));
 		}
-		sc.sendMessage("/synth/start", arguments.toArray());
+		sc.sendMessage(startCommand, arguments.toArray());
 	}
 	
 	public void changeParameter(String paramName, double value) {
 		//if (value != parameters.get(paramName)) {
-			sc.sendMessage("/synth/paramc", synthDef.getSynthName(), paramName, id.toString(), value);
+		System.out.println("change command: " + paramChangeCommand);
+			sc.sendMessage(paramChangeCommand, synthDef.getSynthName(), paramName, id.toString(), value);
 		//	parameters.put(paramName, value);		
 		//}
 	}
@@ -98,7 +98,7 @@ public class Synth {
 	
 	public void close() {
 		// Stop the synth at ID
-    	sc.sendMessage("/synth/stop", synthDef.getSynthName(), id.toString());
+    	sc.sendMessage(closeCommand, synthDef.getSynthName(), id.toString());
     	
 		// Update Synth Listeners
 		for (SynthListener synthListener : synthListeners) {
@@ -127,7 +127,6 @@ public class Synth {
 	 * @return
 	 */
 	public BoundedRangeModel getModelForParameterName(String name) {
-		System.out.println(parameterModels.get(name).toString());
 		return parameterModels.get(name);
 	}
 	

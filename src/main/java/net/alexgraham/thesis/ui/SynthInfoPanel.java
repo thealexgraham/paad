@@ -4,9 +4,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 
-import javax.print.attribute.Size2DSyntax;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -16,13 +14,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.BevelBorder;
 
 import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.Synth.SynthListener;
-import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 import net.alexgraham.thesis.ui.components.Dial;
-import net.alexgraham.thesis.ui.components.JSliderD;
-import net.alexgraham.thesis.ui.components.Dial.DialListener;
 import net.alexgraham.thesis.ui.components.DialD;
-import net.alexgraham.thesis.ui.components.Dial.DialEvent;
 
 public class SynthInfoPanel extends JPanel {
 	
@@ -63,9 +56,9 @@ public class SynthInfoPanel extends JPanel {
 		
 
 
-		ampDial = new DialD(synth.getModelForParameterName("amp"));
+		ampDial = new DialD(synth.getModelForParameterName("gain"));
 		ampDial.setBehavior(Dial.Behavior.NORMAL);
-		ampDial.setName("Amp");
+		ampDial.setName("Gain");
 		
 		panDial = new DialD(synth.getModelForParameterName("pan"));
 		panDial.setBehavior(Dial.Behavior.CENTER);

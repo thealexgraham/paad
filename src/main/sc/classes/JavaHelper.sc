@@ -10,7 +10,7 @@ JavaHelper {
 	init { |sendPort|
 
 		this.sendPort = sendPort;
-		
+
 		// Java will send it's listen port here when ready
 		OSCresponder(nil, '/start/port', { arg time, resp, msg;
 			var port = msg[1];
@@ -25,13 +25,14 @@ JavaHelper {
 			"Quitting Server".postln;
 			Server.quitAll;
 		}).add;
-		
+
 		// Tell Java to send it's listening port
 		javaCommand("setListener");
 
-		synthDefaults = [[\amp, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
-		
+		synthDefaults = [[\gain, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
+
 		this.createSynthListeners;
+		this.createInstListeners;
 
 	}
 
@@ -61,6 +62,113 @@ JavaHelper {
 	}
 
 
+	newInstrument { |instName, params|
+		// Tell Java about the instrument
+		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
+		params = this.addDefaultParams(params);
+		net.sendMsg("/instdef/add", instName);
+
+		params.do({ |item, i|
+			var param = item[0].asString;
+			var min = item[1], max = item[2], default = item[3];
+			net.sendMsg("/instdef/param", instName, param, min, max, default);
+			("Adding Param" + param + "For instrument" + instName).postln;
+		});
+
+		// Create a dictionary to store the running instruments
+		instName.toLower.asSymbol.envirPut(Dictionary.new);
+	}
+
+	createInstListeners {
+		// Whenever an instrument is added, this will create busses for this instance of the synth
+		OSCresponder(nil, "/inst/add", { arg time, resp, msg;
+			var instName = msg[1];
+			var id = msg[2];
+			var instDict;
+
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+
+			// Create a dictionary of busses for this instrument at its ID
+			instName.asString.toLower.asSymbol.envirGet.put(id, Dictionary.new);
+			instDict = instName.asString.toLower.asSymbol.envirGet.at(id);
+
+			// The rest of the parameters are pairs, reshape so we can use them
+			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
+				var param = item[0];
+				var value = item[1];
+				// Put the bus in and initialize it
+				instDict.put(param, Bus.control.set(value));
+			});
+			("Inst added and bus created at" + id).postln;
+		}).add;
+
+		// Whenever the plugin is removed (or killed internally) this will free the synth
+		OSCresponder(nil, "/inst/remove", { arg time, resp, msg;
+			// Free synth defs at this id
+			var instName = msg[1];
+			var id = msg[2];
+			var instDict = instName.asString.toLower.asSymbol.envirGet.at(id);
+
+			// Free the busses and remove them from this dictionary (is this necessary?)
+			instDict.keysValuesArrayDo({ |key, value|
+				value.free;
+				instDict.removeAt(key);
+			});
+
+
+			("Inst disconnected, freeing busses at" + id).postln;
+		}).add;
+
+		// [/synth/newparam, synthName, paramName, id, value]
+		OSCresponder(nil,"/inst/paramc", { arg time, resp, msg;
+				// Set float1
+			var instName = msg[1], param = msg[2], id = msg[3], val = msg[4];
+			// Set the bus at param
+			instName.asString.toLower.asSymbol.envirGet.at(id).at(param).set(val);
+			("Changing" + instName + id + param + val).postln;
+		}).add;
+
+
+		OSCresponder(nil, "/inst/playtest", { arg time, resp, msg;
+
+			var instName = msg[1], id = msg[2];
+			var templateList, busses;
+			var keys = List.new, args = List.new;
+			var template, pattern;
+			var instDict = instName.asString.toLower.asSymbol.envirGet.at(id);
+			instDict.postln;
+
+			pattern = [[5, 2], [8, 2], [10, 2], [8, 2], [\rest, 16]];
+
+			// Create the template
+			[\instrument, instName, \out, 0, \legato, 0.9].pairsDo({ |a, b|
+				keys.add(a);
+				args.add(b);
+			});
+
+			// Add the busses to the template
+			instDict.keysValuesDo({ |key, value|
+				keys.add(key);
+				args.add(value.asMap);
+			});
+
+			// Bind the template
+			template = Pbind(keys.asArray, args.asArray);
+
+			// Play our test sequence
+			Pseq([
+				Pbindf(template,
+					//\amp, 0.2,
+					#[\note, \dur], Pseq(pattern, 5),
+					\octave, 4,
+			)]).play;
+		}).add;
+	}
+
 
 	/* sendSynth
 	* Tells java all about the synth definition
@@ -80,16 +188,6 @@ JavaHelper {
 		synthName.toLower.asSymbol.envirPut(Dictionary.new);
 	}
 
-	/* oldSynth
-	 * Creates the synth in java, then readys the synth to play in
-	 * supercikkuder */
-	oldSynth { |synthName, params|
-		params = this.addDefaultParams(params);
-
-		this.sendSynth(synthName, params);
-		this.startSynth(synthName, params);
-	}
-
 	/* startSynth
 	* responsible for setting up OSC responders for this synth and creating a unique
 	* version of the synth
@@ -105,7 +203,7 @@ JavaHelper {
 			msg.removeAt(0); // Address
 			msg.removeAt(0); // SynthName
 			msg.removeAt(0); // ID
-	
+
 			// The rest are the defaults
 
 			// Create synth defs at this location
@@ -132,50 +230,4 @@ JavaHelper {
 
 		^("OSC Responders ready");
 	}
-
-	/*startSynth { |synthName, params|
-		var paramsSynthFormat;
-
-		//n = NetAddr("127.0.0.1", 57120);
-
-		// Get just the parameters and the default values
-		paramsSynthFormat = Array.new(params.size * 2);
-		params.do({ |item, i|
-			paramsSynthFormat.add(params[i][0]);
-			paramsSynthFormat.add(params[i][3]);
-		});
-
-		// Create a dictionary to store the running synths (for multiple copies of plugin)
-		synthName.toLower.asSymbol.envirPut(Dictionary.new);
-
-		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		OSCresponder(nil, "/"++synthName++"/start", { arg time, resp, msg;
-			var id = msg[1];
-			// Create synth defs at this location
-			synthName.toLower.asSymbol.envirGet.put(id, Synth.new(synthName, paramsSynthFormat));
-			("Synth connected, adding synths at" + id).postln;
-		}).add;
-
-		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/"++synthName++"/stop", { arg time, resp, msg;
-			// Free synth defs at this id
-			var id = msg[1];
-			synthName.toLower.asSymbol.envirGet.at(id).free;
-			("Synth disconnected, freeing synths at" + id).postln;
-		}).add;
-
-		// Set up a listener for each parameter for this synth
-		params.do({|item, i|
-			OSCresponder(nil,"/"++synthName++"/"++item[0].asString, { arg time, resp, msg;
-				// Set float1
-				var id = msg[1], val = msg[2];
-				synthName.toLower.asSymbol.envirGet.at(id).set(item[0], val);
-				("Changing" + synthName + id + item[0] + val).postln;
-			}).add;
-			//("/"++synthName++"/"++item[0].asString).postln;
-		});
-		^("OSC Responders ready for" + synthName);
-	}
-*/
-
 }

@@ -18,11 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import net.alexgraham.thesis.supercollider.SCLang.SCCPUListener;
 import net.alexgraham.thesis.supercollider.SCLang.SCConsoleListener;
+import net.alexgraham.thesis.supercollider.SCLang.SCLangProperties;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
 
-public class MainWindow extends JFrame implements SCCPUListener {
+public class MainWindow extends JFrame {
 	JPanel mainPanel;
 	JPanel bottomPanel;
 	
@@ -63,14 +63,11 @@ public class MainWindow extends JFrame implements SCCPUListener {
 
 		JPanel bottomButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JButton consoleButton = new JButton("Console");
+		
 		consoleButton.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				consoleDialog.openDialog();
-				//App.sc.removeCPUUpdateListener(MainWindow.this);
-				App.sc.removeUpdateListener(SCCPUListener.class, MainWindow.this);
 			}
 		});
 		
@@ -83,7 +80,25 @@ public class MainWindow extends JFrame implements SCCPUListener {
 		add(bottomWrapper, BorderLayout.PAGE_END);
 		
 		//App.sc.addCPUUpdateListener(this);
-		App.sc.addUpdateListener(SCCPUListener.class, this);
+		//App.sc.addUpdateListener(SCCPUListener.class, this);
+		createCPUListeners();
+	}
+	
+	public void createCPUListeners() {
+
+		App.sc.addPropertyChangeListener(SCLangProperties.avgCPU, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				avgCPUField.setText(String.valueOf(evt.getNewValue()) + "%");
+			}
+		});
+		
+		App.sc.addPropertyChangeListener(SCLangProperties.peakCPU, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				peakCPUField.setText(String.valueOf(evt.getNewValue()) + "%");
+			}
+		});
 	}
 
 	public void createConsoleDialog() {
@@ -96,25 +111,7 @@ public class MainWindow extends JFrame implements SCCPUListener {
         //Show it.
         consoleDialog.setSize(new Dimension(600, 300));
         consoleDialog.setLocationRelativeTo(mainFrame);
-        
-        //App.sc.removeUpdateListener(SCCPUListener.class, this);
-        
-	}
-	
-	public void nonModalDialog(JFrame frame) {
-
-        //dialog.setVisible(true);
-    }
-
-	@Override
-	public void avgUpdate(double avgCPU) {
-		// TODO Auto-generated method stub
-		avgCPUField.setText(Double.valueOf(avgCPU) + "%");
+      
 	}
 
-	@Override
-	public void peakUpdate(double peakCPU) {
-		peakCPUField.setText(Double.valueOf(peakCPU) + "%");		
-	}
-	
 }

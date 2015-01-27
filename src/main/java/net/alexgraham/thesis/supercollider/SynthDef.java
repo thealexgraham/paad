@@ -16,7 +16,7 @@ public class SynthDef {
 		this.sc = sc;
 		this.synthName = synthName;
 		
-		parameters = new ArrayList<SynthDef.Parameter>(); // Blank array for params
+		parameters = new ArrayList<Parameter>(); // Blank array for params
 		
 	}
 	
@@ -36,35 +36,5 @@ public class SynthDef {
 	public ArrayList<Parameter> getParameters() {
 		return parameters;
 	}
-	
-	public class Parameter {
-		public String name;
-		public double min;
-		public double max;
-		public double value;
-		
-		public Parameter(String name, double min, double max, double value) {
-			this.name = name;
-			this.min = min;
-			this.max = max;
-			this.value = value;
-		}
-		
-		public String getName() {
-			return name;
-		}
 
-		public double getMin() {
-			return min;
-		}
-
-		public double getMax() {
-			return max;
-		}
-
-		public double getValue() {
-			return value;
-		}
-	
-	}
 }

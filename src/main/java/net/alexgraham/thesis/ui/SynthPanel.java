@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -19,8 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import net.alexgraham.thesis.supercollider.Parameter;
 import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.SynthDef.Parameter;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 
@@ -78,6 +77,7 @@ public class SynthPanel extends JPanel  {
 		
 		// Go through each parameter and add a slider for it
 		for (Parameter param : synth.getParameters()) {
+			System.out.println("Adding parameter " + param.getName());
 			addParameter(param);
 		}
 		

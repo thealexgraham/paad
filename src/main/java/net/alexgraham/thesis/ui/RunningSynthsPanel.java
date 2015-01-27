@@ -5,19 +5,9 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.Console;
-import java.util.AbstractList;
 import java.util.Hashtable;
 
-import javax.swing.AbstractListModel;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -26,23 +16,15 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.InstDef;
+import net.alexgraham.thesis.supercollider.Instrument;
 import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.supercollider.Synth.SynthListener;
+import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
-import net.alexgraham.thesis.ui.components.Dial;
-import net.alexgraham.thesis.ui.components.ResizeCardLayout;
 
 public class RunningSynthsPanel extends JPanel implements SynthSelectListener, SynthListener {
 		
@@ -127,7 +109,25 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		synths.put(synth.getID(), synth);
 		
 		synthInfoList.addSynthInfoPanel(synth);
-
+		//newSynthWindow(synth);
+	}
+	
+	public void addInstrument(InstDef instDef) {
+		// Create the synth and its panel
+		Instrument synth = new Instrument(instDef, App.sc);
+//		synth.start();
+		synth.addSynthListener(this);
+		
+		// Create the SynthPanel and add it to the list of cards
+		SynthPanel panel = new SynthPanel(synth);
+		selectedSynthPanel.add(panel, synth.getID());
+		
+		synths.put(synth.getID(), synth);
+		
+		synthInfoList.addSynthInfoPanel(synth);
+		
+		//App.sc.sendMessage("/inst/playtest", synth.getName(), synth.getID());
+		synth.runInstrumentTest();
 		
 		//newSynthWindow(synth);
 	}

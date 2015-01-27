@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.xml.stream.events.StartDocument;
 
+import net.alexgraham.thesis.supercollider.InstDef;
 import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.ui.RunningSynthsPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel;
@@ -62,5 +63,12 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 	@Override
 	public void launchSynth(SynthDef synthDef) {
 		runningSynths.launchSynth(synthDef);
+	}
+
+	@Override
+	public void addInstrument(InstDef instdef) {
+		// TODO Auto-generated method stub
+		runningSynths.addInstrument(instdef);
+		
 	}
 }
