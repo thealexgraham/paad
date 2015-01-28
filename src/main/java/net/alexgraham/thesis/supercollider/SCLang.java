@@ -78,9 +78,20 @@ public class SCLang extends ChangeSender {
 	 * @throws IOException
 	 */
 	public void startSCLang() throws IOException {
-		// String pwd = System.getProperty("user.dir");
-		String scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src/main/sc/run.scd";
-		startSCLang("C:/Users/Alex/supercollider", sendPort, scFile);
+		// TODO Get rid of personal paths
+		
+		String system = System.getProperty("os.name");
+		String pwd = System.getProperty("user.dir");
+		String scFile;
+
+		if (system.equals("Mac OS X")) {
+			scFile = pwd + "/src/main/sc/run.scd";
+			startSCLang("/Applications/SuperCollider.app/Contents/Resources/", "sclang", sendPort, scFile);
+		} else {
+			scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src/main/sc/run.scd";
+			startSCLang("C:/Users/Alex/supercollider/", "sclang.exe", sendPort, scFile);
+		}
+		
 	}
 
 	/**
@@ -92,12 +103,12 @@ public class SCLang extends ChangeSender {
 	 * @param runFile
 	 * @throws IOException
 	 */
-	public void startSCLang(String scDir, int scPort, String runFile)
+	public void startSCLang(String scDir, String scExec, int scPort, String runFile)
 			throws IOException {
 		running = true;
 
 		// Create Process to run sclang
-		ProcessBuilder pb = new ProcessBuilder(scDir + "/sclang.exe", "-u",
+		ProcessBuilder pb = new ProcessBuilder(scDir + scExec, "-u",
 				String.valueOf(scPort));// , runFile);
 		pb.directory(new File(scDir));
 		pb.redirectErrorStream(true);
