@@ -5,6 +5,7 @@ o = ServerOptions.new;
 
 s = Server(\javaSCServer, NetAddr("127.0.0.1", 57320), o);
 Server.default = s;
+"my file is running".postln;
 
 s.waitForBoot({
 	"server ready".postln;

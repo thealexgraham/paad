@@ -49,6 +49,8 @@ import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.event.MouseInputAdapter;
 
+import sun.text.normalizer.Replaceable;
+
 /**
  *	Swing implementation and extension of SCEnvelopeView by Jan Truetzschler.
  *
@@ -531,19 +533,23 @@ extends AbstractMultiSlider
 	{
 //		final SwingOSC		osc			= SwingOSC.getInstance();
 //		final SwingClient	client		= osc.getCurrentClient();
-//		final Object[] 		replyArgs	= new Object[ 2 + (numDirty * 4) ];
-//		Node n;
-//		replyArgs[ 0 ]					= id;
-//		replyArgs[ 1 ]					= new Integer( numDirty );
-//
-//		for( int i = 0, j = 2; i < numDirty; i++ ) {
-//			n = dirtyNodes[ i ];
-//			replyArgs[ j++ ] = new Integer( n.idx );
-//			replyArgs[ j++ ] = new Float( n.x );
-//			replyArgs[ j++ ] = new Float( n.y );
-//			replyArgs[ j++ ] = new Integer( n.selected ? 1 : 0 );
-//		}
-//		
+		final Object[] 		replyArgs	= new Object[ 2 + (numDirty * 4) ];
+		Node n;
+		replyArgs[ 0 ]					= 0;
+		replyArgs[ 1 ]					= new Integer( numDirty );
+
+		for( int i = 0, j = 2; i < numDirty; i++ ) {
+			n = dirtyNodes[ i ];
+			System.out.println(n.x);
+			replyArgs[ j++ ] = new Integer( n.idx );
+			replyArgs[ j++ ] = new Float( n.x );
+			replyArgs[ j++ ] = new Float( n.y );
+			replyArgs[ j++ ] = new Integer( n.selected ? 1 : 0 );
+		}
+		for (Object object : replyArgs) {
+			System.out.println(object.toString());
+		}
+		System.out.println(replyArgs.toString());
 //		try {
 //			client.reply( new OSCMessage( "/values", replyArgs ));
 //		}

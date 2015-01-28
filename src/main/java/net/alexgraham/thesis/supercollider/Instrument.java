@@ -1,7 +1,5 @@
 package net.alexgraham.thesis.supercollider;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
-
 import net.alexgraham.thesis.App;
 
 
@@ -38,7 +36,6 @@ public class Instrument extends Synth {
 	public void changeParameter(String paramName, double value) {
 		// TODO Auto-generated method stub
 		super.changeParameter(paramName, value);
-		System.out.println("Instrument is changing parameter");
 	}
 
 }

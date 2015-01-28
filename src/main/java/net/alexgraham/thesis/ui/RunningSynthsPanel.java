@@ -21,6 +21,7 @@ import javax.swing.JSplitPane;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.InstDef;
 import net.alexgraham.thesis.supercollider.Instrument;
+import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.Synth.SynthListener;
 import net.alexgraham.thesis.supercollider.SynthDef;
@@ -126,8 +127,14 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		
 		synthInfoList.addSynthInfoPanel(synth);
 		
+		RoutinePlayer player = new RoutinePlayer();
+
+		player.connectInstrument(synth);
+		player.play();
+		
+		//player.play();
 		//App.sc.sendMessage("/inst/playtest", synth.getName(), synth.getID());
-		synth.runInstrumentTest();
+		//synth.runInstrumentTest();
 		
 		//newSynthWindow(synth);
 	}

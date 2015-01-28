@@ -8,10 +8,12 @@
 };
 
 ~array = [0, 0, 7, 0, 0];
+
 e = Prout({| ev |
 	var pat, refPat, count = 0;
 
 	loop {
+		("Embedding reference pattern").postln;
 		refPat = Pbind(*[dur: 1, note: Pseq(~array)]);
 		ev = refPat.embedInStream(ev);
 		("Reference pattern played").postln;
@@ -23,12 +25,35 @@ e = Prout({| ev |
 		ev = pat.embedInStream(ev);
 		count = count + 1;
 		("Loop is done"+count).postln;
-
 	}
 
 }).play;
 f = e.asStream;
 //50.do({ f.asStream.next(Event.new).postln; });
+
+)
+
+(
+~array = [0, 0, 7, 0, 0];
+
+e = Prout({| ev |
+	var pat;
+
+	loop {
+		refPat = Pbind(*[dur: 1, note: Pseq(~array)]);
+
+		("Reference pattern played").postln;
+
+		pat = Pbind(*[
+			dur: Pseq(~durations),
+			note: Pseq(~notes)
+		]);
+
+		ev = pat.embedInStream(ev);
+
+	}
+
+}).play;
 
 )
 
