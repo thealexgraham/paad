@@ -15,9 +15,8 @@ public class GridBagLayoutDemo {
             pane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         }
 
-    JButton button;
+        JButton button;
 	pane.setLayout(new GridBagLayout());
-
 	GridBagConstraints c = new GridBagConstraints();
 	if (shouldFill) {
 	//natural height, maximum width
@@ -28,20 +27,20 @@ public class GridBagLayoutDemo {
 	if (shouldWeightX) {
 	c.weightx = 0.5;
 	}
-	c.fill = GridBagConstraints.NONE;
+	c.fill = GridBagConstraints.HORIZONTAL;
 	c.gridx = 0;
 	c.gridy = 0;
 	pane.add(button, c);
-	
-//	button = new JButton("Button 2");
-//	c.fill = GridBagConstraints.HORIZONTAL;
-//	c.weightx = 0.5;
-//	c.gridx = 1;
-//	c.gridy = 0;
-//	pane.add(button, c);
+
+	button = new JButton("Button 2");
+	c.fill = GridBagConstraints.HORIZONTAL;
+	c.weightx = 0.5;
+	c.gridx = 1;
+	c.gridy = 0;
+	pane.add(button, c);
 
 	button = new JButton("Button 3");
-	c.fill = GridBagConstraints.NONE;
+	c.fill = GridBagConstraints.HORIZONTAL;
 	c.weightx = 0.5;
 	c.gridx = 2;
 	c.gridy = 0;
