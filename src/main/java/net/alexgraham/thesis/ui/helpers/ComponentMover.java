@@ -14,12 +14,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import net.alexgraham.thesis.ui.components.SelectablePanel;
 
 /**
  *  This class allows you to move a Component by using a mouse. The Component
@@ -245,6 +248,7 @@ public class ComponentMover extends MouseAdapter
 
 		if (r.contains(e.getPoint()))
 			setupForDragging(e);
+		System.out.println("Moving component");
 	}
 
 	private void setupForDragging(MouseEvent e)
@@ -316,12 +320,13 @@ public class ComponentMover extends MouseAdapter
 		while (locationX + destination.getSize().width + edgeInsets.right > d.width)
 			locationX -= snapSize.width;
 
-		while (locationY + destination.getSize().height + edgeInsets.bottom > d.height)
+			while (locationY + destination.getSize().height + edgeInsets.bottom > d.height)
 			locationY -= snapSize.height;
 
 		//  Adjustments are finished, move the component
 
 		destination.setLocation(locationX, locationY);
+		System.out.println(destination.getLocation().toString());
 	}
 
 	/*
@@ -388,28 +393,46 @@ public class ComponentMover extends MouseAdapter
 			}
 		}
 	}
+
 	
 	  public static void main(String[] argv) {
 		    JFrame frame = new JFrame();
 		    JPanel panel = new JPanel();
 		    
-		    JPanel textMove = new JPanel(new BorderLayout());
+		    JPanel textMove = new JPanel();
+		    JPanel background = new JPanel();
+		    textMove.add(background);
+		    
+		    background.setLayout(new BoxLayout(background, BoxLayout.Y_AXIS));
 		    JLabel top = new JLabel("Drag Me");
-		    JTextField field1 = new JTextField("Field 1");
+		    top.addMouseListener(new MouseAdapter() {
+			});
+		   // JTextField field1 = new JTextField("Field 1");
+		    JLabel field1 = new JLabel("Field2");
+		    field1.setPreferredSize(new Dimension(50, 50));
+		    background.setMinimumSize(new Dimension(200, 200));
+		    background.setPreferredSize(new Dimension(250,100));
+		    //textMove.set
+		    
+		    
 
-		    textMove.add(top, BorderLayout.NORTH);
-		    textMove.add(field1, BorderLayout.CENTER);
+		    background.add(top, BorderLayout.NORTH);
+		    background.add(field1, BorderLayout.CENTER);
+		    background.setBorder(BorderFactory.createLineBorder(Color.black));
 
-		    ComponentMover cm = new ComponentMover(textMove, top);
+		    //ComponentMover cm = new ComponentMover(textMove, top);
+		    //ComponentMover cm = new ComponentMover(background, textMove);
+		   // cm.registerComponent(textMove);
 		    //cm.registerComponent(field1, field2, field3);
 		    
 		    textMove.setBorder(BorderFactory.createLineBorder(Color.black));
 		    ComponentResizer cr = new ComponentResizer();
 		    cr.setSnapSize(new Dimension(10, 10));
-		    cr.registerComponent(textMove);
+		    cr.registerComponent(background);
+		    
 		    panel.add(textMove);
 
-		    frame.getContentPane().add(panel);
+		    frame.getContentPane().add(background);
 		    frame.setSize(300, 200);
 		    frame.setVisible(true);
 
