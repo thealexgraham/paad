@@ -2,7 +2,6 @@ RoutinePlayer {
 	var <>template;
 	var <>pattern;
 	var <>playedAction;
-	var <>thing;
 	var rout;
 
 	*new {
@@ -59,6 +58,7 @@ RoutinePlayer {
 
 		// Bind the template
 		template = Pbind(keys.asArray, args.asArray);
+		rout.stop;
 	}
 
 	removeInstrument {

@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.net.SocketException;
 import java.util.Hashtable;
 
 import javax.swing.Box;
@@ -127,10 +128,15 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		
 		synthInfoList.addSynthInfoPanel(synth);
 		
+		System.out.println("In add instrument");
 		RoutinePlayer player = new RoutinePlayer();
+		RoutinePlayerPanel playerPanel = new RoutinePlayerPanel(player);
+		
+		newPlayerWindow(playerPanel);
+		
 
 		player.connectInstrument(synth);
-		player.play();
+		//player.play();
 		
 		//player.play();
 		//App.sc.sendMessage("/inst/playtest", synth.getName(), synth.getID());
@@ -148,6 +154,28 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 	public void deselectSynth() {
 		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
 		c1.show(selectedSynthPanel, "No Synth Selected");
+	}
+	
+	public void newPlayerWindow(JPanel panel) {
+		
+        //Schedule a job for the event-dispatching thread:
+        //creating and showing this application's GUI.
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // JFrame Test
+				JFrame frame = new JFrame() {
+					public void dispose() {
+						super.dispose();
+					}
+				};
+				frame.add(panel);
+				frame.setTitle("Test Routine Player");
+				frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				frame.pack();
+				frame.setVisible(true);
+            }
+        });
+
 	}
 	
 	public void newSynthWindow(Synth synth) {

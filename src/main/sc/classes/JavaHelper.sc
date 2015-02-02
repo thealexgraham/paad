@@ -192,7 +192,7 @@ JavaHelper {
 		}).add;
 
 
-		OSCresponder(nil, "/inst/playtest", { arg time, resp, msg;
+/*		OSCresponder(nil, "/inst/playtest", { arg time, resp, msg;
 
 			var instName = msg[1], id = msg[2];
 			var templateList, busses;
@@ -225,7 +225,7 @@ JavaHelper {
 					#[\note, \dur], Pseq(pattern, 5),
 					\octave, 4,
 			)]).play;
-		}).add;
+		}).add;*/
 	}
 
 

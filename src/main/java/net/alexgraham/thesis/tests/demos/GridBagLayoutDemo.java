@@ -46,12 +46,14 @@ public class GridBagLayoutDemo {
 	c.gridy = 0;
 	pane.add(button, c);
 
-	button = new JButton("Long-Named Button 4");
+	button = new JButton("Button 4");
 	c.fill = GridBagConstraints.HORIZONTAL;
-	c.ipady = 40;      //make this component tall
+	//c.ipady = 40;      //make this component tall
+	c.insets = new Insets(0, 0, 20, 0);
 	c.weightx = 0.0;
-	c.gridwidth = 3;
-	c.gridx = 0;
+	c.gridwidth = 1;
+	c.weightx = 0.5;
+	c.gridx = 1;
 	c.gridy = 1;
 	pane.add(button, c);
 

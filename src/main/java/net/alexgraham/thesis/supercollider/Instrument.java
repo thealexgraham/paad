@@ -29,7 +29,7 @@ public class Instrument extends Synth {
 
 	public void runInstrumentTest() {
 		updateParameter("gain", 0.7);
-		App.sc.sendMessage("/inst/playtest", getSynthName(), getID());
+		//App.sc.sendMessage("/inst/playtest", getSynthName(), getID());
 	}
 	
 	@Override
