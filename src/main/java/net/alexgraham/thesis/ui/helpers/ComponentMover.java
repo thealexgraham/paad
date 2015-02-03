@@ -397,43 +397,48 @@ public class ComponentMover extends MouseAdapter
 	
 	  public static void main(String[] argv) {
 		    JFrame frame = new JFrame();
+		    
+		    
 		    JPanel panel = new JPanel();
 		    
-		    JPanel textMove = new JPanel();
-		    JPanel background = new JPanel();
-		    textMove.add(background);
+		    //JPanel moveable = new JPanel();
+		    JPanel moveable = new JPanel();
 		    
-		    background.setLayout(new BoxLayout(background, BoxLayout.Y_AXIS));
-		    JLabel top = new JLabel("Drag Me");
-		    top.addMouseListener(new MouseAdapter() {
+		    //moveable.add(background);
+		    
+		    moveable.setLayout(new BoxLayout(moveable, BoxLayout.Y_AXIS));
+		    
+		    JLabel topLabel = new JLabel("Drag Me");
+		    topLabel.addMouseListener(new MouseAdapter() {
 			});
 		   // JTextField field1 = new JTextField("Field 1");
 		    JLabel field1 = new JLabel("Field2");
-		    field1.setPreferredSize(new Dimension(50, 50));
-		    background.setMinimumSize(new Dimension(200, 200));
-		    background.setPreferredSize(new Dimension(250,100));
+		    topLabel.setBackground(Color.lightGray);
+		    topLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+		    moveable.setPreferredSize(new Dimension(100,200));
 		    //textMove.set
 		    
 		    
 
-		    background.add(top, BorderLayout.NORTH);
-		    background.add(field1, BorderLayout.CENTER);
-		    background.setBorder(BorderFactory.createLineBorder(Color.black));
+		    moveable.add(topLabel, BorderLayout.NORTH);
+		    moveable.add(field1, BorderLayout.CENTER);
+		    moveable.setBorder(BorderFactory.createLineBorder(Color.black));
 
-		    //ComponentMover cm = new ComponentMover(textMove, top);
+		    ComponentMover cm = new ComponentMover(moveable, topLabel);
 		    //ComponentMover cm = new ComponentMover(background, textMove);
 		   // cm.registerComponent(textMove);
 		    //cm.registerComponent(field1, field2, field3);
 		    
-		    textMove.setBorder(BorderFactory.createLineBorder(Color.black));
+		    moveable.setBorder(BorderFactory.createLineBorder(Color.black));
 		    ComponentResizer cr = new ComponentResizer();
 		    cr.setSnapSize(new Dimension(10, 10));
-		    cr.registerComponent(background);
+		    cr.registerComponent(moveable);
 		    
-		    panel.add(textMove);
+		    panel.add(moveable);
 
-		    frame.getContentPane().add(background);
-		    frame.setSize(300, 200);
+		    frame.getContentPane().add(panel);
+		    frame.setSize(900, 500);
 		    frame.setVisible(true);
 
 		  }

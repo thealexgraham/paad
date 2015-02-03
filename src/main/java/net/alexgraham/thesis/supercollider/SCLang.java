@@ -26,6 +26,7 @@ public class SCLang extends ChangeSender {
 	public interface SCUpdateListener extends java.util.EventListener {
 
 	}
+	
 	public interface SCConsoleListener extends SCUpdateListener {
 		public void consoleUpdate(String consoleLine);
 	}

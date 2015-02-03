@@ -83,7 +83,6 @@ public class SelectablePanel extends JPanel {
 	    
 	    SelectablePanel textMove = new SelectablePanel();
 	    
-	 
 	    textMove.setLayout(new BoxLayout(textMove, BoxLayout.Y_AXIS));
 	    JLabel top = new JLabel("Drag Me");
 	    textMove.add(top);
