@@ -45,6 +45,8 @@ RoutinePlayer {
 		var keys = List.new, args = List.new;
 
 		"Creating template".postln;
+		rout.stop;
+		
 		// Create the template
 		[\instrument, instName, \out, 0].pairsDo({ |a, b|
 			keys.add(a);
@@ -59,7 +61,6 @@ RoutinePlayer {
 
 		// Bind the template
 		template = Pbind(keys.asArray, args.asArray);
-		rout.stop;
 	}
 
 	removeInstrument {

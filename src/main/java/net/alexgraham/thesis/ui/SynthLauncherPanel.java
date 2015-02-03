@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionListener;
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.InstDef;
+import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthDef;
 
@@ -128,17 +129,44 @@ public class SynthLauncherPanel extends JPanel {
 			}
 		});
 		
+		JButton playerButton = new JButton("Routine Player");
+		playerButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RoutinePlayer player = new RoutinePlayer();
+				RoutinePlayerPanel playerPanel = new RoutinePlayerPanel(player);
+				
+		        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		            public void run() {
+		                // JFrame Test
+						JFrame frame = new JFrame() {
+							public void dispose() {
+								super.dispose();
+							}
+						};
+						frame.add(playerPanel);
+						frame.setTitle("Test Routine Player");
+						frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+						frame.pack();
+						frame.setVisible(true);
+		            }
+		        });
+			}
+		});
+		
 		middlePanel.add(launchButton);
 		middlePanel.add(resendButton);
-
+		middlePanel.add(playerButton);
 	}
 	
 	public void launchSynth(SynthDef synthDef) {
 
 		if (synthDef.getClass() == SynthDef.class) {
-			delegate.launchSynth(synthDef);			
+			//delegate.launchSynth(synthDef);			
+			App.synthModel.launchSynth(synthDef);
 		} else if (synthDef.getClass() == InstDef.class) {
-			delegate.addInstrument( (InstDef)synthDef );
+			App.synthModel.addInstrument( (InstDef)synthDef );
 		}
 	}
 	

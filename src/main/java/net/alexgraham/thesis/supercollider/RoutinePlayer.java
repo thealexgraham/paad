@@ -37,6 +37,10 @@ public class RoutinePlayer {
 	}
 	
 	public void connectInstrument(Instrument inst) {
+		if (playing) {
+			stop();
+		}
+		
 		App.sc.sendMessage("/routplayer/connect/inst", this.id.toString(), inst.getSynthName(), inst.getID(), 1);
 		this.instrument = inst;
 		

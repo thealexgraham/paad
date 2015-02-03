@@ -47,7 +47,7 @@ s.waitForBoot({
 		Out.ar(0, Pan2.ar(Saw.ar(freq) * gain, pan));
 	}).add;
 
-	SynthDef(\sawsin, { | out = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan = 0, gain = 1 |
+	SynthDef(\sawsinInst, { | out = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan = 0, gain = 1 |
 		var sig, env;
 		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
 		sig = SinOsc.ar(freq);
@@ -55,6 +55,16 @@ s.waitForBoot({
 		sig = sig * env * amp;
 		Out.ar(out, Pan2.ar(sig, pan, gain));
 	}).add;
+	
+	SynthDef(\sinInst, { | out = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 1 |
+		var sig, env;
+		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
+		sig = SinOsc.ar(freq);
+		sig = sig * env * amp;
+		Out.ar(out, Pan2.ar(sig, pan, gain));
+	}).add;
+	
+	
 
 	// This function will run when the Java app is ready and listening
 	OSCFunc( { |msg|
@@ -73,7 +83,8 @@ s.waitForBoot({
 		java.newSynth("sinWave", [[\freq, 0, 1000, 440]]);
 		java.newSynth("sawWave", [[\freq, 0, 1000, 440]]);
 
-		java.newInstrument("sawsin", []);
+		java.newInstrument("sawsinInst", [[\saw, 0, 1, 1]]);
+		java.newInstrument("sinInst", []);
 	}, '/start/ready', recvPort:NetAddr.langPort);
 
 	// Create a new java helper at the default port

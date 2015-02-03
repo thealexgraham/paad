@@ -180,6 +180,7 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 
 	@Override
 	public void synthAdded(Synth synth) {
+		System.out.println("Adding Synth");
 		synth.addSynthListener(this);
 		
 		// Create the SynthPanel and add it to the list of cards
@@ -190,8 +191,14 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 
 	@Override
 	public void instAdded(Instrument inst) {
-		// TODO Auto-generated method stub
+
+		inst.addSynthListener(this);
 		
+		// Create the SynthPanel and add it to the list of cards
+		SynthPanel panel = new SynthPanel(inst);
+		selectedSynthPanel.add(panel, inst.getID());
+		
+		synthInfoList.addSynthInfoPanel(inst);
 	}
 	
 	public void launchSynth(SynthDef synthDef) {

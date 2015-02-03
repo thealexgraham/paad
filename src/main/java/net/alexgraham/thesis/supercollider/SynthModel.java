@@ -71,6 +71,7 @@ public class SynthModel {
 		
 		synthListModel.addElement(synth);
 		synths.put(synth.getID(), synth);
+		fireSynthAdded(synth);
 		
 	}
 	

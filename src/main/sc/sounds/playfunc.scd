@@ -272,7 +272,7 @@ e = Prout({| ev |
 
 e.stop
 
-e.play
+e = e.play
 
 
 // With break

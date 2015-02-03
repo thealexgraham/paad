@@ -44,16 +44,18 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 	class InstDefPopup extends JPopupMenu {
 
 	    public InstDefPopup(){
-	    	ArrayList<InstDef> instDefs = App.defModel.getInstDefs();
-	    	for (InstDef instDef : instDefs) {
+	    	ArrayList<Instrument> instruments = App.synthModel.getInstruments();
+	    	for (Instrument instrument : instruments) {
 	    	    JMenuItem instItem;
-		        instItem = new JMenuItem(instDef.getSynthName());
+		        instItem = new JMenuItem(instrument.getSynthName());
 		        instItem.addActionListener(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						//player.connectInstrument(instDef);
-						RoutinePlayerPanel.this.instLabel.setText("Inst: " + instDef.getSynthName());
+						RoutinePlayerPanel.this.instLabel.setText("Inst: " + instrument.getSynthName());
+						RoutinePlayerPanel.this.player.connectInstrument(instrument);
+						RoutinePlayerPanel.this.revalidate();
 					}
 				});
 		        add(instItem);
