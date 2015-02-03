@@ -54,8 +54,6 @@ public class SynthInfoPanel extends JPanel {
 			}
 		});
 		
-
-
 		ampDial = new DialD(synth.getModelForParameterName("gain"));
 		ampDial.setBehavior(Dial.Behavior.NORMAL);
 		ampDial.setName("Gain");

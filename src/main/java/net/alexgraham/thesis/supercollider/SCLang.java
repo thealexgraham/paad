@@ -55,14 +55,15 @@ public class SCLang extends ChangeSender {
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	private CopyOnWriteArrayList<SCConsoleListener> consoleListeners = 
-			new CopyOnWriteArrayList<SCLang.SCConsoleListener>(); 
+			new CopyOnWriteArrayList<SCLang.SCConsoleListener>();
+	
+	public DefModel defModel;
 
 	public SCLang(int sendPort, int receivePort) throws SocketException,
 			UnknownHostException {
 		running = false;
 		this.sendPort = sendPort;
 		this.receivePort = receivePort;
-
 	}
 
 	public void setSendPort(int port) throws SocketException,

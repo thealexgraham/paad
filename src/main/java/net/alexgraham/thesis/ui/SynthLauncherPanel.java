@@ -47,9 +47,6 @@ public class SynthLauncherPanel extends JPanel {
 	JLabel topLabel;
 
 	JList<SynthDef> synthList;
-	//DefaultListModel<String> synthListModel;
-	DefaultListModel<SynthDef> synthListModel;
-	Hashtable<String, SynthDef> synthdefs;
 	
 	SynthLauncherDelegate delegate;
 	
@@ -60,7 +57,6 @@ public class SynthLauncherPanel extends JPanel {
 	public SynthLauncherPanel(SynthLauncherDelegate delegate) throws SocketException {
 		this.delegate = delegate;
 		start();
-		createListeners();
 		System.out.println("Starting");
 	}
 	
@@ -71,17 +67,13 @@ public class SynthLauncherPanel extends JPanel {
 		setLayout(new BorderLayout());
 		setupLayout();		
 		
-		middlePanel.add(new JLabel("Available instruments"));
-		
-		synthdefs = new Hashtable<String, SynthDef>();
-		
+		middlePanel.add(new JLabel("Available instruments"));	
 		
 		// SynthList Setup
 		// -------------------
 		//synthListModel = new DefaultListModel<String>();
-		synthListModel = new DefaultListModel<SynthDef>();
-		//synthList = new JList<String>(synthListModel);
-		synthList = new JList<SynthDef>(synthListModel);
+		
+		synthList = new JList<SynthDef>(App.defModel.getSynthDefListModel());
 		synthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		synthList.addListSelectionListener(new ListSelectionListener() {
@@ -104,7 +96,6 @@ public class SynthLauncherPanel extends JPanel {
 					Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex()); 
 					if (r != null && r.contains(evt.getPoint()))
 					{ 
-						int index = list.locationToIndex(evt.getPoint());
 						SynthDef selected = synthList.getSelectedValue();
 						launchSynth(selected);
 					}
@@ -127,60 +118,19 @@ public class SynthLauncherPanel extends JPanel {
 			}
 		});
 		
-		middlePanel.add(launchButton);
-
-	}
-	
-	public void createListeners() throws SocketException {
+		JButton resendButton = new JButton("Resend");
+		resendButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				App.sc.sendMessage("/start/ready", 1);
+			}
+		});
 		
-    	App.sc.createListener("/addsynth", new OSCListener() {
-    		public void acceptMessage(java.util.Date time, OSCMessage message) {
-    			List<Object> arguments = message.getArguments();
-    			final String synthName = (String) arguments.get(0);
-    			SynthDef synth = new SynthDef(synthName, App.sc);
-    			synthdefs.put(synthName, synth);
-    			//synthListModel.addElement(synthName);
-    			synthListModel.addElement(synth);
-    			// Also Add To The List
-    		}
-    	});
-    	
-    	App.sc.createListener("/instdef/add", new OSCListener() {
-    		public void acceptMessage(java.util.Date time, OSCMessage message) {
-    			List<Object> arguments = message.getArguments();
-    			final String synthName = (String) arguments.get(0);
-    			//SynthDef synth = new SynthDef(synthName, App.sc);
-    			InstDef synth = new InstDef(synthName, App.sc);
-    			
-    			synthdefs.put(synthName, synth);
-    			synthListModel.addElement(synth);
+		middlePanel.add(launchButton);
+		middlePanel.add(resendButton);
 
-    			//synthListModel.addElement(synthName + "(inst)");
-    			
-    			// Also Add To The List
-    		}
-    	});
-    	
-    	OSCListener paramlistener = new OSCListener() {
-    		public void acceptMessage(java.util.Date time, OSCMessage message) {
-
-    			List<Object> arguments = message.getArguments();
-    			final String synthName = (String) arguments.get(0);
-    			final String paramName = (String) arguments.get(1);
-    			
-    			final float min = AGHelper.convertToFloat(arguments.get(2));
-    			final float max = AGHelper.convertToFloat(arguments.get(3));
-    			final float value = AGHelper.convertToFloat(arguments.get(4));
-       			
-    			SynthDef synth = synthdefs.get(synthName);
-    			
-    			synth.addParameter(paramName, min, max, value);
-    			
-    		}
-    	};
-    	
-    	App.sc.createListener("/addparam", paramlistener);
-    	App.sc.createListener("/instdef/param", paramlistener);
 	}
 	
 	public void launchSynth(SynthDef synthDef) {
@@ -190,27 +140,26 @@ public class SynthLauncherPanel extends JPanel {
 		} else if (synthDef.getClass() == InstDef.class) {
 			delegate.addInstrument( (InstDef)synthDef );
 		}
-
 	}
 	
-	public void launchSynthWindow(String synthName) {
-		SynthDef synthDef = synthdefs.get(synthName);
-		Synth synth = new Synth(synthDef, App.sc);
-		
-		// JFrame Test
-		JFrame frame = new JFrame() {
-			public void dispose() {
-				super.dispose();
-				synth.close();
-			}
-		};
-		
-		frame.add(new SynthPanel(synth));
-		frame.setTitle(synth.getSynthName());
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
+//	public void launchSynthWindow(String synthName) {
+//		SynthDef synthDef = synthdefs.get(synthName);
+//		Synth synth = new Synth(synthDef, App.sc);
+//		
+//		// JFrame Test
+//		JFrame frame = new JFrame() {
+//			public void dispose() {
+//				super.dispose();
+//				synth.close();
+//			}
+//		};
+//		
+//		frame.add(new SynthPanel(synth));
+//		frame.setTitle(synth.getSynthName());
+//		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//		frame.pack();
+//		frame.setVisible(true);
+//	}
 	
 	private void setupLayout() {
 		

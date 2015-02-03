@@ -26,9 +26,10 @@ import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.Synth.SynthListener;
 import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.supercollider.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
 
-public class RunningSynthsPanel extends JPanel implements SynthSelectListener, SynthListener {
+public class RunningSynthsPanel extends JPanel implements SynthSelectListener, SynthListener, SynthModelListener {
 		
 	JList<String> synthList;
 	DefaultListModel<String> synthListModel;
@@ -53,6 +54,8 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		setSize(300, 150);
 		setLayout(new GridLayout());
 		
+		App.synthModel.addListener(this);
+		
 		synths = new Hashtable<String, Synth>();
 			
 		// Setup Synth List Panel
@@ -64,6 +67,7 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		// Setup Split Window //
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, synthListPanel, selectedSynthPanel);
 		add(splitPane);
+		
 		
 		//add(synthListPanel);
 	}
@@ -95,54 +99,6 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 		JPanel defaultCard = new JPanel();
 		defaultCard.add(new JLabel("No Synth Selected"), BorderLayout.CENTER);
 		selectedSynthPanel.add(defaultCard, "No Synth Selected");
-	}
-	
-	public void launchSynth(SynthDef synthDef) {
-		
-		// Create the synth and its panel
-		Synth synth = new Synth(synthDef, App.sc);
-		synth.start();
-		synth.addSynthListener(this);
-		
-		// Create the SynthPanel and add it to the list of cards
-		SynthPanel panel = new SynthPanel(synth);
-		selectedSynthPanel.add(panel, synth.getID());
-		
-		synths.put(synth.getID(), synth);
-		
-		synthInfoList.addSynthInfoPanel(synth);
-		//newSynthWindow(synth);
-	}
-	
-	public void addInstrument(InstDef instDef) {
-		// Create the synth and its panel
-		Instrument synth = new Instrument(instDef, App.sc);
-//		synth.start();
-		synth.addSynthListener(this);
-		
-		// Create the SynthPanel and add it to the list of cards
-		SynthPanel panel = new SynthPanel(synth);
-		selectedSynthPanel.add(panel, synth.getID());
-		
-		synths.put(synth.getID(), synth);
-		
-		synthInfoList.addSynthInfoPanel(synth);
-		
-		System.out.println("In add instrument");
-		RoutinePlayer player = new RoutinePlayer();
-		RoutinePlayerPanel playerPanel = new RoutinePlayerPanel(player);
-		
-		newPlayerWindow(playerPanel);
-		
-
-		player.connectInstrument(synth);
-		//player.play();
-		
-		//player.play();
-		//App.sc.sendMessage("/inst/playtest", synth.getName(), synth.getID());
-		//synth.runInstrumentTest();
-		
-		//newSynthWindow(synth);
 	}
 	
 	public void selectSynth(Synth synth) {
@@ -221,5 +177,68 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 	public void parameterChanged(String paramName, double value) {
 
 	}
+
+	@Override
+	public void synthAdded(Synth synth) {
+		synth.addSynthListener(this);
+		
+		// Create the SynthPanel and add it to the list of cards
+		SynthPanel panel = new SynthPanel(synth);
+		selectedSynthPanel.add(panel, synth.getID());
+		synthInfoList.addSynthInfoPanel(synth);
+	}
+
+	@Override
+	public void instAdded(Instrument inst) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void launchSynth(SynthDef synthDef) {
+		
+		// Create the synth and its panel
+		Synth synth = new Synth(synthDef, App.sc);
+		synth.start();
+		synth.addSynthListener(this);
+		
+		// Create the SynthPanel and add it to the list of cards
+		SynthPanel panel = new SynthPanel(synth);
+		selectedSynthPanel.add(panel, synth.getID());
+		
+		synths.put(synth.getID(), synth);
+		
+		synthInfoList.addSynthInfoPanel(synth);
+		//newSynthWindow(synth);
+	}
+	
+	public void addInstrument(InstDef instDef) {
+		// Create the synth and its panel
+		Instrument synth = new Instrument(instDef, App.sc);
+//		synth.start();
+		synth.addSynthListener(this);
+		
+		// Create the SynthPanel and add it to the list of cards
+		SynthPanel panel = new SynthPanel(synth);
+		selectedSynthPanel.add(panel, synth.getID());
+		
+		synths.put(synth.getID(), synth);
+		
+		synthInfoList.addSynthInfoPanel(synth);
+		
+		RoutinePlayer player = new RoutinePlayer();
+		RoutinePlayerPanel playerPanel = new RoutinePlayerPanel(player);
+		
+		newPlayerWindow(playerPanel);
+
+		player.connectInstrument(synth);
+		//player.play();
+		
+		//player.play();
+		//App.sc.sendMessage("/inst/playtest", synth.getName(), synth.getID());
+		//synth.runInstrumentTest();
+		
+		//newSynthWindow(synth);
+	}
+	
 
 }

@@ -6,6 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -14,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
+import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.InstDef;
 import net.alexgraham.thesis.supercollider.Instrument;
 import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.RoutinePlayer.PlayState;
@@ -32,21 +37,27 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 	String synthName;
 	
 	JButton playButton;
+	JLabel instLabel;
 	
 	int lastInt = 0;
 	
-	class PopUpDemo extends JPopupMenu {
-	    JMenuItem anItem;
-	    public PopUpDemo(){
-	        anItem = new JMenuItem("Click Me!");
-	        anItem.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					System.out.println("It was done");
-				}
-			});
-	        add(anItem);
+	class InstDefPopup extends JPopupMenu {
+
+	    public InstDefPopup(){
+	    	ArrayList<InstDef> instDefs = App.defModel.getInstDefs();
+	    	for (InstDef instDef : instDefs) {
+	    	    JMenuItem instItem;
+		        instItem = new JMenuItem(instDef.getSynthName());
+		        instItem.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						//player.connectInstrument(instDef);
+						RoutinePlayerPanel.this.instLabel.setText("Inst: " + instDef.getSynthName());
+					}
+				});
+		        add(instItem);
+			}
 	    }
 	}
 
@@ -77,8 +88,27 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 			}
 		});
 		
+		instLabel = new JLabel("Inst: None");
+		instLabel.addMouseListener(new MouseAdapter() {
+		    public void mousePressed(MouseEvent e){
+		        if (e.isPopupTrigger())
+		            doPop(e);
+		    }
+
+		    public void mouseReleased(MouseEvent e){
+		        if (e.isPopupTrigger())
+		            doPop(e);
+		    }
+
+		    private void doPop(MouseEvent e){
+		        InstDefPopup menu = new InstDefPopup();
+		        menu.show(e.getComponent(), e.getX(), e.getY());
+		    }
+
+		});
 		middlePanel.add(playButton);
 		middlePanel.add(closeButton);
+		middlePanel.add(instLabel);
 		setPreferredSize(getPreferredSize());
 		//revalidate();
 	}

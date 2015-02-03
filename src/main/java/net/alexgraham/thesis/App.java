@@ -5,8 +5,10 @@ import java.net.SocketException;
 
 import javax.swing.JFrame;
 
+import net.alexgraham.thesis.supercollider.DefModel;
 import net.alexgraham.thesis.supercollider.OSC;
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.SynthModel;
 
 
 public class App 
@@ -15,6 +17,8 @@ public class App
 	static final int JAVA_PORT = 1294;
 	
 	public static SCLang sc;
+	public static DefModel defModel;
+	public static SynthModel synthModel;
 
     public static void main( String[] args ) throws IOException
     {
@@ -22,6 +26,8 @@ public class App
 		
     	sc = new SCLang(SC_PORT, JAVA_PORT);
 		sc.startSCLang();
+		defModel = new DefModel();
+		synthModel = new SynthModel();
 		
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
