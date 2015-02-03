@@ -31,11 +31,12 @@ RoutinePlayer {
 	play {
 		if ((pattern != nil) && (template != nil), {
 			"Playing routine";
-			rout.play;
+			rout = rout.play;
 		});
 	}
 
 	stop {
+		"Stopping routine".postln;
 		rout.stop;
 	}
 

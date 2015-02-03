@@ -73,7 +73,7 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 		closeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				player.close();
 			}
 		});
 		
@@ -83,9 +83,7 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 		//revalidate();
 	}
 	
-	public void changeText() {
-		playButton.setText("Sto");
-	}
+	
 
 	public void setupWindow() {
 		setSize(300, 150);

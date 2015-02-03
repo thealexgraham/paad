@@ -130,6 +130,15 @@ public class Synth {
 		return parameterModels.get(name);
 	}
 	
+	/**
+	 *  Returns the model for the named parameter
+	 * @param name
+	 * @return
+	 */
+	public DoubleBoundedRangeModel getDoubleModelForParameterName(String name) {
+		return (DoubleBoundedRangeModel) parameterModels.get(name);
+	}
+	
 	public ArrayList<Parameter> getParameters() {
 		return synthDef.getParameters();
 	}
@@ -147,6 +156,10 @@ public class Synth {
 	}
 	public String getName() {
 		return name;
+	}
+	
+	public String toString() {
+		return this.name;
 	}
 
 

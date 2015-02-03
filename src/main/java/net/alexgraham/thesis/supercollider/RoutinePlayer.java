@@ -43,7 +43,7 @@ public class RoutinePlayer {
 		for (PlayerListener playerListener : listeners) {
 			playerListener.instrumentConnected(inst);
 		}
-		
+		inst.getDoubleModelForParameterName("gain").setDoubleValue(0.3);;
 		playStateChange();
 		
 	}
@@ -73,6 +73,12 @@ public class RoutinePlayer {
 		}
 	}
 	
+	public void close() {
+		if (playing) {
+			stop();
+		}
+	}
+	
 	public boolean canPlay() {
 		if (instrument != null) {
 			return true;
@@ -97,6 +103,7 @@ public class RoutinePlayer {
 		if (!canPlay()) {
 			state = PlayState.DISABLED;
 		}
+		
 		firePlayStateChange();
 	}
 	

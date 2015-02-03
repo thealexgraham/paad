@@ -36,5 +36,9 @@ public class SynthDef {
 	public ArrayList<Parameter> getParameters() {
 		return parameters;
 	}
+	
+	public String toString() {
+		return this.synthName + " (" + this.getClass().getSimpleName() + ")";
+	}
 
 }

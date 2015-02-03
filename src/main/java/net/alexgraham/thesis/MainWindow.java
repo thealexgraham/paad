@@ -42,7 +42,6 @@ public class MainWindow extends JFrame {
 		
 		setupBottomPanel();
 		//add(bottomPanel, BorderLayout.PAGE_END);
-		
 	}
 	
 	public void setupBottomPanel() {

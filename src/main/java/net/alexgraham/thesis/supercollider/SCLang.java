@@ -56,7 +56,6 @@ public class SCLang extends ChangeSender {
 	
 	private CopyOnWriteArrayList<SCConsoleListener> consoleListeners = 
 			new CopyOnWriteArrayList<SCLang.SCConsoleListener>(); 
-	
 
 	public SCLang(int sendPort, int receivePort) throws SocketException,
 			UnknownHostException {
@@ -91,7 +90,6 @@ public class SCLang extends ChangeSender {
 			scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src/main/sc/run.scd";
 			startSCLang("C:/Users/Alex/supercollider/", "sclang.exe", sendPort, scFile);
 		}
-		
 	}
 
 	/**

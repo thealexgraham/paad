@@ -46,9 +46,9 @@ public class SynthLauncherPanel extends JPanel {
 	
 	JLabel topLabel;
 
-	JList<String> synthList;
-	DefaultListModel<String> synthListModel;
-	
+	JList<SynthDef> synthList;
+	//DefaultListModel<String> synthListModel;
+	DefaultListModel<SynthDef> synthListModel;
 	Hashtable<String, SynthDef> synthdefs;
 	
 	SynthLauncherDelegate delegate;
@@ -78,8 +78,10 @@ public class SynthLauncherPanel extends JPanel {
 		
 		// SynthList Setup
 		// -------------------
-		synthListModel = new DefaultListModel<String>();
-		synthList = new JList<String>(synthListModel);
+		//synthListModel = new DefaultListModel<String>();
+		synthListModel = new DefaultListModel<SynthDef>();
+		//synthList = new JList<String>(synthListModel);
+		synthList = new JList<SynthDef>(synthListModel);
 		synthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		synthList.addListSelectionListener(new ListSelectionListener() {
@@ -103,8 +105,8 @@ public class SynthLauncherPanel extends JPanel {
 					if (r != null && r.contains(evt.getPoint()))
 					{ 
 						int index = list.locationToIndex(evt.getPoint());
-						String synthName = synthList.getSelectedValue().replace("(inst)", "");
-						launchSynth(synthName);
+						SynthDef selected = synthList.getSelectedValue();
+						launchSynth(selected);
 					}
 
 				}
@@ -120,7 +122,7 @@ public class SynthLauncherPanel extends JPanel {
 		launchButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				String currentSelection = synthList.getSelectedValue();
+				SynthDef currentSelection = synthList.getSelectedValue();
 				launchSynth(currentSelection);
 			}
 		});
@@ -137,8 +139,8 @@ public class SynthLauncherPanel extends JPanel {
     			final String synthName = (String) arguments.get(0);
     			SynthDef synth = new SynthDef(synthName, App.sc);
     			synthdefs.put(synthName, synth);
-    			synthListModel.addElement(synthName);
-    			
+    			//synthListModel.addElement(synthName);
+    			synthListModel.addElement(synth);
     			// Also Add To The List
     		}
     	});
@@ -151,7 +153,9 @@ public class SynthLauncherPanel extends JPanel {
     			InstDef synth = new InstDef(synthName, App.sc);
     			
     			synthdefs.put(synthName, synth);
-    			synthListModel.addElement(synthName + "(inst)");
+    			synthListModel.addElement(synth);
+
+    			//synthListModel.addElement(synthName + "(inst)");
     			
     			// Also Add To The List
     		}
@@ -179,9 +183,8 @@ public class SynthLauncherPanel extends JPanel {
     	App.sc.createListener("/instdef/param", paramlistener);
 	}
 	
-	public void launchSynth(String synthName) {
-		SynthDef synthDef = synthdefs.get(synthName);
-		System.out.println("Synth is a " + synthDef.getClass());
+	public void launchSynth(SynthDef synthDef) {
+
 		if (synthDef.getClass() == SynthDef.class) {
 			delegate.launchSynth(synthDef);			
 		} else if (synthDef.getClass() == InstDef.class) {
