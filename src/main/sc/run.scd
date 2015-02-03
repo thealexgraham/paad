@@ -7,7 +7,7 @@ s = Server(\javaSCServer, NetAddr("127.0.0.1", 57320), o);
 Server.default = s;
 "my file is running".postln;
 
-s.waitForBoot({
+s.waitForBoot({x
 	"server ready".postln;
 
 
@@ -55,7 +55,8 @@ s.waitForBoot({
 		sig = sig * env * amp;
 		Out.ar(out, Pan2.ar(sig, pan, gain));
 	}).add;
-	
+
+
 	SynthDef(\sinInst, { | out = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 1 |
 		var sig, env;
 		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
@@ -63,8 +64,8 @@ s.waitForBoot({
 		sig = sig * env * amp;
 		Out.ar(out, Pan2.ar(sig, pan, gain));
 	}).add;
-	
-	
+
+
 
 	// This function will run when the Java app is ready and listening
 	OSCFunc( { |msg|
