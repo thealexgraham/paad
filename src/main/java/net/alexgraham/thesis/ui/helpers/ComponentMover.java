@@ -202,8 +202,11 @@ public class ComponentMover extends MouseAdapter
 	 */
 	public void registerComponent(Component... components)
 	{
-		for (Component component : components)
+		for (Component component : components) {
 			component.addMouseListener( this );
+			component.addMouseMotionListener( this );
+		}
+		
 	}
 
 	/**
@@ -290,7 +293,13 @@ public class ComponentMover extends MouseAdapter
 			jc.setAutoscrolls( false );
 		}
 	}
-
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("Moving mouse");
+		Component c = e.getComponent();
+		c.getParent().getParent().dispatchEvent(e);;
+	}
 	/**
 	 *  Move the component to its new location. The dragged Point must be in
 	 *  the destination coordinates.
@@ -298,6 +307,8 @@ public class ComponentMover extends MouseAdapter
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
+		System.out.println("Moving mouse");
+
 		Point dragged = e.getLocationOnScreen();
 		int dragX = getDragDistance(dragged.x, pressed.x, snapSize.width);
 		int dragY = getDragDistance(dragged.y, pressed.y, snapSize.height);
@@ -326,7 +337,8 @@ public class ComponentMover extends MouseAdapter
 		//  Adjustments are finished, move the component
 
 		destination.setLocation(locationX, locationY);
-		System.out.println(destination.getLocation().toString());
+		//System.out.println(destination.getLocation().toString());
+		destination.getParent().repaint();
 	}
 
 	/*
@@ -392,54 +404,56 @@ public class ComponentMover extends MouseAdapter
 				destination.validate();
 			}
 		}
+		source.getParent().dispatchEvent(e);
+		destination.getParent().dispatchEvent(e);
 	}
 
 	
-	  public static void main(String[] argv) {
-		    JFrame frame = new JFrame();
-		    
-		    
-		    JPanel panel = new JPanel();
-		    
-		    //JPanel moveable = new JPanel();
-		    JPanel moveable = new JPanel();
-		    
-		    //moveable.add(background);
-		    
-		    moveable.setLayout(new BoxLayout(moveable, BoxLayout.Y_AXIS));
-		    
-		    JLabel topLabel = new JLabel("Drag Me");
-		    topLabel.addMouseListener(new MouseAdapter() {
-			});
-		   // JTextField field1 = new JTextField("Field 1");
-		    JLabel field1 = new JLabel("Field2");
-		    topLabel.setBackground(Color.lightGray);
-		    topLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-		    moveable.setPreferredSize(new Dimension(100,200));
-		    //textMove.set
-		    
-		    
-
-		    moveable.add(topLabel, BorderLayout.NORTH);
-		    moveable.add(field1, BorderLayout.CENTER);
-		    moveable.setBorder(BorderFactory.createLineBorder(Color.black));
-
-		    ComponentMover cm = new ComponentMover(moveable, topLabel);
-		    //ComponentMover cm = new ComponentMover(background, textMove);
-		   // cm.registerComponent(textMove);
-		    //cm.registerComponent(field1, field2, field3);
-		    
-		    moveable.setBorder(BorderFactory.createLineBorder(Color.black));
-		    ComponentResizer cr = new ComponentResizer();
-		    cr.setSnapSize(new Dimension(10, 10));
-		    cr.registerComponent(moveable);
-		    
-		    panel.add(moveable);
-
-		    frame.getContentPane().add(panel);
-		    frame.setSize(900, 500);
-		    frame.setVisible(true);
-
-		  }
+//	  public static void main(String[] argv) {
+//		    JFrame frame = new JFrame();
+//		    
+//		    
+//		    JPanel panel = new JPanel();
+//		    
+//		    //JPanel moveable = new JPanel();
+//		    JPanel moveable = new JPanel();
+//		    
+//		    //moveable.add(background);
+//		    
+//		    moveable.setLayout(new BoxLayout(moveable, BoxLayout.Y_AXIS));
+//		    
+//		    JLabel topLabel = new JLabel("Drag Me");
+//		    topLabel.addMouseListener(new MouseAdapter() {
+//			});
+//		   // JTextField field1 = new JTextField("Field 1");
+//		    JLabel field1 = new JLabel("Field2");
+//		    topLabel.setBackground(Color.lightGray);
+//		    topLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+//
+//		    moveable.setPreferredSize(new Dimension(100,200));
+//		    //textMove.set
+//		    
+//		    
+//
+//		    moveable.add(topLabel, BorderLayout.NORTH);
+//		    moveable.add(field1, BorderLayout.CENTER);
+//		    moveable.setBorder(BorderFactory.createLineBorder(Color.black));
+//
+//		    ComponentMover cm = new ComponentMover(moveable, topLabel);
+//		    //ComponentMover cm = new ComponentMover(background, textMove);
+//		   // cm.registerComponent(textMove);
+//		    //cm.registerComponent(field1, field2, field3);
+//		    
+//		    moveable.setBorder(BorderFactory.createLineBorder(Color.black));
+//		    ComponentResizer cr = new ComponentResizer();
+//		    cr.setSnapSize(new Dimension(10, 10));
+//		    cr.registerComponent(moveable);
+//		    
+//		    panel.add(moveable);
+//
+//		    frame.getContentPane().add(panel);
+//		    frame.setSize(900, 500);
+//		    frame.setVisible(true);
+//
+//		  }
 }

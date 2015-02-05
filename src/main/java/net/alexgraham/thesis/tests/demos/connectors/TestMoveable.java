@@ -1,11 +1,11 @@
-package net.alexgraham.thesis.tests.panels;
+package net.alexgraham.thesis.tests.demos.connectors;
 
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,16 +14,16 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import net.alexgraham.thesis.tests.demos.connectors.Connector.Location;
+import net.alexgraham.thesis.tests.panels.GridbagMoveable;
 import net.alexgraham.thesis.ui.components.MovablePanel;
-import net.alexgraham.thesis.ui.components.OldMoveablePanel;
 
-public class GridbagMoveable extends MovablePanel {
+public class TestMoveable extends MovablePanel {
 	
     final boolean shouldFill = true;
     final boolean shouldWeightX = true;
@@ -44,7 +44,7 @@ public class GridbagMoveable extends MovablePanel {
 	    }
 	}
 
-	public GridbagMoveable(int width, int height) {
+	public TestMoveable(int width, int height) {
 		super(width, height);
 		setup(this.getInterior());
 	}
@@ -75,32 +75,32 @@ public class GridbagMoveable extends MovablePanel {
 		//testPanel.setLayout(new GridLayout(1, 1));
 		JLabel titleLabel = new JLabel("title");
 		
-		titleLabel.addMouseListener(new MouseAdapter() {
-		    public void mousePressed(MouseEvent e){
-	        	GridbagMoveable.this.getInterior().dispatchEvent(e);;
-
-		    }
-		    
-		    public void mouseReleased(MouseEvent e) {
-		    	if (e.isPopupTrigger()) {
-		    		doPop(e);
-		    	}
-
-		    }
-		    
-		    public void mouseClicked(MouseEvent e) {
-		        if(e.getClickCount()==2){
-		            System.out.println("Let me change");
-		        }
-	            GridbagMoveable.this.dispatchEvent(e);
-
-		    }
-
-		    private void doPop(MouseEvent e){
-		        PopUpTest menu = new PopUpTest();
-		        menu.show(e.getComponent(), e.getX(), e.getY());
-		    }
-		});
+//		titleLabel.addMouseListener(new MouseAdapter() {
+//		    public void mousePressed(MouseEvent e){
+//	        	TestMoveable.this.getInterior().dispatchEvent(e);;
+//
+//		    }
+//		    
+//		    public void mouseReleased(MouseEvent e) {
+//		    	if (e.isPopupTrigger()) {
+//		    		doPop(e);
+//		    	}
+//
+//		    }
+//		    
+//		    public void mouseClicked(MouseEvent e) {
+//		        if(e.getClickCount()==2){
+//		            System.out.println("Let me change");
+//		        }
+//	            TestMoveable.this.dispatchEvent(e);
+//
+//		    }
+//
+//		    private void doPop(MouseEvent e){
+//		        PopUpTest menu = new PopUpTest();
+//		        menu.show(e.getComponent(), e.getX(), e.getY());
+//		    }
+//		});
 		
 		testPanel.add(titleLabel);
 		testPanel.setBackground(Color.LIGHT_GRAY);
@@ -149,7 +149,22 @@ public class GridbagMoveable extends MovablePanel {
 		c.gridy = c.gridy + 1;
 		pane.add(button, c);
 	
-		button = new JButton("5");
+		ConnectablePanel connectable = new ConnectablePanel(Location.LEFT);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.ipady = 0;       //reset to default
+		c.weighty = 1.0;   //request any extra vertical space
+		c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+		c.insets = new Insets(10,0,0,0);  //top padding
+		c.gridx = 1;       //aligned with button 2
+		c.gridwidth = 1;   //2 columns wide
+		c.gridy = 2;       //third row
+		connectable.setBorder(BorderFactory.createLineBorder(Color.black));
+		connectable.setPreferredSize(new Dimension(50, 50));
+		pane.add(connectable, c);
+		addConnectablePanel(connectable);
+		
+		
+		connectable = new ConnectablePanel(Location.LEFT);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.ipady = 0;       //reset to default
 		c.weighty = 1.0;   //request any extra vertical space
@@ -157,40 +172,11 @@ public class GridbagMoveable extends MovablePanel {
 		c.insets = new Insets(10,0,0,0);  //top padding
 		c.gridx = 1;       //aligned with button 2
 		c.gridwidth = 2;   //2 columns wide
-		c.gridy = 2;       //third row
-		pane.add(button, c);
+		c.gridy = 1;       //third row
+		connectable.setBorder(BorderFactory.createLineBorder(Color.black));
+		connectable.setPreferredSize(new Dimension(50, 50));
+		pane.add(connectable, c);
+		addConnectablePanel(connectable);
+		
     }
-    
-    public static void main(String[] args) {
-    	
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                //Create and set up the window.
-                JFrame frame = new JFrame("GridBagLayoutDemo");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                JPanel background = new JPanel();
-                background.setOpaque(true);
-                background.setBackground(Color.white);
-                background.setLayout(null);
-
-                background.setBorder(BorderFactory.createLineBorder(Color.black));
-                GridbagMoveable moveable = new GridbagMoveable(300, 200);
-                moveable.setLocation(5, 6);
-                moveable.setSize(300,200);
-                background.add(moveable);
-                
-
-                frame.getContentPane().add(background);
-                //Display the window.
-                frame.setLocationByPlatform(true);
-                frame.pack();
-                frame.setSize(900, 600);
-                frame.setVisible(true);
-
-            }
-        });
-
-	}
 }

@@ -14,12 +14,15 @@ public class MiscTest {
 	IllegalArgumentException, InvocationTargetException, 
 	ClassNotFoundException, NoSuchMethodException, SecurityException, SocketException, UnknownHostException {
 		
-		OSC.start(57120, 9000);
-		OSC.sendMessage("/testing", new Object[] {1, 2, 3, 4});
-		OSC.stop();
+//		OSC.start(57120, 9000);
+//		OSC.sendMessage("/testing", new Object[] {1, 2, 3, 4});
+//		OSC.stop();
+//		
+//		doNumbers(((a, b) -> a + b));
+//	    doSomething(t -> new StringBuilder(t).reverse().toString());
 		
-		doNumbers(((a, b) -> a + b));
-	    doSomething(t -> new StringBuilder(t).reverse().toString());
+		Object test = null;
+
 		
 	}
 	interface StringFunc {
