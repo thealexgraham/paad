@@ -139,6 +139,7 @@ public class LineConnectPanel extends JPanel {
 
 			public void mouseMoved(MouseEvent e) {
 				checkPoints(e);
+				System.out.println("CHecking points");
 			};
 
 		});
@@ -148,6 +149,12 @@ public class LineConnectPanel extends JPanel {
 		moveable.setSize(300, 300);
 		add(moveable);
 		boxes.addAll(moveable.getConnectablePanels());
+//		
+//		TestMoveable moveable2 = new TestMoveable(300, 300);
+//		moveable2.setLocation(400, 400);
+//		moveable2.setSize(300, 300);
+//		add(moveable2);
+//		boxes.addAll(moveable2.getConnectablePanels());
 		
 //		ConnectableBox otherBox = new ConnectableBox(Location.LEFT);
 //		add(otherBox);
@@ -297,7 +304,7 @@ public class LineConnectPanel extends JPanel {
 		panel.setFocusable(true);
 		panel.requestFocusInWindow();
 		f.add(panel);
-		f.setSize(500, 500);
+		f.setSize(900, 800);
 		f.setVisible(true);
 	}
 }

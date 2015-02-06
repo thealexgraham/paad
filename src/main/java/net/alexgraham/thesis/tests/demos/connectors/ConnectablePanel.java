@@ -62,6 +62,7 @@ public class ConnectablePanel extends JComponent {
 
 		        repaint();
 		        getParent().getParent().getParent().repaint();
+		        
 	    	} else {
 	    		System.out.println("Rerouting");
 	    		redispatch(e);
@@ -91,8 +92,8 @@ public class ConnectablePanel extends JComponent {
 		connector = new Connector(this);
 		connector.setDrawLocation(location);
 		DragListener listener = new DragListener();
-		addMouseListener(listener);
-		addMouseMotionListener(listener);
+//		addMouseListener(listener);
+//		addMouseMotionListener(listener);
 
 	}
 
