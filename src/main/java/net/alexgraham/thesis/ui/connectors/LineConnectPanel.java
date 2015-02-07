@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.tests.demos.connectors;
+package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -15,13 +16,18 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
-import net.alexgraham.thesis.tests.demos.connectors.Connector.Location;
+import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.Instrument;
+import net.alexgraham.thesis.supercollider.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.modules.InstrumentModule;
+import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
 
-public class LineConnectPanel extends JPanel {
+public class LineConnectPanel extends JPanel implements SynthModelListener {
 	
 	boolean pointHovering = false;
 	boolean dragging = false;
@@ -41,14 +47,40 @@ public class LineConnectPanel extends JPanel {
 	ArrayList<Connection> connections = new ArrayList<Connection>();
 	
 	Connection clicked;
+	
+	boolean requireMouse = false;
+	
+	public boolean isRequiringMouse() { return requireMouse || pointHovering || dragging; }
 
 	public LineConnectPanel() {
 		
 		setOpaque(true);
 		setBackground(Color.WHITE);
 		setLayout(null);
+		
+		// Set able to be focusable for key clicks
+		setFocusable(true);
 
+		// Create mouse and key listeners
+		this.createKeyListeners();
+		this.createMouseListeners();
+		
 		setBorder(BorderFactory.createDashedBorder(Color.black));
+		
+		// Listen for synths being added
+		App.synthModel.addListener(this);
+		
+		// Create a test Routine Player
+		RoutinePlayer player = new RoutinePlayer();
+		RoutinePlayerModule playerPanel = new RoutinePlayerModule(player);
+		playerPanel.setLocation(10, 10);
+		
+		boxes.addAll(playerPanel.getConnectablePanels());
+		add(playerPanel);
+
+	}
+	
+	public void createKeyListeners() {
 		addKeyListener(new KeyListener() {
 			
 			@Override
@@ -78,6 +110,9 @@ public class LineConnectPanel extends JPanel {
 				}
 			}
 		});
+	}
+	
+	public void createMouseListeners() {
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if (pointHovering && !dragging) {
@@ -97,6 +132,8 @@ public class LineConnectPanel extends JPanel {
 						for (Connection connection : connections) {
 							connection.setClicked(false);
 						}
+						
+						LineConnectPanel.this.requestFocusInWindow();
 					}
 					repaint();
 				}
@@ -109,12 +146,20 @@ public class LineConnectPanel extends JPanel {
 				if (dragging) {
 					dragging = false;
 
-					
 					if (destinationPanel != null) {
 						System.out.println("Destination box exists");
+						Connectable originConnectable = originPanel.getConnector().getConnectable();
+						Connectable destinationConnectable = destinationPanel.getConnector().getConnectable();
+						
 						// We have a destination and an origin
-						Connection newConnection = new Connection(originPanel.getConnector(), destinationPanel.getConnector());
-						connections.add(newConnection);
+						if (originConnectable.connectWith(destinationConnectable) && 
+								destinationConnectable.connectWith(originConnectable)) {
+							Connection newConnection = new Connection(originPanel.getConnector(), destinationPanel.getConnector());
+							connections.add(newConnection);
+						} else {
+							System.out.println("Problem connecting");
+						}
+
 					}
 					
 					originPanel = null;
@@ -139,59 +184,39 @@ public class LineConnectPanel extends JPanel {
 
 			public void mouseMoved(MouseEvent e) {
 				checkPoints(e);
-				System.out.println("CHecking points");
+				//System.out.println("CHecking points");
 			};
 
 		});
-		
-		TestMoveable moveable = new TestMoveable(300, 300);
-		moveable.setLocation(5, 5);
-		moveable.setSize(300, 300);
-		add(moveable);
-		boxes.addAll(moveable.getConnectablePanels());
-//		
-//		TestMoveable moveable2 = new TestMoveable(300, 300);
-//		moveable2.setLocation(400, 400);
-//		moveable2.setSize(300, 300);
-//		add(moveable2);
-//		boxes.addAll(moveable2.getConnectablePanels());
-		
-//		ConnectableBox otherBox = new ConnectableBox(Location.LEFT);
-//		add(otherBox);
-//		otherBox.setX(290);
-//		otherBox.setY(200);
-//		boxes.add(otherBox);
-//
-//		ConnectableBox box = new ConnectableBox(Location.RIGHT);
-//		add(box);
-//		box.setX(0);
-//		box.setY(0);
-//		boxes.add(box);
-//		
-//		box = new ConnectableBox(Location.RIGHT);
-//		add(box);
-//		box.setX(50);
-//		box.setY(50);
-//		boxes.add(box);
-
 	}
 	
 	public void checkPoints(MouseEvent e) {
 		for (ConnectablePanel box : boxes) {
 			
+			// If we already are selecting this connector, ignore it
 			if (box == originPanel)
 				continue;
 			
+			// Check if we're hovering over a connector
 			boolean currentHover = box.checkPointHover(e);
 
 			if (currentHover) {
+				// Keep track that this is the connector we found
 				currentPanel = box;
 				
+				// If we're dragging, we found a destinationb ox
 				if (dragging) {
 					destinationPanel = box;
 				}
+			} else {
+				// We aren't hovering over anything, make sure there's no destination panel
+				if (currentPanel == box) {
+					destinationPanel = null;
+				}
 			}
-
+			
+			// Only repaint if we've changed hovering states 
+			// ** looks like I'm repainting anyway...find out why
 			if (box == currentPanel && (currentHover != pointHovering)) {
 				pointHovering = currentHover;
 				
@@ -213,27 +238,6 @@ public class LineConnectPanel extends JPanel {
 		
 		return null;
 	}
-//	
-//	private static final int HIT_BOX_SIZE = 2;
-//	public Line2D getClickedLine(Point point) {
-//		int boxX = x - HIT_BOX_SIZE / 2;
-//		int boxY = y - HIT_BOX_SIZE / 2;
-//
-//		int width = HIT_BOX_SIZE;
-//		int height = HIT_BOX_SIZE;
-//		
-//		for (Connection connection : connections) {
-//			Line2D line = connection.getLine();
-//			if (line.ptLineDist(new Point))
-//			if (line.intersects(boxX, boxY, width, height)) {
-//				return line;
-//			}		
-//		}
-//		
-//		return null;
-//	}
-
-
 
 	public Dimension getPreferredSize() {
 		return new Dimension(250, 200);
@@ -256,6 +260,9 @@ public class LineConnectPanel extends JPanel {
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
 		super.paint(g);
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 		for (ConnectablePanel box : boxes) {
 			box.paintConnectors(g);
 		}
@@ -281,31 +288,26 @@ public class LineConnectPanel extends JPanel {
 			g2.setStroke(new BasicStroke(1));
 		}
 	}
-	
-	public static void main(String[] args) {
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createAndShowGUI();
-			}
-		});
+	@Override
+	public void synthAdded(Synth synth) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private static void createAndShowGUI() {
-		System.out.println("LineConnect Created GUI on EDT? "
-				+ SwingUtilities.isEventDispatchThread());
-		JFrame f = new JFrame("Swing Paint Demo");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		LineConnectPanel panel = new LineConnectPanel();
-//		panel.setOpaque(true);
-//		panel.setBackground(Color.WHITE);
-//		panel.setLayout(null);
-		
-		panel.setFocusable(true);
-		panel.requestFocusInWindow();
-		f.add(panel);
-		f.setSize(900, 800);
-		f.setVisible(true);
+	@Override
+	public void instAdded(Instrument inst) {
+//		// TODO Auto-generated method stub
+		InstrumentModule instrumentModule = new InstrumentModule(100, 100, inst);
+		instrumentModule.setPreferredSize(new Dimension(75, 100));
+		instrumentModule.setSize(new Dimension(100, 75));
+		instrumentModule.setLocation(200, 200);
+		add(instrumentModule);
+		boxes.addAll(instrumentModule.getConnectablePanels());
+		System.out.println("Instrument added to panel");
+
+		updateUI();
+		repaint();
 	}
 }
 

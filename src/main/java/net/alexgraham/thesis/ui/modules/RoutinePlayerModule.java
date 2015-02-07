@@ -1,7 +1,8 @@
-package net.alexgraham.thesis.ui;
+package net.alexgraham.thesis.ui.modules;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -18,13 +19,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.InstDef;
 import net.alexgraham.thesis.supercollider.Instrument;
 import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.RoutinePlayer.PlayState;
 import net.alexgraham.thesis.supercollider.RoutinePlayer.PlayerListener;
+import net.alexgraham.thesis.ui.components.MovablePanel;
+import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
+import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
-public class RoutinePlayerPanel extends JPanel implements PlayerListener {
+public class RoutinePlayerModule extends MovablePanel implements PlayerListener {
 	JPanel topPanel;
 	JPanel bottomPanel;
 	JPanel middlePanel;
@@ -53,9 +56,9 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						//player.connectInstrument(instDef);
-						RoutinePlayerPanel.this.instLabel.setText("Inst: " + instrument.getSynthName());
-						RoutinePlayerPanel.this.player.connectInstrument(instrument);
-						RoutinePlayerPanel.this.revalidate();
+						RoutinePlayerModule.this.instLabel.setText("Inst: " + instrument.getSynthName());
+						RoutinePlayerModule.this.player.connectInstrument(instrument);
+						RoutinePlayerModule.this.revalidate();
 					}
 				});
 		        add(instItem);
@@ -65,13 +68,61 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 
 	
 	
-	public RoutinePlayerPanel(RoutinePlayer player) {
-
+	public RoutinePlayerModule(RoutinePlayer player) {
+		super();
+		
 		this.player = player;
 
 		player.addListener(this);
-		setupWindow();
+		setupWindow(this.getInterior());
+		setSize(getPreferredSize());
+	
+		//setPreferredSize(getPreferredSize());
+		//revalidate();
+	}
+	
+	
+
+	public void setupWindow(Container pane) {
+		//pane.setSize(300, 150);
+		pane.setLayout(new BorderLayout());
+				
+		//Top Panel//
 		
+		topPanel = new JPanel(new FlowLayout());
+		topLabel = new JLabel("Instruments");
+		topLabel.setForeground(Color.WHITE);
+		topPanel.add(topLabel);
+		
+		//Middle Panel//
+		middlePanel = new JPanel();
+		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		middlePanel.setLayout(new GridLayout(0, 2));
+		//scrollPane = new JScrollPane(middlePanel);
+		
+				
+		//Bottom Panel//
+
+		bottomPanel = new JPanel(new FlowLayout());
+
+		// Set up panels //
+		topPanel.setBackground(Color.DARK_GRAY);
+		//middlePanel.setBackground(Color.GRAY);
+		bottomPanel.setBackground(Color.GRAY);
+		
+		// Create connectors //
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player);
+		bottomPanel.add(connectablePanel);
+		this.addConnectablePanel(connectablePanel);
+
+		pane.add(topPanel, BorderLayout.NORTH);
+		pane.add(middlePanel, BorderLayout.CENTER);
+		pane.add(bottomPanel, BorderLayout.SOUTH);	
+		
+		createButtons();
+	}
+	
+	public void createButtons() {
 		playButton = new JButton("Play");
 		playButton.setEnabled(false);
 		playButton.addActionListener(new ActionListener() {
@@ -108,45 +159,10 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 		    }
 
 		});
+		
 		middlePanel.add(playButton);
 		middlePanel.add(closeButton);
 		middlePanel.add(instLabel);
-		setPreferredSize(getPreferredSize());
-		//revalidate();
-	}
-	
-	
-
-	public void setupWindow() {
-		setSize(300, 150);
-		setLayout(new BorderLayout());
-				
-		//Top Panel//
-		
-		topPanel = new JPanel(new FlowLayout());
-		topLabel = new JLabel("Instruments");
-		topLabel.setForeground(Color.WHITE);
-		topPanel.add(topLabel);
-		
-		//Middle Panel//
-		middlePanel = new JPanel();
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-		middlePanel.setLayout(new GridLayout(0, 2));
-		scrollPane = new JScrollPane(middlePanel);
-		
-				
-		//Bottom Panel//
-
-		bottomPanel = new JPanel(new FlowLayout());
-
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-		//middlePanel.setBackground(Color.GRAY);
-		bottomPanel.setBackground(Color.GRAY);
-
-		add(topPanel, BorderLayout.NORTH);
-		add(scrollPane, BorderLayout.CENTER);
-		add(bottomPanel, BorderLayout.SOUTH);	
 	}
 
 	@Override
@@ -185,7 +201,8 @@ public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 
 	@Override
 	public void instrumentDisconnected(Instrument inst) {
-		this.instLabel.setText("Inst: none");
+		// TODO Auto-generated method stub
+		this.instLabel.setText("Inst: None");
 		this.revalidate();
 	}
 

@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 
 import net.alexgraham.thesis.supercollider.DefModel;
 import net.alexgraham.thesis.supercollider.OSC;
+import net.alexgraham.thesis.supercollider.PlayerModel;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.SynthModel;
 
@@ -19,7 +20,8 @@ public class App
 	public static SCLang sc;
 	public static DefModel defModel;
 	public static SynthModel synthModel;
-
+	public static PlayerModel playerModel;
+	
     public static void main( String[] args ) throws IOException
     {
 		OSC.start(SC_PORT, JAVA_PORT);
@@ -28,6 +30,7 @@ public class App
 		sc.startSCLang();
 		defModel = new DefModel();
 		synthModel = new SynthModel();
+		playerModel = new PlayerModel();
 		
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.

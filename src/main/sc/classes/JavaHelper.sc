@@ -131,10 +131,20 @@ JavaHelper {
 			// Set float1
 			var id = msg[1], instName = msg[2], instId = msg[3];
 			var player, instDict;
+			"trying to connect instrument".postln;
 			player = dictName.asString.toLower.asSymbol.envirGet.at(id);
 			instDict = instName.asString.toLower.asSymbol.envirGet.at(instId);
 			player.connectInstrument(instName, instDict);
 			("Connected instrument" + instName + "to player at ID"+id).postln;
+		}).add;
+		
+		OSCresponder(nil,"/routplayer/remove/inst", { arg time, resp, msg;
+			// Set float1
+			var id = msg[1];
+			var player, instDict;
+			player = dictName.asString.toLower.asSymbol.envirGet.at(id);
+			player.removeInstrument();
+			("Removed instrument").postln;
 		}).add;
 	}
 

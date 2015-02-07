@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.tests.demos.connectors;
+package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.event.MouseInputAdapter;
 
-import net.alexgraham.thesis.tests.demos.connectors.Connector.Location;
+import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
 public class ConnectableBox extends JComponent {
 

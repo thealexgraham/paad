@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.tests.demos.connectors;
+package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.geom.Line2D;
 

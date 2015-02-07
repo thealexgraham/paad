@@ -1,10 +1,11 @@
 package net.alexgraham.thesis.supercollider;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 
 
 
-public class Instrument extends Synth {
+public class Instrument extends Synth implements Connectable {
 
 
 	public Instrument(SynthDef synthDef, SCLang sc) {
@@ -29,13 +30,29 @@ public class Instrument extends Synth {
 
 	public void runInstrumentTest() {
 		updateParameter("gain", 0.7);
-		//App.sc.sendMessage("/inst/playtest", getSynthName(), getID());
 	}
 	
 	@Override
 	public void changeParameter(String paramName, double value) {
 		// TODO Auto-generated method stub
 		super.changeParameter(paramName, value);
+	}
+
+	@Override
+	public boolean connectWith(Connectable otherConnectable) {
+		// TODO Auto-generated method stub
+		if (otherConnectable instanceof RoutinePlayer) 
+		{
+			return true;
+		}
+		
+		return false;
+		
+	}
+
+	@Override
+	public boolean removeConnectionWith(Connectable otherConnectable) {
+		return true;
 	}
 
 }

@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.tests.demos.connectors;
+package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -17,8 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import net.alexgraham.thesis.tests.demos.connectors.Connector.Location;
 import net.alexgraham.thesis.ui.components.MovablePanel;
+import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
 public class TestMoveable extends MovablePanel {
 	
@@ -43,6 +43,11 @@ public class TestMoveable extends MovablePanel {
 
 	public TestMoveable(int width, int height) {
 		super(width, height);
+		setup(this.getInterior());
+	}
+	
+	public TestMoveable() {
+		super();
 		setup(this.getInterior());
 	}
 	
@@ -71,33 +76,6 @@ public class TestMoveable extends MovablePanel {
 		JPanel testPanel = new JPanel();
 		//testPanel.setLayout(new GridLayout(1, 1));
 		JLabel titleLabel = new JLabel("title");
-		
-//		titleLabel.addMouseListener(new MouseAdapter() {
-//		    public void mousePressed(MouseEvent e){
-//	        	TestMoveable.this.getInterior().dispatchEvent(e);;
-//
-//		    }
-//		    
-//		    public void mouseReleased(MouseEvent e) {
-//		    	if (e.isPopupTrigger()) {
-//		    		doPop(e);
-//		    	}
-//
-//		    }
-//		    
-//		    public void mouseClicked(MouseEvent e) {
-//		        if(e.getClickCount()==2){
-//		            System.out.println("Let me change");
-//		        }
-//	            TestMoveable.this.dispatchEvent(e);
-//
-//		    }
-//
-//		    private void doPop(MouseEvent e){
-//		        PopUpTest menu = new PopUpTest();
-//		        menu.show(e.getComponent(), e.getX(), e.getY());
-//		    }
-//		});
 		
 		testPanel.add(titleLabel);
 		testPanel.setBackground(Color.LIGHT_GRAY);
@@ -146,7 +124,7 @@ public class TestMoveable extends MovablePanel {
 		c.gridy = c.gridy + 1;
 		pane.add(button, c);
 	
-		ConnectablePanel connectable = new ConnectablePanel(Location.LEFT);
+		ConnectablePanel connectable = new ConnectablePanel(Location.BOTTOM);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.ipady = 0;       //reset to default
 		c.weighty = 1.0;   //request any extra vertical space

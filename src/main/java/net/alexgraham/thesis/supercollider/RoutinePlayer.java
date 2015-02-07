@@ -4,11 +4,13 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 
-public class RoutinePlayer {
+public class RoutinePlayer implements Connectable {
 	
 	public interface PlayerListener {
 		public void instrumentConnected(Instrument inst);
+		public void instrumentDisconnected(Instrument inst);
 		public void playStateChanged(PlayState state);
 	}
 	
@@ -29,6 +31,8 @@ public class RoutinePlayer {
 	
 	public RoutinePlayer() {
 		this.id = UUID.randomUUID();
+		System.out.println("Adding routine player");
+
 		App.sc.sendMessage("/routplayer/add", id.toString());
 	}
 	
@@ -48,6 +52,21 @@ public class RoutinePlayer {
 			playerListener.instrumentConnected(inst);
 		}
 		inst.getDoubleModelForParameterName("gain").setDoubleValue(0.3);;
+		playStateChange();
+		
+	}
+	
+	public void disconnectInstrument(Instrument inst) {
+		if (playing) {
+			stop();
+		}
+		
+		App.sc.sendMessage("/routplayer/remove/inst", this.id.toString(), 0);
+		instrument = null;
+	
+		for (PlayerListener playerListener : listeners) {
+			playerListener.instrumentDisconnected(inst);
+		}
 		playStateChange();
 		
 	}
@@ -113,5 +132,23 @@ public class RoutinePlayer {
 	
 	public String getIDString() {
 		return id.toString();
+	}
+
+	@Override
+	public boolean connectWith(Connectable otherConnectable) {
+		if (otherConnectable instanceof Instrument) {
+			connectInstrument((Instrument) otherConnectable);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean removeConnectionWith(Connectable otherConnectable) {
+		// TODO Auto-generated method stub
+		if (otherConnectable instanceof Instrument) {
+			disconnectInstrument((Instrument) otherConnectable);
+		}
+		return true;
 	}
 }
