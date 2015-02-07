@@ -135,23 +135,7 @@ public class SynthLauncherPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RoutinePlayer player = new RoutinePlayer();
-				RoutinePlayerPanel playerPanel = new RoutinePlayerPanel(player);
-				
-		        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		            public void run() {
-		                // JFrame Test
-						JFrame frame = new JFrame() {
-							public void dispose() {
-								super.dispose();
-							}
-						};
-						frame.add(playerPanel);
-						frame.setTitle("Test Routine Player");
-						frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-						frame.pack();
-						frame.setVisible(true);
-		            }
-		        });
+				App.playerModel.addPlayer(player);
 			}
 		});
 		

@@ -22,12 +22,13 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.Instrument;
 import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.PlayerModel.PlayerModelListener;
 import net.alexgraham.thesis.supercollider.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
 
-public class LineConnectPanel extends JPanel implements SynthModelListener {
+public class LineConnectPanel extends JPanel implements SynthModelListener, PlayerModelListener {
 	
 	boolean pointHovering = false;
 	boolean dragging = false;
@@ -69,15 +70,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener {
 		
 		// Listen for synths being added
 		App.synthModel.addListener(this);
-		
-		// Create a test Routine Player
-		RoutinePlayer player = new RoutinePlayer();
-		RoutinePlayerModule playerPanel = new RoutinePlayerModule(player);
-		playerPanel.setLocation(10, 10);
-		
-		boxes.addAll(playerPanel.getConnectablePanels());
-		add(playerPanel);
-
+		App.playerModel.addListener(this);
 	}
 	
 	public void createKeyListeners() {
@@ -103,8 +96,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener {
 				if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 					System.out.println("Delete key pressed");
 					if (clicked != null) {
-						connections.remove(clicked);
-						clicked = null;
+						removeConnection(clicked);
 						repaint();
 					}
 				}
@@ -148,18 +140,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener {
 
 					if (destinationPanel != null) {
 						System.out.println("Destination box exists");
-						Connectable originConnectable = originPanel.getConnector().getConnectable();
-						Connectable destinationConnectable = destinationPanel.getConnector().getConnectable();
-						
-						// We have a destination and an origin
-						if (originConnectable.connectWith(destinationConnectable) && 
-								destinationConnectable.connectWith(originConnectable)) {
-							Connection newConnection = new Connection(originPanel.getConnector(), destinationPanel.getConnector());
-							connections.add(newConnection);
-						} else {
-							System.out.println("Problem connecting");
-						}
-
+						connectPoints(originPanel.getConnector(), destinationPanel.getConnector());
 					}
 					
 					originPanel = null;
@@ -188,6 +169,36 @@ public class LineConnectPanel extends JPanel implements SynthModelListener {
 			};
 
 		});
+	}
+	
+	public void connectPoints(Connector originConnector, Connector destinationConnector) {
+		// Get the actual modules we are connecting
+		Connectable originConnectable = originConnector.getConnectable();
+		Connectable destinationConnectable = destinationConnector.getConnectable();
+		
+		// We have a destination and an origin
+		if (originConnectable.connectWith(destinationConnectable) && 
+				destinationConnectable.connectWith(originConnectable)) {
+			Connection newConnection = new Connection(originConnector, destinationConnector);
+			connections.add(newConnection);
+		} else {
+			System.out.println("Problem connecting");
+		}
+	}
+	
+	public void removeConnection(Connection theConnection) {
+		
+		Connectable originConnectable = theConnection.getOrigin().getConnectable();
+		Connectable destinationConnectable = theConnection.getDestination().getConnectable();
+		
+		if (originConnectable.removeConnectionWith(destinationConnectable) &&
+				originConnectable.removeConnectionWith(destinationConnectable)) {
+			System.out.println("Disconnection successful");
+		} else {
+			System.out.println("Disconnection probleM");
+		}
+		connections.remove(theConnection);
+		clicked = null;
 	}
 	
 	public void checkPoints(MouseEvent e) {
@@ -308,6 +319,17 @@ public class LineConnectPanel extends JPanel implements SynthModelListener {
 
 		updateUI();
 		repaint();
+	}
+
+	@Override
+	public void playerAdded(RoutinePlayer player) {
+		// Create the routine player's panel
+		RoutinePlayerModule playerPanel = new RoutinePlayerModule(player);
+		playerPanel.setLocation(10, 10);
+		
+		boxes.addAll(playerPanel.getConnectablePanels());
+		add(playerPanel);
+		updateUI();
 	}
 }
 
