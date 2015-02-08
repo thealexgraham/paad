@@ -6,18 +6,32 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
+
+import org.omg.CORBA.INITIALIZE;
+
+import sun.security.pkcs11.Secmod.ModuleType;
+
+import com.sun.org.apache.xml.internal.security.Init;
 
 import jdk.internal.org.objectweb.asm.util.CheckAnnotationAdapter;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
+import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
 
 public class MovablePanel extends JPanel {
 	
@@ -28,45 +42,86 @@ public class MovablePanel extends JPanel {
 	public ArrayList<ConnectablePanel> getConnectablePanels() { return connectables; }
 	public void addConnectablePanel (ConnectablePanel panel) { connectables.add(panel); }
 	
-	public MovablePanel (int width, int height) {
-		interior = new JPanel();
-        setLayout(new GridLayout(1, 1));
-        add(interior);
-        
-        setPreferredSize(new Dimension(width, height));
-        //ComponentMover mover = new ComponentMover(this, interior);
-        //Set up the content pane.
-//        ComponentResizer cr = new ComponentResizer();
-//	    cr.setSnapSize(new Dimension(10, 10));
-//	    cr.registerComponent(this);
-        
-        //moveable.revalidate();
+	class ModulePopup extends JPopupMenu {
+	    JMenuItem anItem;
+	    public ModulePopup() {
 
-        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        
-        DragListener listener = new DragListener();
-        this.addMouseListener(listener);
-        this.addMouseMotionListener(listener);
+	        anItem = new JMenuItem("Delete");
+	        anItem.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					MovablePanel.this.removeSelf();
+				}
+			});
+	        add(anItem);
+	    }
+	}
+	
+	private boolean selected = false;
+	
+	public MovablePanel (int width, int height) {
+		setup();
+        setPreferredSize(new Dimension(width, height));
 	}
 	
 	public MovablePanel () {
+		setup();
+	}
+	
+	public void setup() {
+		setFocusable(true);
 		interior = new JPanel();
         setLayout(new GridLayout(1, 1));
         add(interior);
         
-        //ComponentMover mover = new ComponentMover(this, interior);
-        //Set up the content pane.
-//        ComponentResizer cr = new ComponentResizer();
-//	    cr.setSnapSize(new Dimension(10, 10));
-//	    cr.registerComponent(this);
-        
-        //moveable.revalidate();
-
-        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        
         DragListener listener = new DragListener();
         this.addMouseListener(listener);
         this.addMouseMotionListener(listener);
+        
+        createKeyListeners();
+	}
+	
+	public void select() {
+		requestFocusInWindow();
+	    selected = true;
+	    setBorder(BorderFactory.createLineBorder(Color.black));
+	
+	}
+	
+	public void deselect() {
+		selected = false;
+		setBorder(BorderFactory.createEmptyBorder());
+	}
+	
+	public boolean isSelected() { return selected; }
+	
+	public void removeSelf() {
+		LineConnectPanel connectPanel = (LineConnectPanel) this.getParent();
+		connectPanel.removeModule(this);
+	}
+	
+	public void createKeyListeners() {
+		addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+					if (selected) {
+						removeSelf();
+					}
+				}
+			}
+		});
 	}
 	
 	class DragListener extends MouseInputAdapter
@@ -77,10 +132,18 @@ public class MovablePanel extends JPanel {
 	    public void mousePressed(MouseEvent e)
 	    {
 	    	boolean pointHover = mouseOverride(e);
-    		redispatch(e);
+    		//redispatch(e);
 
 	    	if (!pointHover) { 
 		        pressed = e;
+		        
+		        if (!selected) {
+		        	select();		        	
+		        }
+		        
+		        if (e.isPopupTrigger()) {
+		        	doPop(e);
+		        }
 
 	    	} else {
 	    		redispatch(e);
@@ -92,6 +155,11 @@ public class MovablePanel extends JPanel {
 	    public void mouseReleased(MouseEvent e) {
 	    	// TODO Auto-generated method stub
 	    	super.mouseReleased(e);
+	    	
+	        if (e.isPopupTrigger()) {
+	        	doPop(e);
+	        }
+	    	
     		redispatch(e);
 	    }
 	    @Override
@@ -172,6 +240,11 @@ public class MovablePanel extends JPanel {
 	    	}
 	    	
 	    	return (LineConnectPanel) parent;
+	    }
+	    
+	    private void doPop(MouseEvent e){
+	        ModulePopup menu = new ModulePopup();
+	        menu.show(e.getComponent(), e.getX(), e.getY());
 	    }
 	}
 	

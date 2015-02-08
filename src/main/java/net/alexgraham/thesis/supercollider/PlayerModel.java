@@ -16,6 +16,7 @@ public class PlayerModel {
 	
 	public interface PlayerModelListener {
 		public void playerAdded(RoutinePlayer player);
+		public void playerRemoved(RoutinePlayer player);
 	}
 	
 	private CopyOnWriteArrayList<PlayerModelListener> listeners = 

@@ -38,7 +38,6 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 	
 	JSplitPane splitPane;
 
-	
 	JPanel synthListPanel;
 	JPanel selectedSynthPanel;
 	
@@ -47,7 +46,6 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 	Hashtable<String, Synth> synths;
 	
 	private int synthCount = 0;
-
 	
 	public RunningSynthsPanel () {
 		// So it resizes

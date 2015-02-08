@@ -40,7 +40,7 @@ public class SynthLauncherPanel extends JPanel {
 		void launchSynth(SynthDef synthDef);
 		void addInstrument(InstDef instdef);
 	}
-		
+	
 	JPanel topPanel;
 	JPanel bottomPanel;
 	JPanel middlePanel;
@@ -154,24 +154,6 @@ public class SynthLauncherPanel extends JPanel {
 		}
 	}
 	
-//	public void launchSynthWindow(String synthName) {
-//		SynthDef synthDef = synthdefs.get(synthName);
-//		Synth synth = new Synth(synthDef, App.sc);
-//		
-//		// JFrame Test
-//		JFrame frame = new JFrame() {
-//			public void dispose() {
-//				super.dispose();
-//				synth.close();
-//			}
-//		};
-//		
-//		frame.add(new SynthPanel(synth));
-//		frame.setTitle(synth.getSynthName());
-//		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//		frame.pack();
-//		frame.setVisible(true);
-//	}
 	
 	private void setupLayout() {
 		

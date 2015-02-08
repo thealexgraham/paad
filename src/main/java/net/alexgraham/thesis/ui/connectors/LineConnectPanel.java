@@ -2,6 +2,7 @@ package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,16 +15,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.Instrument;
+import net.alexgraham.thesis.supercollider.PlayerModel.PlayerModelListener;
 import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.PlayerModel.PlayerModelListener;
 import net.alexgraham.thesis.supercollider.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
@@ -45,7 +48,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	Rectangle currentConnector;
 
 	ArrayList<ConnectablePanel> boxes = new ArrayList<ConnectablePanel>();
-	ArrayList<Connection> connections = new ArrayList<Connection>();
+	CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
 	
 	Connection clicked;
 	
@@ -107,6 +110,18 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public void createMouseListeners() {
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
+				
+				// Change current focus
+				LineConnectPanel.this.requestFocusInWindow();
+				
+				// Deselect all children
+				for (Component component : getComponents()) {
+					if (component instanceof MovablePanel) {
+						((MovablePanel) component).deselect();
+					}
+				}
+				
+				// Start dragging 
 				if (pointHovering && !dragging) {
 					originPanel = currentPanel;
 					connectOrigin = originPanel.getConnectionLocation(); // new
@@ -192,13 +207,35 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		Connectable destinationConnectable = theConnection.getDestination().getConnectable();
 		
 		if (originConnectable.removeConnectionWith(destinationConnectable) &&
-				originConnectable.removeConnectionWith(destinationConnectable)) {
+				destinationConnectable.removeConnectionWith(originConnectable)) {
 			System.out.println("Disconnection successful");
 		} else {
 			System.out.println("Disconnection probleM");
 		}
 		connections.remove(theConnection);
 		clicked = null;
+	}
+
+	public void removeModule(MovablePanel panel) {
+		
+		// Check if there are any current connections in this panel's connectables
+		for (ConnectablePanel connectablePanel : panel.getConnectablePanels()) {
+			Connector currentConnector = connectablePanel.getConnector();
+			
+			// Go through all of the connections
+			for (Connection	connection : connections) {
+				
+				// If either of the connections are from this connector, 
+				if (currentConnector == connection.getOrigin() ||
+					currentConnector == connection.getDestination()) {
+					this.removeConnection(connection);
+				}
+			}
+		}
+		
+		boxes.removeAll(panel.getConnectablePanels());
+		remove(panel);
+		repaint();
 	}
 	
 	public void checkPoints(MouseEvent e) {
@@ -330,6 +367,12 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		boxes.addAll(playerPanel.getConnectablePanels());
 		add(playerPanel);
 		updateUI();
+	}
+
+	@Override
+	public void playerRemoved(RoutinePlayer player) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

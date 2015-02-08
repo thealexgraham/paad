@@ -145,6 +145,7 @@ public class RoutinePlayer implements Connectable {
 
 	@Override
 	public boolean removeConnectionWith(Connectable otherConnectable) {
+		System.out.println("Got a remove connection call");
 		// TODO Auto-generated method stub
 		if (otherConnectable instanceof Instrument) {		
 			System.out.println("Disconnecting Instrument");

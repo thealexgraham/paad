@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.Location;
@@ -15,14 +17,17 @@ public class ConnectablePanel extends JComponent {
 	private Connector connector;
 	
 	private boolean pointHover = false;
+	private String labelText = null;
 	
 	public ConnectablePanel(Location location, Connectable toConnect) {
 		connector = new Connector(this, toConnect);
 		connector.setDrawLocation(location);
-		//DragListener listener = new DragListener();
-//		addMouseListener(listener);
-//		addMouseMotionListener(listener);
-
+	}
+	
+	public ConnectablePanel(Location location, Connectable toConnect, String label) {
+		connector = new Connector(this, toConnect);
+		connector.setDrawLocation(location);
+		add(new JLabel(label));
 	}
 
 	public boolean checkPointHover(MouseEvent e) {
@@ -44,7 +49,6 @@ public class ConnectablePanel extends JComponent {
 	}
 
 }
-
 
 //class DragListener extends MouseInputAdapter
 //{

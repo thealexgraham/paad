@@ -25,6 +25,7 @@ import net.alexgraham.thesis.supercollider.RoutinePlayer.PlayState;
 import net.alexgraham.thesis.supercollider.RoutinePlayer.PlayerListener;
 import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
+import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
 public class RoutinePlayerModule extends MovablePanel implements PlayerListener {
@@ -111,7 +112,7 @@ public class RoutinePlayerModule extends MovablePanel implements PlayerListener 
 		bottomPanel.setBackground(Color.GRAY);
 		
 		// Create connectors //
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player);
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player, "Instrument");
 		bottomPanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
 
@@ -137,8 +138,12 @@ public class RoutinePlayerModule extends MovablePanel implements PlayerListener 
 		closeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				player.close();
+//				player.close();
+//				LineConnectPanel connectPanel = (LineConnectPanel) RoutinePlayerModule.this.getParent();
+//				connectPanel.removeModule(RoutinePlayerModule.this);
+				removeSelf();
 			}
+			
 		});
 		
 		instLabel = new JLabel("Inst: None");
@@ -163,6 +168,12 @@ public class RoutinePlayerModule extends MovablePanel implements PlayerListener 
 		middlePanel.add(playButton);
 		middlePanel.add(closeButton);
 		middlePanel.add(instLabel);
+	}
+	@Override
+	public void removeSelf() {
+		// TODO Auto-generated method stub
+		super.removeSelf();
+		player.close();
 	}
 
 	@Override
