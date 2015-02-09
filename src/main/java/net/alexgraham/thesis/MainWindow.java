@@ -33,7 +33,7 @@ public class MainWindow extends JFrame {
 	ConsoleDialog consoleDialog;
 	
 	public MainWindow() throws SocketException {
-		setSize(1000, 500);
+		setSize(1280, 800);
 		setLayout(new BorderLayout());
 		createConsoleDialog();
 		

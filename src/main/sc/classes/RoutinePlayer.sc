@@ -46,7 +46,7 @@ RoutinePlayer {
 
 		"Creating template".postln;
 		rout.stop;
-		
+
 		// Create the template
 		[\instrument, instName, \out, 0].pairsDo({ |a, b|
 			keys.add(a);
