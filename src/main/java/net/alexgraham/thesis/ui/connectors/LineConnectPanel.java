@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.PrimitiveIterator.OfDouble;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
@@ -26,6 +27,7 @@ import net.alexgraham.thesis.supercollider.PlayerModel.PlayerModelListener;
 import net.alexgraham.thesis.supercollider.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.Synth;
 import net.alexgraham.thesis.supercollider.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
@@ -52,6 +54,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	Connection clicked;
 	
+	private CopyOnWriteArrayList<SynthSelectListener> synthSelectListeners = 
+			new CopyOnWriteArrayList<SynthSelectListener>();
+	
 	boolean requireMouse = false;
 	
 	public boolean isRequiringMouse() { return requireMouse || pointHovering || dragging; }
@@ -74,6 +79,10 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		// Listen for synths being added
 		App.synthModel.addListener(this);
 		App.playerModel.addListener(this);
+	}
+	
+	public void addSynthSelectListener(SynthSelectListener listener) {
+		synthSelectListeners.add(listener);
 	}
 	
 	public void createKeyListeners() {
@@ -120,6 +129,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 						((MovablePanel) component).deselect();
 					}
 				}
+				
+				fireSynthDeselectedEvent();
 				
 				// Start dragging 
 				if (pointHovering && !dragging) {
@@ -275,6 +286,24 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		}
 	}
 	
+	public void fireSynthSelectedEvent(Synth synth) {
+		for (SynthSelectListener synthSelectListener : synthSelectListeners) {
+			synthSelectListener.selectSynth(synth);
+		}
+	}
+	
+	public void fireSynthDeselectedEvent() {
+		for (SynthSelectListener synthSelectListener : synthSelectListeners) {
+			synthSelectListener.deselectSynth();
+		}
+	}
+	
+	public void moduleSelected(MovablePanel module) {
+		if (module instanceof InstrumentModule) {
+			fireSynthSelectedEvent(((InstrumentModule) module).getInstrument());
+		}
+	}
+	
 	public Connection getClickedConnection(Point point, int distance) {
 		
 		for (Connection connection : connections) {
@@ -337,6 +366,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		}
 	}
 
+	// SynthModelListener
+	// --------------------------
+	
 	@Override
 	public void synthAdded(Synth synth) {
 		// TODO Auto-generated method stub
@@ -352,12 +384,16 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		instrumentModule.setLocation(200, 200);
 		add(instrumentModule);
 		boxes.addAll(instrumentModule.getConnectablePanels());
+		
+		instrumentModule.setOwner(this);
 		System.out.println("Instrument added to panel");
 
 		updateUI();
 		repaint();
 	}
-
+	
+	// PlayerModelListener
+	// -------------------------
 	@Override
 	public void playerAdded(RoutinePlayer player) {
 		// Create the routine player's panel

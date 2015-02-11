@@ -91,7 +91,7 @@ public class RoutinePlayerModule extends MovablePanel implements PlayerListener 
 		//Top Panel//
 		
 		topPanel = new JPanel(new FlowLayout());
-		topLabel = new JLabel("Instruments");
+		topLabel = new JLabel("Routine Player");
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

@@ -26,6 +26,8 @@ import javax.xml.stream.events.StartDocument;
 import net.alexgraham.thesis.supercollider.InstDef;
 import net.alexgraham.thesis.supercollider.SynthDef;
 import net.alexgraham.thesis.ui.RunningSynthsPanel;
+import net.alexgraham.thesis.ui.SynthCardsPanel;
+import net.alexgraham.thesis.ui.SynthInfoList;
 import net.alexgraham.thesis.ui.SynthLauncherPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel.SynthLauncherDelegate;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
@@ -56,7 +58,16 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		sideSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				synthSelector, lineConnect);
 		
-		add(sideSplitPane);
+		sideSplitPane.setOneTouchExpandable(true);
+		
+		
+		SynthCardsPanel cardsPanel = new SynthCardsPanel();
+		lineConnect.addSynthSelectListener(cardsPanel);
+		
+		JSplitPane wholeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideSplitPane, cardsPanel);
+		
+		add(wholeSplitPane);
+		//add(sideSplitPane);
 		
 		lineConnect.setFocusable(true);
 		lineConnect.requestFocusInWindow();

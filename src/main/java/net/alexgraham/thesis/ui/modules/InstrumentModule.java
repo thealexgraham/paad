@@ -71,6 +71,10 @@ public class InstrumentModule extends MovablePanel {
 		setup(this.getInterior());
 	}
 	
+	public Instrument getInstrument() {
+		return instrument;
+	}
+	
 	@Override
 	public void removeSelf() {
 		// TODO Auto-generated method stub

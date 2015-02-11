@@ -42,6 +42,8 @@ public class MovablePanel extends JPanel {
 	public ArrayList<ConnectablePanel> getConnectablePanels() { return connectables; }
 	public void addConnectablePanel (ConnectablePanel panel) { connectables.add(panel); }
 	
+	private LineConnectPanel owner;
+	
 	class ModulePopup extends JPopupMenu {
 	    JMenuItem anItem;
 	    public ModulePopup() {
@@ -69,6 +71,10 @@ public class MovablePanel extends JPanel {
 		setup();
 	}
 	
+	public void setOwner(LineConnectPanel owner) {
+		this.owner = owner;
+	}
+	
 	public void setup() {
 		setFocusable(true);
 		interior = new JPanel();
@@ -83,6 +89,10 @@ public class MovablePanel extends JPanel {
 	}
 	
 	public void select() {
+		if (owner != null) {
+			owner.moduleSelected(this);
+		}
+		
 		requestFocusInWindow();
 	    selected = true;
 	    setBorder(BorderFactory.createLineBorder(Color.black));
