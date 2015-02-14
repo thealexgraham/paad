@@ -1,9 +1,10 @@
-package net.alexgraham.thesis.supercollider;
+package net.alexgraham.thesis.supercollider.players;
 
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 
 public class RoutinePlayer implements Connectable {

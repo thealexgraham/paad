@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.supercollider;
+package net.alexgraham.thesis.supercollider.models;
 
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.ui.RoutinePlayerPanel;
 import net.alexgraham.thesis.ui.SynthPanel;
 

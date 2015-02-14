@@ -2,6 +2,8 @@ JavaHelper {
 
 	var <>sendPort;
 	var <>synthDefaults;
+	var <>definitions;
+	var <>ready;
 
 	*new { |sendPort|
 		^super.new.init(sendPort);
@@ -30,11 +32,53 @@ JavaHelper {
 		javaCommand("setListener");
 
 		synthDefaults = [[\gain, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
+		definitions = Dictionary.new;
+
+		ready = false;
 
 		this.createSynthListeners;
 		this.createInstListeners;
 		this.createRoutListeners;
 
+	}
+
+	/* Add a new definition, if java is ready, send them right away,
+	* Otherwise, add it to the pending list
+	*/
+	addDefinition { |name, type, params|
+		if(ready != true,
+			{ definitions.put(name, [name, type, params]); },
+			{ sendDefinition(name, type, params); }
+		);
+	}
+
+	/* Sends all pending instruments to java */
+	sendDefinitions {
+		definitions.keysValuesDo({
+			|key, value|
+			var name = value[0], type = value[1], params = value[2];
+
+			this.sendDefinition(name, type, params);
+		});
+	}
+
+
+	/* Send a single definition to Java */
+	sendDefinition { |name, type, params|
+		switch(type,
+			\synth, {
+				this.newSynth(name, params);
+			},
+			\instrument, {
+				this.newInstrument(name, params);
+			},
+			\effect, {
+				this.newEffect(name, params);
+			},
+			{
+				postln("No type for "++type.asString);
+			}
+		);
 	}
 
 	/*
@@ -80,6 +124,258 @@ JavaHelper {
 		instName.toLower.asSymbol.envirPut(Dictionary.new);
 	}
 
+	createInstListeners {
+		~instrumentGroup = Group.head(Server.default);
+
+		// Whenever an instrument is added, this will create busses for this instance of the synth
+		OSCresponder(nil, "/inst/add", { arg time, resp, msg;
+			var instName = msg[1];
+			var id = msg[2];
+			var instDict;
+
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+
+			// Create a dictionary of busses for this instrument at its ID
+			instName.tildaGet.put(id, Dictionary.new);
+			instDict = instName.tildaGet.at(id);
+
+			instDict.put("outBus", 0); // Default out bus is 0
+
+			// The rest of the parameters are pairs, reshape so we can use them
+			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
+				var param = item[0];
+				var value = item[1];
+				// Put the bus in and initialize it
+				instDict.put(param, Bus.control.set(value));
+			});
+			("Inst added and busses created at" + id).postln;
+		}).add;
+
+		// Whenever the plugin is removed (or killed internally) this will free the synth
+		OSCresponder(nil, "/inst/remove", { arg time, resp, msg;
+			// Free synth defs at this id
+			var instName = msg[1];
+			var id = msg[2];
+			var instDict = instName.asString.toLower.asSymbol.envirGet.at(id);
+
+			// Free the busses and remove them from this dictionary (is this necessary?)
+			instDict.keysValuesArrayDo({ |key, value|
+				value.free;
+				instDict.removeAt(key);
+			});
+
+
+			("Inst disconnected, freeing busses at" + id).postln;
+		}).add;
+
+		// [/synth/newparam, synthName, paramName, id, value]
+		OSCresponder(nil,"/inst/paramc", { arg time, resp, msg;
+				// Set float1
+			var instName = msg[1], param = msg[2], id = msg[3], val = msg[4];
+			// Set the bus at param
+			instName.tildaGet.at(id).at(param).set(val);
+			("Changing" + instName + id + param + val).postln;
+		}).add;
+
+		OSCresponder(nil, "/inst/connect/effect", { arg time, resp, msg;
+			var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];
+			var instDict, effectDict;
+
+			instDict = instName.tildaGet.at(instId);
+			effectDict = effectName.tildaGet.at(effectId);
+
+			instDict.put(\outBus, effectDict.at(\inBus));
+			("Connected instrument to effect").postln;
+		});
+	}
+
+	/* newEffect
+	* Tells java all about the effect definition
+	*/
+	newEffect { |effectName, params|
+		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
+		// Need default params for effect?
+		//params = this.addDefaultParams(params);
+
+		// Get effect ready in Java
+		net.sendMsg("/addeffect", effectName);
+
+		// Should we wait for callback?
+		params.do({ |item, i|
+			var param = item[0].asString;
+			var min = item[1], max = item[2], default = item[3];
+			net.sendMsg("/addparam", effectName, param, min, max, default);
+		});
+
+		// Create a dictionary to store the running synths (for multiple copies of plugin)
+		effectName.tildaPut(Dictionary.new);
+	}
+
+	/* createEffectListeners
+	* responsible for setting up OSC responders for this synth and creating a unique
+	* version of the synth
+	*/
+	createEffectListeners {
+		var defaultParams;
+		~effectsGroup = Group.tail(Server.default);
+
+		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
+		OSCresponder(nil, "/effect/start", { arg time, resp, msg;
+			var effectName = msg[1];
+			var id = msg[2];
+			var effectDict;
+			var inBus;
+
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+
+			inBus = Bus.audio(Server.default, 2);
+
+			// Add inBus and outBus to the default arguments
+			msg.add("inBus", inBus);
+			msg.add("outBus", 0); // Default go straight out
+
+			// Create a new dictionary for this ID
+			effectName.tildaGet.put(id, Dictionary.new);
+			effectDict = effectName.tildaGet.at(id);
+
+			// Store the synth and the inBus
+			effectDict.put(\synth, Synth.tail(~effectsGroup, effectName, msg));
+			effectDict.put(\inBus, inBus);
+			("Effect added, adding effect at" + id).postln;
+		}).add;
+
+		// Whenever the plugin is removed (or killed internally) this will free the synth
+		OSCresponder(nil, "/effect/stop", { arg time, resp, msg;
+			// Free synth defs at this id
+			var effectName = msg[1];
+			var id = msg[2];
+			var effectDict = effectName.tildaGet.at(id);
+
+			// Free the bus
+			effectDict.at(\inBus).free;
+			effectDict.at(\synth).free;
+
+			// Remove the dictionary
+			effectName.tildaGet.removeAt(id);
+
+			("Effect disconnected, freeing effect at" + id).postln;
+		}).add;
+
+		// [/synth/newparam, synthName, paramName, id, value]
+		OSCresponder(nil,"/effect/paramc", { arg time, resp, msg;
+			// Set float1
+			var effectName = msg[1], param = msg[2], id = msg[3], val = msg[4];
+
+			// Set the value direcctly
+			effectName.tildaGet.at(id).at(\synth).set(param, val);
+			("Changing" + effectName + id + param + val).postln;
+		}).add;
+
+		OSCresponder(nil, "/effect/connect/effect", { arg time, resp, msg;
+			var effectName = msg[1], effectId = msg[2], toEffectName = msg[4], toEffectId = msg[5];
+			var toEffectDict, effectDict, toEffectInBus, effectSynth;
+
+			// Get the destination effect's in bus
+			toEffectInBus = toEffectId.tildaGet.at(toEffectId).at(\inBus);
+			// Get this effect's dictionary
+			effectDict = effectName.tildaGet.at(effectId);
+
+			// Get the effect's synth and set its outBus
+			effectSynth = effectDict.at(\synth);
+			effectSynth.set(\outBus, toEffectInBus);
+			("Connected effects").postln;
+		});
+
+		OSCresponder(nil, "/effect/disconnect/effect", { arg time, resp, msg;
+			var effectName = msg[1], effectId = msg[2];
+			var effectDict, effectSynth;
+
+			// Get dictionary and synth
+			effectDict = effectName.tildaGet.at(effectId);
+			effectSynth = effectDict.at(\synth);
+
+			// Set outBus back to 0 since it isn't connected to anything
+			effectSynth.set(\outBus, 0);
+			("Connected effects").postln;
+		});
+
+		^("OSC Responders ready");
+	}
+
+
+	/* newSynth
+	* Tells java all about the synth definition
+	*/
+	newSynth { |synthName, params|
+		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
+		params = this.addDefaultParams(params);
+		net.sendMsg("/addsynth", synthName);
+
+		params.do({ |item, i|
+			var param = item[0].asString;
+			var min = item[1], max = item[2], default = item[3];
+			net.sendMsg("/addparam", synthName, param, min, max, default);
+		});
+
+		// Create a dictionary to store the running synths (for multiple copies of plugin)
+		synthName.toLower.asSymbol.envirPut(Dictionary.new);
+	}
+
+	/* createSynthListeners
+	* responsible for setting up OSC responders for this synth and creating a unique
+	* version of the synth
+	*/
+	createSynthListeners {
+		var defaultParams;
+
+		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
+		OSCresponder(nil, "/synth/start", { arg time, resp, msg;
+			var synthName = msg[1];
+			var id = msg[2];
+
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+
+			// Create synth defs at this location
+			synthName.asString.toLower.asSymbol.envirGet.put(id, Synth.new(synthName, msg));
+			("Synth connected, adding synths at" + id).postln;
+		}).add;
+
+		// Whenever the plugin is removed (or killed internally) this will free the synth
+		OSCresponder(nil, "/synth/stop", { arg time, resp, msg;
+			// Free synth defs at this id
+			var synthName = msg[1];
+			var id = msg[2];
+			synthName.asString.toLower.asSymbol.envirGet.at(id).free;
+			("Synth disconnected, freeing synths at" + id).postln;
+		}).add;
+
+		// [/synth/newparam, synthName, paramName, id, value]
+		OSCresponder(nil,"/synth/paramc", { arg time, resp, msg;
+				// Set float1
+			var synthName = msg[1], param = msg[2], id = msg[3], val = msg[4];
+				synthName.asString.toLower.asSymbol.envirGet.at(id).set(param, val);
+				("Changing" + synthName + id + param + val).postln;
+		}).add;
+
+		^("OSC Responders ready");
+	}
+
+	/* createRoutListeners
+	*
+	* Create listeners for routine players
+	*/
 	createRoutListeners {
 		var dictName = "routplayer";
 		dictName.toLower.asSymbol.envirPut(Dictionary.new);
@@ -137,7 +433,7 @@ JavaHelper {
 			player.connectInstrument(instName, instDict);
 			("Connected instrument" + instName + "to player at ID"+id).postln;
 		}).add;
-		
+
 		OSCresponder(nil,"/routplayer/remove/inst", { arg time, resp, msg;
 			// Set float1
 			var id = msg[1];
@@ -148,155 +444,4 @@ JavaHelper {
 		}).add;
 	}
 
-	createInstListeners {
-		// Whenever an instrument is added, this will create busses for this instance of the synth
-		OSCresponder(nil, "/inst/add", { arg time, resp, msg;
-			var instName = msg[1];
-			var id = msg[2];
-			var instDict;
-
-			msg.removeAt(0); // Address
-			msg.removeAt(0); // SynthName
-			msg.removeAt(0); // ID
-
-			// The rest are the defaults
-
-			// Create a dictionary of busses for this instrument at its ID
-			instName.asString.toLower.asSymbol.envirGet.put(id, Dictionary.new);
-			instDict = instName.asString.toLower.asSymbol.envirGet.at(id);
-
-			// The rest of the parameters are pairs, reshape so we can use them
-			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
-				var param = item[0];
-				var value = item[1];
-				// Put the bus in and initialize it
-				instDict.put(param, Bus.control.set(value));
-			});
-			("Inst added and bus created at" + id).postln;
-		}).add;
-
-		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/inst/remove", { arg time, resp, msg;
-			// Free synth defs at this id
-			var instName = msg[1];
-			var id = msg[2];
-			var instDict = instName.asString.toLower.asSymbol.envirGet.at(id);
-
-			// Free the busses and remove them from this dictionary (is this necessary?)
-			instDict.keysValuesArrayDo({ |key, value|
-				value.free;
-				instDict.removeAt(key);
-			});
-
-
-			("Inst disconnected, freeing busses at" + id).postln;
-		}).add;
-
-		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/inst/paramc", { arg time, resp, msg;
-				// Set float1
-			var instName = msg[1], param = msg[2], id = msg[3], val = msg[4];
-			// Set the bus at param
-			instName.asString.toLower.asSymbol.envirGet.at(id).at(param).set(val);
-			("Changing" + instName + id + param + val).postln;
-		}).add;
-
-
-/*		OSCresponder(nil, "/inst/playtest", { arg time, resp, msg;
-
-			var instName = msg[1], id = msg[2];
-			var templateList, busses;
-			var keys = List.new, args = List.new;
-			var template, pattern;
-			var instDict = instName.asString.toLower.asSymbol.envirGet.at(id);
-			instDict.postln;
-
-			pattern = [[5, 2], [8, 2], [10, 2], [8, 2], [\rest, 16]];
-
-			// Create the template
-			[\instrument, instName, \out, 0, \legato, 0.9].pairsDo({ |a, b|
-				keys.add(a);
-				args.add(b);
-			});
-
-			// Add the busses to the template
-			instDict.keysValuesDo({ |key, value|
-				keys.add(key);
-				args.add(value.asMap);
-			});
-
-			// Bind the template
-			template = Pbind(keys.asArray, args.asArray);
-
-			// Play our test sequence
-			Pseq([
-				Pbindf(template,
-					//\amp, 0.2,
-					#[\note, \dur], Pseq(pattern, 5),
-					\octave, 4,
-			)]).play;
-		}).add;*/
-	}
-
-
-	/* sendSynth
-	* Tells java all about the synth definition
-	*/
-	newSynth { |synthName, params|
-		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
-		params = this.addDefaultParams(params);
-		net.sendMsg("/addsynth", synthName);
-
-		params.do({ |item, i|
-			var param = item[0].asString;
-			var min = item[1], max = item[2], default = item[3];
-			net.sendMsg("/addparam", synthName, param, min, max, default);
-		});
-
-		// Create a dictionary to store the running synths (for multiple copies of plugin)
-		synthName.toLower.asSymbol.envirPut(Dictionary.new);
-	}
-
-	/* startSynth
-	* responsible for setting up OSC responders for this synth and creating a unique
-	* version of the synth
-	*/
-	createSynthListeners {
-		var defaultParams;
-
-		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		OSCresponder(nil, "/synth/start", { arg time, resp, msg;
-			var synthName = msg[1];
-			var id = msg[2];
-
-			msg.removeAt(0); // Address
-			msg.removeAt(0); // SynthName
-			msg.removeAt(0); // ID
-
-			// The rest are the defaults
-
-			// Create synth defs at this location
-			synthName.asString.toLower.asSymbol.envirGet.put(id, Synth.new(synthName, msg));
-			("Synth connected, adding synths at" + id).postln;
-		}).add;
-
-		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/synth/stop", { arg time, resp, msg;
-			// Free synth defs at this id
-			var synthName = msg[1];
-			var id = msg[2];
-			synthName.asString.toLower.asSymbol.envirGet.at(id).free;
-			("Synth disconnected, freeing synths at" + id).postln;
-		}).add;
-
-		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/synth/paramc", { arg time, resp, msg;
-				// Set float1
-			var synthName = msg[1], param = msg[2], id = msg[3], val = msg[4];
-				synthName.asString.toLower.asSymbol.envirGet.at(id).set(param, val);
-				("Changing" + synthName + id + param + val).postln;
-		}).add;
-
-		^("OSC Responders ready");
-	}
 }

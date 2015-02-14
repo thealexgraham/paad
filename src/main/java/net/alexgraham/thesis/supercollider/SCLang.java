@@ -15,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.event.EventListenerList;
 
 import net.alexgraham.thesis.ChangeSender;
+import net.alexgraham.thesis.supercollider.models.DefModel;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
 
 import com.illposed.osc.OSCListener;

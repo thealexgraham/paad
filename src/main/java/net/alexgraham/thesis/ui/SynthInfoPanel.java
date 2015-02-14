@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.BevelBorder;
 
-import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 

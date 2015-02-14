@@ -19,10 +19,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.Instrument;
-import net.alexgraham.thesis.supercollider.RoutinePlayer;
-import net.alexgraham.thesis.supercollider.RoutinePlayer.PlayState;
-import net.alexgraham.thesis.supercollider.RoutinePlayer.PlayerListener;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayState;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayerListener;
+import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;

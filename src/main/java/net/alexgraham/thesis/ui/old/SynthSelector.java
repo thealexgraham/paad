@@ -38,8 +38,8 @@ import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
-import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import net.alexgraham.thesis.tests.demos.ListDemo;
 import net.alexgraham.thesis.ui.SynthPanel;
 

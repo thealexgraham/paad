@@ -22,11 +22,11 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.Instrument;
-import net.alexgraham.thesis.supercollider.PlayerModel.PlayerModelListener;
-import net.alexgraham.thesis.supercollider.RoutinePlayer;
-import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.supercollider.models.PlayerModel.PlayerModelListener;
+import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;

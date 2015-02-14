@@ -19,8 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import sun.net.www.content.audio.x_aiff;
-import net.alexgraham.thesis.supercollider.Instrument;
-import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.MovablePanel;

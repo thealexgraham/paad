@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.supercollider;
+package net.alexgraham.thesis.supercollider.synths;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -10,6 +10,7 @@ import javax.swing.BoundedRangeModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 
 public class Synth {

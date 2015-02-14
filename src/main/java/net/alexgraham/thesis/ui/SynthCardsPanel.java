@@ -20,13 +20,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.InstDef;
-import net.alexgraham.thesis.supercollider.Instrument;
-import net.alexgraham.thesis.supercollider.RoutinePlayer;
-import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.Synth.SynthListener;
-import net.alexgraham.thesis.supercollider.SynthDef;
-import net.alexgraham.thesis.supercollider.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.InstDef;
+import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
 import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
 
 public class SynthCardsPanel extends JPanel implements SynthSelectListener, SynthListener, SynthModelListener {

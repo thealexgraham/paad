@@ -18,8 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import net.alexgraham.thesis.supercollider.Parameter;
-import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.synths.Parameter;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 

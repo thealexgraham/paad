@@ -26,10 +26,10 @@ import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.InstDef;
-import net.alexgraham.thesis.supercollider.RoutinePlayer;
-import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.InstDef;
+import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.SynthDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;

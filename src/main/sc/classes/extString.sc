@@ -4,12 +4,22 @@
 		(this++":"++other).postln;
 	}
 
-	tildaPut { |id, item|
-		^this.toLower.asSymbol.envirPut(id, item);
+	tildaPut { |item|
+		^this.toLower.asSymbol.envirPut(item);
 	}
-	tildaGet{ |id, item|
-		^this.toLower.asSymbol.envirGet.at(id, item);
+	tildaGet{ |item|
+		^this.toLower.asSymbol.envirGet(item);
 	}
 
 
+}
+
++ Symbol {
+	tildaPut { |item|
+		^this.toString.toLower.asSymbol.envirPut(item);
+	}
+
+	tildaGet { |item|
+		^this.toString.toLower.asSymbol.evirGet;
+	}
 }

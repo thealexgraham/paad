@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.supercollider;
+package net.alexgraham.thesis.supercollider.synths;
 
 public class Parameter {
 	public String name;

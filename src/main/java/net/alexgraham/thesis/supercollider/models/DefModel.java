@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.supercollider;
+package net.alexgraham.thesis.supercollider.models;
 
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -11,6 +11,8 @@ import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.InstDef;
+import net.alexgraham.thesis.supercollider.synths.SynthDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;

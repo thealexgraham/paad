@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.alexgraham.thesis.supercollider.Synth;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 
 public class SynthInfoList extends JPanel {
 	

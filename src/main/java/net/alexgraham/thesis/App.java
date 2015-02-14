@@ -5,11 +5,11 @@ import java.net.SocketException;
 
 import javax.swing.JFrame;
 
-import net.alexgraham.thesis.supercollider.DefModel;
 import net.alexgraham.thesis.supercollider.OSC;
-import net.alexgraham.thesis.supercollider.PlayerModel;
 import net.alexgraham.thesis.supercollider.SCLang;
-import net.alexgraham.thesis.supercollider.SynthModel;
+import net.alexgraham.thesis.supercollider.models.DefModel;
+import net.alexgraham.thesis.supercollider.models.PlayerModel;
+import net.alexgraham.thesis.supercollider.models.SynthModel;
 
 
 public class App 

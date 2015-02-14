@@ -23,8 +23,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.xml.stream.events.StartDocument;
 
-import net.alexgraham.thesis.supercollider.InstDef;
-import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.InstDef;
+import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import net.alexgraham.thesis.ui.RunningSynthsPanel;
 import net.alexgraham.thesis.ui.SynthCardsPanel;
 import net.alexgraham.thesis.ui.SynthInfoList;
@@ -66,7 +66,7 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		
 		JSplitPane wholeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideSplitPane, cardsPanel);
 		
-		add(wholeSplitPane);
+		add(sideSplitPane);
 		//add(sideSplitPane);
 		
 		lineConnect.setFocusable(true);

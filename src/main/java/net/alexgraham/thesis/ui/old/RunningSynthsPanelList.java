@@ -30,8 +30,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.Synth;
-import net.alexgraham.thesis.supercollider.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import net.alexgraham.thesis.ui.SynthInfoPanel.SynthInfoPanelDelegate;
 import net.alexgraham.thesis.ui.SynthPanel.SynthPanelDelegate;
 import net.alexgraham.thesis.ui.components.ResizeCardLayout;

@@ -1,9 +1,11 @@
-package net.alexgraham.thesis.supercollider;
+package net.alexgraham.thesis.supercollider.synths;
 
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import net.alexgraham.thesis.supercollider.SCLang;
 
 public class SynthDef {
 	
