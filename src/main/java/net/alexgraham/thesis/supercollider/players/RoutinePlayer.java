@@ -5,7 +5,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.ui.connectors.Connection;
+import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class RoutinePlayer implements Connectable {
 	
@@ -135,6 +138,49 @@ public class RoutinePlayer implements Connectable {
 		return id.toString();
 	}
 
+	
+	// Implementations //
+	/////////////////////
+	
+	// Connectable
+	// ------------------
+
+	@Override
+	public boolean connect(Connection connection) {
+		Connectable target = connection.getTargetConnector(this).getConnectable();
+		if (target instanceof Instrument) {
+			if (connection.isConnectionType(this, ConnectorType.INST_PLAY_OUT, ConnectorType.INST_PLAY_IN)) {
+				connectInstrument((Instrument) target);	
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean disconnect(Connection connection) {
+		Connectable target = connection.getTargetConnector(this).getConnectable();
+		if (target instanceof Instrument) {
+			if (connection.isConnectionType(this, ConnectorType.INST_PLAY_OUT, ConnectorType.INST_PLAY_IN)) {
+				disconnectInstrument((Instrument) target);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	// Older, uglier methods
+	@Override
+	public boolean connect(Connector thisConnector, Connector targetConnector) {
+		return false;
+	}
+	
+	@Override
+	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
+		return false;
+	}
+	
 	@Override
 	public boolean connectWith(Connectable otherConnectable) {
 		if (otherConnectable instanceof Instrument) {
@@ -147,11 +193,12 @@ public class RoutinePlayer implements Connectable {
 	@Override
 	public boolean removeConnectionWith(Connectable otherConnectable) {
 		System.out.println("Got a remove connection call");
-		// TODO Auto-generated method stub
-		if (otherConnectable instanceof Instrument) {		
+		
+		if (otherConnectable instanceof Instrument) {
 			System.out.println("Disconnecting Instrument");
 			disconnectInstrument((Instrument) otherConnectable);
 		}
 		return true;
 	}
+	
 }

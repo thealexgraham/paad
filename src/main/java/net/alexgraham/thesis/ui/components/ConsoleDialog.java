@@ -24,7 +24,7 @@ public class ConsoleDialog extends JDialog implements SCConsoleListener {
 	private JScrollPane consolePane;
 	
 	public ConsoleDialog(JFrame frame, String title) {
-		// TODO Auto-generated constructor stub
+		
 		super(frame, title);
 		
         //Add contents to it. It must have a close button,
@@ -68,7 +68,7 @@ public class ConsoleDialog extends JDialog implements SCConsoleListener {
 
 	@Override
 	public void consoleUpdate(String consoleLine) {
-		// TODO Auto-generated method stub
+		
 		//consoleArea.append(consoleLine+"\n");
 		consoleArea.append("  " + consoleLine+"\n"); // Write to the console window
 		consoleArea.setCaretPosition(consoleArea.getDocument().getLength());

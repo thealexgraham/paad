@@ -93,7 +93,7 @@ public class MainApplet extends JApplet implements ActionListener, FocusListener
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
-		// TODO Auto-generated method stub
+		
 		
 		if(ev.getSource() == timeButton) {
 			timeArea.setText("Time is " + System.currentTimeMillis());
@@ -113,7 +113,7 @@ public class MainApplet extends JApplet implements ActionListener, FocusListener
 
 	@Override
 	public void focusGained(FocusEvent fv) {
-		// TODO Auto-generated method stub
+		
 		if (fv.getSource() == stringField) {
 			stringField.setText("");
 		}
@@ -122,7 +122,7 @@ public class MainApplet extends JApplet implements ActionListener, FocusListener
 
 	@Override
 	public void focusLost(FocusEvent e) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

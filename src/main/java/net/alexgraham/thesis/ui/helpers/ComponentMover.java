@@ -295,7 +295,7 @@ public class ComponentMover extends MouseAdapter
 	}
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
+		
 		System.out.println("Moving mouse");
 		Component c = e.getComponent();
 		c.getParent().getParent().dispatchEvent(e);;

@@ -20,6 +20,7 @@ JavaHelper {
 
 			this.sendPort = port;
 			("Set sendPort to "++port).postln;
+			ready = true;
 			net.sendMsg("/start/ready", 1); // run.scd on run function
 		}).add;
 
@@ -38,9 +39,28 @@ JavaHelper {
 
 		this.createSynthListeners;
 		this.createInstListeners;
+		this.createEffectListeners;
 		this.createRoutListeners;
 
 	}
+
+	// Gets whatever is at the ID (defining the type)
+	idPut { |type, id, value|
+		^type.tildaGet.put(id, value);
+	}
+
+	idGet { |type, id|
+		^type.tildaGet.at(id);
+	}
+
+	idRemove { |type, id|
+		^type.tildaGet.removeAt(id);
+	}
+
+	setupTypeStorage { |type|
+		^type.tildaPut(Dictionary.new);
+	}
+
 
 	/* Add a new definition, if java is ready, send them right away,
 	* Otherwise, add it to the pending list
@@ -85,11 +105,13 @@ JavaHelper {
 	 * Adds the default parameters shown above
 	 * only if they do not previously exist
 	 */
-	addDefaultParams { |params|
+	addDefaultParams {
+		arg params, defaults = [[\gain, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
+
 		var newParams = List(params.size);
 		newParams.addAll(params);
 
-		synthDefaults.do({ |item, i|
+		defaults.do({ |item, i|
 			var contains = false;
 			var param = item[0];
 			params.do({ |item, i|
@@ -117,7 +139,7 @@ JavaHelper {
 			var param = item[0].asString;
 			var min = item[1], max = item[2], default = item[3];
 			net.sendMsg("/instdef/param", instName, param, min, max, default);
-			("Adding Param" + param + "For instrument" + instName).postln;
+			// ("Adding Param" + param + "For instrument" + instName).postln;
 		});
 
 		// Create a dictionary to store the running instruments
@@ -143,7 +165,7 @@ JavaHelper {
 			instName.tildaGet.put(id, Dictionary.new);
 			instDict = instName.tildaGet.at(id);
 
-			instDict.put("outBus", 0); // Default out bus is 0
+			instDict.put(\out, 0); // Default out bus is 0
 
 			// The rest of the parameters are pairs, reshape so we can use them
 			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
@@ -152,6 +174,7 @@ JavaHelper {
 				// Put the bus in and initialize it
 				instDict.put(param, Bus.control.set(value));
 			});
+
 			("Inst added and busses created at" + id).postln;
 		}).add;
 
@@ -178,19 +201,32 @@ JavaHelper {
 			var instName = msg[1], param = msg[2], id = msg[3], val = msg[4];
 			// Set the bus at param
 			instName.tildaGet.at(id).at(param).set(val);
-			("Changing" + instName + id + param + val).postln;
+			//("Changing" + instName + id + param + val).postln;
 		}).add;
 
 		OSCresponder(nil, "/inst/connect/effect", { arg time, resp, msg;
+/*			var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];
+			var instDict, effectDict;*/
+			("received " + msg).postln;
+
+/*			instDict = instName.tildaGet.at(instId);
+			effectDict = this.idGet(effectName, effectId);
+
+			instDict.put(\outBus, effectDict.at(\inBus));*/
+			("Connected instrument to effect").postln;
+		}).add;
+
+		OSCresponder(nil, "/inst/disconnect/effect", { arg time, resp, msg;
 			var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];
 			var instDict, effectDict;
 
 			instDict = instName.tildaGet.at(instId);
-			effectDict = effectName.tildaGet.at(effectId);
+			effectDict = effectName.tildaGet.at(effectId); // Don't really need this
 
-			instDict.put(\outBus, effectDict.at(\inBus));
-			("Connected instrument to effect").postln;
-		});
+			// Change instrument's output back to default (0)
+			instDict.put(\outBus, 0);
+			("Disconnected instrument from effect").postln;
+		}).add;
 	}
 
 	/* newEffect
@@ -199,10 +235,10 @@ JavaHelper {
 	newEffect { |effectName, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 		// Need default params for effect?
-		//params = this.addDefaultParams(params);
+		params = this.addDefaultParams(params, [[\gain, 0.0, 1.0, 0.0]]);
 
 		// Get effect ready in Java
-		net.sendMsg("/addeffect", effectName);
+		net.sendMsg("/effectdef/add", effectName);
 
 		// Should we wait for callback?
 		params.do({ |item, i|
@@ -212,7 +248,8 @@ JavaHelper {
 		});
 
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
-		effectName.tildaPut(Dictionary.new);
+		//effectName.tildaPut(Dictionary.new);
+		this.setupTypeStorage(effectName);
 	}
 
 	/* createEffectListeners
@@ -224,12 +261,12 @@ JavaHelper {
 		~effectsGroup = Group.tail(Server.default);
 
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		OSCresponder(nil, "/effect/start", { arg time, resp, msg;
+		OSCresponder(nil, "/effect/add", { arg time, resp, msg;
 			var effectName = msg[1];
 			var id = msg[2];
 			var effectDict;
 			var inBus;
-
+			"Adding Effect".postln;
 			msg.removeAt(0); // Address
 			msg.removeAt(0); // SynthName
 			msg.removeAt(0); // ID
@@ -243,8 +280,11 @@ JavaHelper {
 			msg.add("outBus", 0); // Default go straight out
 
 			// Create a new dictionary for this ID
-			effectName.tildaGet.put(id, Dictionary.new);
-			effectDict = effectName.tildaGet.at(id);
+			//effectName.tildaGet.put(id, Dictionary.new);
+			this.idPut(effectName, id, Dictionary.new);
+			effectDict = this.idGet(effectName, id);
+
+			// effectDict = effectName.tildaGet.at(id);
 
 			// Store the synth and the inBus
 			effectDict.put(\synth, Synth.tail(~effectsGroup, effectName, msg));
@@ -257,14 +297,14 @@ JavaHelper {
 			// Free synth defs at this id
 			var effectName = msg[1];
 			var id = msg[2];
-			var effectDict = effectName.tildaGet.at(id);
+			var effectDict = this.idGet(effectName, id);
 
 			// Free the bus
 			effectDict.at(\inBus).free;
 			effectDict.at(\synth).free;
 
 			// Remove the dictionary
-			effectName.tildaGet.removeAt(id);
+			this.idRemove(effectName, id);
 
 			("Effect disconnected, freeing effect at" + id).postln;
 		}).add;
@@ -274,8 +314,8 @@ JavaHelper {
 			// Set float1
 			var effectName = msg[1], param = msg[2], id = msg[3], val = msg[4];
 
-			// Set the value direcctly
-			effectName.tildaGet.at(id).at(\synth).set(param, val);
+			// Set the value directly
+			this.idGet(effectName, id).at(\synth).set(param, val);
 			("Changing" + effectName + id + param + val).postln;
 		}).add;
 
@@ -284,9 +324,9 @@ JavaHelper {
 			var toEffectDict, effectDict, toEffectInBus, effectSynth;
 
 			// Get the destination effect's in bus
-			toEffectInBus = toEffectId.tildaGet.at(toEffectId).at(\inBus);
+			toEffectInBus = this.idGet(toEffectName, toEffectId).at(\inBus);
 			// Get this effect's dictionary
-			effectDict = effectName.tildaGet.at(effectId);
+			effectDict = this.idGet(effectName, effectId);
 
 			// Get the effect's synth and set its outBus
 			effectSynth = effectDict.at(\synth);
@@ -299,7 +339,7 @@ JavaHelper {
 			var effectDict, effectSynth;
 
 			// Get dictionary and synth
-			effectDict = effectName.tildaGet.at(effectId);
+			effectDict = this.idGet(effectName, effectId);
 			effectSynth = effectDict.at(\synth);
 
 			// Set outBus back to 0 since it isn't connected to anything
@@ -317,7 +357,7 @@ JavaHelper {
 	newSynth { |synthName, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 		params = this.addDefaultParams(params);
-		net.sendMsg("/addsynth", synthName);
+		net.sendMsg("/synthdef/add", synthName);
 
 		params.do({ |item, i|
 			var param = item[0].asString;
@@ -375,6 +415,8 @@ JavaHelper {
 	/* createRoutListeners
 	*
 	* Create listeners for routine players
+	*
+	* Please fix this dictName nonsense
 	*/
 	createRoutListeners {
 		var dictName = "routplayer";
@@ -428,9 +470,11 @@ JavaHelper {
 			var id = msg[1], instName = msg[2], instId = msg[3];
 			var player, instDict;
 			"trying to connect instrument".postln;
+
 			player = dictName.asString.toLower.asSymbol.envirGet.at(id);
 			instDict = instName.asString.toLower.asSymbol.envirGet.at(instId);
 			player.connectInstrument(instName, instDict);
+
 			("Connected instrument" + instName + "to player at ID"+id).postln;
 		}).add;
 

@@ -23,14 +23,15 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.xml.stream.events.StartDocument;
 
+import net.alexgraham.thesis.supercollider.synths.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.SynthDef;
-import net.alexgraham.thesis.ui.RunningSynthsPanel;
 import net.alexgraham.thesis.ui.SynthCardsPanel;
-import net.alexgraham.thesis.ui.SynthInfoList;
 import net.alexgraham.thesis.ui.SynthLauncherPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel.SynthLauncherDelegate;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
+import net.alexgraham.thesis.ui.macstyle.RunningSynthsPanel;
+import net.alexgraham.thesis.ui.macstyle.SynthInfoList;
 import net.alexgraham.thesis.ui.old.SynthWindowDelegate;
 
 public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
@@ -66,8 +67,8 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		
 		JSplitPane wholeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideSplitPane, cardsPanel);
 		
-		add(sideSplitPane);
 		//add(sideSplitPane);
+		add(wholeSplitPane);
 		
 		lineConnect.setFocusable(true);
 		lineConnect.requestFocusInWindow();
@@ -84,8 +85,14 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 
 	@Override
 	public void addInstrument(InstDef instdef) {
-		// TODO Auto-generated method stub
+		
 		runningSynths.addInstrument(instdef);
+		
+	}
+
+	@Override
+	public void addEffect(EffectDef effectDef) {
+		
 		
 	}
 }

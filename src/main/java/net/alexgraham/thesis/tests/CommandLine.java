@@ -34,7 +34,7 @@ public class CommandLine {
 
 			@Override
 			public String apply(String t) {
-				// TODO Auto-generated method stub
+				
 				return (t + " it worked");
 			}
 		};

@@ -23,11 +23,12 @@ import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
-import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
+import net.alexgraham.thesis.ui.connectors.ModulePanel;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
-public class InstrumentModule extends MovablePanel {
+public class InstrumentModule extends ModulePanel {
 	
 	private Instrument instrument;
 	
@@ -77,7 +78,7 @@ public class InstrumentModule extends MovablePanel {
 	
 	@Override
 	public void removeSelf() {
-		// TODO Auto-generated method stub
+		
 		super.removeSelf();
 		instrument.close();
 	}
@@ -90,8 +91,8 @@ public class InstrumentModule extends MovablePanel {
 		GridBagConstraints c = new GridBagConstraints();
 
 		c.fill = GridBagConstraints.BOTH;
-		
-		ConnectablePanel topConnectable = new ConnectablePanel(Location.TOP, instrument);
+
+		ConnectablePanel topConnectable = new ConnectablePanel(Location.TOP, instrument, ConnectorType.INST_PLAY_IN);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weighty = 0;
 		c.gridy = 0;
@@ -129,6 +130,16 @@ public class InstrumentModule extends MovablePanel {
 		c.gridx = 2;
 		c.weightx = 0.5;
 		pane.add(panDial, c);
+		
+		ConnectablePanel bottomConnectable = new ConnectablePanel(Location.BOTTOM, instrument, ConnectorType.AUDIO_OUTPUT);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridwidth = 3;
+		c.weighty = 1;
+		c.gridy = 3;
+		c.gridx = 1;
+		pane.add(bottomConnectable, c);
+		addConnectablePanel(bottomConnectable);
+		
 
 		
     }

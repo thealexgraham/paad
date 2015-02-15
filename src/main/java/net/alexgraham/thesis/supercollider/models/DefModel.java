@@ -11,6 +11,7 @@ import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.SynthDef;
 
@@ -48,7 +49,7 @@ public class DefModel {
 	
 	public void createListeners() throws SocketException {
 		
-    	App.sc.createListener("/addsynth", new OSCListener() {
+    	App.sc.createListener("/synthdef/add", new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
     			List<Object> arguments = message.getArguments();
     			final String synthName = (String) arguments.get(0);
@@ -72,6 +73,19 @@ public class DefModel {
     		}
     	});
     	
+    	App.sc.createListener("/effectdef/add", new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+    			List<Object> arguments = message.getArguments();
+    			final String synthName = (String) arguments.get(0);
+    			//SynthDef synth = new SynthDef(synthName, App.sc);
+    			EffectDef effectDef = new EffectDef(synthName, App.sc);
+    			synthdefs.put(synthName, effectDef);
+    			synthListModel.addElement(effectDef);
+    			
+    			// Also Add To The List
+    		}
+    	});
+    	
     	OSCListener paramlistener = new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
 
@@ -84,7 +98,6 @@ public class DefModel {
     			final float value = AGHelper.convertToFloat(arguments.get(4));
        			
     			SynthDef synth = synthdefs.get(synthName);
-    			
     			synth.addParameter(paramName, min, max, value);
     			
     		}

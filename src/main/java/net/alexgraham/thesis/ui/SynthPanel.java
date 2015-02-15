@@ -127,7 +127,7 @@ public class SynthPanel extends JPanel  {
 		        menu.show(e.getComponent(), e.getX(), e.getY());
 		    }
 
-		});
+		});	
 		
 		//middlePanel.add(paramDial);
 		middlePanel.add(paramDial);

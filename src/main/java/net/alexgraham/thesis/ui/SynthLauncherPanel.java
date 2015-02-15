@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionListener;
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.SynthDef;
@@ -39,6 +40,7 @@ public class SynthLauncherPanel extends JPanel {
 	public interface SynthLauncherDelegate {
 		void launchSynth(SynthDef synthDef);
 		void addInstrument(InstDef instdef);
+		void addEffect(EffectDef effectDef);
 	}
 	
 	JPanel topPanel;
@@ -124,8 +126,8 @@ public class SynthLauncherPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				App.sc.sendMessage("/start/ready", 1);
+				synthList.updateUI();
+				//App.sc.sendMessage("/start/ready", 1);
 			}
 		});
 		
@@ -145,12 +147,13 @@ public class SynthLauncherPanel extends JPanel {
 	}
 	
 	public void launchSynth(SynthDef synthDef) {
-
+		// Launch the Synth based on the type of Synth
 		if (synthDef.getClass() == SynthDef.class) {
-			//delegate.launchSynth(synthDef);			
 			App.synthModel.launchSynth(synthDef);
 		} else if (synthDef.getClass() == InstDef.class) {
 			App.synthModel.addInstrument( (InstDef)synthDef );
+		} else if(synthDef.getClass() == EffectDef.class) {
+			App.synthModel.addEffect((EffectDef)synthDef);
 		}
 	}
 	

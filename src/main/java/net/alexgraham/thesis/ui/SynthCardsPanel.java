@@ -22,12 +22,13 @@ import javax.swing.JSplitPane;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
-import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
+import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 
 public class SynthCardsPanel extends JPanel implements SynthSelectListener, SynthListener, SynthModelListener {
 		
@@ -61,8 +62,11 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 		selectedSynthPanel.add(defaultCard, "No Synth Selected");
 	}
 	
+	// Interface implementations //
+	///////////////////////////////
+	
 	// SynthSelectListener
-	// -----------------------
+	// ----------------------
 	public void selectSynth(Synth synth) {
 		// Get the card layout and show the correct new card
 		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
@@ -76,7 +80,7 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 
 	
 	// SynthListener
-	// ------------------------
+	// ------------------
 	@Override
 	public void synthClosed(Synth synth) {
 
@@ -100,24 +104,32 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 
 	}
 
+	
+	// SynthModelListener
+	// ------------------------
+	
+	// Currently all of these use the same panel, so just do it in the helper function
 	@Override
 	public void synthAdded(Synth synth) {
-		System.out.println("Adding Synth");
+		addPanelForSynth(synth);
+	}
+
+	@Override
+	public void instAdded(Instrument inst) {
+		addPanelForSynth(inst);
+	}
+
+	@Override
+	public void effectAdded(Effect effect) {
+		addPanelForSynth(effect);
+	}
+	
+	private void addPanelForSynth(Synth synth) {
 		synth.addSynthListener(this);
 		
 		// Create the SynthPanel and add it to the list of cards
 		SynthPanel panel = new SynthPanel(synth);
 		selectedSynthPanel.add(panel, synth.getID());
-	}
-
-	@Override
-	public void instAdded(Instrument inst) {
-
-		inst.addSynthListener(this);
-		
-		// Create the SynthPanel and add it to the list of cards
-		SynthPanel panel = new SynthPanel(inst);
-		selectedSynthPanel.add(panel, inst.getID());
 	}
 
 

@@ -25,11 +25,12 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.PlayerModel.PlayerModelListener;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.ui.SynthInfoList.SynthSelectListener;
-import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
+import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
 
@@ -90,19 +91,19 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
+				
 				System.out.println("Key typed");
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
+				
 				System.out.println("key pressed");
 
 				if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
@@ -125,8 +126,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 				
 				// Deselect all children
 				for (Component component : getComponents()) {
-					if (component instanceof MovablePanel) {
-						((MovablePanel) component).deselect();
+					if (component instanceof ModulePanel) {
+						((ModulePanel) component).deselect();
 					}
 				}
 				
@@ -159,7 +160,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 				super.mouseReleased(e);
 				if (dragging) {
 					dragging = false;
@@ -197,15 +198,12 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		});
 	}
 	
-	public void connectPoints(Connector originConnector, Connector destinationConnector) {
-		// Get the actual modules we are connecting
-		Connectable originConnectable = originConnector.getConnectable();
-		Connectable destinationConnectable = destinationConnector.getConnectable();
-		
+	public void connectPoints(Connector origin, Connector destination) {
+		Connection newConnection = new Connection(origin, destination);
+
 		// We have a destination and an origin
-		if (originConnectable.connectWith(destinationConnectable) && 
-				destinationConnectable.connectWith(originConnectable)) {
-			Connection newConnection = new Connection(originConnector, destinationConnector);
+		if (newConnection.connectModules()) {
+			// If either of them was able to connect, that means the connection was good		
 			connections.add(newConnection);
 		} else {
 			System.out.println("Problem connecting");
@@ -214,11 +212,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	public void removeConnection(Connection theConnection) {
 		
-		Connectable originConnectable = theConnection.getOrigin().getConnectable();
-		Connectable destinationConnectable = theConnection.getDestination().getConnectable();
-		
-		if (originConnectable.removeConnectionWith(destinationConnectable) &&
-				destinationConnectable.removeConnectionWith(originConnectable)) {
+		if (theConnection.disconnectModules()) {
 			System.out.println("Disconnection successful");
 		} else {
 			System.out.println("Disconnection probleM");
@@ -227,7 +221,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		clicked = null;
 	}
 
-	public void removeModule(MovablePanel panel) {
+	public void removeModule(ModulePanel panel) {
 		
 		// Check if there are any current connections in this panel's connectables
 		for (ConnectablePanel connectablePanel : panel.getConnectablePanels()) {
@@ -298,7 +292,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		}
 	}
 	
-	public void moduleSelected(MovablePanel module) {
+	public void moduleSelected(ModulePanel module) {
 		if (module instanceof InstrumentModule) {
 			fireSynthSelectedEvent(((InstrumentModule) module).getInstrument());
 		}
@@ -371,13 +365,12 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	@Override
 	public void synthAdded(Synth synth) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void instAdded(Instrument inst) {
-//		// TODO Auto-generated method stub
+//		
 		InstrumentModule instrumentModule = new InstrumentModule(100, 100, inst);
 		instrumentModule.setPreferredSize(new Dimension(75, 100));
 		instrumentModule.setSize(new Dimension(100, 75));
@@ -388,6 +381,23 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		instrumentModule.setOwner(this);
 		System.out.println("Instrument added to panel");
 
+		updateUI();
+		repaint();
+	}
+	
+	@Override
+	public void effectAdded(Effect effect) {
+		
+		EffectModule effectModule = new EffectModule(100, 100, effect);
+		
+		effectModule.setPreferredSize(new Dimension(75, 100));
+		effectModule.setSize(new Dimension(100, 75));
+		effectModule.setLocation(200, 200);
+		add(effectModule);
+		boxes.addAll(effectModule.getConnectablePanels());
+		
+		effectModule.setOwner(this);
+		
 		updateUI();
 		repaint();
 	}
@@ -407,8 +417,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 
 	@Override
 	public void playerRemoved(RoutinePlayer player) {
-		// TODO Auto-generated method stub
+		
 		
 	}
+
 }
 

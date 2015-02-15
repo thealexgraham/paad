@@ -110,7 +110,7 @@ public class CustomComboBoxDemo extends JPanel {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
+					
 					System.out.println("Pressed");
 				}
 			});

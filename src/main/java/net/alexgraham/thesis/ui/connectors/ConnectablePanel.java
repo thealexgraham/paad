@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
 public class ConnectablePanel extends JComponent {
@@ -21,6 +22,11 @@ public class ConnectablePanel extends JComponent {
 	
 	public ConnectablePanel(Location location, Connectable toConnect) {
 		connector = new Connector(this, toConnect);
+		connector.setDrawLocation(location);
+	}
+	
+	public ConnectablePanel(Location location, Connectable toConnect, ConnectorType type) {
+		connector = new Connector(this, toConnect, type);
 		connector.setDrawLocation(location);
 	}
 	
@@ -70,13 +76,13 @@ public class ConnectablePanel extends JComponent {
 //    
 //    @Override
 //    public void mouseReleased(MouseEvent e) {
-//    	// TODO Auto-generated method stub
+//    	
 //    	super.mouseReleased(e);
 //		redispatch(e);
 //    }
 //    @Override
 //    public void mouseMoved(MouseEvent e) {
-//    	// TODO Auto-generated method stub
+//    	
 //    	super.mouseMoved(e);
 //    	redispatch(e);
 //    }

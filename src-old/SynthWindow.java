@@ -89,7 +89,7 @@ public class SynthWindow extends JFrame {
 	}
 	
 	public SynthWindow(SynthDef synth, SCLang sc) {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public void addParameter(final String name, float min, float max, float value) {
@@ -121,7 +121,7 @@ public class SynthWindow extends JFrame {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		
 		super.dispose();
 		
 		// Set up Synth Starter

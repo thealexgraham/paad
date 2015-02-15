@@ -48,16 +48,27 @@ RoutinePlayer {
 		rout.stop;
 
 		// Create the template
-		[\instrument, instName, \out, 0].pairsDo({ |a, b|
+		[\instrument, instName].pairsDo({ |a, b|
 			keys.add(a);
 			args.add(b);
 		});
 
+		keys.add(\out);
+		args.add(instDict.at(\out));
+		"ISNTASD".postln;
+		instDict.at(\out).postln;
+
+
 		// Add the busses to the template
 		instDict.keysValuesDo({ |key, value|
-			keys.add(key);
-			args.add(value.asMap);
+			if(key != \out, {
+				keys.add(key);
+				args.add(value.asMap);
+			});
 		});
+
+				keys.postln;
+		args.postln;
 
 		// Bind the template
 		template = Pbind(keys.asArray, args.asArray);

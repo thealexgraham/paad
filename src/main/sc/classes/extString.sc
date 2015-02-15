@@ -16,10 +16,10 @@
 
 + Symbol {
 	tildaPut { |item|
-		^this.toString.toLower.asSymbol.envirPut(item);
+		^this.asString.toLower.asSymbol.envirPut(item);
 	}
 
 	tildaGet { |item|
-		^this.toString.toLower.asSymbol.evirGet;
+		^this.asString.toLower.asSymbol.envirGet;
 	}
 }

@@ -10,8 +10,8 @@ import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
-import net.alexgraham.thesis.ui.RoutinePlayerPanel;
 import net.alexgraham.thesis.ui.SynthPanel;
+import net.alexgraham.thesis.ui.old.RoutinePlayerPanel;
 
 public class PlayerModel {
 	

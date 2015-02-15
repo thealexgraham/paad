@@ -236,7 +236,7 @@ public class Dial extends JComponent {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 				switch (movementType) {
 					case EXACT:
 						break;
@@ -260,7 +260,6 @@ public class Dial extends JComponent {
 						try {
 							difference(e);
 						} catch (AWTException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 						break;

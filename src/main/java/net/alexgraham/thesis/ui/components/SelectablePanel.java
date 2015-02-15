@@ -28,7 +28,7 @@ import net.alexgraham.thesis.ui.helpers.ComponentMover;
 public class SelectablePanel extends JPanel {
 	private boolean selected = false;
 	public SelectablePanel() {
-		// TODO Auto-generated constructor stub
+		
 		super();
 		setBorder(BorderFactory.createDashedBorder(Color.black));
 		
@@ -38,7 +38,7 @@ public class SelectablePanel extends JPanel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 				super.mousePressed(e);
 				//if (e.getButton() == MouseEvent.MOUSE_CLICKED) {
 					System.out.println("Changing border");
@@ -62,14 +62,14 @@ public class SelectablePanel extends JPanel {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 				//super.mouseClicked(e);
 
 				//super.mouseClicked(e);
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 				super.mouseReleased(e);
 				System.out.println("Border change mouse release " + getLocation().toString());
 				

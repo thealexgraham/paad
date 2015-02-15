@@ -108,7 +108,7 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 		synthList.addListSelectionListener(new ListSelectionListener() {
 			
 			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
+				
 				JList theList = (JList)e.getSource();
 				if (theList.getSelectedIndex() == -1) {
 					// No selection, don't have launch button
@@ -241,7 +241,7 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		// TODO Auto-generated method stub
+		
 		
 		if(ev.getSource() == timeButton) {
 			timeArea.setText("Time is " + System.currentTimeMillis());
@@ -263,12 +263,12 @@ public class SynthSelector extends JApplet implements ActionListener, FocusListe
 	}
 
 	public void focusGained(FocusEvent arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	public void focusLost(FocusEvent arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

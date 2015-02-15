@@ -32,9 +32,10 @@ import javax.swing.event.ListSelectionListener;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.SynthDef;
-import net.alexgraham.thesis.ui.SynthInfoPanel.SynthInfoPanelDelegate;
 import net.alexgraham.thesis.ui.SynthPanel.SynthPanelDelegate;
 import net.alexgraham.thesis.ui.components.ResizeCardLayout;
+import net.alexgraham.thesis.ui.macstyle.SynthInfoPanel;
+import net.alexgraham.thesis.ui.macstyle.SynthInfoPanel.SynthInfoPanelDelegate;
 
 public class RunningSynthsPanelList extends JPanel implements SynthPanelDelegate, SynthInfoPanelDelegate {
 		

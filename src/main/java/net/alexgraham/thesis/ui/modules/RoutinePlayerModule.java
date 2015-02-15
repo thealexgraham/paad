@@ -23,12 +23,13 @@ import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayState;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayerListener;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
-import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
+import net.alexgraham.thesis.ui.connectors.ModulePanel;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
-public class RoutinePlayerModule extends MovablePanel implements PlayerListener {
+public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	JPanel topPanel;
 	JPanel bottomPanel;
 	JPanel middlePanel;
@@ -112,7 +113,7 @@ public class RoutinePlayerModule extends MovablePanel implements PlayerListener 
 		bottomPanel.setBackground(Color.GRAY);
 		
 		// Create connectors //
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player, "Instrument");
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player, ConnectorType.INST_PLAY_OUT);
 		bottomPanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
 
@@ -171,14 +172,14 @@ public class RoutinePlayerModule extends MovablePanel implements PlayerListener 
 	}
 	@Override
 	public void removeSelf() {
-		// TODO Auto-generated method stub
+		
 		super.removeSelf();
 		player.close();
 	}
 
 	@Override
 	public void instrumentConnected(Instrument inst) {
-		// TODO Auto-generated method stub
+		
 		this.instLabel.setText("Inst: " + inst.getSynthName());
 		this.revalidate();
 	}
@@ -212,7 +213,7 @@ public class RoutinePlayerModule extends MovablePanel implements PlayerListener 
 
 	@Override
 	public void instrumentDisconnected(Instrument inst) {
-		// TODO Auto-generated method stub
+		
 		this.instLabel.setText("Inst: None");
 		this.revalidate();
 	}

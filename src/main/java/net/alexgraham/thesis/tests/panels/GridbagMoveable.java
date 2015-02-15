@@ -20,10 +20,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-import net.alexgraham.thesis.ui.components.MovablePanel;
 import net.alexgraham.thesis.ui.components.OldMoveablePanel;
+import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
-public class GridbagMoveable extends MovablePanel {
+public class GridbagMoveable extends ModulePanel {
 	
     final boolean shouldFill = true;
     final boolean shouldWeightX = true;

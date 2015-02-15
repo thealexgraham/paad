@@ -23,7 +23,7 @@ public class Synth {
 	private SynthDef synthDef;
 	private SCLang sc;
 	protected String name;
-	private UUID id;
+	protected UUID id;
 	
 	private CopyOnWriteArrayList<SynthListener> synthListeners = 
 			new CopyOnWriteArrayList<Synth.SynthListener>();
