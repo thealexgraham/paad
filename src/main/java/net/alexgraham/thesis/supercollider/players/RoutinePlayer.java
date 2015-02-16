@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.players;
 
+import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -10,7 +11,7 @@ import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class RoutinePlayer implements Connectable {
+public class RoutinePlayer implements Connectable, Serializable {
 	
 	public interface PlayerListener {
 		public void instrumentConnected(Instrument inst);
@@ -35,9 +36,20 @@ public class RoutinePlayer implements Connectable {
 	
 	public RoutinePlayer() {
 		this.id = UUID.randomUUID();
-		System.out.println("Adding routine player");
-
 		App.sc.sendMessage("/routplayer/add", id.toString());
+	}
+	
+	public void start() {
+		App.sc.sendMessage("/routplayer/add", getIDString());
+	}
+	
+	/*
+	 * Reset for 
+	 */
+	public void reset() {
+		playing = false;
+		state = PlayState.DISABLED;
+		firePlayStateChange();
 	}
 	
 	public void addListener(PlayerListener l) {
@@ -114,13 +126,13 @@ public class RoutinePlayer implements Connectable {
 		}
 	}
 	
-	public void firePlayStateChange() {
+	private void firePlayStateChange() {
 		for (PlayerListener playerListener : listeners) {
 			playerListener.playStateChanged(state);
 		}
 	}
 	
-	public void playStateChange() {
+	private void playStateChange() {
 		if (playing) {
 			state = PlayState.PLAYING;
 		} else {

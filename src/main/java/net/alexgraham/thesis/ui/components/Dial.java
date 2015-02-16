@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Robot;
@@ -286,16 +287,19 @@ public class Dial extends JComponent {
 		startY = e.getYOnScreen();
 		pixelsMoved = 0;
 		lastValue = getValue();
-				
-		// Transparent 16 x 16 pixel cursor image.
-		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		
+		// FIXME : Null point exception for some reason
 
-		// Create a new blank cursor.
-		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-		    cursorImg, new Point(0, 0), "blank cursor");
+//			// Transparent 16 x 16 pixel cursor image.
+//			BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+//
+//			// Create a new blank cursor.
+//			Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+//			    cursorImg, new Point(0, 0), "blank cursor");
+//
+//			// Set the blank cursor to the JFrame.
+//			getRootPane().setCursor(blankCursor);
 
-		// Set the blank cursor to the JFrame.
-		getRootPane().setCursor(blankCursor);
 		
 		setBorder(BorderFactory.createLineBorder(Color.black));		
 	}

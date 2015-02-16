@@ -15,18 +15,20 @@ import javax.swing.SwingUtilities;
 
 import net.alexgraham.thesis.AGHelper;
 
-public class Connector {
+public class Connector implements java.io.Serializable {
+	
 	ConnectablePanel owner;
 
 	public interface Connectable {
-		boolean connectWith(Connectable otherConnectable);
-		boolean removeConnectionWith(Connectable otherConnectable);
 		
-		boolean connect(Connector thisConnector, Connector targetConnector);
 		boolean connect(Connection connection);
+		boolean disconnect(Connection connection);
 		
 		boolean disconnect(Connector thisConnector, Connector targetConnector);
-		boolean disconnect(Connection connection);
+		boolean connect(Connector thisConnector, Connector targetConnector);
+		
+		public boolean connectWith(Connectable otherConnectable);
+		public boolean removeConnectionWith(Connectable otherConnectable);
 	}
 
 	public enum Location {
@@ -37,10 +39,7 @@ public class Connector {
 		AUDIO_INPUT, AUDIO_OUTPUT, INST_PLAY_IN, INST_PLAY_OUT, DEFAULT
 	}
 	
-	// TODO: Make ConnectorType more robust with categories and such
 	
-	final public ConnectorType[] AUDIO_CONNECTORS = {ConnectorType.AUDIO_INPUT, ConnectorType.AUDIO_OUTPUT};
-
 	private int height = 10;
 	private int width = 10;
 
@@ -77,7 +76,7 @@ public class Connector {
 		return type;
 	}
 	
-	// TODO: Top positions are way off
+	// FIXME: Top positions are way off
 	public Point getCurrentPosition() {
 		Point location = null;
 		Point ownerLocation = owner.getLocation();
@@ -152,8 +151,8 @@ public class Connector {
 		}
 	}
 	
-	// TODO: Triangle is not drawing in correct place
-	// TODO: Put flipping in drawSelf probably (maybe with negative heights or something)
+	// FIXME: Triangle is not drawing in correct place
+	// FIXME: Put flipping in drawSelf probably (maybe with negative heights or something)
 	public void drawTriangle(Graphics2D g2, Point location, int width, int height) {
 		//location.y = (int)(location.y + height * 1.8f);
 		

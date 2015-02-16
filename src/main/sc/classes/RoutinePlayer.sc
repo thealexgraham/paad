@@ -2,6 +2,8 @@ RoutinePlayer {
 	var <>template;
 	var <>pattern;
 	var <>playedAction;
+	var <>instName;
+	var <>instDict;
 	var rout;
 
 	*new {
@@ -40,36 +42,33 @@ RoutinePlayer {
 		rout.stop;
 	}
 
+	isInstConnected {
+		if ((instDict == nil || instName == nil),
+			{ ^true },
+			{ ^false});
+	}
+
+
+
 	connectInstrument { |instName, instDict|
 		var templateList, busses;
-		var keys = List.new, args = List.new;
+		var keys = List.new;
+		var args = List.new;
 
 		"Creating template".postln;
 		rout.stop;
 
-		// Create the template
+		// Create the template (non busses)
 		[\instrument, instName].pairsDo({ |a, b|
 			keys.add(a);
 			args.add(b);
 		});
 
-		keys.add(\out);
-		args.add(instDict.at(\out));
-		"ISNTASD".postln;
-		instDict.at(\out).postln;
-
-
 		// Add the busses to the template
 		instDict.keysValuesDo({ |key, value|
-			if(key != \out, {
-				keys.add(key);
-				args.add(value.asMap);
-			});
+			keys.add(key);
+			args.add(value.asMap);
 		});
-
-				keys.postln;
-		args.postln;
-
 		// Bind the template
 		template = Pbind(keys.asArray, args.asArray);
 	}

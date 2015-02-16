@@ -1,6 +1,7 @@
 package net.alexgraham.thesis;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
@@ -8,7 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.net.SocketException;
+import java.util.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,11 +21,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.illposed.osc.OSCListener;
+import com.illposed.osc.OSCMessage;
+
 import net.alexgraham.thesis.supercollider.SCLang.SCConsoleListener;
 import net.alexgraham.thesis.supercollider.SCLang.SCLangProperties;
+import net.alexgraham.thesis.supercollider.SCLang.SCMessageListener;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
+import net.alexgraham.thesis.ui.components.FlashButton;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements SCMessageListener {
 	JPanel mainPanel;
 	JPanel bottomPanel;
 	
@@ -31,6 +39,11 @@ public class MainWindow extends JFrame {
 	JTextField avgCPUField;
 	JTextField peakCPUField;
 	ConsoleDialog consoleDialog;
+	
+	FlashButton inFlasher;
+	FlashButton outFlasher;
+	
+	final int FLASH_LENGTH = 150;
 	
 	public MainWindow() throws SocketException {
 		setSize(1280, 800);
@@ -41,6 +54,16 @@ public class MainWindow extends JFrame {
 		add(splitLayout, BorderLayout.CENTER);
 		
 		setupBottomPanel();
+		
+		App.sc.addUpdateListener(SCMessageListener.class, this);
+		
+		App.sc.createListener("/*", new OSCListener() {
+			
+			@Override
+			public void acceptMessage(Date time, OSCMessage message) {
+				inFlasher.flash();
+			}
+		});
 		//add(bottomPanel, BorderLayout.PAGE_END);
 	}
 	
@@ -50,6 +73,10 @@ public class MainWindow extends JFrame {
 		
 		//Bottom Panel//
 		bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		
+		// Blinkers //
+		inFlasher = new FlashButton(FLASH_LENGTH, Color.GREEN);
+		outFlasher = new FlashButton(FLASH_LENGTH, Color.RED);
 		
 		// CPU Fields
 		avgCPUField = new JTextField(4);
@@ -72,6 +99,25 @@ public class MainWindow extends JFrame {
 		
 		consoleButton.setMargin(new Insets(0, 0, 0, 0));
 		bottomButtons.add(consoleButton);
+		
+		bottomButtons.add(inFlasher);
+		bottomButtons.add(outFlasher);
+		
+		JButton rebootButton = new JButton("Reboot");
+		rebootButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					App.sc.rebootServer();
+				} catch (IOException e1) {
+					
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		bottomWrapper.add(rebootButton);
 		
 		bottomWrapper.add(bottomButtons);
 		bottomWrapper.add(bottomPanel);
@@ -111,6 +157,22 @@ public class MainWindow extends JFrame {
         consoleDialog.setSize(new Dimension(600, 300));
         consoleDialog.setLocationRelativeTo(mainFrame);
       
+	}
+	
+	// SCMessage Listener
+	// --------------------
+
+	@Override
+	public void oscMessageOut() {
+		outFlasher.flash();
+	}
+
+	@Override
+	public void messageIn(boolean oscMessage) {
+		
+		if (!oscMessage) {
+			inFlasher.flash(inFlasher.blinkColor.darker().darker().darker());
+		}
 	}
 
 }

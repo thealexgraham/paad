@@ -7,8 +7,11 @@ import java.util.UUID;
 
 import net.alexgraham.thesis.supercollider.SCLang;
 
-public class SynthDef {
+public class SynthDef implements java.io.Serializable {
 	
+	/**
+	 * 
+	 */
 	private String synthName;
 	private ArrayList<Parameter> parameters;
 	

@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.PlayerModel.PlayerModelListener;
+import net.alexgraham.thesis.supercollider.models.SynthModel;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.Effect;
@@ -33,6 +34,7 @@ import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
+import net.alexgraham.thesis.ui.modules.SynthModule;
 
 public class LineConnectPanel extends JPanel implements SynthModelListener, PlayerModelListener {
 	
@@ -43,16 +45,13 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	ConnectablePanel originPanel;
 	ConnectablePanel destinationPanel;
 	
-	Connection originConnection;
-	Connection destinationConnection;
-	
 	Point connectOrigin;
 	Point connectDestination;
-	Rectangle currentConnector;
+	
 
 	ArrayList<ConnectablePanel> boxes = new ArrayList<ConnectablePanel>();
-	CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
-	
+	//CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
+	CopyOnWriteArrayList<Connection> connections = App.connectionModel.getCopyConnections();
 	Connection clicked;
 	
 	private CopyOnWriteArrayList<SynthSelectListener> synthSelectListeners = 
@@ -295,6 +294,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public void moduleSelected(ModulePanel module) {
 		if (module instanceof InstrumentModule) {
 			fireSynthSelectedEvent(((InstrumentModule) module).getInstrument());
+		} else if (module instanceof EffectModule) {
+			fireSynthSelectedEvent(((EffectModule) module).getEffect());
 		}
 	}
 	
@@ -365,7 +366,18 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	@Override
 	public void synthAdded(Synth synth) {
+		SynthModule synthModule = new SynthModule(100, 100, synth);
+		synthModule.setPreferredSize(new Dimension(75, 100));
+		synthModule.setSize(new Dimension(100, 75));
+		synthModule.setLocation(200, 200);
+		add(synthModule);
+		boxes.addAll(synthModule.getConnectablePanels());
 		
+		synthModule.setOwner(this);
+		System.out.println("Instrument added to panel");
+
+		updateUI();
+		repaint();
 	}
 
 	@Override

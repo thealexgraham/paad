@@ -2,7 +2,6 @@ package net.alexgraham.thesis.supercollider.synths;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -12,8 +11,6 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class Instrument extends Synth implements Connectable {
 	
-	// TODO: Make Connectable have a list of Connectors, so it can check if it owns
-
 	public Instrument(SynthDef synthDef, SCLang sc) {
 		super(synthDef, sc);
 		init();
@@ -133,26 +130,18 @@ public class Instrument extends Synth implements Connectable {
 		
 		return false;
 	}
-
+	
+	
 	
 	@Override
 	public boolean connectWith(Connectable otherConnectable) {
-		
-		if (otherConnectable instanceof RoutinePlayer) 
-		{
-			return true;
-		}
-		
 		return false;
-		
 	}
 
 	@Override
 	public boolean removeConnectionWith(Connectable otherConnectable) {
-		return true;
+		return false;
 	}
 
-
-	
 
 }

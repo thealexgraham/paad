@@ -1,6 +1,6 @@
 package net.alexgraham.thesis.supercollider.synths;
 
-public class Parameter {
+public class Parameter implements java.io.Serializable {
 	public String name;
 	public double min;
 	public double max;

@@ -1,17 +1,12 @@
 package net.alexgraham.thesis.supercollider.models;
 
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListModel;
 
-import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
-import net.alexgraham.thesis.ui.SynthPanel;
-import net.alexgraham.thesis.ui.old.RoutinePlayerPanel;
 
 public class PlayerModel {
 	
@@ -30,6 +25,16 @@ public class PlayerModel {
 
 	}
 	
+	// TODO: Rewrite with ArrayList<T>
+	public ArrayList<RoutinePlayer> getPlayers() {
+		ArrayList<RoutinePlayer> list = new ArrayList<RoutinePlayer>();
+		for (Enumeration<RoutinePlayer> e = playerListModel.elements(); e.hasMoreElements();)  {
+			RoutinePlayer player = e.nextElement();
+			list.add(player);
+		}
+		return list;
+	}
+
 	public void addListener(PlayerModelListener l) {
 		listeners.add(l);
 	}

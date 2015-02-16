@@ -2,25 +2,32 @@ package net.alexgraham.thesis;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
 import net.alexgraham.thesis.supercollider.OSC;
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.SCLang.SCServerListener;
+import net.alexgraham.thesis.supercollider.models.ConnectionModel;
 import net.alexgraham.thesis.supercollider.models.DefModel;
 import net.alexgraham.thesis.supercollider.models.PlayerModel;
 import net.alexgraham.thesis.supercollider.models.SynthModel;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.ui.connectors.Connection;
 
 
 public class App 
 {
 	static final int SC_PORT = 53120;
-	static final int JAVA_PORT = 1294;
+	static final int JAVA_PORT = 1295;
 	
 	public static SCLang sc;
 	public static DefModel defModel;
 	public static SynthModel synthModel;
 	public static PlayerModel playerModel;
+	public static ConnectionModel connectionModel;
 	
     public static void main( String[] args ) throws IOException
     {
@@ -31,6 +38,8 @@ public class App
 		defModel = new DefModel();
 		synthModel = new SynthModel();
 		playerModel = new PlayerModel();
+		connectionModel = new ConnectionModel();
+		
 		
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.
@@ -44,6 +53,7 @@ public class App
             }
         });
     }
+      
     
     /**
      * Create the GUI and show it.  For thread safety,

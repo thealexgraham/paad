@@ -10,10 +10,15 @@ import javax.swing.BoundedRangeModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
+import net.alexgraham.thesis.ui.connectors.Connection;
+import net.alexgraham.thesis.ui.connectors.Connector;
+import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class Synth {
+public class Synth implements Connectable, java.io.Serializable {
 	
 	public interface SynthListener {
 		public void parameterChanged(String paramName, double value);
@@ -79,12 +84,12 @@ public class Synth {
 			parameterModels.put(param.getName(), model);
 			parameters.put(param.getName(), Double.valueOf(param.getValue()));
 		}
+    	System.out.println("Doing start");
 		sc.sendMessage(startCommand, arguments.toArray());
 	}
 	
 	public void changeParameter(String paramName, double value) {
 		//if (value != parameters.get(paramName)) {
-		System.out.println("change command: " + paramChangeCommand);
 			sc.sendMessage(paramChangeCommand, synthDef.getSynthName(), paramName, id.toString(), value);
 		//	parameters.put(paramName, value);		
 		//}
@@ -161,6 +166,77 @@ public class Synth {
 	
 	public String toString() {
 		return this.name;
+	}
+	
+	
+	public void connectToEffect(Effect effect) {
+		//var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];
+		App.sc.sendMessage("/synth/connect/effect", this.getSynthName(), this.id.toString(), effect.getSynthName(), effect.getID());
+	}
+	
+	public void disconnectEffect(Effect effect) {
+		//var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];
+		App.sc.sendMessage("/synth/disconnect/effect", this.getSynthName(), this.id.toString(), effect.getSynthName(), effect.getID());
+	}
+	
+	// Connectable
+	// -------------
+
+
+	@Override
+	public boolean disconnect(Connection connection) {
+		Connectable target = connection.getTargetConnector(this).getConnectable();
+		
+		if (target.getClass() == Effect.class) {
+			// Instrument output into Effect input, valid, check if connectors are correct
+			if (connection.isConnectionType(this, ConnectorType.AUDIO_OUTPUT, ConnectorType.AUDIO_INPUT)) {
+				// Should return the effect we want, so connect to it
+				disconnectEffect((Effect) target);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean connect(Connection connection) {
+		Connectable target = connection.getTargetConnector(this).getConnectable();
+		
+		if (target.getClass() == Effect.class) {
+			// Instrument output into Effect input, valid, check if connectors are correct
+			if (connection.isConnectionType(this, ConnectorType.AUDIO_OUTPUT, ConnectorType.AUDIO_INPUT)) {
+				// Should return the effect we want, so connect to it
+				connectToEffect((Effect) target);
+				return true;
+			}
+		}
+		
+		// No connections were made, so return false
+		return false;
+	}
+	
+	@Override
+	public boolean connect(Connector thisConnector, Connector targetConnector) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean connectWith(Connectable otherConnectable) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeConnectionWith(Connectable otherConnectable) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

@@ -1,0 +1,27 @@
+Finished with SynthModule, now need to allow effect connect in SC code
+
+
+** Get Effect to connect to effect
+
+Looking up currently modifyable code
+Final test for effect
+
+- Fixing instrument connecting to effect
+-- Instrument -> effect can't be added twice
+-- Template should be recreated when instrument changes its bus for some reason 
+
+>> About to test to see if I can use a control bus with the index by using a test instrumnt
+
+
+- adding effect connect to effect
+
+Updating connectable implementation
+
+
+
+Monday
+iii
+before 4
+50614739131
+9:30 77840
+x

@@ -23,7 +23,7 @@ import javax.swing.JPopupMenu;
 import net.alexgraham.thesis.ui.components.OldMoveablePanel;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
-public class GridbagMoveable extends ModulePanel {
+public class GridbagMoveable {
 	
     final boolean shouldFill = true;
     final boolean shouldWeightX = true;
@@ -42,11 +42,6 @@ public class GridbagMoveable extends ModulePanel {
 			});
 	        add(anItem);
 	    }
-	}
-
-	public GridbagMoveable(int width, int height) {
-		super(width, height);
-		setup(this.getInterior());
 	}
 	
 	public void setLocation(int x, int y) {

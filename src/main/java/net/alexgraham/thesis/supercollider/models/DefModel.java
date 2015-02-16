@@ -2,6 +2,7 @@ package net.alexgraham.thesis.supercollider.models;
 
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -105,6 +106,7 @@ public class DefModel {
     	
     	App.sc.createListener("/addparam", paramlistener);
     	App.sc.createListener("/instdef/param", paramlistener);
+	
 	}
 	
 

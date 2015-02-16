@@ -5,7 +5,8 @@ import java.awt.geom.Line2D;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class Connection {
+public class Connection implements java.io.Serializable {
+	
 	private Connector origin;
 	private Connector destination;
 	private Line2D line;
@@ -29,7 +30,7 @@ public class Connection {
 	}
 	
 	/*
-	 * Attempts to disconnect this connection's connectables TODO: Change the name of connectables
+	 * Attempts to disconnect this connection's connectables
 	 */
 	public boolean disconnectModules() {
 		if (getOriginConnectable().disconnect(this) &&
@@ -41,7 +42,7 @@ public class Connection {
 	}
 	
 	/*
-	 * Attempts to disconnect this connection's connectables TODO: Change the name of connectables
+	 * Attempts to disconnect this connection's connectables
 	 */
 	public boolean connectModules() {
 		// We have a destination and an origin
@@ -76,9 +77,13 @@ public class Connection {
 			return getDestination();
 		}
 	}
+	/*
+	 * Makes sure the connection requested type is valid
+	 */
 	
-	
-	public boolean isConnectionType(Connectable ownerConnectable, ConnectorType ownerType, ConnectorType targetType) {
+	public boolean isConnectionType(Connectable ownerConnectable, 
+			ConnectorType ownerType, ConnectorType targetType) {
+		
 		Connector owner = getOwnerConnector(ownerConnectable);
 		Connector target = getTargetConnector(ownerConnectable);
 		

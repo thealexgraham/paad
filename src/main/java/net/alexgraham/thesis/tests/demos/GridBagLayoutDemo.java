@@ -9,6 +9,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -16,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.alexgraham.thesis.ui.components.FlashButton;
 import net.alexgraham.thesis.ui.helpers.ComponentMover;
 import net.alexgraham.thesis.ui.helpers.ComponentResizer;
 
@@ -49,6 +52,8 @@ public class GridBagLayoutDemo {
 	c.gridx = 0;
 	c.gridy = 0;
 	pane.add(titleLabel, c);
+	
+	FlashButton flasher = new FlashButton(60, Color.RED);
 
 	button = new JButton("Button 1");
 	if (shouldWeightX) {
@@ -58,6 +63,14 @@ public class GridBagLayoutDemo {
 	c.gridwidth = 1;
 	c.gridx = 0;
 	c.gridy = 1;
+	button.addActionListener(new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			flasher.flash();
+		}
+	});	
+
 	pane.add(button, c);
 
 	button = new JButton("Button 2");
@@ -83,9 +96,8 @@ public class GridBagLayoutDemo {
 	c.weightx = 0.5;
 	c.gridx = 1;
 	c.gridy = c.gridy + 1;
-	pane.add(button, c);
+	pane.add(flasher, c);
 
-	button = new JButton("5");
 	c.fill = GridBagConstraints.HORIZONTAL;
 	c.ipady = 0;       //reset to default
 	c.weighty = 1.0;   //request any extra vertical space

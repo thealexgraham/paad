@@ -2,31 +2,18 @@ package net.alexgraham.thesis.ui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.net.SocketException;
 import java.util.Hashtable;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.Effect;
-import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 

@@ -43,13 +43,11 @@ s.waitForBoot({
 
 	// This function will run when the Java app is ready and listening
 	OSCFunc( { |msg|
-
 		"Creating Synths".postln;
 		// [name, min, max, default]
 		~java.sendDefinitions;
-
+		javaCommand("ready");
 	}, '/start/ready', recvPort:NetAddr.langPort);
-
 	"ready".postln;
 }, 100);
 

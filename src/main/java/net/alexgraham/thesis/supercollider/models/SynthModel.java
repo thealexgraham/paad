@@ -2,6 +2,7 @@ package net.alexgraham.thesis.supercollider.models;
 
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,6 +39,15 @@ public class SynthModel {
 	
 	public SynthModel() {
 
+	}
+	
+	public ArrayList<Synth> getSynths() {
+		ArrayList<Synth> list = new ArrayList<Synth>();
+		for (Enumeration<Synth> e = synthListModel.elements(); e.hasMoreElements();)  {
+			Synth synth = e.nextElement();
+			list.add(synth);
+		}
+		return list;
 	}
 	
 	public void addListener(SynthModelListener l) {

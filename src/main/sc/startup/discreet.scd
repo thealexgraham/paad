@@ -28,7 +28,7 @@ SynthDef(\eq, { |inBus, outBus =0, lofreq = 80, midfreq = 800, hifreq = 2000, ba
 		[\band3, -80, 80, 0]]);
 
 // Simple reverb
-SynthDef(\verb, { |inBus, outBus=0, mix = 0.33, room = 0.5, damp = 0.5, mul = 1, add = 0, gain = 1|
+SynthDef(\verb, { |inBus, outBus = 0, mix = 0.33, room = 0.5, damp = 0.5, mul = 1, add = 0, gain = 1|
 	var sig;
 	sig = In.ar(inBus, 2);
 	sig = FreeVerb.ar(sig, mix, room, damp, mul, add);

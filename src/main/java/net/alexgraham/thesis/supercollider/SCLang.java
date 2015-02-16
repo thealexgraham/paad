@@ -10,15 +10,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.EventListenerList;
 
+import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.ChangeSender;
 import net.alexgraham.thesis.supercollider.models.DefModel;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
+import net.alexgraham.thesis.ui.connectors.Connection;
 
 import com.illposed.osc.OSCListener;
+import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 
@@ -31,6 +38,17 @@ public class SCLang extends ChangeSender {
 	public interface SCConsoleListener extends SCUpdateListener {
 		public void consoleUpdate(String consoleLine);
 	}
+	
+	public interface SCMessageListener extends SCUpdateListener {
+		public void oscMessageOut();
+		public void messageIn(boolean oscMessage);
+	}
+	
+	public interface SCServerListener extends SCUpdateListener {
+		public void serverReady();
+	}
+	
+	// TODO: Use Adapter instead of multiple interfaces
 	
 	public class SCLangProperties {
 		public final static String avgCPU = "avgCPU";
@@ -60,6 +78,9 @@ public class SCLang extends ChangeSender {
 			new CopyOnWriteArrayList<SCLang.SCConsoleListener>();
 	
 	public DefModel defModel;
+	
+	// FIXME : this is dumb
+	int reboot = 0;
 
 	public SCLang(int sendPort, int receivePort) throws SocketException,
 			UnknownHostException {
@@ -80,7 +101,7 @@ public class SCLang extends ChangeSender {
 	 * @throws IOException
 	 */
 	public void startSCLang() throws IOException {
-		// TODO Get rid of personal paths
+		// FIXME Get rid of personal paths
 		
 		String system = System.getProperty("os.name");
 		String pwd = System.getProperty("user.dir");
@@ -170,8 +191,14 @@ public class SCLang extends ChangeSender {
 						if (s.equals("|")) {
 							command = true;
 						} else {
-							System.out.println("sc[ " + s);
-							fireConsoleUpdate(s);
+							if (!s.startsWith("<-")) {
+								System.out.println("sc[ " + s);
+								fireConsoleUpdate(s);
+								fireInMessageUpdate(false);
+							} else {
+								fireInMessageUpdate(false);
+							}
+
 						}
 					} else {
 						command = false;
@@ -196,15 +223,17 @@ public class SCLang extends ChangeSender {
 								// so it knows where to send
 								OSC.sendMessage("/start/port", receivePort);
 								break;
-
 							case "ready":
 								log("Server is ready.");
+								fireServerReadyUpdate();
+//								RoutinePlayer testPlayer = new RoutinePlayer();
+//								App.playerModel.addPlayer(testPlayer);
 								break;
-
 							default:
 								log("Unknown command: " + s);
 						}
 					}
+					
 				}
 
 			} catch (NumberFormatException e) {
@@ -230,6 +259,42 @@ public class SCLang extends ChangeSender {
 
 		scProcess.destroy();
 	}
+	
+    public void rebootServer() throws IOException {
+    	reboot = 1;
+    	
+    	App.sc.stopSCLang();
+    	App.sc.startSCLang();
+    	
+    	App.sc.addUpdateListener(SCServerListener.class, new SCServerListener() {
+			
+			@Override
+			public void serverReady() {
+		    	ArrayList<Synth> synths = App.synthModel.getSynths();
+		    	
+		    	for (Synth synth : synths) {
+		        	System.out.println("Trying start");
+					synth.start();
+				}
+		    	
+		    	ArrayList<RoutinePlayer> players = App.playerModel.getPlayers();
+		    	for (RoutinePlayer player : players) {
+		    		player.reset();
+		    		player.start();
+		    	}
+		    	
+		    	ArrayList<Connection> connections = App.connectionModel.getConnections();
+		    	for (Connection connection : connections) {
+					if (connection.connectModules()) {
+						System.out.println("Java{ Could not connect modules");
+					}
+				}
+		    	
+		    	App.sc.removeUpdateListener(SCServerListener.class, this);
+			}
+		});
+
+    }
 
 	public void sendMessage(String address, Object... args) {
 		OSC.sendMessage(this.sendPort, address, args);
@@ -282,6 +347,33 @@ public class SCLang extends ChangeSender {
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == SCConsoleListener.class) {
 				((SCConsoleListener) listeners[i + 1]).consoleUpdate(line);
+			}
+		}
+	}
+	
+	protected void fireServerReadyUpdate() {
+		Object[] listeners = listenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == SCServerListener.class) {
+				((SCServerListener) listeners[i + 1]).serverReady();
+			}
+		}
+	}
+	
+	protected void fireInMessageUpdate(boolean oscMessage) {
+		Object[] listeners = listenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == SCMessageListener.class) {
+				((SCMessageListener) listeners[i + 1]).messageIn(oscMessage);
+			}
+		}
+	}
+	
+	protected void fireOutMessageUpdate() {
+		Object[] listeners = listenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == SCMessageListener.class) {
+				((SCMessageListener) listeners[i + 1]).oscMessageOut();
 			}
 		}
 	}

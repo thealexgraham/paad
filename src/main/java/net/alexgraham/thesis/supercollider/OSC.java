@@ -6,7 +6,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+
+import net.alexgraham.thesis.App;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -34,7 +37,6 @@ public class OSC {
 		
 		receiver = new OSCPortIn(receivePort);
 		receiver.startListening();
-
 	}
 	
 	static public void setSendPort(int port) throws SocketException, UnknownHostException {
@@ -67,7 +69,11 @@ public class OSC {
 	    	
 	    	// Send the message
 	    	sender.send(msg);
-	    	log("sent msg: " + address + " " + arguments.toString());
+	    	// FIXME: Make log ignore more robust
+	    	if (!address.contains("paramc")) {
+	    		log("sent msg: " + address + " " + arguments.toString());	    		
+	    	}
+	    	App.sc.fireOutMessageUpdate();
 	    	
 		} catch (SocketException e) {
 			// 
