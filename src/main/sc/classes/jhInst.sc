@@ -10,11 +10,10 @@
 			var param = item[0].asString;
 			var min = item[1], max = item[2], default = item[3];
 			net.sendMsg("/instdef/param", instName, param, min, max, default);
-			// ("Adding Param" + param + "For instrument" + instName).postln;
 		});
 
 		// Create a dictionary to store the running instruments
-		instName.toLower.asSymbol.envirPut(Dictionary.new);
+		instName.tildaPut(Dictionary.new);
 	}
 
 	createInstListeners {

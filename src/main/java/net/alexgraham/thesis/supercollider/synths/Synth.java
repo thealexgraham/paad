@@ -39,9 +39,9 @@ public class Synth implements Connectable, java.io.Serializable {
 	private Hashtable<String, BoundedRangeModel> parameterModels = 
 			new Hashtable<String, BoundedRangeModel>();
 	
-	protected String startCommand = "/synth/start";
+	protected String startCommand = "/synth/add";
 	protected String paramChangeCommand = "/synth/paramc";
-	protected String closeCommand = "/synth/stop";
+	protected String closeCommand = "/synth/remove";
 	
 	public Synth(SynthDef synthDef, SCLang sc) {
 		this.synthDef = synthDef;

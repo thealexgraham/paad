@@ -104,8 +104,9 @@ public class DefModel {
     		}
     	};
     	
-    	App.sc.createListener("/addparam", paramlistener);
+    	App.sc.createListener("/synthdef/param", paramlistener);
     	App.sc.createListener("/instdef/param", paramlistener);
+    	App.sc.createListener("/effectdef/param", paramlistener);
 	
 	}
 	

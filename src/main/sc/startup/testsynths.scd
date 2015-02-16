@@ -33,7 +33,6 @@ SynthDef(\sinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 
 	Out.ar(outBus, Pan2.ar(sig, pan, gain));
 }).add;
 
-
 ~java.addDefinition("PanFM3OP", \synth,
 	[[\mod_ratio1, 0.0, 5.0, 0.2],
 		[\mod_ratio2, 0, 5, 1],

@@ -1,3 +1,6 @@
+Figuring out why synths have no sound
+
+
 Finished with SynthModule, now need to allow effect connect in SC code
 
 

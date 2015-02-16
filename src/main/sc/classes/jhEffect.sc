@@ -15,7 +15,7 @@
 		params.do({ |item, i|
 			var param = item[0].asString;
 			var min = item[1], max = item[2], default = item[3];
-			net.sendMsg("/addparam", effectName, param, min, max, default);
+			net.sendMsg("/effectdef/param", effectName, param, min, max, default);
 		});
 
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
