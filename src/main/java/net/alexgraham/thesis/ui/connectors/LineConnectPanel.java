@@ -14,9 +14,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.PrimitiveIterator.OfDouble;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javafx.scene.input.KeyCode;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -103,7 +106,17 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			@Override
 			public void keyPressed(KeyEvent e) {
 				
-				System.out.println("key pressed");
+				if (e.getKeyCode() == KeyEvent.VK_F9) {
+					if (e.isControlDown()) {
+						try {
+							App.sc.rebootServer();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}		
+					}
+
+				}
 
 				if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 					System.out.println("Delete key pressed");

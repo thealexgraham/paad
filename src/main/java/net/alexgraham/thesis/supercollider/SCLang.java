@@ -79,8 +79,6 @@ public class SCLang extends ChangeSender {
 	
 	public DefModel defModel;
 	
-	// FIXME : this is dumb
-	int reboot = 0;
 
 	public SCLang(int sendPort, int receivePort) throws SocketException,
 			UnknownHostException {
@@ -94,13 +92,22 @@ public class SCLang extends ChangeSender {
 		// Need this so we can recreate the sender
 		OSC.setSendPort(port);
 	}
+	
+	/**
+	 * Starts sclang.exe using default options and no run command
+	 * 
+	 * @throws IOException
+	 */
+	public void startSCLang() throws IOException {
+		startSCLang("");
+	}
 
 	/**
 	 * Starts sclang.exe using default options
 	 * 
 	 * @throws IOException
 	 */
-	public void startSCLang() throws IOException {
+	public void startSCLang(String onRun) throws IOException {
 		// FIXME Get rid of personal paths
 		
 		String system = System.getProperty("os.name");
@@ -109,10 +116,10 @@ public class SCLang extends ChangeSender {
 
 		if (system.equals("Mac OS X")) {
 			scFile = pwd + "/src/main/sc/run.scd";
-			startSCLang("/Applications/SuperCollider.app/Contents/Resources/", "sclang", sendPort, scFile);
+			startSCLang("/Applications/SuperCollider.app/Contents/Resources/", "sclang", sendPort, scFile, onRun);
 		} else {
 			scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src/main/sc/run.scd";
-			startSCLang("C:/Users/Alex/supercollider/", "sclang.exe", sendPort, scFile);
+			startSCLang("C:/Users/Alex/supercollider/", "sclang.exe", sendPort, scFile, onRun);
 		}
 	}
 
@@ -125,7 +132,7 @@ public class SCLang extends ChangeSender {
 	 * @param runFile
 	 * @throws IOException
 	 */
-	public void startSCLang(String scDir, String scExec, int scPort, String runFile)
+	public void startSCLang(String scDir, String scExec, int scPort, String runFile, String onRun)
 			throws IOException {
 		running = true;
 
@@ -152,6 +159,8 @@ public class SCLang extends ChangeSender {
 
 		writer = new BufferedWriter(new OutputStreamWriter(
 				scProcess.getOutputStream()));
+		
+		sendCommand(onRun);
 		sendCommand("\"" + runFile + "\"" + ".load.postln");
 	}
 
@@ -200,6 +209,7 @@ public class SCLang extends ChangeSender {
 							}
 
 						}
+						
 					} else {
 						command = false;
 						switch ((splitString = s.split(":"))[0]) {
@@ -226,8 +236,6 @@ public class SCLang extends ChangeSender {
 							case "ready":
 								log("Server is ready.");
 								fireServerReadyUpdate();
-//								RoutinePlayer testPlayer = new RoutinePlayer();
-//								App.playerModel.addPlayer(testPlayer);
 								break;
 							default:
 								log("Unknown command: " + s);
@@ -261,10 +269,9 @@ public class SCLang extends ChangeSender {
 	}
 	
     public void rebootServer() throws IOException {
-    	reboot = 1;
     	
     	App.sc.stopSCLang();
-    	App.sc.startSCLang();
+    	App.sc.startSCLang("~reboot = true");
     	
     	App.sc.addUpdateListener(SCServerListener.class, new SCServerListener() {
 			
@@ -273,7 +280,6 @@ public class SCLang extends ChangeSender {
 		    	ArrayList<Synth> synths = App.synthModel.getSynths();
 		    	
 		    	for (Synth synth : synths) {
-		        	System.out.println("Trying start");
 					synth.start();
 				}
 		    	

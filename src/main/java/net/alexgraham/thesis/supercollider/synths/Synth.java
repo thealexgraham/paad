@@ -10,6 +10,8 @@ import javax.swing.BoundedRangeModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.sun.org.apache.xml.internal.security.Init;
+
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
@@ -46,29 +48,23 @@ public class Synth implements Connectable, java.io.Serializable {
 	public Synth(SynthDef synthDef, SCLang sc) {
 		this.synthDef = synthDef;
 		this.sc = sc;
-		id = UUID.randomUUID();		
+		id = UUID.randomUUID();
+		
+		// Create default values
+		createParamModels();
 	}
 	
 	public Synth(SynthDef synthDef, SCLang sc, String name) {
 		this(synthDef, sc);
 		this.name = name;
 	}
-	
+		
 	public void addSynthListener(SynthListener listener) {
 		synthListeners.add(listener);
 	}
 	
-	public void start() {
-		
-		// Create the arguments list for this Synth
-    	List<Object> arguments = new ArrayList<Object>();
-    	arguments.add(synthDef.getSynthName());
-    	arguments.add(id.toString());
-    	
-    	// Add the current parameters for the synth's default startup
-    	for (Parameter param : synthDef.getParameters()) {
-			arguments.add(param.name);
-			arguments.add(param.value);
+	public void createParamModels() {
+		for (Parameter param : synthDef.getParameters()) {
 
 			DoubleBoundedRangeModel model = 
 					new DoubleBoundedRangeModel(2, param.getMin(), param.getMax(), param.getValue());
@@ -84,8 +80,23 @@ public class Synth implements Connectable, java.io.Serializable {
 			parameterModels.put(param.getName(), model);
 			parameters.put(param.getName(), Double.valueOf(param.getValue()));
 		}
-    	System.out.println("Doing start");
-		sc.sendMessage(startCommand, arguments.toArray());
+	}
+	
+	public void start() {
+		
+		// Create the arguments list for this Synth
+    	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(synthDef.getSynthName());
+    	arguments.add(id.toString());
+    	
+    	
+    	// Add the current parameters
+    	for (String paramName : parameterModels.keySet()) {
+			arguments.add(paramName);
+			arguments.add(getValueForParameterName(paramName));
+		}
+    	
+    	sc.sendMessage(startCommand, arguments.toArray());
 	}
 	
 	public void changeParameter(String paramName, double value) {
@@ -144,6 +155,17 @@ public class Synth implements Connectable, java.io.Serializable {
 	public DoubleBoundedRangeModel getDoubleModelForParameterName(String name) {
 		return (DoubleBoundedRangeModel) parameterModels.get(name);
 	}
+	
+	/**
+	 *  Returns the model for the named parameter
+	 * @param name
+	 * @return
+	 */
+	public double getValueForParameterName(String name) {
+		DoubleBoundedRangeModel model = getDoubleModelForParameterName(name);
+		return model.getDoubleValue();
+	}
+	
 	
 	public ArrayList<Parameter> getParameters() {
 		return synthDef.getParameters();
@@ -218,24 +240,21 @@ public class Synth implements Connectable, java.io.Serializable {
 	
 	@Override
 	public boolean connect(Connector thisConnector, Connector targetConnector) {
-		// TODO Auto-generated method stub
+		// 
 		return false;
 	}
 	@Override
 	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean connectWith(Connectable otherConnectable) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean removeConnectionWith(Connectable otherConnectable) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

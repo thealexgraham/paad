@@ -41,7 +41,7 @@ public class SynthDef implements java.io.Serializable {
 	public ArrayList<Parameter> getParameters() {
 		return parameters;
 	}
-	
+
 	public String toString() {
 		return this.synthName + " (" + this.getClass().getSimpleName() + ")";
 	}

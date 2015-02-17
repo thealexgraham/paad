@@ -51,7 +51,6 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		setSize(1024, 800);
 		setupLayout();
 		
-//		runningSynths = new RunningSynthsPanel();
 		LineConnectPanel lineConnect = new LineConnectPanel();
 		synthSelector = new SynthLauncherPanel(this);
 

@@ -1,3 +1,5 @@
+Vim+Supercollider, Eclim
+
 
 1. Wires should match the color you're leaving from
 2. Top of inst still a circle
