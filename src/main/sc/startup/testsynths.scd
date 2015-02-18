@@ -6,15 +6,15 @@ SynthDef(\PanFM3OP, { | outBus = 0, car_freq, mod_ratio1, mod_ratio2, mod_index1
 			(SinOsc.ar(car_freq*mod_ratio2) * mod_index2)) * mod_index1));
 	//var env = EnvGen.kr(Env.linen, doneAction: 2);
 	Out.ar(outBus, Pan2.ar(fm * gain, pan));
-}).add;
+}).readyLoad;
 
 SynthDef(\sinWave, { | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
 	Out.ar(outBus, Pan2.ar(SinOsc.ar(freq) * gain, pan));
-}).add;
+}).readyLoad;
 
 SynthDef(\sawWave, { | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
 	Out.ar(outBus, Pan2.ar(Saw.ar(freq) * gain, pan));
-}).add;
+}).readyLoad;
 
 SynthDef(\sawsinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan = 0, gain = 1 |
 	var sig, env;
@@ -23,7 +23,7 @@ SynthDef(\sawsinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan 
 	sig = sig + (Saw.ar(freq) * saw);
 	sig = sig * env * amp;
 	Out.ar(outBus, Pan2.ar(sig, pan, gain));
-}).add;
+}).readyLoad;
 
 SynthDef(\sinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 1 |
 	var sig, env;
@@ -31,7 +31,7 @@ SynthDef(\sinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 
 	sig = SinOsc.ar(freq);
 	sig = sig * env * amp;
 	Out.ar(outBus, Pan2.ar(sig, pan, gain));
-}).add;
+}).readyLoad;
 
 ~java.addDefinition("PanFM3OP", \synth,
 	[[\mod_ratio1, 0.0, 5.0, 0.2],

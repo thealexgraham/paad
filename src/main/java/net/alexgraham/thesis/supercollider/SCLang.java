@@ -55,7 +55,7 @@ public class SCLang extends ChangeSender {
 		public final static String peakCPU = "peakCPU";
 	}
 
-	final static boolean logging = false;
+	final static boolean logging = true;
 
 	private int sendPort;
 	private int receivePort;
@@ -194,7 +194,7 @@ public class SCLang extends ChangeSender {
 				String[] splitString;
 
 				while ((s = inStreamReader.readLine()) != null) {
-
+//					System.out.println(s);
 					if (!command) {
 						s = s.replace("sc3> ", "");
 						if (s.equals("|")) {
@@ -236,6 +236,9 @@ public class SCLang extends ChangeSender {
 							case "ready":
 								log("Server is ready.");
 								fireServerReadyUpdate();
+								break;
+							case "test":
+								log("Test is dumb");
 								break;
 							default:
 								log("Unknown command: " + s);

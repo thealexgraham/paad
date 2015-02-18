@@ -1,3 +1,6 @@
+How to make sure server isn't ready until all synth defs have loaded
+
+
 Figuring out why synths have no sound
 
 
@@ -16,7 +19,7 @@ Final test for effect
 >> About to test to see if I can use a control bus with the index by using a test instrumnt
 
 
-- adding effect connect to effect
+- adding effect connect to 
 
 Updating connectable implementation
 
@@ -25,6 +28,6 @@ Updating connectable implementation
 Monday
 iii
 before 4
-50614739131
+50614739131ji
 9:30 77840
 x

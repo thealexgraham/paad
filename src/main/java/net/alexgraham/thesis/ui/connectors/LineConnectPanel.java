@@ -413,10 +413,13 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	@Override
 	public void effectAdded(Effect effect) {
 		
-		EffectModule effectModule = new EffectModule(100, 100, effect);
+		EffectModule effectModule = new EffectModule(100, 300, effect);
 		
-		effectModule.setPreferredSize(new Dimension(75, 100));
-		effectModule.setSize(new Dimension(100, 75));
+		//effectModule.setPreferredSize(new Dimension(100, 300));
+		//effectModule.setSize(new Dimension(100, 200));
+		effectModule.setSize(effectModule.getPreferredSize());
+		effectModule.validate();
+		
 		effectModule.setLocation(200, 200);
 		add(effectModule);
 		boxes.addAll(effectModule.getConnectablePanels());

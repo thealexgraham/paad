@@ -41,7 +41,6 @@ s.waitForBoot({
 		item.load;
 	});
 
-
 	// This function will run when the Java app is ready and listening
 	OSCFunc({|msg|
 		"Creating Synths".postln;
@@ -49,8 +48,6 @@ s.waitForBoot({
 		if (~reboot != true, {
 			~java.sendDefinitions; // problem os jere
 		});
-		"problem with reboot line".postln;
-		javaCommand("ready");
 
 	}, '/start/ready', recvPort:NetAddr.langPort);
 

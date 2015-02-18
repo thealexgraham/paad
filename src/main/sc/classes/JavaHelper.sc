@@ -4,6 +4,8 @@ JavaHelper {
 	var <>synthDefaults;
 	var <>definitions;
 	var <>ready;
+	var loaded;
+	var pendingDefs;
 
 	*new { |sendPort|
 		^super.new.init(sendPort);
@@ -21,6 +23,7 @@ JavaHelper {
 			this.sendPort = port;
 			("Set sendPort to "++port).postln;
 			ready = true;
+			this.tryReadyMessage;
 			net.sendMsg("/start/ready", 1); // run.scd on run function
 		}).add;
 
@@ -46,7 +49,10 @@ JavaHelper {
 		synthDefaults = [[\gain, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
 		definitions = Dictionary.new;
 
+		pendingDefs = IdentitySet.new;
+
 		ready = false;
+		loaded = false;
 
 		this.createSynthListeners;
 		this.createInstListeners;
@@ -76,6 +82,28 @@ JavaHelper {
 	setupTypeStorage { |type|
 		^type.tildaPut(Dictionary.new);
 	}
+
+
+	// This is all to make sure that all the synth defs are loaded before moving on
+
+	addPendingDef { |name|
+		pendingDefs.add(name);
+	}
+
+	removePendingDef { |name|
+		pendingDefs.remove(name);
+		this.tryReadyMessage;
+	}
+
+	tryReadyMessage {
+		var size = pendingDefs.size;
+		if((ready == true) && (size < 1),
+			{
+				javaCommand("ready");
+			}
+		);
+	}
+
 
 
 	/* Add a new definition, if java is ready, send them right away,
@@ -117,6 +145,8 @@ JavaHelper {
 			}
 		);
 	}
+
+
 
 	/*
 	 * Adds the default parameters shown above

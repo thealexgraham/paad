@@ -102,7 +102,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		middlePanel.setLayout(new GridLayout(0, 2));
 		//scrollPane = new JScrollPane(middlePanel);
 		
-				
+		
 		//Bottom Panel//
 
 		bottomPanel = new JPanel(new FlowLayout());

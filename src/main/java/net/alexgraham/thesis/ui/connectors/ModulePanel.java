@@ -57,7 +57,7 @@ public class ModulePanel extends JPanel {
 
 	public ModulePanel(int width, int height) {
 		setup();
-		setPreferredSize(new Dimension(width, height));
+//		setPreferredSize(new Dimension(width, height));
 	}
 
 	public ModulePanel() {

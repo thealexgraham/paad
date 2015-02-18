@@ -77,6 +77,9 @@ public class SynthModule extends ModulePanel {
 	}
 	
 	
+	public void otherSetup(Container pane) {
+		
+	}
 	
     public void setup(Container pane) {
 

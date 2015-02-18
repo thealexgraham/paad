@@ -17,7 +17,7 @@ SynthDef(\eq, { |inBus, outBus =0, lofreq = 80, midfreq = 800, hifreq = 2000, ba
 	wet = BHiShelf.ar(wet, hifreq, 1, band3);
 	wet = Clip.ar(wet, -0.1, 0.1);
 	Out.ar(outBus, XFade2.ar(dry * gain, wet * gain, mix));
-}).add;
+}).readyLoad;
 
 ~java.addDefinition("eq", \effect,
 	[[\lofreq, 0, 600, 80],
@@ -33,7 +33,7 @@ SynthDef(\verb, { |inBus, outBus = 0, mix = 0.33, room = 0.5, damp = 0.5, mul = 
 	sig = In.ar(inBus, 2);
 	sig = FreeVerb.ar(sig, mix, room, damp, mul, add);
 	Out.ar(outBus, sig * gain);
-}).add;
+}).readyLoad;
 
 ~java.addDefinition("verb", \effect,
 	[[\verbMix,  0, 1, 0.2],
@@ -58,7 +58,7 @@ SynthDef(\tapedelay, {
 	record = playback + sig;
 	BufWr.ar(record, buffer, phase); // Record Signal Input plus Player input
 	Out.ar(outBus, record * gain);
-}).add;
+}).readyLoad;
 
 // simple feedback delay
 SynthDef(\feedbackdelay, {
@@ -70,7 +70,7 @@ SynthDef(\feedbackdelay, {
 			delayfactor: feedback,
 			wetlevel: wet
 	) * gain);
-}).add;
+}).readyLoad;
 
 ~java.addDefinition("feedbackdelay", \effect,
 	[[\delaytime, 0, 10, 4],
