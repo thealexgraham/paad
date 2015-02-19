@@ -27,7 +27,7 @@ public class Synth implements Connectable, java.io.Serializable {
 		public void synthClosed(Synth synth);
 	}
 	
-	private SynthDef synthDef;
+	protected SynthDef synthDef;
 	private SCLang sc;
 	protected String name;
 	protected UUID id;
@@ -38,7 +38,7 @@ public class Synth implements Connectable, java.io.Serializable {
 	private Hashtable<String, Double> parameters = 
 			new Hashtable<String, Double>();
 	
-	private Hashtable<String, BoundedRangeModel> parameterModels = 
+	protected Hashtable<String, BoundedRangeModel> parameterModels = 
 			new Hashtable<String, BoundedRangeModel>();
 	
 	protected String startCommand = "/synth/add";
@@ -66,8 +66,11 @@ public class Synth implements Connectable, java.io.Serializable {
 	public void createParamModels() {
 		for (Parameter param : synthDef.getParameters()) {
 
-			DoubleBoundedRangeModel model = 
-					new DoubleBoundedRangeModel(2, param.getMin(), param.getMax(), param.getValue());
+			DoubleParamModel model = 
+					new DoubleParamModel(2, param.getMin(), param.getMax(), param.getValue());
+			
+			model.setName(param.getName());
+			model.setOwner(this);
 
 			model.addChangeListener(new ChangeListener() {
 				@Override
@@ -183,7 +186,7 @@ public class Synth implements Connectable, java.io.Serializable {
 		this.name = name;
 	}
 	public String getName() {
-		return name;
+		return getSynthName();
 	}
 	
 	public String toString() {

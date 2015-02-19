@@ -39,6 +39,8 @@ import com.sun.xml.internal.ws.org.objectweb.asm.Label;
 public class Dial extends JComponent {
 	int radius;
 	
+	boolean drawText = true;
+	
     /**
      * The data model that handles the numeric maximum value,
      * minimum value, and current-position value for the slider.
@@ -355,10 +357,12 @@ public class Dial extends JComponent {
 		FontMetrics fontInfo = g2.getFontMetrics();
 		int stringWidth =  fontInfo.stringWidth(name);
 		int stringHeight = fontInfo.getHeight();
-		
-		
 		int tick = 0;
-		int offset = (int) (stringHeight / 2);
+		int offset = 0;
+		
+		if (drawText) 
+			offset = (int) (stringHeight / 2);
+		
 		radius = Math.min(getSize().width, getSize().height) / 2 - tick;
 		radius -= offset;
 
@@ -385,15 +389,22 @@ public class Dial extends JComponent {
 		g2.setPaint(Color.BLACK);
 		g2.drawLine(end.x, end.y, center.x, center.y);
 		
-		g.drawString(name, (getSize().width / 2) - (stringWidth / 2), 0 + (int)(stringHeight / 1.2));
+		if (drawText) {
+			
+			g.drawString(name, (getSize().width / 2) - (stringWidth / 2), 0 + (int)(stringHeight / 1.2));
 		
-		String stringValue = getValueString();
-		stringWidth =  fontInfo.stringWidth(stringValue);
-		g.drawString(stringValue, (getSize().width / 2) - (stringWidth / 2), getHeight()- (int)(stringHeight / 4));
+			String stringValue = getValueString();
+			stringWidth =  fontInfo.stringWidth(stringValue);
+			g.drawString(stringValue, (getSize().width / 2) - (stringWidth / 2), getHeight()- (int)(stringHeight / 4));
+		}
 	}
 	
 	protected String getValueString() {
 		return String.valueOf(getValue());
+	}
+	
+	public void setDrawText(boolean drawText) {
+		this.drawText = drawText;
 	}
 
 	private void drawDial(Graphics g,
@@ -464,9 +475,12 @@ public class Dial extends JComponent {
 		cg.fillOval(xCenter-r, yCenter-r, 2*r, 2*r);
 	
 	}
-
+	private Dimension fakeSize = new Dimension(50, 50);
+	public void setForcedSize(Dimension size) {
+		fakeSize = size;
+	}
 	public Dimension getPreferredSize() {
-		return new Dimension(45, 45);
+		return fakeSize; //new Dimension(50, 50);
 	}
 
 	public void setValue(int value) {
@@ -532,9 +546,15 @@ public class Dial extends JComponent {
 		final Dial dial = new DialD(2, -1, 1, 0);
 		dial.setName("Amp");
 		dial.setBehavior(Dial.Behavior.CENTER);
+		dial.fakeSize = new Dimension(50,50);
+		dial.setDrawText(false);
+		//dial.setPreferredSize(new Dimension(15, 15));
 		frame.setLayout(new FlowLayout());
 		frame.getContentPane().add(dial);
-		
+
+//		dial.setMinimumSize(new Dimension(200,200));
+//		dial.setSize(new Dimension(200, 200));
+//		
 		Dial dial2 = new DialD(dial.getModel());
 
 		frame.getContentPane().add(dial2);

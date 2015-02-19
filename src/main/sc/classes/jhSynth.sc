@@ -30,9 +30,9 @@
 	*/
 	createSynthListeners {
 		var defaultParams;
-		
+
 		~synthsGroup = Group.head(Server.default);
-		
+
 		// Whenever an synthrument is added, this will create busses for this synthance of the synth
 		OSCresponder(nil, "/synth/add", { arg time, resp, msg;
 			var synthName = msg[1];
@@ -46,13 +46,13 @@
 			// The rest are the defaults
 
 			msg = msg.addAll(["outBus", 0]);
-			
+
 			synthName.idPut(id, Dictionary.new);
 			synthDict = synthName.idGet(id);
-			
+
 			// Store the synth and the inBus
 			synthDict.put(\synth, Synth.head(~synthsGroup, synthName, msg));
-			
+
 			("Synth added" + id).postln;
 		}).add;
 
@@ -102,7 +102,7 @@
 			effectDict = this.idGet(effectName, effectId);
 
 			// Change synthrument's output bus back to default (0)
-			synthDict.at(\outBus).set(0);
+			synthDict.at(\synth).set(\outBus, 0);
 			("Disconnected synthrument from effect").postln;
 		}).add;
 

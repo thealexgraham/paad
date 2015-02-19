@@ -28,6 +28,7 @@ import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import net.alexgraham.thesis.ui.SynthCardsPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel;
+import net.alexgraham.thesis.ui.TreeLauncherPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel.SynthLauncherDelegate;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 import net.alexgraham.thesis.ui.macstyle.RunningSynthsPanel;
@@ -40,7 +41,7 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 	JSplitPane sideSplitPane;
 	
 	RunningSynthsPanel runningSynths;
-	SynthLauncherPanel synthSelector;
+	TreeLauncherPanel synthSelector;
 	
 	JPanel mainCardPanel;
 	private JButton testButton;
@@ -52,20 +53,24 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		setupLayout();
 		
 		LineConnectPanel lineConnect = new LineConnectPanel();
-		synthSelector = new SynthLauncherPanel(this);
+		synthSelector = new TreeLauncherPanel();
 
 		
 		sideSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				synthSelector, lineConnect);
 		
+		sideSplitPane.setResizeWeight(0.8);
+		sideSplitPane.setDividerLocation(250);
+		
 		sideSplitPane.setOneTouchExpandable(true);
 		
 		
 		SynthCardsPanel cardsPanel = new SynthCardsPanel();
+		cardsPanel.setMaximumSize(new Dimension(160, 100));
 		lineConnect.addSynthSelectListener(cardsPanel);
 		
 		JSplitPane wholeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideSplitPane, cardsPanel);
-		
+		wholeSplitPane.setDividerLocation(1000);
 		//add(sideSplitPane);
 		add(wholeSplitPane);
 		

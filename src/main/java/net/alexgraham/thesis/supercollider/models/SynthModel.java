@@ -7,9 +7,13 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javafx.collections.ListChangeListener.Change;
+
 import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
+import net.alexgraham.thesis.supercollider.synths.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.InstDef;
@@ -25,6 +29,7 @@ public class SynthModel {
 		public void synthAdded(Synth synth);
 		public void instAdded(Instrument inst);
 		public void effectAdded(Effect effect);
+		public void changeFuncAdded(ChangeFunc changeFunc);
 	}
 	
 	private CopyOnWriteArrayList<SynthModelListener> listeners = 
@@ -72,6 +77,12 @@ public class SynthModel {
 		}
 	}
 	
+	public void fireChangeFuncAdded(ChangeFunc changeFunc) {
+		for (SynthModelListener synthModelListener : listeners) {
+			synthModelListener.changeFuncAdded(changeFunc);
+		}
+	}
+	
 	public ArrayList<Instrument> getInstruments() {
 		ArrayList<Instrument> insts = new ArrayList<Instrument>();
 		
@@ -114,6 +125,16 @@ public class SynthModel {
 		synthListModel.addElement(effect);
 		synths.put(effect.getID(), effect);
 		fireEffectAdded(effect);
+	}
+	
+	//TODO: Refactor this nonsense into one function, they're all doing the same thing
+	public void addChangeFunc(ChangeFuncDef synthDef) {
+		// Create the synth and its panel
+		ChangeFunc changeFunc = new ChangeFunc(synthDef, App.sc);
+
+		synthListModel.addElement(changeFunc);
+		synths.put(changeFunc.getID(), changeFunc);
+		fireChangeFuncAdded(changeFunc);
 	}
 	
 	

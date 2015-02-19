@@ -11,6 +11,7 @@ import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.SCLang.SCServerListener;
 import net.alexgraham.thesis.supercollider.models.ConnectionModel;
 import net.alexgraham.thesis.supercollider.models.DefModel;
+import net.alexgraham.thesis.supercollider.models.LaunchTreeModel;
 import net.alexgraham.thesis.supercollider.models.PlayerModel;
 import net.alexgraham.thesis.supercollider.models.SynthModel;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
@@ -24,6 +25,7 @@ public class App
 	static final int JAVA_PORT = 1295;
 	
 	public static SCLang sc;
+	public static LaunchTreeModel launchTreeModel;
 	public static DefModel defModel;
 	public static SynthModel synthModel;
 	public static PlayerModel playerModel;
@@ -35,9 +37,11 @@ public class App
 		
     	sc = new SCLang(SC_PORT, JAVA_PORT);
 		sc.startSCLang();
+		
 		defModel = new DefModel();
 		synthModel = new SynthModel();
 		playerModel = new PlayerModel();
+		launchTreeModel = new LaunchTreeModel();
 		connectionModel = new ConnectionModel();
 		
 		

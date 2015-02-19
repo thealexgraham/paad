@@ -1,8 +1,12 @@
 package net.alexgraham.thesis.supercollider.synths;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -30,6 +34,30 @@ public class Effect extends Synth implements Connectable {
 		closeCommand = "/effect/remove";
 	}
 	//var effectName = msg[1], effectId = msg[2], toEffectName = msg[4], toEffectId = msg[5];
+	
+	
+	// temporarily override
+	public void start() {
+		
+		// Create the arguments list for this Synth
+    	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(synthDef.getSynthName());
+    	arguments.add(id.toString());
+    	
+    	
+    	// Add the current parameters
+    	for (String paramName : parameterModels.keySet()) {
+    		
+    		DoubleBoundedRangeModel model = getDoubleModelForParameterName(paramName);
+    		
+			arguments.add(paramName);
+			arguments.add(model.getDoubleValue());
+			arguments.add(model.getDoubleMinimum());
+			arguments.add(model.getDoubleMaximum());
+    	}
+    	
+    	App.sc.sendMessage(startCommand, arguments.toArray());
+	}
 
 	public void connectOutputTo(Effect effect) {
 		App.sc.sendMessage("/effect/connect/effect", this.getSynthName(), this.getID(), effect.getSynthName(), effect.getID());

@@ -29,11 +29,13 @@ import net.alexgraham.thesis.supercollider.models.PlayerModel.PlayerModelListene
 import net.alexgraham.thesis.supercollider.models.SynthModel;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
+import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
@@ -304,11 +306,16 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		}
 	}
 	
+	//TODO: refactor
 	public void moduleSelected(ModulePanel module) {
 		if (module instanceof InstrumentModule) {
 			fireSynthSelectedEvent(((InstrumentModule) module).getInstrument());
 		} else if (module instanceof EffectModule) {
 			fireSynthSelectedEvent(((EffectModule) module).getEffect());
+		} else if (module instanceof ChangeFuncModule) {
+			fireSynthSelectedEvent(((ChangeFuncModule) module).getChangeFunc());
+		} else if (module instanceof SynthModule) {
+			fireSynthSelectedEvent(((SynthModule)module).getSynth());
 		}
 	}
 	
@@ -414,9 +421,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public void effectAdded(Effect effect) {
 		
 		EffectModule effectModule = new EffectModule(100, 300, effect);
-		
-		//effectModule.setPreferredSize(new Dimension(100, 300));
-		//effectModule.setSize(new Dimension(100, 200));
+
 		effectModule.setSize(effectModule.getPreferredSize());
 		effectModule.validate();
 		
@@ -425,6 +430,24 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		boxes.addAll(effectModule.getConnectablePanels());
 		
 		effectModule.setOwner(this);
+		
+		updateUI();
+		repaint();
+	}
+	//TODO: This is also literally the same thing....
+	@Override
+	public void changeFuncAdded(ChangeFunc changeFunc) {
+		// TODO Auto-generated method stub
+		ChangeFuncModule changeFuncModule = new ChangeFuncModule(100, 300, changeFunc);
+
+		changeFuncModule.setSize(changeFuncModule.getPreferredSize());
+		changeFuncModule.validate();
+		
+		changeFuncModule.setLocation(200, 200);
+		add(changeFuncModule);
+		boxes.addAll(changeFuncModule.getConnectablePanels());
+		
+		changeFuncModule.setOwner(this);
 		
 		updateUI();
 		repaint();
@@ -448,6 +471,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		
 	}
+
+
 
 }
 

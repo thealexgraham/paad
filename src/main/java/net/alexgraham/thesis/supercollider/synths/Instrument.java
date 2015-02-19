@@ -15,7 +15,6 @@ public class Instrument extends Synth implements Connectable {
 		super(synthDef, sc);
 		init();
 		this.start();
-
 	}
 	
 	public Instrument(SynthDef synthDef, SCLang sc, String name) {

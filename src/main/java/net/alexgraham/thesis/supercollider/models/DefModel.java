@@ -12,6 +12,7 @@ import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.SynthDef;
@@ -33,6 +34,11 @@ public class DefModel {
 
 	public DefaultListModel<SynthDef> getSynthDefListModel() {
 		return synthListModel;
+	}
+	
+	public void clearSynthDefListModel() {
+		synthListModel = new DefaultListModel<SynthDef>();
+		synthdefs = new Hashtable<String, SynthDef>();
 	}
 	
 	public ArrayList<InstDef> getInstDefs() {
@@ -57,6 +63,7 @@ public class DefModel {
     			SynthDef synth = new SynthDef(synthName, App.sc);
     			synthdefs.put(synthName, synth);
     			synthListModel.addElement(synth);
+    			App.launchTreeModel.addSynthDef(synth);	
     			// Also Add To The List
     		}
     	});
@@ -69,7 +76,7 @@ public class DefModel {
     			InstDef synth = new InstDef(synthName, App.sc);
     			synthdefs.put(synthName, synth);
     			synthListModel.addElement(synth);
-    			
+    			App.launchTreeModel.addSynthDef(synth);	
     			// Also Add To The List
     		}
     	});
@@ -82,6 +89,21 @@ public class DefModel {
     			EffectDef effectDef = new EffectDef(synthName, App.sc);
     			synthdefs.put(synthName, effectDef);
     			synthListModel.addElement(effectDef);
+    			App.launchTreeModel.addSynthDef(effectDef);
+
+    			// Also Add To The List
+    		}
+    	});
+    	
+    	App.sc.createListener("/changefuncdef/add", new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+    			List<Object> arguments = message.getArguments();
+    			final String synthName = (String) arguments.get(0);
+
+    			ChangeFuncDef changeDef = new ChangeFuncDef(synthName, App.sc);
+    			synthdefs.put(synthName, changeDef);
+    			synthListModel.addElement(changeDef);
+    			App.launchTreeModel.addSynthDef(changeDef);
     			
     			// Also Add To The List
     		}
@@ -107,7 +129,7 @@ public class DefModel {
     	App.sc.createListener("/synthdef/param", paramlistener);
     	App.sc.createListener("/instdef/param", paramlistener);
     	App.sc.createListener("/effectdef/param", paramlistener);
-	
+    	App.sc.createListener("/changefuncdef/param", paramlistener);	
 	}
 	
 

@@ -274,7 +274,13 @@ public class SCLang extends ChangeSender {
     public void rebootServer() throws IOException {
     	
     	App.sc.stopSCLang();
-    	App.sc.startSCLang("~reboot = true");
+    	
+    	// Do this since the server will send new versions
+    	App.defModel.clearSynthDefListModel();
+    	
+    	App.sc.startSCLang();
+    	
+    	
     	
     	App.sc.addUpdateListener(SCServerListener.class, new SCServerListener() {
 			

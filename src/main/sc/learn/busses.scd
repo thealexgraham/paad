@@ -11,6 +11,25 @@ b.get({arg value;
 )
 
 
+(
+p = ParameterBus.new(\gain, 1.5, 0, 1);
+
+
+)
+
+p.set(10)
+p.bus.get
+
+(
+
+b = Bus.control(s);
+
+b.set([0, 2, 3, 5]);
+)
+
+b.get;
+
+
 // get a bus
 b = Bus.control(s);
 

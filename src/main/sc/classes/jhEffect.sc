@@ -6,7 +6,7 @@
 	newEffect { |effectName, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 		// Need default params for effect?
-		params = this.addDefaultParams(params, [[\gain, 0.0, 1.0, 0.0]]);
+		params = this.addDefaultParams(params, [[\gain, 0.0, 1.0, 0.5]]);
 
 		// Get effect ready in Java
 		net.sendMsg("/effectdef/add", effectName);
@@ -47,8 +47,7 @@
 			inBus = Bus.audio(Server.default, 2);
 
 			// Add inBus and outBus to the default arguments
-			msg = msg.addAll(["inBus", inBus, "outBus", 0]);
-			msg.postln;
+			//msg = msg.addAll(["inBus", inBus, "outBus", 0]);
 
 			// Create a new dictionary for this ID
 
@@ -56,7 +55,25 @@
 			effectDict = effectName.idGet(id);
 
 			// Store the synth and the inBus
-			effectDict.put(\synth, Synth.tail(~effectsGroup, effectName, msg));
+			effectDict.put(\synth, Synth.tail(~effectsGroup, effectName,
+				[\inBus, inBus, \outBus, 0]));
+
+			// The rest of the parameters are quads, reshape so we can use them
+			msg.reshape((msg.size / 4).asInt, 4).do({ |item, i|
+				var paramName = item[0];
+				var value = item[1];
+				var min = item[2];
+				var max = item[3];
+				var param = ParameterBus.new(paramName, value, min, max);
+				param.ownerId = id;
+				//var bus = Bus.control.set(value);
+
+				// Save the param bus
+				effectDict.put(paramName, param);
+				// Map the effect to it
+				effectDict.at(\synth).map(paramName, param.bus);
+			});
+			// Save the inBus
 			effectDict.put(\inBus, inBus);
 
 			("Effect added, adding effect at" + id).postln;
@@ -85,7 +102,8 @@
 			var effectName = msg[1], param = msg[2], id = msg[3], val = msg[4];
 
 			// Set the value directly
-			effectName.idGet(id).at(\synth).set(param, val);
+			//effectName.idGet(id).at(\synth).set(param, val);
+			effectName.idGet(id).at(param).setSilent(val); // Change the value at the bus
 		}).add;
 
 		OSCresponder(nil, "/effect/connect/effect", { arg time, resp, msg;

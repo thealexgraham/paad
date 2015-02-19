@@ -4,3 +4,5 @@ Vim+Supercollider, Eclim
 1. Wires should match the color you're leaving from
 2. Top of inst still a circle
 3. 
+
+HashMap of class names, points to a Category node. When adding a new class to the tree it checks that dict, fi it finds its class it can put it in

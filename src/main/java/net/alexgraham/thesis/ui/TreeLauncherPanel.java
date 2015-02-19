@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.SocketException;
 import java.util.Hashtable;
 import java.util.List;
@@ -24,9 +25,15 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.SCLang.SCServerListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.EffectDef;
@@ -37,7 +44,7 @@ import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
-public class SynthLauncherPanel extends JPanel {
+public class TreeLauncherPanel extends JPanel {
 	
 	public interface SynthLauncherDelegate {
 		void launchSynth(SynthDef synthDef);
@@ -60,8 +67,7 @@ public class SynthLauncherPanel extends JPanel {
 		
 	int lastInt = 0;
 	
-	public SynthLauncherPanel(SynthLauncherDelegate delegate) throws SocketException {
-		this.delegate = delegate;
+	public TreeLauncherPanel() throws SocketException {
 		start();
 		System.out.println("Starting");
 	}
@@ -79,39 +85,60 @@ public class SynthLauncherPanel extends JPanel {
 		// -------------------
 		//synthListModel = new DefaultListModel<String>();
 		
-		synthList = new JList<SynthDef>(App.defModel.getSynthDefListModel());
-		synthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tree = new JTree(App.launchTreeModel.getTreeModel());
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		
-		synthList.addListSelectionListener(new ListSelectionListener() {
-			
-			public void valueChanged(ListSelectionEvent e) {
-				JList theList = (JList)e.getSource();
-				if (theList.getSelectedIndex() == -1) {
-					// No selection, don't have launch button
-					launchButton.setEnabled(false);
-				} else {
-					launchButton.setEnabled(true);
-				}
-			}
-		});
-		
-		synthList.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
-				JList list = (JList)evt.getSource();
-				if (evt.getClickCount() == 2) {
-					Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex()); 
-					if (r != null && r.contains(evt.getPoint()))
-					{ 
-						SynthDef selected = synthList.getSelectedValue();
-						launchSynth(selected);
-					}
+        tree.expandPath(new TreePath(App.launchTreeModel.getRoot().getPath()));
+//        tree.expandRow(0);
+//        tree.setRootVisible(false);
+//        tree.setShowsRootHandles(true);
+       
+        
+        MouseListener ml = new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                int selRow = tree.getRowForLocation(e.getX(), e.getY());
+                TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+                if(selRow != -1) {
+                    if(e.getClickCount() == 1) {
+                      //  mySingleClick(selRow, selPath);
+                    }
+                    else if(e.getClickCount() == 2) {
+                        //myDoubleClick(selRow, selPath);
+                    	DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selPath.getLastPathComponent();
+                    	
+                    	if (selectedNode.getUserObject() instanceof SynthDef) {
+                        	SynthDef selected = (SynthDef) selectedNode.getUserObject();
+                        	launchSynth(selected);
+                    	}
 
+                    }
+                }
+            }
+        };
+        tree.addMouseListener(ml);
+        
+        // Pull out the trees when the server is ready
+        App.sc.addUpdateListener(SCServerListener.class, new SCServerListener() {
+			
+			@Override
+			public void serverReady() {
+				
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
 				}
+				
+				System.out.println("Doing it");
+		        for (int i = 0; i < tree.getRowCount(); i++) {
+		            tree.expandRow(i);
+		        }
 			}
 		});
+        
 		
 		// Add Srollplane to it
-		JScrollPane listScrollPane = new JScrollPane(synthList);
+		JScrollPane listScrollPane = new JScrollPane(tree);
 		middlePanel.add(listScrollPane);
 		
 		// Launch Button
@@ -129,8 +156,12 @@ public class SynthLauncherPanel extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				synthList.updateUI();
+				//synthList.updateUI();
 				//App.sc.sendMessage("/start/ready", 1);
+		        for (int i = 0; i < tree.getRowCount(); i++) {
+		            tree.expandRow(i);
+		        }
+			
 			}
 		});
 		

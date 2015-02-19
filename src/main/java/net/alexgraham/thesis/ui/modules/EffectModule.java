@@ -3,6 +3,7 @@ package net.alexgraham.thesis.ui.modules;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -14,7 +15,11 @@ import java.awt.event.ActionListener;
 import java.security.Policy.Parameters;
 import java.util.ArrayList;
 
+
+
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,6 +30,7 @@ import javax.swing.event.ChangeListener;
 
 import com.sun.org.apache.xpath.internal.compiler.Keywords;
 
+import net.alexgraham.thesis.supercollider.synths.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Parameter;
@@ -109,7 +115,7 @@ public class EffectModule extends ModulePanel {
 		topPanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
 		
-		JLabel topLabel = new JLabel("Routine Player");
+		JLabel topLabel = new JLabel(effect.getName());
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
@@ -117,7 +123,7 @@ public class EffectModule extends ModulePanel {
 		middlePanel = new JPanel();
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
-		middlePanel.setLayout(new GridLayout(0, 1));
+		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 //		middlePanel.add(new JLabel("testing "));
 //		middlePanel.add(new JLabel("testing"));
 		addParameters();
@@ -146,7 +152,7 @@ public class EffectModule extends ModulePanel {
 	public void addParameters() {
 		ArrayList<Parameter> getParameters = effect.getParameters();
 		for (Parameter parameter : getParameters) {
-			DoubleBoundedRangeModel model = (DoubleBoundedRangeModel) effect.getModelForParameterName(parameter.getName());
+			DoubleParamModel model = (DoubleParamModel) effect.getModelForParameterName(parameter.getName());
 			JLabel paramNameLabel = new JLabel(parameter.getName());
 			JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
 			model.addChangeListener(new ChangeListener() {
@@ -156,18 +162,32 @@ public class EffectModule extends ModulePanel {
 				}
 			});
 			
-			JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-			paramPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+//			JPanel togetherPanel = new JPanel(new GridLayout(1, 0, 0, 0));
+			JPanel togetherPanel = new JPanel();
+			togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
+			JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
 			
+		
 			paramPanel.add(paramNameLabel);
-			paramPanel.add(paramValueLabel);
+			//paramPanel.add(paramValueLabel);
+
+			JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+			DialD dial = new DialD(model);
+			dial.setForcedSize(new Dimension(15, 15));
+			dial.setDrawText(false);
+			dialPanel.add(dial);
+			dialPanel.add(paramValueLabel);
+			//dialPanel.add(paramNameLabel);
 			
-			
-			ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, effect, ConnectorType.AUDIO_INPUT);
+			ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model, ConnectorType.PARAM_CHANGE_IN);
 			paramPanel.add(connectablePanel);
 			this.addConnectablePanel(connectablePanel);
 			
-			middlePanel.add(paramPanel);
+
+			togetherPanel.add(dialPanel);
+			togetherPanel.add(Box.createHorizontalGlue());
+			togetherPanel.add(paramPanel);
+			middlePanel.add(togetherPanel);
 		}
 	}
 	

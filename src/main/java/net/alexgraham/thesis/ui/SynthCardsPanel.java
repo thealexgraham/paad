@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
+import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Synth;
@@ -111,6 +112,12 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 		addPanelForSynth(effect);
 	}
 	
+	@Override
+	public void changeFuncAdded(ChangeFunc changeFunc) {
+		addPanelForSynth(changeFunc);
+		
+	}
+	
 	private void addPanelForSynth(Synth synth) {
 		synth.addSynthListener(this);
 		
@@ -118,6 +125,8 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 		SynthPanel panel = new SynthPanel(synth);
 		selectedSynthPanel.add(panel, synth.getID());
 	}
+
+
 
 
 }

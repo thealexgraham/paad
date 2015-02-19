@@ -58,7 +58,15 @@ JavaHelper {
 		this.createInstListeners;
 		this.createEffectListeners;
 		this.createRoutListeners;
+		this.createChangeFuncListeners;
+		this.createChooserListeners;
+		this.createPatternGenListeners;
 
+	}
+
+	sendMsg { arg ... args;
+		var net = NetAddr.new("127.0.0.1", this.sendPort);
+		net.sendMsg(args);
 	}
 
 	// Gets whatever is at the ID (defining the type)
@@ -139,6 +147,9 @@ JavaHelper {
 			},
 			\effect, {
 				this.newEffect(name, params);
+			},
+			\changeFunc, {
+				this.newChangeFunc(name, params[0], params[1]);
 			},
 			{
 				postln("No type for "++type.asString);

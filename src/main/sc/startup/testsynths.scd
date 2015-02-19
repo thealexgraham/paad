@@ -14,7 +14,23 @@ SynthDef(\sinWave, { | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
 
 SynthDef(\sawWave, { | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
 	Out.ar(outBus, Pan2.ar(Saw.ar(freq) * gain, pan));
+
 }).readyLoad;
+
+
+SynthDef(\scale, { | outBus=0, gain = 0.5 |
+	var trig, div, freq, oct, reps, env, osc, flt;
+	oct = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3];
+	trig = Impulse.kr(2);
+	env = EnvGen.kr(Env.perc(0.01, 0.1), trig, 0.5);
+	freq = (Stepper.kr(trig, 0, 42, 56, 2, 42)).midicps;
+	osc = Saw.ar(freq * [1, 1.01], env);
+	//flt = RLPF.ar(osc, freq * 2, 0.7);
+	Out.ar(outBus, Pan2.ar(osc * gain, 0));
+
+}).readyLoad;
+
+~java.addDefinition("scale", \synth, []);
 
 SynthDef(\sawsinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan = 0, gain = 1 |
 	var sig, env;

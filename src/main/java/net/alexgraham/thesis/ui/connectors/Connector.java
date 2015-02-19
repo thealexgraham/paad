@@ -36,7 +36,7 @@ public class Connector implements java.io.Serializable {
 	}
 
 	public enum ConnectorType {
-		AUDIO_INPUT, AUDIO_OUTPUT, INST_PLAY_IN, INST_PLAY_OUT, DEFAULT
+		AUDIO_INPUT, AUDIO_OUTPUT, INST_PLAY_IN, INST_PLAY_OUT, PARAM_CHANGE_IN, PARAM_CHANGE_OUT, ACTION_IN, DEFAULT
 	}
 	
 	

@@ -25,7 +25,8 @@ SynthDef(\eq, { |inBus, outBus =0, lofreq = 80, midfreq = 800, hifreq = 2000, ba
 		[\midfreq, 200, 1000, 800],
 		[\band2, -80, 80, 0],
 		[\hifreq, 800, 5000, 2000],
-		[\band3, -80, 80, 0]]);
+		[\band3, -80, 80, 0],
+		[\mix, -1, 0, 1]]);
 
 // Simple reverb
 SynthDef(\verb, { |inBus, outBus = 0, mix = 0.33, room = 0.5, damp = 0.5, mul = 1, add = 0, gain = 1|
