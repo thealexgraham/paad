@@ -25,6 +25,10 @@ ChangeFunc {
 
 	}
 
+	paramAt { |paramName|
+		^argsDict.at(paramName);
+	}
+
 	setParam { |paramName, value|
 		argsDict.at(paramName).setSilent(value);
 	}

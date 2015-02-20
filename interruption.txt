@@ -1,3 +1,5 @@
+paramc
+
 How to make sure server isn't ready until all synth defs have loaded
 
 

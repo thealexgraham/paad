@@ -36,7 +36,8 @@ public class Connector implements java.io.Serializable {
 	}
 
 	public enum ConnectorType {
-		AUDIO_INPUT, AUDIO_OUTPUT, INST_PLAY_IN, INST_PLAY_OUT, PARAM_CHANGE_IN, PARAM_CHANGE_OUT, ACTION_IN, DEFAULT
+		AUDIO_INPUT, AUDIO_OUTPUT, INST_PLAY_IN, INST_PLAY_OUT, PARAM_CHANGE_IN, PARAM_CHANGE_OUT, 
+		PATTERN_OUT, PATTERN_IN, CHOICE_CHANGE_IN, CHOICE_CHANGE_OUT, ACTION_IN, ACTION_OUT, DEFAULT
 	}
 	
 	
@@ -119,6 +120,32 @@ public class Connector implements java.io.Serializable {
 		return new Point(currentPositon.x + width / 2, currentPositon.y
 				+ height / 2);
 	}
+	
+	public Color getColor() {
+		Color color = Color.black;
+		
+		if(AGHelper.allEquals(type, ConnectorType.AUDIO_INPUT, ConnectorType.AUDIO_OUTPUT)) {
+			color = Color.ORANGE;
+		}
+		
+		if(AGHelper.allEquals(type, ConnectorType.CHOICE_CHANGE_IN, ConnectorType.CHOICE_CHANGE_OUT)) {
+			color = Color.GREEN;
+		}
+		
+		if(AGHelper.allEquals(type, ConnectorType.PARAM_CHANGE_IN, ConnectorType.PARAM_CHANGE_OUT)) {
+			color = Color.BLUE;
+		}
+		
+		if(AGHelper.allEquals(type, ConnectorType.ACTION_IN, ConnectorType.ACTION_OUT)) {
+			color = Color.RED;
+		}
+		
+		if(AGHelper.allEquals(type, ConnectorType.PATTERN_IN, ConnectorType.PATTERN_OUT)) {
+			color = Color.MAGENTA;
+		}
+		
+		return color;
+	}
 
 	public void drawSelf(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
@@ -139,9 +166,7 @@ public class Connector implements java.io.Serializable {
 			triangleDirection = -1;	
 		}
 		
-		if(AGHelper.allEquals(type, ConnectorType.AUDIO_INPUT, ConnectorType.AUDIO_OUTPUT)) {
-			g2.setColor(Color.RED);
-		}
+		g2.setColor(getColor());
 		
 		if (type == ConnectorType.AUDIO_INPUT || type == ConnectorType.AUDIO_OUTPUT) {
 			g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);
@@ -176,7 +201,6 @@ public class Connector implements java.io.Serializable {
 		g2.drawLine(point1.x, point1.y, point3.x, point3.y);
 		g2.drawLine(point2.x, point2.y, point3.x, point3.y);
 	}
-	
 	
 
 	public boolean checkHover(Point position) {

@@ -15,6 +15,18 @@ public class AGHelper {
 		return toReturn;
 	}
 	
+	public static Integer convertToInt(Object number) {
+		Integer toReturn = 0;
+		
+		if (number.getClass() == Integer.class) {
+			toReturn = (Integer) number;
+		} else if (number.getClass() == Float.class) {
+			toReturn = (Integer) ((Float) number).intValue();
+		}
+		return toReturn;
+	}
+	
+	
 	public static <E extends Enum> boolean allEquals(E value, E... types) {
 		boolean passed = false; // Innocent until proven guilty
 		

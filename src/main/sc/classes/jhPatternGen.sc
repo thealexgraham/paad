@@ -10,7 +10,7 @@
 		);
 	}
 
-	getPatternGenDefs { |name|
+	getPatternGenDef { |name|
 		^this.patternGenDefs.at(name.asSymbol);
 	}
 
@@ -31,7 +31,7 @@
 		params.do({ |item, i|
 			var param = item[0].asString;
 			var type = item[1];
-
+			postln(item);
 			switch(type,
 				\int, {
 					var min = item[2];
@@ -41,8 +41,10 @@
 				},
 				\choice, {
 					var choiceName = item[2][0];
-					var choiceValue = item[2][1];
-					net.sendMsg("/patterngendef/param", patternGenName, param, type, choiceName, choiceValue);
+					var choiceValue = item[2][1]; // Assume array
+					//var message = choiceValue.insertAll(0, "/patterngendef/param", param, type, choiceName);
+					var message = ["/patterngendef/param", patternGenName, param, type, choiceName].addAll(choiceValue);
+					net.sendBundle(0, message);
 				},
 				{
 					var min = item[2];
@@ -76,10 +78,10 @@
 			var patternGenDef, patternGen;
 
 			"Adding patternGen".postln;
-			patternGenDef = this.getpatternGenDef(patternGenName);
+			patternGenDef = this.getPatternGenDef(patternGenName);
 
 			// Create the actual object
-			patternGen = patternGen.new(patternGenDef.at(\function), patternGenDef.at(\params));
+			patternGen = PatternGenerator.new(id, patternGenDef.at(\function), patternGenDef.at(\params));
 
 			// Store the object
 			patternGenName.idPut(id, patternGen);

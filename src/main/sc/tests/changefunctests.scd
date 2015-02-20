@@ -17,7 +17,7 @@ p.getMin
 c.doChange(p);
 
 p.value;
-
+Synth
 
 (
 ~effect = Dictionary.new;

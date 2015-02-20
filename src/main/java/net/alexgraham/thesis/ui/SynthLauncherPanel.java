@@ -28,11 +28,12 @@ import javax.swing.event.ListSelectionListener;
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
-import net.alexgraham.thesis.supercollider.synths.ChangeFuncDef;
-import net.alexgraham.thesis.supercollider.synths.EffectDef;
-import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
+import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
+import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -40,7 +41,7 @@ import com.illposed.osc.OSCMessage;
 public class SynthLauncherPanel extends JPanel {
 	
 	public interface SynthLauncherDelegate {
-		void launchSynth(SynthDef synthDef);
+		void launchSynth(Def def);
 		void addInstrument(InstDef instdef);
 		void addEffect(EffectDef effectDef);
 	}
@@ -51,7 +52,7 @@ public class SynthLauncherPanel extends JPanel {
 	
 	JLabel topLabel;
 
-	JList<SynthDef> synthList;
+	JList<Def> synthList;
 	JTree tree;
 	
 	SynthLauncherDelegate delegate;
@@ -79,7 +80,7 @@ public class SynthLauncherPanel extends JPanel {
 		// -------------------
 		//synthListModel = new DefaultListModel<String>();
 		
-		synthList = new JList<SynthDef>(App.defModel.getSynthDefListModel());
+		synthList = new JList<Def>(App.defModel.getSynthDefListModel());
 		synthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		synthList.addListSelectionListener(new ListSelectionListener() {
@@ -102,7 +103,7 @@ public class SynthLauncherPanel extends JPanel {
 					Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex()); 
 					if (r != null && r.contains(evt.getPoint()))
 					{ 
-						SynthDef selected = synthList.getSelectedValue();
+						Def selected = synthList.getSelectedValue();
 						launchSynth(selected);
 					}
 
@@ -119,7 +120,7 @@ public class SynthLauncherPanel extends JPanel {
 		launchButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				SynthDef currentSelection = synthList.getSelectedValue();
+				Def currentSelection = synthList.getSelectedValue();
 				launchSynth(currentSelection);
 			}
 		});
@@ -149,16 +150,16 @@ public class SynthLauncherPanel extends JPanel {
 		middlePanel.add(playerButton);
 	}
 	
-	public void launchSynth(SynthDef synthDef) {
+	public void launchSynth(Def def) {
 		// Launch the Synth based on the type of Synth
-		if (synthDef.getClass() == SynthDef.class) {
-			App.synthModel.launchSynth(synthDef);
-		} else if (synthDef.getClass() == InstDef.class) {
-			App.synthModel.addInstrument( (InstDef)synthDef );
-		} else if(synthDef.getClass() == EffectDef.class) {
-			App.synthModel.addEffect((EffectDef)synthDef);
-		} else if(synthDef.getClass() == ChangeFuncDef.class) {
-			App.synthModel.addChangeFunc((ChangeFuncDef)synthDef);
+		if (def.getClass() == SynthDef.class) {
+			App.synthModel.launchSynth(def);
+		} else if (def.getClass() == InstDef.class) {
+			App.synthModel.addInstrument( (InstDef)def );
+		} else if(def.getClass() == EffectDef.class) {
+			App.synthModel.addEffect((EffectDef)def);
+		} else if(def.getClass() == ChangeFuncDef.class) {
+			App.synthModel.addChangeFunc((ChangeFuncDef)def);
 		}
 	}
 	

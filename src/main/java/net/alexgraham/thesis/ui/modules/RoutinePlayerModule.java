@@ -96,10 +96,17 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
+		ConnectablePanel topConnectablePanel= new ConnectablePanel(Location.TOP, player, ConnectorType.PATTERN_IN);
+		topPanel.add(topConnectablePanel);
+		this.addConnectablePanel(topConnectablePanel);
+		
 		//Middle Panel//
 		middlePanel = new JPanel();
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		middlePanel.setLayout(new GridLayout(0, 2));
+		
+		
+
 		//scrollPane = new JScrollPane(middlePanel);
 		
 		
@@ -116,6 +123,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player, ConnectorType.INST_PLAY_OUT);
 		bottomPanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
+
 
 		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);
@@ -169,6 +177,10 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		middlePanel.add(playButton);
 		middlePanel.add(closeButton);
 		middlePanel.add(instLabel);
+		
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, player, ConnectorType.ACTION_OUT);
+		middlePanel.add(connectablePanel);
+		this.addConnectablePanel(connectablePanel);
 	}
 	@Override
 	public void removeSelf() {

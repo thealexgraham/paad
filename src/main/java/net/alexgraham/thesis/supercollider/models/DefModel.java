@@ -12,42 +12,44 @@ import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.synths.ChangeFuncDef;
-import net.alexgraham.thesis.supercollider.synths.EffectDef;
-import net.alexgraham.thesis.supercollider.synths.InstDef;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
+import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
+import net.alexgraham.thesis.supercollider.synths.defs.PatternGenDef;
+import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
 public class DefModel {
 	
-	private DefaultListModel<SynthDef> synthListModel 
-		= new DefaultListModel<SynthDef>();
+	private DefaultListModel<Def> synthListModel 
+		= new DefaultListModel<Def>();
 	
-	private Hashtable<String, SynthDef> synthdefs = new Hashtable<String, SynthDef>();
+	private Hashtable<String, Def> synthdefs = new Hashtable<String, Def>();
 
 	
 	public DefModel() throws SocketException {
 		createListeners();
 	}
 
-	public DefaultListModel<SynthDef> getSynthDefListModel() {
+	public DefaultListModel<Def> getSynthDefListModel() {
 		return synthListModel;
 	}
 	
 	public void clearSynthDefListModel() {
-		synthListModel = new DefaultListModel<SynthDef>();
-		synthdefs = new Hashtable<String, SynthDef>();
+		synthListModel = new DefaultListModel<Def>();
+		synthdefs = new Hashtable<String, Def>();
 	}
 	
 	public ArrayList<InstDef> getInstDefs() {
 		ArrayList<InstDef> instDefs = new ArrayList<InstDef>();
 		
-		for (Enumeration<SynthDef> e = synthListModel.elements(); e.hasMoreElements();)  {
-			SynthDef synthDef = e.nextElement();
-			if (synthDef.getClass() == InstDef.class) {
-				instDefs.add((InstDef) synthDef);
+		for (Enumeration<Def> e = synthListModel.elements(); e.hasMoreElements();)  {
+			Def def = e.nextElement();
+			if (def.getClass() == InstDef.class) {
+				instDefs.add((InstDef) def);
 			}
 		}
 		
@@ -109,6 +111,7 @@ public class DefModel {
     		}
     	});
     	
+    	
     	OSCListener paramlistener = new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
 
@@ -120,7 +123,7 @@ public class DefModel {
     			final float max = AGHelper.convertToFloat(arguments.get(3));
     			final float value = AGHelper.convertToFloat(arguments.get(4));
        			
-    			SynthDef synth = synthdefs.get(synthName);
+    			Def synth = synthdefs.get(synthName);
     			synth.addParameter(paramName, min, max, value);
     			
     		}
@@ -129,8 +132,58 @@ public class DefModel {
     	App.sc.createListener("/synthdef/param", paramlistener);
     	App.sc.createListener("/instdef/param", paramlistener);
     	App.sc.createListener("/effectdef/param", paramlistener);
-    	App.sc.createListener("/changefuncdef/param", paramlistener);	
+    	App.sc.createListener("/changefuncdef/param", paramlistener);
+    	createGenListeners();
 	}
+	
+	public void createGenListeners() throws SocketException {
+    	App.sc.createListener("/patterngendef/add", new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+    			List<Object> arguments = message.getArguments();
+    			final String synthName = (String) arguments.get(0);
+
+    			PatternGenDef def = new PatternGenDef(synthName, App.sc);
+    			synthdefs.put(synthName, def);
+    			synthListModel.addElement(def);
+    			System.out.println("Addding def " + def.getClass());
+    			App.launchTreeModel.addSynthDef(def);
+    		}
+    	});
+		
+    	OSCListener paramlistener = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+
+    			List<Object> arguments = message.getArguments();
+    			final String name = (String) arguments.get(0);
+    			final String paramName = (String) arguments.get(1);
+    			final String paramType = (String) arguments.get(2);
+    			
+    			PatternGenDef def = (PatternGenDef) synthdefs.get(name);
+    			
+    			switch (paramType) {
+    				case "int":
+    	    			final int min = AGHelper.convertToInt(arguments.get(3));
+    	    			final int max = AGHelper.convertToInt(arguments.get(4));
+    	    			final int value = AGHelper.convertToInt(arguments.get(5));
+    	    			def.addParameter(paramName, min, max, value);
+    	    			break;
+    				case "choice":
+    					final String choiceName = (String) arguments.get(3);
+    					// The rest of the arguments should be the array
+    					// Can probaably check how long this is instead, to see if it is just one number
+    					List<Object> choiceList = arguments.subList(4, arguments.size() - 1);
+    					def.addParameter(paramName, choiceName, choiceList.toArray());
+    					break;
+    				default:
+    					break;
+    					
+    			}
+    		}
+    	};
+		App.sc.createListener("/patterngendef/param", paramlistener);
+    	
+	}
+	
 	
 
 }

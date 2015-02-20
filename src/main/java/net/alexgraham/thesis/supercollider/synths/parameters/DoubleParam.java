@@ -1,12 +1,12 @@
-package net.alexgraham.thesis.supercollider.synths;
+package net.alexgraham.thesis.supercollider.synths.parameters;
 
-public class Parameter implements java.io.Serializable {
+public class DoubleParam implements Param, java.io.Serializable {
 	public String name;
 	public double min;
 	public double max;
 	public double value;
 	
-	public Parameter(String name, double min, double max, double value) {
+	public DoubleParam(String name, double min, double max, double value) {
 		this.name = name;
 		this.min = min;
 		this.max = max;

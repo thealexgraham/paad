@@ -4,8 +4,12 @@ import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.sun.swing.internal.plaf.metal.resources.metal;
+
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -84,7 +88,22 @@ public class RoutinePlayer implements Connectable, Serializable {
 			playerListener.instrumentDisconnected(inst);
 		}
 		playStateChange();
-		
+	}
+	
+	public void connectPatternObject(PatternGen patternObj) {
+		App.sc.sendMessage("/routplayer/connect/pattern", this.getIDString(), patternObj.getDefName(), patternObj.getID(), 0);
+	}
+	
+	public void disconnectPatternObject(PatternGen patternObj) {
+		App.sc.sendMessage("/routplayer/disconnect/pattern", this.getIDString(), patternObj.getDefName(), patternObj.getID(), 0);	
+	}
+	
+	public void connectPlayAction(Instance target) {
+		App.sc.sendMessage("/routplayer/connect/playaction", this.getIDString(), target.getDefName(), target.getID(), 0);
+	}
+	
+	public void disconnectPlayAction(Instance target) {
+		App.sc.sendMessage("/routplayer/disconnect/playaction", this.getIDString(), target.getDefName(), target.getID(), 0);	
 	}
 	
 	public void playOrPause() {
@@ -167,6 +186,20 @@ public class RoutinePlayer implements Connectable, Serializable {
 			}
 		}
 		
+		if (target instanceof PatternGen) {
+			if (connection.isConnectionType(this, ConnectorType.PATTERN_IN, ConnectorType.PATTERN_OUT)) {
+				connectPatternObject((PatternGen) target);
+				return true;
+			}
+		}
+		
+		if (target instanceof Instance) {
+			if (connection.isConnectionType(this, ConnectorType.ACTION_OUT, ConnectorType.ACTION_IN)) {
+				connectPlayAction((Instance) target);
+				return true;
+			}
+		}
+		
 		return false;
 	}
 
@@ -179,6 +212,21 @@ public class RoutinePlayer implements Connectable, Serializable {
 				return true;
 			}
 		}
+		
+		if (target instanceof PatternGen) {
+			if (connection.isConnectionType(this, ConnectorType.PATTERN_IN, ConnectorType.PATTERN_OUT)) {
+				disconnectPatternObject((PatternGen) target);
+				return true;
+			}
+		}
+		
+		if (target instanceof Instance) {
+			if (connection.isConnectionType(this, ConnectorType.ACTION_OUT, ConnectorType.ACTION_IN)) {
+				disconnectPlayAction((Instance) target);
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
@@ -188,7 +236,7 @@ public class RoutinePlayer implements Connectable, Serializable {
 		return false;
 	}
 	
-	@Overridet
+	@Override
 	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
 		return false;
 	}

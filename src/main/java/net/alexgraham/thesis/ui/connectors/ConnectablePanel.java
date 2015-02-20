@@ -1,6 +1,7 @@
 package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.Graphics;
+import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
@@ -12,7 +13,7 @@ import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
-public class ConnectablePanel extends JComponent {
+public class ConnectablePanel extends JPanel {
 	
 
 	private Connector connector;
@@ -20,6 +21,15 @@ public class ConnectablePanel extends JComponent {
 	private boolean pointHover = false;
 	private String labelText = null;
 	
+	public ConnectablePanel() {
+		// TODO Auto-generated constructor stub
+		super();
+	}
+	public ConnectablePanel(LayoutManager layout) {
+		super(layout);
+		// TODO Auto-generated constructor stub
+	}
+
 	public ConnectablePanel(Location location, Connectable toConnect) {
 		connector = new Connector(this, toConnect);
 		connector.setDrawLocation(location);
@@ -34,6 +44,11 @@ public class ConnectablePanel extends JComponent {
 		connector = new Connector(this, toConnect);
 		connector.setDrawLocation(location);
 		add(new JLabel(label));
+	}
+	
+	public void addConnector(Location location, Connectable toConnect, ConnectorType type) {
+		connector = new Connector(this, toConnect, type);
+		connector.setDrawLocation(location);
 	}
 
 	public boolean checkPointHover(MouseEvent e) {

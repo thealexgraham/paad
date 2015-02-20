@@ -39,7 +39,7 @@ import javax.swing.event.ListSelectionListener;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.tests.demos.ListDemo;
 import net.alexgraham.thesis.ui.SynthPanel;
 
@@ -72,7 +72,7 @@ public class SynthSelector extends JFrame implements ActionListener {
 	JList<String> synthList;
 	DefaultListModel<String> synthListModel;
 	
-	Hashtable<String, SynthDef> synthdefs;
+	Hashtable<String, Def> synthdefs;
 	
 	JButton launchButton;
 		
@@ -97,7 +97,7 @@ public class SynthSelector extends JFrame implements ActionListener {
 		
 		middlePanel.add(new JLabel("Available instruments"));
 		
-		synthdefs = new Hashtable<String, SynthDef>();
+		synthdefs = new Hashtable<String, Def>();
 		
 		
 		// SynthList Setup
@@ -201,7 +201,7 @@ public class SynthSelector extends JFrame implements ActionListener {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
     			List<Object> arguments = message.getArguments();
     			final String synthName = (String) arguments.get(0);
-    			SynthDef synth = new SynthDef(synthName, App.sc);
+    			Def synth = new Def(synthName, App.sc);
     			synthdefs.put(synthName, synth);
     			synthListModel.addElement(synthName);
     			
@@ -221,7 +221,7 @@ public class SynthSelector extends JFrame implements ActionListener {
     			final float max = convertToFloat(arguments.get(3));
     			final float value = convertToFloat(arguments.get(4));
        			
-    			SynthDef synth = synthdefs.get(synthName);
+    			Def synth = synthdefs.get(synthName);
     			
     			synth.addParameter(paramName, min, max, value);
     			
@@ -241,8 +241,8 @@ public class SynthSelector extends JFrame implements ActionListener {
 	}
 	
 	public void launchSynth(String synthName) {
-		SynthDef synthDef = synthdefs.get(synthName);
-		Synth synth = new Synth(synthDef, App.sc);
+		Def def = synthdefs.get(synthName);
+		Synth synth = new Synth(def, App.sc);
 		
 		// JFrame Test
 		JFrame frame = new JFrame() {

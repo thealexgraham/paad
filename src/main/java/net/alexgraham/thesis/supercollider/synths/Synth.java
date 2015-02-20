@@ -3,34 +3,29 @@ package net.alexgraham.thesis.supercollider.synths;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.org.apache.xml.internal.security.Init;
-
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class Synth implements Connectable, java.io.Serializable {
+public class Synth extends Instance implements Connectable, java.io.Serializable {
 	
 	public interface SynthListener {
 		public void parameterChanged(String paramName, double value);
 		public void synthClosed(Synth synth);
 	}
-	
-	protected SynthDef synthDef;
-	private SCLang sc;
-	protected String name;
-	protected UUID id;
 	
 	private CopyOnWriteArrayList<SynthListener> synthListeners = 
 			new CopyOnWriteArrayList<Synth.SynthListener>();
@@ -45,17 +40,15 @@ public class Synth implements Connectable, java.io.Serializable {
 	protected String paramChangeCommand = "/synth/paramc";
 	protected String closeCommand = "/synth/remove";
 	
-	public Synth(SynthDef synthDef, SCLang sc) {
-		this.synthDef = synthDef;
-		this.sc = sc;
-		id = UUID.randomUUID();
-		
+	public Synth(Def def, SCLang sc) {
+		super(def, sc);
+	
 		// Create default values
 		createParamModels();
 	}
 	
-	public Synth(SynthDef synthDef, SCLang sc, String name) {
-		this(synthDef, sc);
+	public Synth(Def def, SCLang sc, String name) {
+		this(def, sc);
 		this.name = name;
 	}
 		
@@ -64,7 +57,7 @@ public class Synth implements Connectable, java.io.Serializable {
 	}
 	
 	public void createParamModels() {
-		for (Parameter param : synthDef.getParameters()) {
+		for (Parameter param : def.getParameters()) {
 
 			DoubleParamModel model = 
 					new DoubleParamModel(2, param.getMin(), param.getMax(), param.getValue());
@@ -89,7 +82,7 @@ public class Synth implements Connectable, java.io.Serializable {
 		
 		// Create the arguments list for this Synth
     	List<Object> arguments = new ArrayList<Object>();
-    	arguments.add(synthDef.getSynthName());
+    	arguments.add(def.getDefName());
     	arguments.add(id.toString());
     	
     	
@@ -99,12 +92,12 @@ public class Synth implements Connectable, java.io.Serializable {
 			arguments.add(getValueForParameterName(paramName));
 		}
     	
-    	sc.sendMessage(startCommand, arguments.toArray());
+    	App.sc.sendMessage(startCommand, arguments.toArray());
 	}
 	
 	public void changeParameter(String paramName, double value) {
 		//if (value != parameters.get(paramName)) {
-			sc.sendMessage(paramChangeCommand, synthDef.getSynthName(), paramName, id.toString(), value);
+			App.sc.sendMessage(paramChangeCommand, def.getDefName(), paramName, id.toString(), value);
 		//	parameters.put(paramName, value);		
 		//}
 	}
@@ -118,7 +111,7 @@ public class Synth implements Connectable, java.io.Serializable {
 	
 	public void close() {
 		// Stop the synth at ID
-    	sc.sendMessage(closeCommand, synthDef.getSynthName(), id.toString());
+    	App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());
     	
 		// Update Synth Listeners
 		for (SynthListener synthListener : synthListeners) {
@@ -133,7 +126,7 @@ public class Synth implements Connectable, java.io.Serializable {
 	 * @return
 	 */
 	public Parameter getParameterWithName(String name) {
-		for (Parameter parameter : synthDef.getParameters()) {
+		for (Parameter parameter : def.getParameters()) {
 			if (parameter.getName().equals(name)) {
 				return parameter;
 			}
@@ -171,22 +164,11 @@ public class Synth implements Connectable, java.io.Serializable {
 	
 	
 	public ArrayList<Parameter> getParameters() {
-		return synthDef.getParameters();
+		return def.getParameters();
 	}
 	
 	public String getSynthName() {
-		return synthDef.getSynthName();
-	}
-	
-	public String getID() {
-		return id.toString();
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getName() {
-		return getSynthName();
+		return def.getDefName();
 	}
 	
 	public String toString() {

@@ -13,6 +13,7 @@ PatternChooser {
 	}
 
 	getCurrentPattern {
+		this.choosePattern;
 		^currentPattern;
 	}
 	choosePattern {

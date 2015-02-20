@@ -2,6 +2,7 @@ package net.alexgraham.thesis.supercollider.synths;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -11,14 +12,14 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class Instrument extends Synth implements Connectable {
 	
-	public Instrument(SynthDef synthDef, SCLang sc) {
-		super(synthDef, sc);
+	public Instrument(Def def, SCLang sc) {
+		super(def, sc);
 		init();
 		this.start();
 	}
 	
-	public Instrument(SynthDef synthDef, SCLang sc, String name) {
-		this(synthDef, sc);
+	public Instrument(Def def, SCLang sc, String name) {
+		this(def, sc);
 		this.name = name;
 		init();
 		this.start();

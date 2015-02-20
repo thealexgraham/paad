@@ -33,7 +33,7 @@
 			var choiceArray = item[1]; //lets assume it is a single dimension array for now
 			// Create the message as a list
 			var message = choiceArray.insert(0, choiceName).insert(0, chooserName).insert(0, "/chooserdef/param");
-			net.sendMsg(message);
+			net.sendBundle(0, message);
 		});
 
 		// Store the definition

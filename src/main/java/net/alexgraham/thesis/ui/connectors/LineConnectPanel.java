@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -16,28 +15,25 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.PrimitiveIterator.OfDouble;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javafx.scene.input.KeyCode;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.PlayerModel.PlayerModelListener;
-import net.alexgraham.thesis.supercollider.models.SynthModel;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
+import net.alexgraham.thesis.ui.modules.PatternGenModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
 import net.alexgraham.thesis.ui.modules.SynthModule;
 
@@ -52,6 +48,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	Point connectOrigin;
 	Point connectDestination;
+	Connector originConnector;
 	
 
 	ArrayList<ConnectablePanel> boxes = new ArrayList<ConnectablePanel>();
@@ -69,7 +66,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public LineConnectPanel() {
 		
 		setOpaque(true);
-		setBackground(Color.WHITE);
+		setBackground(Color.LIGHT_GRAY.brighter());
 		setLayout(null);
 		
 		// Set able to be focusable for key clicks
@@ -361,6 +358,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		
 		if (dragging) {
+			g.setColor(originPanel.getConnector().getColor());
 			g.drawLine(connectOrigin.x,
 					connectOrigin.y,
 					connectDestination.x,
@@ -369,8 +367,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		}
 		
 		for (Connection connection : connections) {
-			//Line2D line = new Line2D.Float(connection.getOrigin().getCurrentCenter(), connection.getDestination().getCurrentCenter());
-					//new Line2D(connection.getOrigin().getCurrentCenter(), connection.getDestination().getCurrentCenter());
+			g2.setColor(connection.getOrigin().getColor());
 			Line2D line = connection.getLine();
 			if (connection.isClicked())
 				g2.setStroke(new BasicStroke(3));
@@ -434,6 +431,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		updateUI();
 		repaint();
 	}
+	
 	//TODO: This is also literally the same thing....
 	@Override
 	public void changeFuncAdded(ChangeFunc changeFunc) {
@@ -448,6 +446,25 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		boxes.addAll(changeFuncModule.getConnectablePanels());
 		
 		changeFuncModule.setOwner(this);
+		
+		updateUI();
+		repaint();
+	}
+	
+	@Override
+	public void patternGenAdded(PatternGen patternGen) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		PatternGenModule patternGenModule = new PatternGenModule(100, 300, patternGen);
+
+		patternGenModule.setSize(patternGenModule.getPreferredSize());
+		patternGenModule.validate();
+		
+		patternGenModule.setLocation(200, 200);
+		add(patternGenModule);
+		boxes.addAll(patternGenModule.getConnectablePanels());
+		
+		patternGenModule.setOwner(this);
 		
 		updateUI();
 		repaint();
@@ -471,6 +488,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		
 	}
+
+
 
 
 

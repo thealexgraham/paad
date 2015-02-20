@@ -18,8 +18,8 @@ import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
-import net.alexgraham.thesis.supercollider.synths.SynthDef.Parameter;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.defs.Def.Parameter;
 import net.alexgraham.thesis.ui.components.JSliderD;
 
 public class SynthWindow extends JFrame {

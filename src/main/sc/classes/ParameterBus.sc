@@ -25,6 +25,7 @@ ParameterBus {
 			value = newValue;
 			bus.set(newValue);
 			net.sendMsg("/"++ownerId++"/"++name++"/change", value);
+			"sending message".postln;
 		});
 
 		^value;

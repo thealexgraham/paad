@@ -93,13 +93,21 @@
 
 		OSCresponder(nil, "/changefunc/connect/param", { arg time, resp, msg;
 			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
-			var changeFunc, parameter;
+			var changeFunc, parameter, owner;
 
 			changeFunc = cfName.idGet(cfId);
 
-			// Get the actual parameter object
-			parameter = ownerName.idGet(ownerId).at(paramName);
+			owner = ownerName.idGet(ownerId);
 
+			// Get the actual parameter object
+
+			if (owner.class == Dictionary,
+				{
+					parameter = ownerName.idGet(ownerId).at(paramName);
+				}, {
+					parameter = owner.paramAt(paramName);
+				}
+			);
 			// Tell the change func to listen for this parameter
 			changeFunc.addListener(parameter); // IS THIS THE OBJECT???
 
@@ -107,7 +115,7 @@
 		}).add;
 
 		OSCresponder(nil, "/changefunc/disconnect/param", { arg time, resp, msg;
-			var cfName, cfId, ownerName, ownerId, paramName;
+			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
 			var changeFunc, parameter;
 
 			changeFunc = cfName.idGet(cfId);

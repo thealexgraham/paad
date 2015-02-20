@@ -1,17 +1,17 @@
 PatternGenerator {
 	var patternFunction;
-	var <>currentPattern;
+	var currentPattern;
 	var <>argsDict;
 	var <>action;
-	*new { | function, arguments |
-		^super.new.init(function, arguments);
+	*new { | id, function, arguments |
+		^super.new.init(id, function, arguments);
 	}
 
-	init { |function, arguments|
+	init { |id, function, arguments|
 
 		action = function;
 		argsDict = Dictionary.new;
-
+		arguments.postln;
 		arguments.do({ |item, i|
 			var name = item[0];
 			var type = item[1];
@@ -21,7 +21,10 @@ PatternGenerator {
 					var min = item[2];
 					var max = item[3];
 					var default = item[4];
-					argsDict.put(name, ParameterBus.new(name, default, min, max));
+					var paramBus = ParameterBus.new(name, default, min, max);
+					argsDict.put(name, paramBus);
+					paramBus.ownerId = id;
+					postln("Putting in " + paramBus);
 				},
 				\choice, {
 					var choiceName = item[2][0];
@@ -32,17 +35,28 @@ PatternGenerator {
 					var min = item[2];
 					var max = item[3];
 					var default = item[4];
-					argsDict.put(name, ParameterBus.new(name, default, min, max));
+					var paramBus = ParameterBus.new(name, default, min, max);
+					argsDict.put(name, paramBus);
+					paramBus.ownerId = id;
 				}
 			);
 
 		});
+
+		this.doGenerate;
+	}
+
+	paramAt { |paramName|
+		^argsDict.at(paramName);
+	}
+
+	setParam { |paramName, value|
+		argsDict.at(paramName).setSilent(value);
 	}
 
 	doAction {
 		this.doGenerate;
 	}
-
 
 	doGenerate {
 		var args = Array.new;
@@ -55,5 +69,9 @@ PatternGenerator {
 		newPattern = action.performKeyValuePairs(\value, args);
 
 		currentPattern = newPattern;
+	}
+
+	getCurrentPattern {
+		^currentPattern;
 	}
 }

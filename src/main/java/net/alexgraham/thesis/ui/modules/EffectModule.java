@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 
 
+
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,10 +32,10 @@ import javax.swing.event.ChangeListener;
 
 import com.sun.org.apache.xpath.internal.compiler.Keywords;
 
-import net.alexgraham.thesis.supercollider.synths.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
-import net.alexgraham.thesis.supercollider.synths.Parameter;
+import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;

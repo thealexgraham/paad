@@ -23,11 +23,11 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.Effect;
-import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 import net.alexgraham.thesis.ui.SynthPanel;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.old.RoutinePlayerPanel;
@@ -214,10 +214,10 @@ public class RunningSynthsPanel extends JPanel implements SynthSelectListener, S
 	
 	// Old Interface ?? //
 	
-	public void launchSynth(SynthDef synthDef) {
+	public void launchSynth(Def def) {
 		
 		// Create the synth and its panel
-		Synth synth = new Synth(synthDef, App.sc);
+		Synth synth = new Synth(def, App.sc);
 		synth.start();
 		synth.addSynthListener(this);
 		

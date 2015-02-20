@@ -4,6 +4,8 @@ RoutinePlayer {
 	var <>playedAction;
 	var <>instName;
 	var <>instDict;
+	var listeners;
+
 	var rout;
 
 	*new {
@@ -14,6 +16,7 @@ RoutinePlayer {
 
 		pattern = nil;
 		template = nil;
+		listeners = IdentitySet.new;
 
 		rout = Prout({| ev |
 			var pat;
@@ -21,9 +24,9 @@ RoutinePlayer {
 				loop {
 					pat = Pbindf(*[
 						this.template,
-						#[\note, \dur], Pseq(pattern.value)
+						#[\midinote, \dur], Pseq(pattern.value)
 					]);
-					this.playedAction.value(); // Run the action to do when played (probably OSC message)
+					this.doPlayedAction; // Run the action to do when played (probably OSC message)
 					ev = pat.embedInStream(ev); // Embed the pattern and wait for it to be played
 				}
 			}
@@ -41,6 +44,21 @@ RoutinePlayer {
 		"Stopping routine".postln;
 		rout.stop;
 	}
+
+	addListener { |obj|
+		listeners.add(obj);
+	}
+
+	removeListener { |obj|
+		listeners.remove(obj);
+	}
+
+	doPlayedAction { |obj|
+		listeners.do({ |item, i|
+			item.doAction;
+		});
+	}
+
 
 	isInstConnected {
 		if ((instDict == nil || instName == nil),
@@ -85,9 +103,11 @@ RoutinePlayer {
 	}
 
 	connectPatternObject { |patternObject|
+		postln("Trying to set pattern pboject");
+		patternObject.postln;
 		pattern = {
-			//patternObject.getCurrentPattern;
-			patternObject.choosePattern;
+			patternObject.getCurrentPattern;
+			//patternObject.choosePattern;
 		};
 	}
 

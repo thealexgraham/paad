@@ -19,7 +19,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
-import net.alexgraham.thesis.supercollider.synths.Parameter;
+import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
@@ -39,9 +39,9 @@ public class ChangeFuncModule extends ModulePanel {
 	private DialD panDial;
 	
 	
-	JPanel topPanel;
-	JPanel bottomPanel;
-	JPanel middlePanel;
+	ConnectablePanel topPanel;
+	ConnectablePanel bottomPanel;
+	ConnectablePanel middlePanel;
 	JScrollPane scrollPane;
     
 	private JButton closeButton;
@@ -86,18 +86,18 @@ public class ChangeFuncModule extends ModulePanel {
 				
 		//Top Panel//
 		
-		topPanel = new JPanel(new FlowLayout());
-		
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.TOP, changeFunc, ConnectorType.ACTION_IN);
-		topPanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
+		topPanel = new ConnectablePanel(new FlowLayout());
+		topPanel.addConnector(Location.TOP, changeFunc, ConnectorType.PARAM_CHANGE_OUT);
+		this.addConnectablePanel(topPanel);
 		
 		JLabel topLabel = new JLabel(changeFunc.getSynthName());
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
 		//Middle Panel//
-		middlePanel = new JPanel();
+		middlePanel = new ConnectablePanel();
+		middlePanel.addConnector(Location.LEFT, changeFunc, ConnectorType.ACTION_IN);
+		this.addConnectablePanel(middlePanel);
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
 		middlePanel.setLayout(new GridLayout(0, 1));
@@ -119,17 +119,18 @@ public class ChangeFuncModule extends ModulePanel {
 		
 		//Bottom Panel//
 
-		bottomPanel = new JPanel(new FlowLayout());
-
+		bottomPanel = new ConnectablePanel(new FlowLayout());
+		bottomPanel.addConnector(Location.BOTTOM, changeFunc, ConnectorType.PARAM_CHANGE_OUT);
+		this.addConnectablePanel(bottomPanel);
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);
 		//middlePanel.setBackground(Color.GRAY);
 		bottomPanel.setBackground(Color.GRAY);
 		
 		// Create connectors //
-		connectablePanel = new ConnectablePanel(Location.BOTTOM, changeFunc, ConnectorType.PARAM_CHANGE_OUT);
-		bottomPanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
+//		connectablePanel = new ConnectablePanel(Location.BOTTOM, changeFunc, ConnectorType.PARAM_CHANGE_OUT);
+//		bottomPanel.add(connectablePanel);
+//		this.addConnectablePanel(connectablePanel);
 
 		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);

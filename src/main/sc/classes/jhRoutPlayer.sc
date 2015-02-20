@@ -74,6 +74,51 @@
 			player.removeInstrument();
 			("Removed instrument").postln;
 		}).add;
+
+		OSCresponder(nil,"/routplayer/connect/pattern", { arg time, resp, msg;
+			// Set float1
+			var id = msg[1], patternName = msg[2], patternId = msg[3];
+			var player, patternObj;
+			"trying to connect pattern".postln;
+			player = dictName.idGet(id);
+			patternObj = patternName.idGet(patternId);
+			player.connectPatternObject(patternObj);
+
+			("Connected Pattern Object to player at ID"+id).postln;
+		}).add;
+
+		OSCresponder(nil,"/routplayer/remove/pattern", { arg time, resp, msg;
+			// Set float1
+			var id = msg[1];
+			var player, instDict;
+			player = dictName.idGet(id);
+			player.removeInstrument();
+			("Removed instrument").postln;
+		}).add;
+
+		OSCresponder(nil,"/routplayer/connect/playaction", { arg time, resp, msg;
+			// Set float1
+			var id = msg[1], targetName = msg[2], targetId = msg[3];
+			var player, targetObj;
+
+			player = dictName.idGet(id);
+			targetObj = targetName.idGet(targetId);
+			player.addListener(targetObj);
+
+			("Connected Player Object to player at ID"+id).postln;
+		}).add;
+
+		OSCresponder(nil,"/routplayer/remove/playaction", { arg time, resp, msg;
+			// Set float1
+			var id = msg[1], targetName = msg[2], targetId = msg[3];
+			var player, targetObj;
+
+			player = dictName.idGet(id);
+			targetObj = targetName.idGet(targetId);
+			player.removeListener(targetObj);
+			("Removed instrument").postln;
+		}).add;
+
 	}
 
 }

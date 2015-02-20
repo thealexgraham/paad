@@ -23,9 +23,9 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.xml.stream.events.StartDocument;
 
-import net.alexgraham.thesis.supercollider.synths.EffectDef;
-import net.alexgraham.thesis.supercollider.synths.InstDef;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
+import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 import net.alexgraham.thesis.ui.SynthCardsPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel;
 import net.alexgraham.thesis.ui.TreeLauncherPanel;
@@ -83,8 +83,8 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 	}
 
 	@Override
-	public void launchSynth(SynthDef synthDef) {
-		runningSynths.launchSynth(synthDef);
+	public void launchSynth(Def def) {
+		runningSynths.launchSynth(def);
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.ui.SynthPanel.SynthPanelDelegate;
 import net.alexgraham.thesis.ui.components.ResizeCardLayout;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoPanel;
@@ -124,10 +124,10 @@ public class RunningSynthsPanelList extends JPanel implements SynthPanelDelegate
 		selectedSynthPanel.add(defaultCard, "No Synth Selected");
 	}
 	
-	public void launchSynth(SynthDef synthDef) {
+	public void launchSynth(Def def) {
 		
 		// Create the synth and its panel
-		Synth synth = new Synth(synthDef, App.sc);
+		Synth synth = new Synth(def, App.sc);
 		synth.start();
 		
 		// Create the SynthPanel and add it to the list of cards

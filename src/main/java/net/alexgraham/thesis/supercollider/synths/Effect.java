@@ -6,6 +6,7 @@ import java.util.List;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
@@ -15,14 +16,14 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 public class Effect extends Synth implements Connectable {
 
 
-	public Effect(SynthDef synthDef, SCLang sc) {
-		super(synthDef, sc);
+	public Effect(Def def, SCLang sc) {
+		super(def, sc);
 		init();
 		this.start();
 	}
 	
-	public Effect(SynthDef synthDef, SCLang sc, String name) {
-		this(synthDef, sc);
+	public Effect(Def def, SCLang sc, String name) {
+		this(def, sc);
 		this.name = name;
 		init();
 		this.start();
@@ -41,7 +42,7 @@ public class Effect extends Synth implements Connectable {
 		
 		// Create the arguments list for this Synth
     	List<Object> arguments = new ArrayList<Object>();
-    	arguments.add(synthDef.getSynthName());
+    	arguments.add(def.getDefName());
     	arguments.add(id.toString());
     	
     	

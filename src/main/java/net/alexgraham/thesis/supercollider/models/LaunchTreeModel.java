@@ -6,14 +6,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
 
 public class LaunchTreeModel {
 	HashMap<String, DefaultMutableTreeNode> categories = new HashMap<String, DefaultMutableTreeNode>();
 	DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 	DefaultTreeModel treeModel;
 	
-	SynthDef def = new SynthDef("test", App.sc);
+	Def def = new Def("test", App.sc);
 	public LaunchTreeModel() {
 		treeModel = new DefaultTreeModel(root);
 	}
@@ -26,7 +26,7 @@ public class LaunchTreeModel {
 		return root;
 	}
 	
-	public void addSynthDef(SynthDef def) {
+	public void addSynthDef(Def def) {
 		String className = def.getClass().getSimpleName();
 		if (categories.containsKey(className)) {
 			DefaultMutableTreeNode category = categories.get(className);

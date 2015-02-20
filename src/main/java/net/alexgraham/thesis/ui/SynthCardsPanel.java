@@ -14,6 +14,7 @@ import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
@@ -124,6 +125,12 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 		// Create the SynthPanel and add it to the list of cards
 		SynthPanel panel = new SynthPanel(synth);
 		selectedSynthPanel.add(panel, synth.getID());
+	}
+
+	@Override
+	public void patternGenAdded(PatternGen patternGen) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

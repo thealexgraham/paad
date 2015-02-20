@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.supercollider.synths;
+package net.alexgraham.thesis.supercollider.synths.parameters;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +10,7 @@ import com.illposed.osc.OSCMessage;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;

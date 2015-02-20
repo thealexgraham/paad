@@ -112,8 +112,6 @@ JavaHelper {
 		);
 	}
 
-
-
 	/* Add a new definition, if java is ready, send them right away,
 	* Otherwise, add it to the pending list
 	*/
@@ -150,6 +148,9 @@ JavaHelper {
 			},
 			\changeFunc, {
 				this.newChangeFunc(name, params[0], params[1]);
+			},
+			\patternGen, {
+				this.newPatternGen(name, params[0], params[1]);
 			},
 			{
 				postln("No type for "++type.asString);

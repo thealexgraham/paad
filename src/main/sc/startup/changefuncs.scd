@@ -4,6 +4,7 @@
 			| value, min, max, walkAmount |
 
 			var changeTop, change;
+			"performing change func".postln;
 			changeTop = (max - min) * (walkAmount / 100);
 			change = changeTop.rand * [1, -1].choose;
 			value + change;

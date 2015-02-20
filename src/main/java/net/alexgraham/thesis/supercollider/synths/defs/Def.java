@@ -1,4 +1,4 @@
-package net.alexgraham.thesis.supercollider.synths;
+package net.alexgraham.thesis.supercollider.synths.defs;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -6,20 +6,21 @@ import java.util.List;
 import java.util.UUID;
 
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 
-public class SynthDef implements java.io.Serializable {
+public class Def implements java.io.Serializable {
 	
 	/**
 	 * 
 	 */
-	private String synthName;
+	protected String defName;
 	private ArrayList<Parameter> parameters;
 	
 	SCLang sc;
 	
-	public SynthDef(String synthName, SCLang sc) {
+	public Def(String defName, SCLang sc) {
 		this.sc = sc;
-		this.synthName = synthName;
+		this.defName = defName;
 		
 		parameters = new ArrayList<Parameter>(); // Blank array for params
 		
@@ -30,12 +31,12 @@ public class SynthDef implements java.io.Serializable {
 		
 	}
 
-	public String getSynthName() {
-		return synthName;
+	public String getDefName() {
+		return defName;
 	}
 
-	public void setSynthName(String synthName) {
-		this.synthName = synthName;
+	public void setDefName(String defName) {
+		this.defName = defName;
 	}
 	
 	public ArrayList<Parameter> getParameters() {
@@ -43,7 +44,7 @@ public class SynthDef implements java.io.Serializable {
 	}
 
 	public String toString() {
-		return this.synthName + " (" + this.getClass().getSimpleName() + ")";
+		return this.defName + " (" + this.getClass().getSimpleName() + ")";
 	}
 
 }

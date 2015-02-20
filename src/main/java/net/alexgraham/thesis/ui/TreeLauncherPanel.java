@@ -35,11 +35,13 @@ import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang.SCServerListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
-import net.alexgraham.thesis.supercollider.synths.ChangeFuncDef;
-import net.alexgraham.thesis.supercollider.synths.EffectDef;
-import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
+import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
+import net.alexgraham.thesis.supercollider.synths.defs.PatternGenDef;
+import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -47,7 +49,7 @@ import com.illposed.osc.OSCMessage;
 public class TreeLauncherPanel extends JPanel {
 	
 	public interface SynthLauncherDelegate {
-		void launchSynth(SynthDef synthDef);
+		void launchSynth(Def def);
 		void addInstrument(InstDef instdef);
 		void addEffect(EffectDef effectDef);
 	}
@@ -58,7 +60,7 @@ public class TreeLauncherPanel extends JPanel {
 	
 	JLabel topLabel;
 
-	JList<SynthDef> synthList;
+	JList<Def> synthList;
 	JTree tree;
 	
 	SynthLauncherDelegate delegate;
@@ -106,8 +108,8 @@ public class TreeLauncherPanel extends JPanel {
                         //myDoubleClick(selRow, selPath);
                     	DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selPath.getLastPathComponent();
                     	
-                    	if (selectedNode.getUserObject() instanceof SynthDef) {
-                        	SynthDef selected = (SynthDef) selectedNode.getUserObject();
+                    	if (selectedNode.getUserObject() instanceof Def) {
+                        	Def selected = (Def) selectedNode.getUserObject();
                         	launchSynth(selected);
                     	}
 
@@ -146,7 +148,7 @@ public class TreeLauncherPanel extends JPanel {
 		launchButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				SynthDef currentSelection = synthList.getSelectedValue();
+				Def currentSelection = synthList.getSelectedValue();
 				launchSynth(currentSelection);
 			}
 		});
@@ -180,16 +182,18 @@ public class TreeLauncherPanel extends JPanel {
 		middlePanel.add(playerButton);
 	}
 	
-	public void launchSynth(SynthDef synthDef) {
+	public void launchSynth(Def def) {
 		// Launch the Synth based on the type of Synth
-		if (synthDef.getClass() == SynthDef.class) {
-			App.synthModel.launchSynth(synthDef);
-		} else if (synthDef.getClass() == InstDef.class) {
-			App.synthModel.addInstrument( (InstDef)synthDef );
-		} else if(synthDef.getClass() == EffectDef.class) {
-			App.synthModel.addEffect((EffectDef)synthDef);
-		} else if(synthDef.getClass() == ChangeFuncDef.class) {
-			App.synthModel.addChangeFunc((ChangeFuncDef)synthDef);
+		if (def.getClass() == SynthDef.class) {
+			App.synthModel.launchSynth(def);
+		} else if (def.getClass() == InstDef.class) {
+			App.synthModel.addInstrument( (InstDef)def );
+		} else if(def.getClass() == EffectDef.class) {
+			App.synthModel.addEffect((EffectDef)def);
+		} else if(def.getClass() == ChangeFuncDef.class) {
+			App.synthModel.addChangeFunc((ChangeFuncDef)def);
+		} else if(def.getClass() == PatternGenDef.class) {
+			App.synthModel.addPatternGen((PatternGenDef)def);
 		}
 	}
 	

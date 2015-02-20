@@ -21,8 +21,8 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayState;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayerListener;
-import net.alexgraham.thesis.supercollider.synths.InstDef;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 
 public class RoutinePlayerPanel extends JPanel implements PlayerListener {
 	JPanel topPanel;
