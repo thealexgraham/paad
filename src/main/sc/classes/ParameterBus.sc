@@ -33,6 +33,7 @@ ParameterBus {
 
 	setSilent { |newValue|
 		value = newValue;
+		bus.set(newValue);
 		^value;
 	}
 

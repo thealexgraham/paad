@@ -19,6 +19,7 @@ SynthDef(\eq, { |inBus, outBus =0, lofreq = 80, midfreq = 800, hifreq = 2000, ba
 	Out.ar(outBus, XFade2.ar(dry * gain, wet * gain, mix));
 }).readyLoad;
 
+
 ~java.addDefinition("eq", \effect,
 	[[\lofreq, 0, 600, 80],
 		[\band1, -80, 80, 0],
