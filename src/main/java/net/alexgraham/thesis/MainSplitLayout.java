@@ -55,9 +55,15 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		LineConnectPanel lineConnect = new LineConnectPanel();
 		synthSelector = new TreeLauncherPanel();
 
+		JScrollPane scroller = new JScrollPane(lineConnect);
+		
+		lineConnect.setSize(5000, 5000);
+		lineConnect.setMinimumSize(new Dimension(5000, 5000));
+		lineConnect.setPreferredSize(new Dimension(5000, 5000));
 		
 		sideSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				synthSelector, lineConnect);
+				synthSelector, scroller);
+		
 		
 		sideSplitPane.setResizeWeight(0.8);
 		sideSplitPane.setDividerLocation(250);
