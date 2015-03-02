@@ -8,8 +8,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.SwingUtilities;
+
+import com.sun.javafx.geom.Shape;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.ui.components.TriangleShape;
@@ -30,8 +33,8 @@ public class Connector implements java.io.Serializable {
 		public boolean removeConnectionWith(Connectable otherConnectable);
 	}
 
-	private int height = 10;
-	private int width = 10;
+	private int height = 9;
+	private int width = 9;
 
 	private Connectable connectable;
 
@@ -70,6 +73,10 @@ public class Connector implements java.io.Serializable {
 		this.connectable = connectable;
 		this.type = type;
 		
+		if (AGHelper.allEquals(type, ConnectorType.PARAM_CHANGE_IN)) {
+			height = 6; width = 6;
+		}
+		
 	}
 	
 	
@@ -83,6 +90,10 @@ public class Connector implements java.io.Serializable {
 
 	public ConnectorType getConnectorType() {
 		return type;
+	}
+	
+	public TriangleShape getCurrentTriangle() {
+		return new TriangleShape(getCurrentPosition(), getTriangleOrigin(), getRotationFromLocation(), width, height);
 	}
 	
 	// FIXME: Top positions are way off
@@ -102,19 +113,17 @@ public class Connector implements java.io.Serializable {
 		switch (drawLocation) {
 			case RIGHT:
 				location = new Point(ownerLocation.x + owner.getSize().width,
-						ownerLocation.y + owner.getSize().height / 2 - height);
+						ownerLocation.y + owner.getSize().height / 2);
 				break;
 			case LEFT:
-				location = new Point(ownerLocation.x - (width),
-						ownerLocation.y + owner.getSize().height / 2 - height);
+				location = new Point(ownerLocation.x,
+						ownerLocation.y + owner.getSize().height / 2);
 				break;
 			case BOTTOM:
-				location = new Point(ownerLocation.x + (ownerSize.width / 2)
-						- width, ownerLocation.y + owner.getSize().height);
+				location = new Point(ownerLocation.x + (ownerSize.width / 2), ownerLocation.y + owner.getSize().height);
 				break;
 			case TOP:
-				location = new Point(ownerLocation.x + (ownerSize.width / 2)
-						- width, ownerLocation.y - height * 2);
+				location = new Point(ownerLocation.x + (ownerSize.width / 2), ownerLocation.y);
 				break;
 			default:
 				break;
@@ -125,8 +134,31 @@ public class Connector implements java.io.Serializable {
 
 	public Point getCurrentCenter() {
 		Point currentPositon = getCurrentPosition();
-		return new Point(currentPositon.x + width / 2, currentPositon.y
-				+ height / 2);
+		Point location = null;
+		
+		switch (drawLocation) {
+			case RIGHT:
+				location = new Point(currentPositon.x + width / 2, currentPositon.y);
+				break;
+			case LEFT:
+				location = new Point(currentPositon.x + width, currentPositon.y);
+				break;
+			case BOTTOM:
+				location = new Point(currentPositon.x, currentPositon.y + height / 2);
+				break;
+			case TOP:
+				location = new Point(currentPositon.x, currentPositon.y - height / 2);
+				break;
+			default:
+				return new Point(currentPositon.x + width / 2, currentPositon.y
+						+ height / 2);
+		}
+		
+		TriangleShape triangle = getCurrentTriangle();
+		Rectangle boundRect = triangle.getTranslatedBounds();
+		location = new Point((int)boundRect.getCenterX(), (int)boundRect.getCenterY());
+		
+		return location;
 	}
 	
 	public int getRotationFromLocation() {
@@ -215,86 +247,15 @@ public class Connector implements java.io.Serializable {
 		triangle.draw(g2);
 	}
 	
-	// FIXME: Triangle is not drawing in correct place
-	// FIXME: Put flipping in drawSelf probably (maybe with negative heights or something)
-	public void drawTriangle(Graphics2D g2, Point location, int width, int height) {
-		//location.y = (int)(location.y + height * 1.8f);
-		
-		// Regular Triangle
-		Point point1 = new Point(location.x - width / 2, location.y - height / 2);
-		Point point2 = new Point(location.x + width / 2, location.y - height / 2);
-		Point point3 = new Point(location.x, location.y + height / 2);
-		
-		if (type == ConnectorType.AUDIO_INPUT) {
-			// Upside Down
-			point1 = new Point(location.x + width / 2, location.y + height / 2);
-			point2 = new Point(location.x - width / 2, location.y + height / 2);
-			point3 = new Point(location.x, location.y - height / 2);
-		}
-		
-		drawTriangle(g2, point1, point2, point3);
-	}
-		
-	public void drawTriangleFromBase(Graphics2D g2, Point location, int baseLength, int length) {
-		int x = location.x;
-		int y = location.y;
-		
-		Point base1 = new Point(x, y + baseLength / 2);
-		Point base2 = new Point(x, y - baseLength / 2);
-		Point apex = new Point (x + length, y);
-		
-		drawTriangle(g2, base1, base2, apex);
-	}
-	
-	public void drawTriangleFromApex(Graphics2D g2, Point location, int baseLength, int length) {
-		int x = location.x;
-		int y = location.y;
-		
-		Point base1 = new Point(x + length, y + baseLength / 2);
-		Point base2 = new Point(x + length, y - baseLength / 2);
-		Point apex = new Point (x, y);
-		
-		drawTriangle(g2, base1, base2, apex);
-	}
-	
-	public void drawVerticalTriangleFromApex(Graphics2D g2, Point location, int baseLength, int length) {
-		int x = location.x;
-		int y = location.y;
-		
-		Point base1 = new Point(x + baseLength / 2, y + length);
-		Point base2 = new Point(x + baseLength / 2, y + length);
-		Point apex = new Point (x, y);
-		
-		drawTriangle(g2, base1, base2, apex);
-	}
-	
-	
-	public void drawVerticalTriangleFromBase(Graphics2D g2, Point location, int baseLength, int length) {
-		int x = location.x;
-		int y = location.y;
-		
-		Point base1 = new Point(x + baseLength / 2, y);
-		Point base2 = new Point(x + baseLength / 2, y);
-		Point apex = new Point (x + length, y);
-		
-		drawTriangle(g2, base1, base2, apex);
-	}
-	
-
-	
-	public void drawTriangle(Graphics2D g2, Point point1, Point point2, Point point3) {
-		g2.drawLine(point1.x, point1.y, point2.x, point2.y);
-		g2.drawLine(point1.x, point1.y, point3.x, point3.y);
-		g2.drawLine(point2.x, point2.y, point3.x, point3.y);
-	}
-	
 
 	public boolean checkHover(Point position) {
 		Point currentPosition = getCurrentPosition();
-		Rectangle ovalRect = new Rectangle(currentPosition.x,
-				currentPosition.y, 10, 10);
+		TriangleShape triangle = new TriangleShape(currentPosition, getTriangleOrigin(), getRotationFromLocation(), width, height);
 
-		if (ovalRect.contains(position.x, position.y)) {
+		Rectangle ovalRect = triangle.getTranslatedBounds();
+		ovalRect.setSize(new Dimension((int) ovalRect.getWidth() * 2, (int) ovalRect.getHeight()*2));
+
+		if (ovalRect.contains(position)) {
 			hovered = true;
 		} else {
 			hovered = false;

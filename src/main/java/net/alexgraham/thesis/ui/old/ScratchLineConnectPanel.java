@@ -33,6 +33,7 @@ import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
@@ -470,6 +471,84 @@ public class ScratchLineConnectPanel extends JPanel implements SynthModelListene
 		
 		
 	}
+	
+	
+	
+	
+	
+	// FIXME: Triangle is not drawing in correct place
+	// FIXME: Put flipping in drawSelf probably (maybe with negative heights or something)
+	public void drawTriangle(Graphics2D g2, Point location, int width, int height) {
+		//location.y = (int)(location.y + height * 1.8f);
+		
+		// Regular Triangle
+		Point point1 = new Point(location.x - width / 2, location.y - height / 2);
+		Point point2 = new Point(location.x + width / 2, location.y - height / 2);
+		Point point3 = new Point(location.x, location.y + height / 2);
+		
+		if (type == ConnectorType.AUDIO_INPUT) {
+			// Upside Down
+			point1 = new Point(location.x + width / 2, location.y + height / 2);
+			point2 = new Point(location.x - width / 2, location.y + height / 2);
+			point3 = new Point(location.x, location.y - height / 2);
+		}
+		
+		drawTriangle(g2, point1, point2, point3);
+	}
+		
+	public void drawTriangleFromBase(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x, y + baseLength / 2);
+		Point base2 = new Point(x, y - baseLength / 2);
+		Point apex = new Point (x + length, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+	public void drawTriangleFromApex(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x + length, y + baseLength / 2);
+		Point base2 = new Point(x + length, y - baseLength / 2);
+		Point apex = new Point (x, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+	public void drawVerticalTriangleFromApex(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x + baseLength / 2, y + length);
+		Point base2 = new Point(x + baseLength / 2, y + length);
+		Point apex = new Point (x, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+	
+	public void drawVerticalTriangleFromBase(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x + baseLength / 2, y);
+		Point base2 = new Point(x + baseLength / 2, y);
+		Point apex = new Point (x + length, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+
+	
+	public void drawTriangle(Graphics2D g2, Point point1, Point point2, Point point3) {
+		g2.drawLine(point1.x, point1.y, point2.x, point2.y);
+		g2.drawLine(point1.x, point1.y, point3.x, point3.y);
+		g2.drawLine(point2.x, point2.y, point3.x, point3.y);
+	}
+	
 
 }
 

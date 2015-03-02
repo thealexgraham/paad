@@ -2,6 +2,7 @@ package net.alexgraham.thesis.ui.components;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 
@@ -14,7 +15,11 @@ public class TriangleShape extends Path2D.Double {
 	private int rotation = 0;
 	
     public Point getLocation() { return location; }
-	public void setLocation(Point location) { this.location = location; }
+	public void setLocation(Point location) {
+		this.location = location;
+	}
+	
+	
 	public int getRotation() { return rotation; }
 	public void setRotation(int rotation) { this.rotation = rotation; }
 
@@ -22,10 +27,17 @@ public class TriangleShape extends Path2D.Double {
     	this.location = location;
     	this.rotation = rotation;
     	if (origin == APEX) {
-    		createTriangleFromApex(new Point(0,0), baseLength, length);
+    		createTriangleFromApex(new Point(0, 0), baseLength, length);
     	} else {
-    		createTriangleFromBase(new Point(0,0), baseLength, length);
+    		createTriangleFromBase(new Point(0, 0), baseLength, length);
     	}
+    	
+        AffineTransform at = new AffineTransform();
+        at.rotate(Math.toRadians(rotation));
+////        at.translate(location.x, location.y);
+        transform(at);
+    	
+    	
     }
     
 	public void createTriangleFromApex(Point location, int baseLength, int length) {
@@ -57,18 +69,21 @@ public class TriangleShape extends Path2D.Double {
         closePath();
 	}
 	
+	
+	public Rectangle getTranslatedBounds() {
+		Rectangle newRectangle = getBounds();
+		
+		newRectangle.translate(location.x, location.y);
+		return newRectangle;
+	}
+	
 	public void draw(Graphics2D g2) {
+		
         Graphics2D g2d = (Graphics2D) g2.create();
         
-        AffineTransform at = new AffineTransform();
-        at.rotate(Math.toRadians(rotation));
-        
         g2d.translate(location.x, location.y);
-        g2d.transform(at);
-        
+
         g2d.draw(this);
         g2d.dispose();
-        
-       
 	}
 }

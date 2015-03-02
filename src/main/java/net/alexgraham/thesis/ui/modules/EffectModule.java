@@ -56,8 +56,8 @@ public class EffectModule extends ModulePanel {
 	private DialD panDial;
 	
 	
-	JPanel topPanel;
-	JPanel bottomPanel;
+	ConnectablePanel topPanel;
+	ConnectablePanel bottomPanel;
 	JPanel middlePanel;
 	JScrollPane scrollPane;
     
@@ -115,11 +115,12 @@ public class EffectModule extends ModulePanel {
 				
 		//Top Panel//
 		
-		topPanel = new JPanel(new FlowLayout());
+		topPanel = new ConnectablePanel(new FlowLayout());
+		topPanel.addConnector(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
 		
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
-		topPanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
+//		ConnectablePanel connectablePanel = new ConnectablePanel(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
+//		topPanel.add(connectablePanel);
+		this.addConnectablePanel(topPanel);
 		
 		JLabel topLabel = new JLabel(effect.getName());
 		topLabel.setForeground(Color.WHITE);
@@ -130,25 +131,22 @@ public class EffectModule extends ModulePanel {
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
 		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
-//		middlePanel.add(new JLabel("testing "));
-//		middlePanel.add(new JLabel("testing"));
 		addParameters();
 		//scrollPane = new JScrollPane(middlePanel);
 		
 		
 		//Bottom Panel//
 
-		bottomPanel = new JPanel(new FlowLayout());
+		bottomPanel = new ConnectablePanel(new FlowLayout());
 
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);
-		//middlePanel.setBackground(Color.GRAY);
+
 		bottomPanel.setBackground(Color.GRAY);
 		
+		bottomPanel.addConnector(Location.BOTTOM, effect, ConnectorType.AUDIO_OUTPUT);
 		// Create connectors //
-		connectablePanel = new ConnectablePanel(Location.BOTTOM, effect, ConnectorType.AUDIO_OUTPUT);
-		bottomPanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
+		this.addConnectablePanel(bottomPanel);
 
 		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);
