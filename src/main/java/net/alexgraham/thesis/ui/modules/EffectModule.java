@@ -9,15 +9,9 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.Policy.Parameters;
 import java.util.ArrayList;
-
-
-
-
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -26,23 +20,18 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.org.apache.xpath.internal.compiler.Keywords;
-
 import net.alexgraham.thesis.supercollider.synths.Effect;
-import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
-import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
-import net.alexgraham.thesis.ui.connectors.ModulePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
-import net.alexgraham.thesis.ui.connectors.Connector.Location;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
+import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class EffectModule extends ModulePanel {
 	
@@ -116,7 +105,7 @@ public class EffectModule extends ModulePanel {
 		//Top Panel//
 		
 		topPanel = new ConnectablePanel(new FlowLayout());
-		topPanel.addConnector(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
+		topPanel.addConnector(Location.TOP, effect.getConnector(ConnectorType.AUDIO_INPUT));
 		
 //		ConnectablePanel connectablePanel = new ConnectablePanel(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
 //		topPanel.add(connectablePanel);
@@ -144,7 +133,7 @@ public class EffectModule extends ModulePanel {
 
 		bottomPanel.setBackground(Color.GRAY);
 		
-		bottomPanel.addConnector(Location.BOTTOM, effect, ConnectorType.AUDIO_OUTPUT);
+		bottomPanel.addConnector(Location.BOTTOM, effect.getConnector(ConnectorType.AUDIO_OUTPUT));
 		// Create connectors //
 		this.addConnectablePanel(bottomPanel);
 
@@ -174,16 +163,19 @@ public class EffectModule extends ModulePanel {
 		
 			paramPanel.add(paramNameLabel);
 			//paramPanel.add(paramValueLabel);
+			ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
 
 			JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 			DialD dial = new DialD(model);
 			dial.setForcedSize(new Dimension(15, 15));
 			dial.setDrawText(false);
+			dialPanel.add(leftConnectable);
+			this.addConnectablePanel(leftConnectable);
 			dialPanel.add(dial);
 			dialPanel.add(paramValueLabel);
 			//dialPanel.add(paramNameLabel);
 			
-			ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model, ConnectorType.PARAM_CHANGE_IN);
+			ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
 			paramPanel.add(connectablePanel);
 			this.addConnectablePanel(connectablePanel);
 			
@@ -195,66 +187,66 @@ public class EffectModule extends ModulePanel {
 		}
 	}
 	
-    public void setup(Container pane) {
-
-		pane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-
-		c.fill = GridBagConstraints.BOTH;
-		
-		ConnectablePanel topConnectable = new ConnectablePanel(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
-		
-		// Top connectable constraints
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weighty = 1;
-		c.gridwidth = 3;
-		c.gridy = 0;
-		c.gridx = 1;
-		
-		topConnectable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		pane.add(topConnectable, c);
-		addConnectablePanel(topConnectable);
-		
-		
-		// Prepare Title //
-		JPanel titlePanel = new JPanel();
-		//testPanel.setLayout(new GridLayout(1, 1));
-		JLabel titleLabel = new JLabel(this.effect.getSynthName());
-		titlePanel.add(titleLabel);
-		titlePanel.setBackground(Color.LIGHT_GRAY);
-		titlePanel.setOpaque(true);
-		
-		// Title constraints
-		c.fill = GridBagConstraints.BOTH;
-		c.gridwidth = 3;
-		c.weighty = 0.5;
-		c.weightx = 1;
-		c.gridx = 0;
-		c.gridy = 1;
-		pane.add(titlePanel, c);
-		
-		// Add amp dials
-		c.gridwidth = 1;
-		c.gridy = 2;
-		c.gridx = 1;
-		c.weightx = 0.5;
-		pane.add(ampDial, c);
-		
-		// Bottom Connectable Constraings
-		ConnectablePanel bottomConnectable = new ConnectablePanel(Location.BOTTOM, effect, ConnectorType.AUDIO_OUTPUT);
-		c.gridwidth = 3;
-		c.gridy = 3;
-		c.gridx = 1;
-		pane.add(bottomConnectable, c);
-		addConnectablePanel(bottomConnectable);
-		
-		
+//    public void setup(Container pane) {
+//
+//		pane.setLayout(new GridBagLayout());
+//		GridBagConstraints c = new GridBagConstraints();
+//
+//		c.fill = GridBagConstraints.BOTH;
+//		
+//		ConnectablePanel topConnectable = new ConnectablePanel(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
+//		
+//		// Top connectable constraints
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.weighty = 1;
+//		c.gridwidth = 3;
+//		c.gridy = 0;
+//		c.gridx = 1;
+//		
+//		topConnectable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+//		pane.add(topConnectable, c);
+//		addConnectablePanel(topConnectable);
+//		
+//		
+//		// Prepare Title //
+//		JPanel titlePanel = new JPanel();
+//		//testPanel.setLayout(new GridLayout(1, 1));
+//		JLabel titleLabel = new JLabel(this.effect.getSynthName());
+//		titlePanel.add(titleLabel);
+//		titlePanel.setBackground(Color.LIGHT_GRAY);
+//		titlePanel.setOpaque(true);
+//		
+//		// Title constraints
+//		c.fill = GridBagConstraints.BOTH;
+//		c.gridwidth = 3;
+//		c.weighty = 0.5;
+//		c.weightx = 1;
+//		c.gridx = 0;
+//		c.gridy = 1;
+//		pane.add(titlePanel, c);
+//		
+//		// Add amp dials
+//		c.gridwidth = 1;
 //		c.gridy = 2;
-//		c.gridx = 2;
+//		c.gridx = 1;
 //		c.weightx = 0.5;
-//		pane.add(panDial, c);
-
-		
-    }
-   
+//		pane.add(ampDial, c);
+//		
+//		// Bottom Connectable Constraings
+//		ConnectablePanel bottomConnectable = new ConnectablePanel(Location.BOTTOM, effect, ConnectorType.AUDIO_OUTPUT);
+//		c.gridwidth = 3;
+//		c.gridy = 3;
+//		c.gridx = 1;
+//		pane.add(bottomConnectable, c);
+//		addConnectablePanel(bottomConnectable);
+//		
+//		
+////		c.gridy = 2;
+////		c.gridx = 2;
+////		c.weightx = 0.5;
+////		pane.add(panDial, c);
+//
+//		
+//    }
+//   
 }

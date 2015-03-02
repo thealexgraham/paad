@@ -284,7 +284,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		remove(panel);
 		
 		App.data.removeModule(panel);
-//		App.synthModel.removeInstance(panel.getInstance());
+		App.synthModel.removeInstance(panel.getInstance());
 		
 		repaint();
 	}
@@ -369,7 +369,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		// Paint dragging l9ine
 		if (dragging) {
-			g.setColor(originPanel.getConnector().getColor());
+			g.setColor(originPanel.getConnectorUI().getColor());
 			g.drawLine(connectOrigin.x,
 					connectOrigin.y,
 					connectDestination.x,
@@ -380,7 +380,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		// Paint connections
 		for (Connection connection : getConnections()) {
 			
-			g2.setColor(connection.getOrigin().getColor());
+			g2.setColor(Connector.getColorForType(connection.getOrigin().getConnectorType()));
 			
 			Line2D line = connection.getLine();
 			
@@ -466,13 +466,13 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		removeAll();
 		boxes.removeAll(boxes);
 		
-		for (ModulePanel panel : App.data.getModulePanels()) {
-			// Add the actual panel to the surface
-			add(panel);
-			// Add the connectable panels to the list
-			boxes.addAll(panel.getConnectablePanels());
-			panel.refresh();
-		}
+//		for (ModulePanel panel : App.data.getModulePanels()) {
+//			// Add the actual panel to the surface
+//			add(panel);
+//			// Add the connectable panels to the list
+//			boxes.addAll(panel.getConnectablePanels());
+//			panel.refresh();
+//		}
 		
 		updateUI();
 		repaint();

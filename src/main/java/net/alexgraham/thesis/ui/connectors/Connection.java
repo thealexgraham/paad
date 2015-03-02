@@ -21,8 +21,13 @@ public class Connection implements java.io.Serializable {
 	public Connectable getOriginConnectable() { return origin.getConnectable(); }
 	public Connectable getDestinationConnectable() { return destination.getConnectable(); }
 	
-	public Line2D getLine() { return new Line2D.Float(getOrigin().getCurrentCenter(), getDestination().getCurrentCenter()); } 
-	
+	public Line2D getLine() {
+		// Find the closest connectorUIs
+		ConnectorUI[] closest = getOrigin().findClosestConnectorUI(getDestination());
+		// Draw the line between them
+		return new Line2D.Float(closest[0].getCurrentCenter(), closest[1].getCurrentCenter()); 
+	}
+		
 	public Connection(Connector origin, Connector destination) {
 		
 		this.origin = origin;

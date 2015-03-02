@@ -5,18 +5,14 @@ import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
-import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
-import net.alexgraham.thesis.ui.connectors.Connector.Location;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 
 public class ConnectablePanel extends JPanel {
 	
 
-	private Connector connector;
+	private ConnectorUI connectorUI;
 	
 	private boolean pointHover = false;
 	private String labelText = null;
@@ -30,33 +26,37 @@ public class ConnectablePanel extends JPanel {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ConnectablePanel(Location location, Connectable toConnect, ConnectorType type) {
-		connector = new Connector(this, toConnect, type);
-		connector.setDrawLocation(location);
+	public ConnectablePanel(Location location, Connector connector) {
+		connectorUI = new ConnectorUI(this, connector, location);
+		connector.addConnectorUI(connectorUI); //TODO: Make sure we delete
 	}
 
 	
-	public void addConnector(Location location, Connectable toConnect, ConnectorType type) {
-		connector = new Connector(this, toConnect, type);
-		connector.setDrawLocation(location);
+	public void addConnector(Location location, Connector connector) {
+		connectorUI = new ConnectorUI(this, connector, location);
+		connector.addConnectorUI(connectorUI);
 	}
 
 	public boolean checkPointHover(MouseEvent e) {
-		pointHover = connector.checkHover(e.getPoint());
+		pointHover = connectorUI.checkHover(e.getPoint());
 		return pointHover;
 	}
 	
+	public ConnectorUI getConnectorUI() {
+		return connectorUI;
+	}
+	
 	public Connector getConnector() {
-		return connector;
+		return connectorUI.getConnector();
 	}
 
 	public Point getConnectionLocation() {
-		return connector.getCurrentCenter();
+		return connectorUI.getCurrentCenter();
 		//return new Point(xPos + width + 5, yPos + height / 2 + 5);
 	}
 	
 	public void paintConnectors(Graphics g) {
-		connector.drawSelf(g);
+		connectorUI.drawSelf(g);
 	}
 
 }

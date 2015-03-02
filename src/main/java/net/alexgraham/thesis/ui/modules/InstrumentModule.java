@@ -1,32 +1,25 @@
 package net.alexgraham.thesis.ui.modules;
 
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
-import sun.net.www.content.audio.x_aiff;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
-import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
-import net.alexgraham.thesis.ui.connectors.ModulePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
-import net.alexgraham.thesis.ui.connectors.Connector.Location;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
+import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class InstrumentModule extends ModulePanel {
 
@@ -91,7 +84,7 @@ public class InstrumentModule extends ModulePanel {
 		c.fill = GridBagConstraints.BOTH;
 
 		ConnectablePanel topConnectable = new ConnectablePanel(Location.TOP,
-				instrument, ConnectorType.INST_PLAY_IN);
+				instrument.getConnector(ConnectorType.INST_PLAY_IN));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weighty = 0;
 		c.gridy = 0;
@@ -130,7 +123,7 @@ public class InstrumentModule extends ModulePanel {
 		pane.add(panDial, c);
 
 		ConnectablePanel bottomConnectable = new ConnectablePanel(
-				Location.BOTTOM, instrument, ConnectorType.AUDIO_OUTPUT);
+				Location.BOTTOM, instrument.getConnector(ConnectorType.AUDIO_OUTPUT));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 3;
 		c.weighty = 1;

@@ -125,22 +125,40 @@ public class SynthModel implements Serializable {
 		
 		return synths;
 	}
-	
+		
 	public void refreshInstances() {
-		ArrayList<Instance> list = new ArrayList<Instance>();
+
 		for (Enumeration<Instance> e = synthListModel.elements(); e.hasMoreElements();)  {
 			Instance instance = (Instance) e.nextElement();
 			instance.start();
-			
-			// Fire instance added for everyone but LineConnectPanel (modules are saved)
+			instance.refresh();
+
+			// Fire instance added for everyone
 			for (SynthModelListener synthModelListener : listeners) {
-				if (synthModelListener.getClass() != LineConnectPanel.class)
 					synthModelListener.instanceAdded(instance);
 			}
-			
-			instance.refresh();
-		
+
 		}
+	}
+	
+	public void closeInstances() {
+		for (Enumeration<Instance> e = synthListModel.elements(); e.hasMoreElements();)  {
+			Instance instance = (Instance) e.nextElement();
+			instance.close();
+
+			// Fire instance added for everyone
+			for (SynthModelListener synthModelListener : listeners) {
+					synthModelListener.instanceAdded(instance);
+			}
+
+		}
+	}
+
+	
+
+	public void removeInstance(Instance instance) {
+		synthListModel.removeElement(instance);
+		
 	}
 	
 	public void launchSynth(Def def) {
@@ -193,6 +211,7 @@ public class SynthModel implements Serializable {
 		synths.put(changeFunc.getID(), changeFunc);
 		fireInstanceAdded(changeFunc);
 	}
+
 	
 	
 }

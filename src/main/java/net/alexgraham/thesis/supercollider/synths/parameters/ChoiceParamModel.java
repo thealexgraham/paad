@@ -2,12 +2,15 @@ package net.alexgraham.thesis.supercollider.synths.parameters;
 
 import java.io.Serializable;
 import java.security.acl.Owner;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 
@@ -16,10 +19,19 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	
 	public String choiceName;
 	public Object[] choiceArray;
-	
+
 	public ChoiceParamModel(String choiceName, Object[] choiceArray) {
 		this.choiceName = choiceName;
 		this.choiceArray = Arrays.copyOf(choiceArray, choiceArray.length);
+	}
+	
+	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
+	public Connector getConnector(ConnectorType type) {
+		return connectors.get(type); //TODO: might not be the best way to do this
+	}
+	
+	public void addConnector(ConnectorType type) {
+		connectors.put(type, new Connector(this, type));
 	}
 	
 	public String getChoiceName() {

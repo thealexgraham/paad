@@ -12,6 +12,11 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class Instrument extends Synth implements Connectable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Instrument(Def def, SCLang sc) {
 		super(def, sc);
 		init();
@@ -29,6 +34,9 @@ public class Instrument extends Synth implements Connectable {
 		startCommand = "/inst/add";
 		paramChangeCommand = "/inst/paramc";
 		closeCommand = "/inst/remove";
+		
+		addConnector(ConnectorType.INST_PLAY_IN);
+		addConnector(ConnectorType.AUDIO_OUTPUT);
 	}
 
 	public void runInstrumentTest() {

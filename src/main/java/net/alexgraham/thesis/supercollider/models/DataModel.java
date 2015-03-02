@@ -1,15 +1,11 @@
 package net.alexgraham.thesis.supercollider.models;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-
-import com.sun.org.apache.xml.internal.security.Init;
 
 import net.alexgraham.thesis.supercollider.SaveHelper;
-import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
@@ -50,51 +46,54 @@ public class DataModel {
 	
 	
 	public void addModule(ModulePanel module) {
-		dataStore.addModule(module);
+//		dataStore.addModule(module);
 	}
 	
 	public void removeModule(ModulePanel module) {
-		dataStore.removeModule(module);
+//		dataStore.removeModule(module);
 		
 	}
 	
 	public ArrayList<ModulePanel> getModulePanels() {
 		ArrayList<ModulePanel> list = new ArrayList<ModulePanel>();
-		for (Enumeration<ModulePanel> e = Collections.enumeration(dataStore.getModules()); e.hasMoreElements();)  {
-			ModulePanel module = e.nextElement();
-			list.add(module);
-		}
+//		for (Enumeration<ModulePanel> e = Collections.enumeration(dataStore.getModules()); e.hasMoreElements();)  {
+//			ModulePanel module = e.nextElement();
+//			list.add(module);
+//		}
 		return list;
 	}
 	
 	
 	
-	public void saveInstances() throws IOException {
+	public void saveData(File outFile){
     	// Write to disk with FileOutputStream
-		String filename = "test";
-		SaveHelper save = new SaveHelper();
-		save.writeObject(filename, dataStore);
-//		save.writeObject(filename, connectionModel);
-		
-		for (Synth synth : synthModel.getSynths()) {
-			System.out.println(synth.toString());
-		}
+		SaveHelper.writeObject(outFile, dataStore);
+
 	}
 	
-	public void loadInstances() throws ClassNotFoundException, IOException {
-		String filename = "test";
-		SaveHelper save = new SaveHelper();
-		dataStore = (DataStore) save.readObject(filename, dataStore);
+	public void loadData(File inFile) {
 		
+		// Close all instances first
+		synthModel.closeInstances();
+		
+		Object o = SaveHelper.readObject(inFile);
+		
+		if (o instanceof DataStore) {
+			dataStore = (DataStore) o;
+		} else {
+			System.err.println("Error loading DataStore (wrong type)");
+			return;
+		}
+		lineConnectPanel.refreshModules(); // Deletes everything
+		
+		// Have models point to new datastore (necessary?)
 		init();
 		
-		for (Synth synth : synthModel.getSynths()) {
-			System.out.println(synth.toString());
-		}
-		
-		// Start and readd to lineconnect
+		// Start and read to lineconnect
 		synthModel.refreshInstances();
-		lineConnectPanel.refreshModules();
+
+		
+		// Reconnect connections in SCLang
 		for (Connection connection : dataStore.getConnections()){
 			connection.connectModules();
 		}

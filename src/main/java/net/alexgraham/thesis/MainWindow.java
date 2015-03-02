@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.Date;
@@ -17,18 +18,25 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
-import com.illposed.osc.OSCListener;
-import com.illposed.osc.OSCMessage;
 
 import net.alexgraham.thesis.supercollider.SCLang.SCConsoleListener;
 import net.alexgraham.thesis.supercollider.SCLang.SCLangProperties;
 import net.alexgraham.thesis.supercollider.SCLang.SCMessageListener;
+import net.alexgraham.thesis.supercollider.SaveHelper;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
 import net.alexgraham.thesis.ui.components.FlashButton;
+
+import com.illposed.osc.OSCListener;
+import com.illposed.osc.OSCMessage;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 public class MainWindow extends JFrame implements SCMessageListener {
 	JPanel mainPanel;
@@ -64,6 +72,8 @@ public class MainWindow extends JFrame implements SCMessageListener {
 				inFlasher.flash();
 			}
 		});
+		
+		this.setJMenuBar(createMenuBar());
 		//add(bottomPanel, BorderLayout.PAGE_END);
 	}
 	
@@ -93,7 +103,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		consoleButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				consoleDialog.openDialog();
+				consoleAction();
 			}
 		});
 		
@@ -108,12 +118,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					App.sc.rebootServer();
-				} catch (IOException e1) {
-					
-					e1.printStackTrace();
-				}
+				rebootAction();
 			}
 		});
 		
@@ -124,12 +129,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					App.data.saveInstances();
-					//App.sc.saveState();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				saveAction();
 			}
 		});
 		
@@ -141,15 +141,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					App.data.loadInstances();
-					//App.sc.saveState();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				loadAction();
 			}
 		});
 		
@@ -163,6 +155,36 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		//App.sc.addCPUUpdateListener(this);
 		//App.sc.addUpdateListener(SCCPUListener.class, this);
 		createCPUListeners();
+	}
+	
+	public void saveAction() {
+		File file = SaveHelper.chooseFile("Save");
+		if (file != null) {
+			App.data.saveData(file);
+			this.setTitle(file.getName());
+		}
+
+	}
+	
+	public void loadAction() {
+		File file = SaveHelper.chooseFile("Load");
+		if (file != null) {
+			App.data.loadData(file);
+			this.setTitle(file.getName());
+		}
+	}
+	
+	public void rebootAction() {
+		try {
+			App.sc.rebootServer();
+		} catch (IOException e1) {
+			
+			e1.printStackTrace();
+		}
+	}
+	
+	public void consoleAction() {
+		consoleDialog.openDialog();
 	}
 	
 	public void createCPUListeners() {
@@ -193,6 +215,119 @@ public class MainWindow extends JFrame implements SCMessageListener {
         consoleDialog.setSize(new Dimension(600, 300));
         consoleDialog.setLocationRelativeTo(mainFrame);
       
+	}
+	
+	public JMenuBar createMenuBar() {
+		JMenuBar menuBar;
+		JMenu file, menu;
+		JMenuItem menuItem;
+		
+		menuBar = new JMenuBar();
+		
+		// Build File Menu
+		file = new JMenu("File");
+		file.setMnemonic(KeyEvent.VK_F);
+        file.getAccessibleContext().setAccessibleDescription(
+                "Opens and closes files, etc");
+        menuBar.add(file);
+        
+        // New File
+        menuItem = new JMenuItem("New", KeyEvent.VK_N);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_1, ActionEvent.ALT_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+        file.add(menuItem);
+        
+        // Save File
+        menuItem = new JMenuItem("Save", KeyEvent.VK_S);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveAction();
+			}
+		});
+        file.add(menuItem);
+        
+        // Save As
+        menuItem = new JMenuItem("Save As", KeyEvent.VK_S);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_S, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveAction();
+			}
+		});
+        file.add(menuItem);
+        
+        // Open File
+        menuItem = new JMenuItem("Open", KeyEvent.VK_O);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loadAction();
+			}
+		});
+        file.add(menuItem);
+        
+        file.addSeparator();
+        
+        // Exit
+        menuItem = new JMenuItem("Exit", KeyEvent.VK_E);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispatchEvent(new WindowEvent(MainWindow.this, WindowEvent.WINDOW_CLOSING));
+			}
+		});
+        file.add(menuItem);
+        
+        // SuperCollider Menu
+        // -----------------------
+        
+        menu = new JMenu("SuperCollider");
+        menu.setMnemonic(KeyEvent.VK_S);      
+        menuBar.add(menu);
+        
+        // Show Console
+        menuItem = new JMenuItem("Show Console", KeyEvent.VK_C);
+        menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				consoleAction();
+			}
+		});
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        // Reboot server
+        menuItem = new JMenuItem("Reboot Server", KeyEvent.VK_R);
+        menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				rebootAction();
+			}
+		});
+        menu.add(menuItem);
+        
+        return menuBar;
 	}
 	
 	// SCMessage Listener

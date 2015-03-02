@@ -1,7 +1,9 @@
 package net.alexgraham.thesis.supercollider.synths.parameters;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.List;
 
 import javax.swing.SpinnerNumberModel;
@@ -16,6 +18,7 @@ import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class IntParamModel extends SpinnerNumberModel implements ParamModel, Connectable, Serializable {
 	
@@ -24,6 +27,7 @@ public class IntParamModel extends SpinnerNumberModel implements ParamModel, Con
 	
 	public IntParamModel(int value, int min, int max) {
 		super(value, min, max, 1);
+		addConnector(ConnectorType.PARAM_CHANGE_IN);
 	}
 	
 	public Instance getOwner() { return owner; }
@@ -41,6 +45,15 @@ public class IntParamModel extends SpinnerNumberModel implements ParamModel, Con
     				setValue(newValue);
 			}
 		});
+	}
+	
+	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
+	public Connector getConnector(ConnectorType type) {
+		return connectors.get(type); //TODO: might not be the best way to do this
+	}
+	
+	public void addConnector(ConnectorType type) {
+		connectors.put(type, new Connector(this, type));
 	}
 
 	

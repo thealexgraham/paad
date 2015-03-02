@@ -41,10 +41,17 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 	public RoutinePlayer() {
 		this.id = UUID.randomUUID();
 		App.sc.sendMessage("/routplayer/add", id.toString());
+		init();
 	}
 	
 	public void start() {
 		App.sc.sendMessage("/routplayer/add", getIDString());
+	}
+	
+	public void init() {
+		addConnector(ConnectorType.ACTION_OUT);
+		addConnector(ConnectorType.INST_PLAY_OUT);
+		addConnector(ConnectorType.PATTERN_IN);
 	}
 	
 	/*

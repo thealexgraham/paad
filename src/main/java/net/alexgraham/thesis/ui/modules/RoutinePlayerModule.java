@@ -24,10 +24,9 @@ import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayState;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayerListener;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
-import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
-import net.alexgraham.thesis.ui.connectors.ModulePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
-import net.alexgraham.thesis.ui.connectors.Connector.Location;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
+import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	
@@ -96,7 +95,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
-		ConnectablePanel topConnectablePanel= new ConnectablePanel(Location.TOP, player, ConnectorType.PATTERN_IN);
+		ConnectablePanel topConnectablePanel= new ConnectablePanel(Location.TOP, player.getConnector(ConnectorType.PATTERN_IN));
 		topPanel.add(topConnectablePanel);
 		this.addConnectablePanel(topConnectablePanel);
 		
@@ -120,7 +119,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		bottomPanel.setBackground(Color.GRAY);
 		
 		// Create connectors //
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player, ConnectorType.INST_PLAY_OUT);
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player.getConnector(ConnectorType.INST_PLAY_OUT));
 		bottomPanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
 
@@ -178,7 +177,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		middlePanel.add(closeButton);
 		middlePanel.add(instLabel);
 		
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, player, ConnectorType.ACTION_OUT);
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, player.getConnector(ConnectorType.ACTION_OUT));
 		middlePanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
 	}

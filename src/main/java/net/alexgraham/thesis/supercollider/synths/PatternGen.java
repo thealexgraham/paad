@@ -26,6 +26,7 @@ import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class PatternGen extends Instance implements Serializable, Connectable {
 
@@ -48,11 +49,18 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 		// Create default values
 		this.start();
 		createParamModels();
+		init();
 	}
 	
 	public PatternGen(Def def, SCLang sc, String name) {
 		this(def, sc);
 		this.name = name;
+		init();
+	}
+	
+	public void init() {
+		addConnector(ConnectorType.PATTERN_OUT);
+		addConnector(ConnectorType.ACTION_IN);
 	}
 		
 	public void addSynthListener(SynthListener listener) {

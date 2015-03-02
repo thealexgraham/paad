@@ -46,11 +46,17 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	
 		// Create default values
 		createParamModels();
+		init();
 	}
 	
 	public Synth(Def def, SCLang sc, String name) {
 		this(def, sc);
 		this.name = name;
+		init();
+	}
+	
+	public void init() {
+		addConnector(ConnectorType.AUDIO_OUTPUT);
 	}
 		
 	public void addSynthListener(SynthListener listener) {
@@ -89,6 +95,8 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 					changeParameter(((DoubleParamModel)model).getName(), ((DoubleParamModel)model).getDoubleValue());
 				}
 			});
+			
+			((DoubleParamModel)model).setOwner(this);
 		}
 	}
 	

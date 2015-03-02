@@ -18,15 +18,13 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.org.apache.xml.internal.security.Init;
-
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
-import net.alexgraham.thesis.ui.connectors.Connector.Location;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class ChangeFuncModule extends ModulePanel {
@@ -98,7 +96,7 @@ public class ChangeFuncModule extends ModulePanel {
 		//Top Panel//
 		
 		topPanel = new ConnectablePanel(new FlowLayout());
-		topPanel.addConnector(Location.TOP, changeFunc, ConnectorType.PARAM_CHANGE_OUT);
+		topPanel.addConnector(Location.TOP, changeFunc.getConnector(ConnectorType.PARAM_CHANGE_OUT));
 		this.addConnectablePanel(topPanel);
 		
 		JLabel topLabel = new JLabel(changeFunc.getSynthName());
@@ -107,7 +105,7 @@ public class ChangeFuncModule extends ModulePanel {
 		
 		//Middle Panel//
 		middlePanel = new ConnectablePanel();
-		middlePanel.addConnector(Location.LEFT, changeFunc, ConnectorType.ACTION_IN);
+		middlePanel.addConnector(Location.LEFT, changeFunc.getConnector(ConnectorType.ACTION_IN));
 		this.addConnectablePanel(middlePanel);
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
@@ -131,7 +129,7 @@ public class ChangeFuncModule extends ModulePanel {
 		//Bottom Panel//
 
 		bottomPanel = new ConnectablePanel(new FlowLayout());
-		bottomPanel.addConnector(Location.BOTTOM, changeFunc, ConnectorType.PARAM_CHANGE_OUT);
+		bottomPanel.addConnector(Location.BOTTOM, changeFunc.getConnector(ConnectorType.PARAM_CHANGE_OUT));
 		this.addConnectablePanel(bottomPanel);
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);

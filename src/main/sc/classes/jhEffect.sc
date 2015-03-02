@@ -80,7 +80,7 @@
 		}).add;
 
 		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/effect/stop", { arg time, resp, msg;
+		OSCresponder(nil, "/effect/remove", { arg time, resp, msg;
 			// Free synth defs at this id
 			var effectName = msg[1];
 			var id = msg[2];
@@ -124,6 +124,20 @@
 		}).add;
 
 		OSCresponder(nil, "/effect/disconnect/effect", { arg time, resp, msg;
+			var effectName = msg[1], effectId = msg[2];
+			var effectDict, effectSynth;
+
+			// Get dictionary and synth
+			effectDict = effectName.idGet(effectId);
+			effectSynth = effectDict.at(\synth);
+
+			// Set outBus back to 0 since it isn't connected to anything
+			effectSynth.set(\outBus, 0);
+			("Connected effects").postln;
+		}).add;
+		
+		// Disconnect this output
+		OSCresponder(nil, "/effect/disconnect/output", { arg time, resp, msg;
 			var effectName = msg[1], effectId = msg[2];
 			var effectDict, effectSynth;
 

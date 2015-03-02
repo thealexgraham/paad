@@ -1,7 +1,10 @@
 package net.alexgraham.thesis.supercollider.synths.parameters;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
+import java.util.Hashtable;
 import java.util.List;
 
 import jdk.internal.org.objectweb.asm.tree.analysis.Value;
@@ -16,6 +19,7 @@ import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
+import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class DoubleParamModel extends DoubleBoundedRangeModel implements Connectable, Serializable {
 	
@@ -24,7 +28,7 @@ public class DoubleParamModel extends DoubleBoundedRangeModel implements Connect
 
 	public DoubleParamModel(int decimals, double min, double max, double value) {
 		super(decimals, min, max, value);
-		
+		addConnector(ConnectorType.PARAM_CHANGE_IN);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -44,8 +48,16 @@ public class DoubleParamModel extends DoubleBoundedRangeModel implements Connect
 			}
 		});
 	}
-
 	
+	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
+	public Connector getConnector(ConnectorType type) {
+		return connectors.get(type); //TODO: might not be the best way to do this
+	}
+	
+	public void addConnector(ConnectorType type) {
+		connectors.put(type, new Connector(this, type));
+	}
+		
 	public String getName() {
 		return name;
 	}

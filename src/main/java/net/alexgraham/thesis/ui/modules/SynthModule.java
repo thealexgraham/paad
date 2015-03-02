@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,7 +17,7 @@ import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
-import net.alexgraham.thesis.ui.connectors.Connector.Location;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class SynthModule extends ModulePanel {
@@ -117,7 +116,7 @@ public class SynthModule extends ModulePanel {
 		c.weightx = 0.5;
 		pane.add(panDial, c);
 		
-		ConnectablePanel bottomConnectable = new ConnectablePanel(Location.BOTTOM, synth, ConnectorType.AUDIO_OUTPUT);
+		ConnectablePanel bottomConnectable = new ConnectablePanel(Location.BOTTOM, synth.getConnector(ConnectorType.AUDIO_OUTPUT));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 3;
 		c.weighty = 1;

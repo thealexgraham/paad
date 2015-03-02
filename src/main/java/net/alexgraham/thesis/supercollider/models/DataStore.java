@@ -14,9 +14,10 @@ public class DataStore implements Serializable {
 
 	private DefaultListModel<Instance> synthListModel = new DefaultListModel<Instance>();
 	private CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
-	private CopyOnWriteArrayList<ModulePanel> modules = new CopyOnWriteArrayList<ModulePanel>();
 	private DefaultListModel<Def> defListModel = new DefaultListModel<Def>();
 
+//	private CopyOnWriteArrayList<ModulePanel> modules = new CopyOnWriteArrayList<ModulePanel>();
+	
 	public DefaultListModel<Def> getDefListModel() {
 		return defListModel;
 	}
@@ -26,15 +27,17 @@ public class DataStore implements Serializable {
 	public CopyOnWriteArrayList<Connection> getConnections() {
 		return connections;
 	}
-	public CopyOnWriteArrayList<ModulePanel> getModules() {
-		return modules;
-	}
-	public void addModule(ModulePanel module) {
-		modules.add(module);
-	}
-	public void removeModule(ModulePanel module) {
-		modules.remove(module);		
-	}
+	
+	
+//	public CopyOnWriteArrayList<ModulePanel> getModules() {
+//		return modules;
+//	}
+//	public void addModule(ModulePanel module) {
+//		modules.add(module);
+//	}
+//	public void removeModule(ModulePanel module) {
+//		modules.remove(module);		
+//	}
 	
 	
 }

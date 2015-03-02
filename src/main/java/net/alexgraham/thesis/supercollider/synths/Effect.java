@@ -33,6 +33,9 @@ public class Effect extends Synth implements Connectable {
 		startCommand = "/effect/add";
 		paramChangeCommand = "/effect/paramc";
 		closeCommand = "/effect/remove";
+		
+		addConnector(ConnectorType.AUDIO_INPUT);
+		addConnector(ConnectorType.AUDIO_OUTPUT);
 	}
 	//var effectName = msg[1], effectId = msg[2], toEffectName = msg[4], toEffectId = msg[5];
 	
