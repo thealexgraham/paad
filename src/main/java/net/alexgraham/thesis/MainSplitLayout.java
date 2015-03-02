@@ -1,51 +1,28 @@
 package net.alexgraham.thesis;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.SocketException;
-import java.util.Hashtable;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.xml.stream.events.StartDocument;
 
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 import net.alexgraham.thesis.ui.SynthCardsPanel;
-import net.alexgraham.thesis.ui.SynthLauncherPanel;
-import net.alexgraham.thesis.ui.TreeLauncherPanel;
 import net.alexgraham.thesis.ui.SynthLauncherPanel.SynthLauncherDelegate;
+import net.alexgraham.thesis.ui.TreeLauncherPanel;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
-import net.alexgraham.thesis.ui.macstyle.RunningSynthsPanel;
-import net.alexgraham.thesis.ui.macstyle.SynthInfoList;
-import net.alexgraham.thesis.ui.old.SynthWindowDelegate;
 
 public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 	
 	JSplitPane mainSplitPane;
 	JSplitPane sideSplitPane;
 	
-	RunningSynthsPanel runningSynths;
 	TreeLauncherPanel synthSelector;
 	
 	JPanel mainCardPanel;
@@ -105,13 +82,13 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 
 	@Override
 	public void launchSynth(Def def) {
-		runningSynths.launchSynth(def);
+//		runningSynths.launchSynth(def);
 	}
 
 	@Override
 	public void addInstrument(InstDef instdef) {
 		
-		runningSynths.addInstrument(instdef);
+//		runningSynths.addInstrument(instdef);
 		
 	}
 

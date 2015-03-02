@@ -18,10 +18,10 @@ import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
-import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
+import net.alexgraham.thesis.ui.connectors.LineConnectPanel.SynthSelectListener;
 
 public class SynthCardsPanel extends JPanel implements SynthSelectListener, SynthListener, SynthModelListener {
-		
+	
 	JPanel selectedSynthPanel;
 	
 	JPanel selectedContainer;

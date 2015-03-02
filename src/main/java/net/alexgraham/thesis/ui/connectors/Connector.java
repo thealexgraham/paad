@@ -8,18 +8,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 import javax.swing.SwingUtilities;
-
-import com.sun.javafx.geom.Shape;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.ui.components.TriangleShape;
 
 public class Connector implements java.io.Serializable {
-	
-
 
 	public interface Connectable {
 		
@@ -60,12 +55,7 @@ public class Connector implements java.io.Serializable {
 
 	private boolean hovered = false;
 
-	public Connector(ConnectablePanel connectablePanel, Connectable connectable) {
-		
-		this.owner = connectablePanel;
-		this.connectable = connectable;
-	}
-
+	
 	public Connector(ConnectablePanel connectablePanel,
 			Connectable connectable, ConnectorType type) {
 		
@@ -78,7 +68,6 @@ public class Connector implements java.io.Serializable {
 		}
 		
 	}
-	
 	
 	public void setDrawLocation(Location drawLocation) {
 		this.drawLocation = drawLocation;
@@ -96,7 +85,6 @@ public class Connector implements java.io.Serializable {
 		return new TriangleShape(getCurrentPosition(), getTriangleOrigin(), getRotationFromLocation(), width, height);
 	}
 	
-	// FIXME: Top positions are way off
 	public Point getCurrentPosition() {
 		Point location = null;
 		Point ownerLocation = owner.getLocation();
@@ -217,38 +205,25 @@ public class Connector implements java.io.Serializable {
 
 	public void drawSelf(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
+		
 		if (hovered) {
 			g2.setStroke(new BasicStroke(2));
 		} else {
 			g2.setStroke(new BasicStroke(1));
 		}
-
+		
 		Point currentPosition = getCurrentPosition();
-		// System.out.println(currentPosition);
-		g2.setColor(Color.BLUE);
-		
-		int triangleDirection = 1;
-		
-		if(AGHelper.allEquals(type, ConnectorType.AUDIO_INPUT, ConnectorType.INST_PLAY_IN) 
-				&& drawLocation == Location.TOP) {
-			triangleDirection = -1;	
-		}
-		
+
+		g2.setColor(Color.BLUE);		
 		g2.setColor(getColor());
-		
-//		if (type == ConnectorType.AUDIO_INPUT || type == ConnectorType.AUDIO_OUTPUT) {
-//			g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);
-//			drawTriangle(g2, currentPosition, width, height * triangleDirection);
-//		} else {
-////			g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);
-//		}
 		
 		TriangleShape triangle = new TriangleShape(currentPosition, getTriangleOrigin(), getRotationFromLocation(), width, height);
 		triangle.draw(g2);
-	}
 	
+//		g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);	
+	}
 
-	public boolean checkHover(Point position) {
+	boolean checkHover(Point position) {
 		Point currentPosition = getCurrentPosition();
 		TriangleShape triangle = new TriangleShape(currentPosition, getTriangleOrigin(), getRotationFromLocation(), width, height);
 

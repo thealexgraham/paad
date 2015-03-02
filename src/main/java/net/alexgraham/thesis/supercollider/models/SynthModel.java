@@ -1,14 +1,10 @@
 package net.alexgraham.thesis.supercollider.models;
 
 import java.io.Serializable;
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javafx.collections.ListChangeListener.Change;
 
 import javax.swing.DefaultListModel;
 
@@ -23,9 +19,7 @@ import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
-import net.alexgraham.thesis.ui.SynthPanel;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
-import net.alexgraham.thesis.ui.old.RoutinePlayerPanel;
 
 public class SynthModel implements Serializable {
 	

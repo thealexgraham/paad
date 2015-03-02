@@ -35,8 +35,6 @@ import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.tests.demos.serialize.Employee;
-import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
@@ -45,6 +43,11 @@ import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
 import net.alexgraham.thesis.ui.modules.SynthModule;
 
 public class LineConnectPanel extends JPanel implements SynthModelListener, PlayerModelListener {
+	
+	public interface SynthSelectListener {
+		public void selectSynth(Synth synth);
+		public void deselectSynth();
+	}
 	
 	boolean pointHovering = false;
 	boolean dragging = false;
@@ -101,6 +104,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		synthSelectListeners.add(listener);
 	}
 	
+	/**
+	 * Creates key listeners for delete key, backspace and server reboot
+	 */
 	public void createKeyListeners() {
 		addKeyListener(new KeyListener() {
 			
@@ -142,6 +148,10 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		});
 	}
 	
+	
+	/**
+	 * Creates mouse listenres for dragging,
+	 */
 	public void createMouseListeners() {
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -156,6 +166,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 					}
 				}
 				
+				// Notify of synth deselecting
 				fireSynthDeselectedEvent();
 				
 				// Start dragging 
@@ -168,6 +179,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 					dragging = true;
 				}
 				
+				// Check if clicking a line
 				if (!pointHovering) {
 					clicked = getClickedConnection(e.getPoint(), 10);
 					if (clicked != null) {
@@ -187,17 +199,22 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			public void mouseReleased(MouseEvent e) {
 				
 				super.mouseReleased(e);
+				
+				// If the mouse was dragging, see if we landed on anything
 				if (dragging) {
 					dragging = false;
-
+					
+					// Found a destination panel, try and connect the points
 					if (destinationPanel != null) {
 						System.out.println("Destination box exists");
 						connectPoints(originPanel.getConnector(), destinationPanel.getConnector());
 					}
 					
+					// Reset origin and destination
 					originPanel = null;
 					destinationPanel = null;
 					
+					// Check for hovering
 					for (ConnectablePanel connectableBox : boxes) {
 						connectableBox.checkPointHover(e);
 					}
@@ -272,6 +289,10 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		repaint();
 	}
 	
+	/**
+	 * Check if points are hovering
+	 * @param e
+	 */
 	public void checkPoints(MouseEvent e) {
 		for (ConnectablePanel box : boxes) {
 			
@@ -309,6 +330,73 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			repaint();
 		}
 	}
+		
+	public Connection getClickedConnection(Point point, int distance) {
+		
+		for (Connection connection : getConnections()) {
+			Line2D line = connection.getLine();
+			if (line.ptLineDist(point) < distance) {
+				return connection;
+			}
+		}
+		
+		return null;
+	}
+	
+	// Painting 
+	//--------------------
+
+	public void paintComponent(Graphics g) {
+		Graphics2D g2 = (Graphics2D)g;
+		super.paintComponent(g);
+		g2.setStroke(new BasicStroke(0));
+		g.drawString("This is my custom Panel!", 10, 20);
+			
+		
+	}
+	
+	@Override
+	public void paint(Graphics g) {
+		Graphics2D g2 = (Graphics2D)g;
+		super.paint(g);
+		
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		// Paint connectors
+		for (ConnectablePanel box : boxes) {
+			box.paintConnectors(g);
+		}
+		
+		// Paint dragging l9ine
+		if (dragging) {
+			g.setColor(originPanel.getConnector().getColor());
+			g.drawLine(connectOrigin.x,
+					connectOrigin.y,
+					connectDestination.x,
+					connectDestination.y);
+
+		}
+		
+		// Paint connections
+		for (Connection connection : getConnections()) {
+			
+			g2.setColor(connection.getOrigin().getColor());
+			
+			Line2D line = connection.getLine();
+			
+			if (connection.isClicked())
+				g2.setStroke(new BasicStroke(3));
+			else
+				g2.setStroke(new BasicStroke(1));
+			
+			g2.draw(line);
+			g2.setStroke(new BasicStroke(1));
+		}
+	}
+	
+	
+	// SynthSelectListener Notifications
+	// -------------------------------------
 	
 	public void fireSynthSelectedEvent(Synth synth) {
 		for (SynthSelectListener synthSelectListener : synthSelectListeners) {
@@ -333,109 +421,6 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		} else if (module instanceof SynthModule) {
 			fireSynthSelectedEvent(((SynthModule)module).getSynth());
 		}
-	}
-	
-	public Connection getClickedConnection(Point point, int distance) {
-		
-		for (Connection connection : getConnections()) {
-			Line2D line = connection.getLine();
-			if (line.ptLineDist(point) < distance) {
-				return connection;
-			}
-		}
-		
-		return null;
-	}
-
-//	public Dimension getPreferredSize() {
-//		return new Dimension(250, 200);
-//	}
-//
-//	public Dimension getMaximumSize() {
-//		return new Dimension(250, 200);
-//	}
-
-	public void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D)g;
-		super.paintComponent(g);
-		g2.setStroke(new BasicStroke(0));
-		g.drawString("This is my custom Panel!", 10, 20);
-			
-		
-	}
-	
-	@Override
-	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D)g;
-		super.paint(g);
-		
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		for (ConnectablePanel box : boxes) {
-			box.paintConnectors(g);
-		}
-		
-		
-		if (dragging) {
-			g.setColor(originPanel.getConnector().getColor());
-			g.drawLine(connectOrigin.x,
-					connectOrigin.y,
-					connectDestination.x,
-					connectDestination.y);
-
-		}
-		
-		for (Connection connection : getConnections()) {
-			g2.setColor(connection.getOrigin().getColor());
-			Line2D line = connection.getLine();
-			if (connection.isClicked())
-				g2.setStroke(new BasicStroke(3));
-			else
-				g2.setStroke(new BasicStroke(1));
-			g2.draw(line);
-			g2.setStroke(new BasicStroke(1));
-		}
-	}
-	
-	public void saveModules() throws IOException {
-    	// Write to disk with FileOutputStream
-    	String filename = "test.modules";
-    	File out = new File(System.getProperty("user.home") + "\\test\\" + filename);
-    	
-    	FileOutputStream f_out = new 
-    		FileOutputStream(out);
-
-    	// Write object with ObjectOutputStream
-    	ObjectOutputStream obj_out = new
-    		ObjectOutputStream (f_out);
-
-    	// Write object out to disk
-    	obj_out.writeObject ( modules );
-    	obj_out.close();
-    	f_out.close();
-	}
-	
-
-	public void loadModules() throws IOException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-    	String filename = "test.modules";
-    	File in = new File(System.getProperty("user.home") + "\\test\\" + filename);
-		
-        FileInputStream fileIn = new FileInputStream(in);
-        ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-        Object o = objectIn.readObject();
-        if (o instanceof CopyOnWriteArrayList<?>) {
-        	modules = (CopyOnWriteArrayList<ModulePanel>) o;
-        	removeAll();
-        	for (ModulePanel modulePanel : modules) {
-        		add(modulePanel);
-			}
-        }
-        objectIn.close();
-        fileIn.close();	
-        
-		updateUI();
-		repaint();
 	}
 	
 	public void addModuleForInstance(Instance instance) {
@@ -463,12 +448,11 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		}
 
 		module.setInstance(instance);
-//		module.setPreferredSize(new Dimension(75, 100));
-//		module.setSize(new Dimension(100, 75));
 		module.setLocation(instance.getLocation());
+		module.setOwner(this);
+
 		add(module);
 		boxes.addAll(module.getConnectablePanels());
-		module.setOwner(this);
 		modules.add(module);
 		
 		App.data.addModule(module);
@@ -632,6 +616,50 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public void playerRemoved(RoutinePlayer player) {
 		
 		
+	}
+	
+	// Saving and Loading
+	// ------------------------
+	
+	public void saveModules() throws IOException {
+    	// Write to disk with FileOutputStream
+    	String filename = "test.modules";
+    	File out = new File(System.getProperty("user.home") + "\\test\\" + filename);
+    	
+    	FileOutputStream f_out = new 
+    		FileOutputStream(out);
+
+    	// Write object with ObjectOutputStream
+    	ObjectOutputStream obj_out = new
+    		ObjectOutputStream (f_out);
+
+    	// Write object out to disk
+    	obj_out.writeObject ( modules );
+    	obj_out.close();
+    	f_out.close();
+	}
+	
+
+	public void loadModules() throws IOException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+    	String filename = "test.modules";
+    	File in = new File(System.getProperty("user.home") + "\\test\\" + filename);
+		
+        FileInputStream fileIn = new FileInputStream(in);
+        ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+        Object o = objectIn.readObject();
+        if (o instanceof CopyOnWriteArrayList<?>) {
+        	modules = (CopyOnWriteArrayList<ModulePanel>) o;
+        	removeAll();
+        	for (ModulePanel modulePanel : modules) {
+        		add(modulePanel);
+			}
+        }
+        objectIn.close();
+        fileIn.close();	
+        
+		updateUI();
+		repaint();
 	}
 
 

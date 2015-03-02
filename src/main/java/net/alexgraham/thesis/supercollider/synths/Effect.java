@@ -80,7 +80,6 @@ public class Effect extends Synth implements Connectable {
 	// Connectable
 	// ----------------
 
-
 	@Override
 	public boolean connect(Connection connection) {
 		Connectable target = connection.getTargetConnector(this).getConnectable();
