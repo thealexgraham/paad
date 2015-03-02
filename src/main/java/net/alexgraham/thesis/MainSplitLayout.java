@@ -7,6 +7,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.util.Hashtable;
 
@@ -47,23 +52,23 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 	private JButton testButton;
 	private JButton otherButton;
 	
+	LineConnectPanel lineConnect;
+	
 
 	public MainSplitLayout() throws SocketException {
 		setSize(1024, 800);
 		setupLayout();
 		
-		LineConnectPanel lineConnect = new LineConnectPanel();
+		lineConnect = new LineConnectPanel();
 		synthSelector = new TreeLauncherPanel();
-
-		JScrollPane scroller = new JScrollPane(lineConnect);
 		
-		lineConnect.setSize(5000, 5000);
-		lineConnect.setMinimumSize(new Dimension(5000, 5000));
-		lineConnect.setPreferredSize(new Dimension(5000, 5000));
+		App.data.setLineConnectPanel(lineConnect);
+		
+		JScrollPane scroller = new JScrollPane(lineConnect);
 		
 		sideSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				synthSelector, scroller);
-		
+
 		
 		sideSplitPane.setResizeWeight(0.8);
 		sideSplitPane.setDividerLocation(250);
@@ -82,6 +87,16 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		
 		lineConnect.setFocusable(true);
 		lineConnect.requestFocusInWindow();
+	}
+
+	public void saveLineConnect() throws IOException {
+    	// Write to disk with FileOutputStream
+		lineConnect.saveModules();
+	}
+	
+	public void loadLineConnect() throws IOException, ClassNotFoundException {
+    	// Write to disk with FileOutputStream
+		lineConnect.loadModules();
 	}
 	
 	private void setupLayout() {

@@ -92,6 +92,10 @@ public class EffectModule extends ModulePanel {
 //		panDial.setName("Pan");
 		
 		setupWindow(this.getInterior());
+		
+		// Resize based on innards
+		setSize(getPreferredSize());
+		validate();
 	}
 	
 	public Effect getEffect() {

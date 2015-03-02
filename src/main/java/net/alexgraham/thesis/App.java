@@ -10,6 +10,7 @@ import net.alexgraham.thesis.supercollider.OSC;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.SCLang.SCServerListener;
 import net.alexgraham.thesis.supercollider.models.ConnectionModel;
+import net.alexgraham.thesis.supercollider.models.DataModel;
 import net.alexgraham.thesis.supercollider.models.DefModel;
 import net.alexgraham.thesis.supercollider.models.LaunchTreeModel;
 import net.alexgraham.thesis.supercollider.models.PlayerModel;
@@ -31,6 +32,8 @@ public class App
 	public static PlayerModel playerModel;
 	public static ConnectionModel connectionModel;
 	
+	public static DataModel data;
+	
     public static void main( String[] args ) throws IOException
     {
 		OSC.start(SC_PORT, JAVA_PORT);
@@ -38,12 +41,13 @@ public class App
     	sc = new SCLang(SC_PORT, JAVA_PORT);
 		sc.startSCLang();
 		
-		defModel = new DefModel();
-		synthModel = new SynthModel();
-		playerModel = new PlayerModel();
-		launchTreeModel = new LaunchTreeModel();
-		connectionModel = new ConnectionModel();
+		data = new DataModel();
 		
+		defModel = data.getDefModel();
+		synthModel = data.getSynthModel();
+		playerModel = data.getPlayerModel();
+		launchTreeModel = data.getLaunchTreeModel();
+		connectionModel = data.getConnectionModel();
 		
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.

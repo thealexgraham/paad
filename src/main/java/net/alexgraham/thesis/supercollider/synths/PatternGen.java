@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.synths;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -26,7 +27,7 @@ import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 
-public class PatternGen extends Instance implements Connectable{
+public class PatternGen extends Instance implements Serializable, Connectable {
 
 	
 	private CopyOnWriteArrayList<SynthListener> synthListeners = 

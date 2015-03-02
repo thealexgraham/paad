@@ -16,10 +16,8 @@ public class Def implements java.io.Serializable {
 	protected String defName;
 	private ArrayList<Parameter> parameters;
 	
-	SCLang sc;
-	
+
 	public Def(String defName, SCLang sc) {
-		this.sc = sc;
 		this.defName = defName;
 		
 		parameters = new ArrayList<Parameter>(); // Blank array for params

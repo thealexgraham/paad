@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.models;
 
+import java.io.Serializable;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +24,10 @@ import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 import net.alexgraham.thesis.ui.SynthPanel;
+import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 import net.alexgraham.thesis.ui.old.RoutinePlayerPanel;
 
-public class SynthModel {
+public class SynthModel implements Serializable {
 	
 	public interface SynthModelListener {
 		public void synthAdded(Synth synth);
@@ -33,20 +35,26 @@ public class SynthModel {
 		public void effectAdded(Effect effect);
 		public void changeFuncAdded(ChangeFunc changeFunc);
 		public void patternGenAdded(PatternGen patternGen);
+		
+		public void instanceAdded(Instance instance);
 	}
 	
-	private CopyOnWriteArrayList<SynthModelListener> listeners = 
+	transient CopyOnWriteArrayList<SynthModelListener> listeners = 
 			new CopyOnWriteArrayList<SynthModel.SynthModelListener>();
-	
+
 	private DefaultListModel<Instance> synthListModel 
 		= new DefaultListModel<Instance>();
 	
 	private Hashtable<String, Instance> synths = new Hashtable<String, Instance>();
 	
 	
+	public void setSynthListModel(DefaultListModel<Instance> synthListModel) {
+		this.synthListModel = synthListModel;
+	}
 	
 	public SynthModel() {
-
+		listeners = 
+				new CopyOnWriteArrayList<SynthModel.SynthModelListener>();
 	}
 	
 	public ArrayList<Instance> getInstances() {
@@ -92,6 +100,12 @@ public class SynthModel {
 		}
 	}
 	
+	public void fireInstanceAdded(Instance instance) {
+		for (SynthModelListener synthModelListener : listeners) {
+			synthModelListener.instanceAdded(instance);
+		}
+	}
+		
 	public ArrayList<Instrument> getInstruments() {
 		ArrayList<Instrument> insts = new ArrayList<Instrument>();
 		
@@ -118,6 +132,22 @@ public class SynthModel {
 		return synths;
 	}
 	
+	public void refreshInstances() {
+		ArrayList<Instance> list = new ArrayList<Instance>();
+		for (Enumeration<Instance> e = synthListModel.elements(); e.hasMoreElements();)  {
+			Instance instance = (Instance) e.nextElement();
+			instance.start();
+			
+			// Fire instance added for everyone but LineConnectPanel (modules are saved)
+			for (SynthModelListener synthModelListener : listeners) {
+				if (synthModelListener.getClass() != LineConnectPanel.class)
+					synthModelListener.instanceAdded(instance);
+			}
+			
+			instance.refresh();
+		
+		}
+	}
 	
 	public void launchSynth(Def def) {
 		
@@ -127,7 +157,8 @@ public class SynthModel {
 		
 		synthListModel.addElement(synth);
 		synths.put(synth.getID(), synth);
-		fireSynthAdded(synth);
+//		fireSynthAdded(synth);
+		fireInstanceAdded(synth);
 		
 	}
 	
@@ -137,7 +168,7 @@ public class SynthModel {
 
 		synthListModel.addElement(inst);
 		synths.put(inst.getID(), inst);
-		fireInstAdded(inst);
+		fireInstanceAdded(inst);
 	}
 
 	public void addEffect(EffectDef synthDef) {
@@ -146,7 +177,7 @@ public class SynthModel {
 
 		synthListModel.addElement(effect);
 		synths.put(effect.getID(), effect);
-		fireEffectAdded(effect);
+		fireInstanceAdded(effect);
 	}
 	
 	//TODO: Refactor this nonsense into one function, they're all doing the same thing
@@ -156,7 +187,7 @@ public class SynthModel {
 
 		synthListModel.addElement(changeFunc);
 		synths.put(changeFunc.getID(), changeFunc);
-		fireChangeFuncAdded(changeFunc);
+		fireInstanceAdded(changeFunc);
 	}
 	
 	//TODO: Refactor this nonsense into one function, they're all doing the same thing
@@ -166,7 +197,7 @@ public class SynthModel {
 
 		synthListModel.addElement(changeFunc);
 		synths.put(changeFunc.getID(), changeFunc);
-		firePatternGenFuncAdded(changeFunc);
+		fireInstanceAdded(changeFunc);
 	}
 	
 	

@@ -13,6 +13,7 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.ParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
@@ -39,7 +40,7 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	protected String startCommand = "/synth/add";
 	protected String paramChangeCommand = "/synth/paramc";
 	protected String closeCommand = "/synth/remove";
-	
+		
 	public Synth(Def def, SCLang sc) {
 		super(def, sc);
 	
@@ -78,6 +79,20 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		}
 	}
 	
+	@Override
+	public void refresh() {
+		for (BoundedRangeModel model : parameterModels.values()) {
+			model.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					// Update the SuperCollider
+					changeParameter(((DoubleParamModel)model).getName(), ((DoubleParamModel)model).getDoubleValue());
+				}
+			});
+		}
+	}
+	
+	@Override
 	public void start() {
 		
 		// Create the arguments list for this Synth

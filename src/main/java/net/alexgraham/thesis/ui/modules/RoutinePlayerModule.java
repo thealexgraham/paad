@@ -30,6 +30,7 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.Connector.Location;
 
 public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
+	
 	JPanel topPanel;
 	JPanel bottomPanel;
 	JPanel middlePanel;
@@ -84,7 +85,6 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	}
 	
 	
-
 	public void setupWindow(Container pane) {
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());

@@ -15,7 +15,7 @@ import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class RoutinePlayer implements Connectable, Serializable {
+public class RoutinePlayer extends Instance implements Connectable, Serializable {
 	
 	public interface PlayerListener {
 		public void instrumentConnected(Instrument inst);

@@ -17,8 +17,7 @@ public class ChangeFunc extends Synth implements Connectable {
 		init();
 		this.start();
 	}
-	
-	
+
 	public void init() {
 		startCommand = "/changefunc/add";
 		paramChangeCommand = "/changefunc/paramc";

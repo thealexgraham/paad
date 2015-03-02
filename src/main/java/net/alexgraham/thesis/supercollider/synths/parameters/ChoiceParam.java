@@ -1,10 +1,11 @@
 package net.alexgraham.thesis.supercollider.synths.parameters;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import com.sun.org.apache.xml.internal.utils.ObjectPool;
 
-public class ChoiceParam implements Param {
+public class ChoiceParam implements Param, Serializable {
 	public String getChoiceName() {
 		return choiceName;
 	}

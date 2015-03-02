@@ -88,6 +88,9 @@ public class PatternGenModule extends ModulePanel {
 		
 		
 		setupWindow(this.getInterior());
+		
+		setSize(getPreferredSize());
+		validate();
 	}
 	
 	public PatternGen getPatternGen() {

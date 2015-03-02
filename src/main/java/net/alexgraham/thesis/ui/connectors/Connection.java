@@ -9,7 +9,7 @@ public class Connection implements java.io.Serializable {
 	
 	private Connector origin;
 	private Connector destination;
-	private Line2D line;
+
 	private boolean clicked = false;
 	
 	public boolean isClicked()  {return clicked; }
@@ -42,7 +42,7 @@ public class Connection implements java.io.Serializable {
 	}
 	
 	/*
-	 * Attempts to disconnect this connection's connectables
+	 * Attempts to connect this connection's connectables
 	 */
 	public boolean connectModules() {
 		// We have a destination and an origin

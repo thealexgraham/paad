@@ -18,6 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.sun.org.apache.xml.internal.security.Init;
+
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.DialD;
@@ -45,12 +47,18 @@ public class ChangeFuncModule extends ModulePanel {
 	JScrollPane scrollPane;
     
 	private JButton closeButton;
+	
+	public ChangeFuncModule() {
+		init();
+	}
 
 	public ChangeFuncModule(int width, int height, ChangeFunc changeFunc) {
 		super(width, height);
-		
 		this.changeFunc = changeFunc;
-		
+		init();
+	}
+	
+	public void init() {
 		nameLabel = new JLabel(changeFunc.getName());
 		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
 		
@@ -65,8 +73,11 @@ public class ChangeFuncModule extends ModulePanel {
 				changeFunc.close();
 			}
 		});
-				
+		
 		setupWindow(this.getInterior());
+		
+		setSize(getPreferredSize());
+		validate();
 	}
 	
 	public ChangeFunc getChangeFunc() {

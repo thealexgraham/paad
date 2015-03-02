@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,28 +9,32 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListModel;
 
+import sun.misc.JavaAWTAccess;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.connectors.Connection;
 
 
-public class ConnectionModel {
+public class ConnectionModel implements Serializable {
 	
 	public interface ConnectionModelListener {
 		public void connectionAdded(Connection connection);
 		public void connectionRemoved(Connection player);
 	}
 	
-	private CopyOnWriteArrayList<ConnectionModelListener> listeners = 
+	transient CopyOnWriteArrayList<ConnectionModelListener> listeners = 
 			new CopyOnWriteArrayList<ConnectionModelListener>();
 	
 	private CopyOnWriteArrayList<Connection> connections
 		= new CopyOnWriteArrayList<Connection>();
 	
+	
+	public void setConnections(CopyOnWriteArrayList<Connection> connections) {
+		this.connections = connections;
+	}
+	
 	public ConnectionModel() {
 		
 	}
-	
-	
 	
 	public ArrayList<Connection> getConnections() {
 		ArrayList<Connection> list = new ArrayList<Connection>();

@@ -5,8 +5,10 @@ import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -20,6 +22,7 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.ChangeSender;
 import net.alexgraham.thesis.supercollider.models.DefModel;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
 import net.alexgraham.thesis.ui.connectors.Connection;
@@ -286,12 +289,11 @@ public class SCLang extends ChangeSender {
 			
 			@Override
 			public void serverReady() {
-		    	ArrayList<Synth> synths = App.synthModel.getSynths();
-		    	
-		    	for (Synth synth : synths) {
-					synth.start();
+		    	ArrayList<Instance> instances= App.synthModel.getInstances();
+		    	for (Instance instance : instances) {
+		    		instance.start();
 				}
-		    	
+    	
 		    	ArrayList<RoutinePlayer> players = App.playerModel.getPlayers();
 		    	for (RoutinePlayer player : players) {
 		    		player.reset();
@@ -309,6 +311,22 @@ public class SCLang extends ChangeSender {
 			}
 		});
 
+    }
+    
+    public void saveState() throws IOException {
+    	// Write to disk with FileOutputStream
+    	String filename = "testobject.data";
+    	File out = new File(System.getProperty("user.home") + "\\test\\" + filename);
+    	
+    	FileOutputStream f_out = new 
+    		FileOutputStream(out);
+
+    	// Write object with ObjectOutputStream
+    	ObjectOutputStream obj_out = new
+    		ObjectOutputStream (f_out);
+
+    	// Write object out to disk
+    	obj_out.writeObject ( App.connectionModel );
     }
 
 	public void sendMessage(String address, Object... args) {

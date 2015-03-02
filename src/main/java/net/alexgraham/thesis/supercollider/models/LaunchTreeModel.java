@@ -9,6 +9,7 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 
 public class LaunchTreeModel {
+	
 	HashMap<String, DefaultMutableTreeNode> categories = new HashMap<String, DefaultMutableTreeNode>();
 	DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 	DefaultTreeModel treeModel;

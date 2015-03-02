@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.synths.parameters;
 
+import java.io.Serializable;
 import java.security.acl.Owner;
 import java.util.Arrays;
 
@@ -8,7 +9,7 @@ import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 
-public class ChoiceParamModel implements ParamModel, Connectable {
+public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 
 	private Instance owner;
 	private String name;

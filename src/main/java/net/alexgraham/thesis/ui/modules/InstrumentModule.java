@@ -42,7 +42,7 @@ public class InstrumentModule extends ModulePanel {
 	private JButton closeButton;
 
 	public InstrumentModule(int width, int height, Instrument instrument) {
-		super(width, height);
+		super(width, height, instrument);
 
 		this.instrument = instrument;
 

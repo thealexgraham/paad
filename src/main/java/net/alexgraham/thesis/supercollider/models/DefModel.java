@@ -24,29 +24,31 @@ import com.illposed.osc.OSCMessage;
 
 public class DefModel {
 	
-	private DefaultListModel<Def> synthListModel 
-		= new DefaultListModel<Def>();
+	private DefaultListModel<Def> defListModel = new DefaultListModel<Def>();
 	
 	private Hashtable<String, Def> synthdefs = new Hashtable<String, Def>();
 
+	public void setDefListModel(DefaultListModel<Def> model) {
+		this.defListModel = model;
+	}
 	
 	public DefModel() throws SocketException {
 		createListeners();
 	}
 
 	public DefaultListModel<Def> getSynthDefListModel() {
-		return synthListModel;
+		return defListModel;
 	}
 	
 	public void clearSynthDefListModel() {
-		synthListModel = new DefaultListModel<Def>();
+		defListModel = new DefaultListModel<Def>();
 		synthdefs = new Hashtable<String, Def>();
 	}
 	
 	public ArrayList<InstDef> getInstDefs() {
 		ArrayList<InstDef> instDefs = new ArrayList<InstDef>();
 		
-		for (Enumeration<Def> e = synthListModel.elements(); e.hasMoreElements();)  {
+		for (Enumeration<Def> e = defListModel.elements(); e.hasMoreElements();)  {
 			Def def = e.nextElement();
 			if (def.getClass() == InstDef.class) {
 				instDefs.add((InstDef) def);
@@ -64,7 +66,7 @@ public class DefModel {
     			final String synthName = (String) arguments.get(0);
     			SynthDef synth = new SynthDef(synthName, App.sc);
     			synthdefs.put(synthName, synth);
-    			synthListModel.addElement(synth);
+    			defListModel.addElement(synth);
     			App.launchTreeModel.addSynthDef(synth);	
     			// Also Add To The List
     		}
@@ -77,7 +79,7 @@ public class DefModel {
     			//SynthDef synth = new SynthDef(synthName, App.sc);
     			InstDef synth = new InstDef(synthName, App.sc);
     			synthdefs.put(synthName, synth);
-    			synthListModel.addElement(synth);
+    			defListModel.addElement(synth);
     			App.launchTreeModel.addSynthDef(synth);	
     			// Also Add To The List
     		}
@@ -90,7 +92,7 @@ public class DefModel {
     			//SynthDef synth = new SynthDef(synthName, App.sc);
     			EffectDef effectDef = new EffectDef(synthName, App.sc);
     			synthdefs.put(synthName, effectDef);
-    			synthListModel.addElement(effectDef);
+    			defListModel.addElement(effectDef);
     			App.launchTreeModel.addSynthDef(effectDef);
 
     			// Also Add To The List
@@ -104,7 +106,7 @@ public class DefModel {
 
     			ChangeFuncDef changeDef = new ChangeFuncDef(synthName, App.sc);
     			synthdefs.put(synthName, changeDef);
-    			synthListModel.addElement(changeDef);
+    			defListModel.addElement(changeDef);
     			App.launchTreeModel.addSynthDef(changeDef);
     			
     			// Also Add To The List
@@ -144,7 +146,7 @@ public class DefModel {
 
     			PatternGenDef def = new PatternGenDef(synthName, App.sc);
     			synthdefs.put(synthName, def);
-    			synthListModel.addElement(def);
+    			defListModel.addElement(def);
     			System.out.println("Addding def " + def.getClass());
     			App.launchTreeModel.addSynthDef(def);
     		}

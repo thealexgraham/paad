@@ -119,6 +119,42 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		
 		bottomWrapper.add(rebootButton);
 		
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					App.data.saveInstances();
+					//App.sc.saveState();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		bottomWrapper.add(saveButton);
+		
+		
+		JButton loadButton = new JButton("Load");
+		loadButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					App.data.loadInstances();
+					//App.sc.saveState();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		bottomWrapper.add(loadButton);
+		
 		bottomWrapper.add(bottomButtons);
 		bottomWrapper.add(bottomPanel);
 				

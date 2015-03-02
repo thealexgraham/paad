@@ -1,6 +1,8 @@
 package net.alexgraham.thesis.supercollider.synths.parameters;
 
-public class IntParam implements Param {
+import java.io.Serializable;
+
+public class IntParam implements Param, Serializable {
 	public String name;
 	public int min;
 	public int max;

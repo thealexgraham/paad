@@ -116,7 +116,7 @@
 
 		OSCresponder(nil, "/changefunc/disconnect/param", { arg time, resp, msg;
 			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
-			var changeFunc, parameter;
+			var changeFunc, owner, parameter;
 
 			changeFunc = cfName.idGet(cfId);
 			parameter = ownerName.idGet(ownerId).at(paramName);
@@ -124,7 +124,7 @@
 			// Tell the change func to listen for this parameter
 			changeFunc.removeListener(parameter);
 
-			("Connected changeFuncs").postln;
+			("Disconnected changeFuncs").postln;
 		}).add;
 
 

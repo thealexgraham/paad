@@ -13,7 +13,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -26,9 +31,11 @@ import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Effect;
+import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.tests.demos.serialize.Employee;
 import net.alexgraham.thesis.ui.macstyle.SynthInfoList.SynthSelectListener;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.EffectModule;
@@ -54,6 +61,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	ArrayList<ConnectablePanel> boxes = new ArrayList<ConnectablePanel>();
 	//CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
 	CopyOnWriteArrayList<Connection> connections = App.connectionModel.getCopyConnections();
+	
+	CopyOnWriteArrayList<ModulePanel> modules = new CopyOnWriteArrayList<ModulePanel>();
+	
 	Connection clicked;
 	
 	private CopyOnWriteArrayList<SynthSelectListener> synthSelectListeners = 
@@ -62,6 +72,10 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	boolean requireMouse = false;
 	
 	public boolean isRequiringMouse() { return requireMouse || pointHovering || dragging; }
+	
+	public CopyOnWriteArrayList<Connection> getConnections() {
+		return App.connectionModel.getCopyConnections();
+	}
 
 	public LineConnectPanel() {
 		
@@ -159,7 +173,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 					if (clicked != null) {
 						clicked.setClicked(true);
 					} else {
-						for (Connection connection : connections) {
+						for (Connection connection : getConnections()) {
 							connection.setClicked(false);
 						}
 						
@@ -215,7 +229,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		// We have a destination and an origin
 		if (newConnection.connectModules()) {
 			// If either of them was able to connect, that means the connection was good		
-			connections.add(newConnection);
+			getConnections().add(newConnection);
 		} else {
 			System.out.println("Problem connecting");
 		}
@@ -228,7 +242,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		} else {
 			System.out.println("Disconnection probleM");
 		}
-		connections.remove(theConnection);
+		getConnections().remove(theConnection);
 		clicked = null;
 	}
 
@@ -239,7 +253,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			Connector currentConnector = connectablePanel.getConnector();
 			
 			// Go through all of the connections
-			for (Connection	connection : connections) {
+			for (Connection	connection : getConnections()) {
 				
 				// If either of the connections are from this connector, 
 				if (currentConnector == connection.getOrigin() ||
@@ -251,6 +265,10 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		boxes.removeAll(panel.getConnectablePanels());
 		remove(panel);
+		
+		App.data.removeModule(panel);
+//		App.synthModel.removeInstance(panel.getInstance());
+		
 		repaint();
 	}
 	
@@ -272,6 +290,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 				if (dragging) {
 					destinationPanel = box;
 				}
+				
 			} else {
 				// We aren't hovering over anything, make sure there's no destination panel
 				if (currentPanel == box) {
@@ -318,7 +337,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	public Connection getClickedConnection(Point point, int distance) {
 		
-		for (Connection connection : connections) {
+		for (Connection connection : getConnections()) {
 			Line2D line = connection.getLine();
 			if (line.ptLineDist(point) < distance) {
 				return connection;
@@ -328,13 +347,13 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		return null;
 	}
 
-	public Dimension getPreferredSize() {
-		return new Dimension(250, 200);
-	}
-
-	public Dimension getMaximumSize() {
-		return new Dimension(250, 200);
-	}
+//	public Dimension getPreferredSize() {
+//		return new Dimension(250, 200);
+//	}
+//
+//	public Dimension getMaximumSize() {
+//		return new Dimension(250, 200);
+//	}
 
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
@@ -366,7 +385,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 
 		}
 		
-		for (Connection connection : connections) {
+		for (Connection connection : getConnections()) {
 			g2.setColor(connection.getOrigin().getColor());
 			Line2D line = connection.getLine();
 			if (connection.isClicked())
@@ -377,56 +396,174 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			g2.setStroke(new BasicStroke(1));
 		}
 	}
+	
+	public void saveModules() throws IOException {
+    	// Write to disk with FileOutputStream
+    	String filename = "test.modules";
+    	File out = new File(System.getProperty("user.home") + "\\test\\" + filename);
+    	
+    	FileOutputStream f_out = new 
+    		FileOutputStream(out);
+
+    	// Write object with ObjectOutputStream
+    	ObjectOutputStream obj_out = new
+    		ObjectOutputStream (f_out);
+
+    	// Write object out to disk
+    	obj_out.writeObject ( modules );
+    	obj_out.close();
+    	f_out.close();
+	}
+	
+
+	public void loadModules() throws IOException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+    	String filename = "test.modules";
+    	File in = new File(System.getProperty("user.home") + "\\test\\" + filename);
+		
+        FileInputStream fileIn = new FileInputStream(in);
+        ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+        Object o = objectIn.readObject();
+        if (o instanceof CopyOnWriteArrayList<?>) {
+        	modules = (CopyOnWriteArrayList<ModulePanel>) o;
+        	removeAll();
+        	for (ModulePanel modulePanel : modules) {
+        		add(modulePanel);
+			}
+        }
+        objectIn.close();
+        fileIn.close();	
+        
+		updateUI();
+		repaint();
+	}
+	
+	public void addModuleForInstance(Instance instance) {
+		
+		ModulePanel module = null;
+		
+		if (instance.getClass() == Synth.class) {
+			module = new SynthModule(100, 100, (Synth) instance);
+			
+		} else if (instance.getClass() == Instrument.class) {
+			
+			module = new InstrumentModule(100, 100, (Instrument) instance);
+			module.setPreferredSize(new Dimension(75, 100));
+			module.setSize(new Dimension(100, 75));
+		
+		} else if (instance.getClass() == Effect.class) {
+			module = new EffectModule(100, 300, (Effect) instance);
+		} else if (instance.getClass() == ChangeFunc.class) {
+			module = new ChangeFuncModule(100, 300, (ChangeFunc) instance);
+		} else if (instance.getClass() == PatternGen.class) {
+			module = new PatternGenModule(100, 300, (PatternGen) instance);
+		} else {
+			System.err.println("No module for class");
+			return;
+		}
+
+		module.setInstance(instance);
+//		module.setPreferredSize(new Dimension(75, 100));
+//		module.setSize(new Dimension(100, 75));
+		module.setLocation(instance.getLocation());
+		add(module);
+		boxes.addAll(module.getConnectablePanels());
+		module.setOwner(this);
+		modules.add(module);
+		
+		App.data.addModule(module);
+		
+		updateUI();
+		repaint();
+	}
+	
+	public void refreshModules() {
+		// Remove anything currently here
+		removeAll();
+		boxes.removeAll(boxes);
+		
+		for (ModulePanel panel : App.data.getModulePanels()) {
+			// Add the actual panel to the surface
+			add(panel);
+			// Add the connectable panels to the list
+			boxes.addAll(panel.getConnectablePanels());
+			panel.refresh();
+		}
+		
+		updateUI();
+		repaint();
+	}
+
 
 	// SynthModelListener
 	// --------------------------
 	
 	@Override
+	public
+	void instanceAdded(Instance instance) {
+		addModuleForInstance(instance);
+	}
+	
+	@Override
 	public void synthAdded(Synth synth) {
-		SynthModule synthModule = new SynthModule(100, 100, synth);
-		synthModule.setPreferredSize(new Dimension(75, 100));
-		synthModule.setSize(new Dimension(100, 75));
-		synthModule.setLocation(200, 200);
-		add(synthModule);
-		boxes.addAll(synthModule.getConnectablePanels());
+		addModuleForInstance(synth);
 		
-		synthModule.setOwner(this);
-		System.out.println("Instrument added to panel");
-
-		updateUI();
-		repaint();
+//		SynthModule module = new SynthModule(100, 100, synth);
+//		module.setInstance(synth);
+//		
+//		module.setPreferredSize(new Dimension(75, 100));
+//		module.setSize(new Dimension(100, 75));
+//		module.setLocation(200, 200);
+//		add(module);
+//		boxes.addAll(module.getConnectablePanels());
+//		
+//		module.setOwner(this);
+//		System.out.println("Instrument added to panel");
+//
+//		modules.add(module);
+//			
+//		updateUI();
+//		repaint();
 	}
 
 	@Override
 	public void instAdded(Instrument inst) {
-//		
-		InstrumentModule instrumentModule = new InstrumentModule(100, 100, inst);
-		instrumentModule.setPreferredSize(new Dimension(75, 100));
-		instrumentModule.setSize(new Dimension(100, 75));
-		instrumentModule.setLocation(200, 200);
-		add(instrumentModule);
-		boxes.addAll(instrumentModule.getConnectablePanels());
-		
-		instrumentModule.setOwner(this);
-		System.out.println("Instrument added to panel");
+		addModuleForInstance(inst);
 
-		updateUI();
-		repaint();
+//		InstrumentModule module = new InstrumentModule(100, 100, inst);
+//		module.setInstance(inst);
+//		
+//		module.setPreferredSize(new Dimension(75, 100));
+//		module.setSize(new Dimension(100, 75));
+//		module.setLocation(200, 200);
+//		add(module);
+//		boxes.addAll(module.getConnectablePanels());
+//		
+//		module.setOwner(this);
+//		System.out.println("Instrument added to panel");
+//
+//		modules.add(module);
+//		
+//		updateUI();
+//		repaint();
 	}
 	
 	@Override
 	public void effectAdded(Effect effect) {
 		
-		EffectModule effectModule = new EffectModule(100, 300, effect);
-
-		effectModule.setSize(effectModule.getPreferredSize());
-		effectModule.validate();
+		EffectModule module = new EffectModule(100, 300, effect);
+		module.setInstance(effect);
 		
-		effectModule.setLocation(200, 200);
-		add(effectModule);
-		boxes.addAll(effectModule.getConnectablePanels());
+		module.setSize(module.getPreferredSize());
+		module.validate();
 		
-		effectModule.setOwner(this);
+		module.setLocation(200, 200);
+		add(module);
+		boxes.addAll(module.getConnectablePanels());
+		
+		module.setOwner(this);
+		
+		modules.add(module);
 		
 		updateUI();
 		repaint();
@@ -436,16 +573,19 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	@Override
 	public void changeFuncAdded(ChangeFunc changeFunc) {
 		// TODO Auto-generated method stub
-		ChangeFuncModule changeFuncModule = new ChangeFuncModule(100, 300, changeFunc);
-
-		changeFuncModule.setSize(changeFuncModule.getPreferredSize());
-		changeFuncModule.validate();
+		ChangeFuncModule module = new ChangeFuncModule(100, 300, changeFunc);
+		module.setInstance(changeFunc);
 		
-		changeFuncModule.setLocation(200, 200);
-		add(changeFuncModule);
-		boxes.addAll(changeFuncModule.getConnectablePanels());
+		module.setSize(module.getPreferredSize());
+		module.validate();
 		
-		changeFuncModule.setOwner(this);
+		module.setLocation(200, 200);
+		add(module);
+		boxes.addAll(module.getConnectablePanels());
+		
+		module.setOwner(this);
+		
+		modules.add(module);
 		
 		updateUI();
 		repaint();
@@ -453,18 +593,19 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	@Override
 	public void patternGenAdded(PatternGen patternGen) {
-		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
-		PatternGenModule patternGenModule = new PatternGenModule(100, 300, patternGen);
-
-		patternGenModule.setSize(patternGenModule.getPreferredSize());
-		patternGenModule.validate();
+		PatternGenModule module = new PatternGenModule(100, 300, patternGen);
+		module.setInstance(patternGen);
 		
-		patternGenModule.setLocation(200, 200);
-		add(patternGenModule);
-		boxes.addAll(patternGenModule.getConnectablePanels());
+		module.setSize(module.getPreferredSize());
+		module.validate();
 		
-		patternGenModule.setOwner(this);
+		module.setLocation(200, 200);
+		add(module);
+		boxes.addAll(module.getConnectablePanels());
+		
+		module.setOwner(this);
+		
+		modules.add(module);
 		
 		updateUI();
 		repaint();
@@ -476,10 +617,14 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public void playerAdded(RoutinePlayer player) {
 		// Create the routine player's panel
 		RoutinePlayerModule playerPanel = new RoutinePlayerModule(player);
+		playerPanel.setInstance(player);
 		playerPanel.setLocation(10, 10);
 		
 		boxes.addAll(playerPanel.getConnectablePanels());
 		add(playerPanel);
+		
+		modules.add(playerPanel);
+		
 		updateUI();
 	}
 
@@ -488,7 +633,6 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		
 	}
-
 
 
 

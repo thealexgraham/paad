@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.synths.parameters;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 
-public class IntParamModel extends SpinnerNumberModel implements ParamModel, Connectable {
+public class IntParamModel extends SpinnerNumberModel implements ParamModel, Connectable, Serializable {
 	
 	private String name;
 	private Instance owner;

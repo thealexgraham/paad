@@ -19,12 +19,20 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
+import com.sun.swing.internal.plaf.metal.resources.metal;
+
 import net.alexgraham.thesis.AGHelper.TestEnum;
+import net.alexgraham.thesis.supercollider.synths.Instance;
 
 public class ModulePanel extends JPanel {
 
 	private JPanel interior;
 	private ArrayList<ConnectablePanel> connectables = new ArrayList<ConnectablePanel>();
+	
+	private Instance instance;
+	
+	public Instance getInstance() { return instance; }
+	public void setInstance(Instance instance) { this.instance = instance; }
 
 	public ArrayList<ConnectablePanel> getConnectablePanels() {
 		return connectables;
@@ -34,7 +42,7 @@ public class ModulePanel extends JPanel {
 		connectables.add(panel);
 	}
 
-	private LineConnectPanel owner;
+//	private LineConnectPanel owner;
 
 	class ModulePopup extends JPopupMenu {
 		JMenuItem anItem;
@@ -57,6 +65,12 @@ public class ModulePanel extends JPanel {
 
 	public ModulePanel(int width, int height) {
 		setup();
+		setSize(new Dimension(width, height));
+	}
+	
+	public ModulePanel(int width, int height, Instance instance) {
+		this.setInstance(instance);
+		setup();
 //		setPreferredSize(new Dimension(width, height));
 	}
 
@@ -65,7 +79,11 @@ public class ModulePanel extends JPanel {
 	}
 
 	public void setOwner(LineConnectPanel owner) {
-		this.owner = owner;
+//		this.owner = owner;
+	}
+	
+	public LineConnectPanel getOwner() {
+		return (LineConnectPanel) this.getParent();
 	}
 
 	public void setup() {
@@ -80,10 +98,20 @@ public class ModulePanel extends JPanel {
 
 		createKeyListeners();
 	}
+	
+	public void refresh() {
+		setFocusable(true);
+
+		DragListener listener = new DragListener();
+		this.addMouseListener(listener);
+		this.addMouseMotionListener(listener);
+
+		createKeyListeners();
+	}
 
 	public void select() {
-		if (owner != null) {
-			owner.moduleSelected(this);
+		if (getOwner() != null) {
+			getOwner().moduleSelected(this);
 		}
 
 		requestFocusInWindow();
@@ -184,7 +212,21 @@ public class ModulePanel extends JPanel {
 				component.setLocation(x, y);
 
 				repaint();
-				getParent().getParent().getParent().repaint();
+				getParent().repaint();
+				
+				JPanel parent = (JPanel) getParent();
+				
+				if (y > parent.getHeight()) {
+					parent.setPreferredSize(new Dimension(parent.getWidth(), y + getHeight() * 2));
+					parent.revalidate();
+				}
+				
+				if (x > parent.getWidth()) {
+					parent.setPreferredSize(new Dimension(x + getWidth() * 2, parent.getHeight()));
+					parent.revalidate();
+				}
+				
+				instance.setLocation(new Point(x, y));
 
 			} else {
 				redispatch(e);

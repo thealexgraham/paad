@@ -8,16 +8,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import net.alexgraham.thesis.AGHelper;
+import net.alexgraham.thesis.ui.components.TriangleShape;
 
 public class Connector implements java.io.Serializable {
 	
-	ConnectablePanel owner;
+
 
 	public interface Connectable {
 		
@@ -31,16 +30,6 @@ public class Connector implements java.io.Serializable {
 		public boolean removeConnectionWith(Connectable otherConnectable);
 	}
 
-	public enum Location {
-		TOP, BOTTOM, LEFT, RIGHT
-	}
-
-	public enum ConnectorType {
-		AUDIO_INPUT, AUDIO_OUTPUT, INST_PLAY_IN, INST_PLAY_OUT, PARAM_CHANGE_IN, PARAM_CHANGE_OUT, 
-		PATTERN_OUT, PATTERN_IN, CHOICE_CHANGE_IN, CHOICE_CHANGE_OUT, ACTION_IN, ACTION_OUT, DEFAULT
-	}
-	
-	
 	private int height = 10;
 	private int width = 10;
 
@@ -48,9 +37,22 @@ public class Connector implements java.io.Serializable {
 
 	private Location drawLocation = Location.LEFT;
 	private ConnectorType type = ConnectorType.DEFAULT;
+	
+	ConnectablePanel owner;
+	
+	
+	public enum Location {
+		TOP, BOTTOM, LEFT, RIGHT
+	}
 
-	public void setDrawLocation(Location drawLocation) {
-		this.drawLocation = drawLocation;
+	public enum ConnectorType {
+		AUDIO_INPUT, AUDIO_OUTPUT, 
+		INST_PLAY_IN, INST_PLAY_OUT, 
+		PARAM_CHANGE_IN, PARAM_CHANGE_OUT, 
+		PATTERN_IN, PATTERN_OUT, 
+		CHOICE_CHANGE_IN, CHOICE_CHANGE_OUT, 
+		ACTION_IN, ACTION_OUT, 
+		DEFAULT
 	}
 
 	private boolean hovered = false;
@@ -67,6 +69,12 @@ public class Connector implements java.io.Serializable {
 		this.owner = connectablePanel;
 		this.connectable = connectable;
 		this.type = type;
+		
+	}
+	
+	
+	public void setDrawLocation(Location drawLocation) {
+		this.drawLocation = drawLocation;
 	}
 
 	public Connectable getConnectable() {
@@ -97,7 +105,7 @@ public class Connector implements java.io.Serializable {
 						ownerLocation.y + owner.getSize().height / 2 - height);
 				break;
 			case LEFT:
-				location = new Point(ownerLocation.x - (width * 2),
+				location = new Point(ownerLocation.x - (width),
 						ownerLocation.y + owner.getSize().height / 2 - height);
 				break;
 			case BOTTOM:
@@ -119,6 +127,34 @@ public class Connector implements java.io.Serializable {
 		Point currentPositon = getCurrentPosition();
 		return new Point(currentPositon.x + width / 2, currentPositon.y
 				+ height / 2);
+	}
+	
+	public int getRotationFromLocation() {
+		int rotation = 0;
+		switch (drawLocation) {
+			case RIGHT:
+				rotation = 0; break;
+			case BOTTOM:
+				rotation = 90; break;
+			case LEFT:
+				rotation = 180; break;
+			case TOP:
+				rotation = 270; break;
+			default:
+				break;
+		}
+		
+		return rotation;
+	}
+	
+	public int getTriangleOrigin() {
+		if (type.ordinal() % 2 == 0) {
+			// Evens are input, so use the apex (pointing in)
+			return TriangleShape.APEX;
+		} else {
+			// Odds are output, use the base (points out)
+			return TriangleShape.BASE;
+		}
 	}
 	
 	public Color getColor() {
@@ -168,12 +204,15 @@ public class Connector implements java.io.Serializable {
 		
 		g2.setColor(getColor());
 		
-		if (type == ConnectorType.AUDIO_INPUT || type == ConnectorType.AUDIO_OUTPUT) {
-			g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);
-			drawTriangle(g2, currentPosition, width, height * triangleDirection);
-		} else {
-			g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);
-		}
+//		if (type == ConnectorType.AUDIO_INPUT || type == ConnectorType.AUDIO_OUTPUT) {
+//			g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);
+//			drawTriangle(g2, currentPosition, width, height * triangleDirection);
+//		} else {
+////			g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);
+//		}
+		
+		TriangleShape triangle = new TriangleShape(currentPosition, getTriangleOrigin(), getRotationFromLocation(), width, height);
+		triangle.draw(g2);
 	}
 	
 	// FIXME: Triangle is not drawing in correct place
@@ -195,6 +234,53 @@ public class Connector implements java.io.Serializable {
 		
 		drawTriangle(g2, point1, point2, point3);
 	}
+		
+	public void drawTriangleFromBase(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x, y + baseLength / 2);
+		Point base2 = new Point(x, y - baseLength / 2);
+		Point apex = new Point (x + length, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+	public void drawTriangleFromApex(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x + length, y + baseLength / 2);
+		Point base2 = new Point(x + length, y - baseLength / 2);
+		Point apex = new Point (x, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+	public void drawVerticalTriangleFromApex(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x + baseLength / 2, y + length);
+		Point base2 = new Point(x + baseLength / 2, y + length);
+		Point apex = new Point (x, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+	
+	public void drawVerticalTriangleFromBase(Graphics2D g2, Point location, int baseLength, int length) {
+		int x = location.x;
+		int y = location.y;
+		
+		Point base1 = new Point(x + baseLength / 2, y);
+		Point base2 = new Point(x + baseLength / 2, y);
+		Point apex = new Point (x + length, y);
+		
+		drawTriangle(g2, base1, base2, apex);
+	}
+	
+
 	
 	public void drawTriangle(Graphics2D g2, Point point1, Point point2, Point point3) {
 		g2.drawLine(point1.x, point1.y, point2.x, point2.y);

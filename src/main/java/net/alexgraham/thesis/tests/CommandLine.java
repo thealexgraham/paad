@@ -40,12 +40,20 @@ public class CommandLine {
 		};
 		
 		System.out.println(myFun.apply("Whatever"));
-		
+		String testString = "testing";
+		System.out.println(testString);
+		testFunction(testString);
+		System.out.println(testString);
 		
     	System.in.read();
 		System.out.println("Done.");
     	Runtime.getRuntime().exit(1);
+    	
 
+	}
+	
+	public static void testFunction(String myString) {
+		myString = "new string";
 	}
 
 }

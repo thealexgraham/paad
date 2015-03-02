@@ -50,7 +50,7 @@ s.waitForBoot({
 		});
 
 	}, '/start/ready', recvPort:NetAddr.langPort);
-
+	//s.record;
 }, 100);
 
 )
