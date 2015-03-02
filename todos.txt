@@ -1,5 +1,6 @@
 Vim+Supercollider, Eclim
 
+Add/remove dials from module (from the synth card panel)
 
 1. Wires should match the color you're leaving from
 2. Top of inst still a circle

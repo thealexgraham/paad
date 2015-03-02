@@ -13,12 +13,33 @@ import com.illposed.osc.OSCPortOut;
 
 public class SendOSC {
 	
-	public static void main(String[] args) throws SocketException, UnknownHostException {
+	public static void main(String[] args) throws IOException {
 		OSCPortOut sender;
 		OSCPortIn receiver;
 		sender = new OSCPortOut(InetAddress.getLocalHost(), 57120);
 		receiver = new OSCPortIn(1253);
 		
+		
+		OSCListener listener = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+
+    			System.out.println(message.getArguments());
+    			System.out.println(" ");
+    		}
+    		
+    	};
+    	
+    	
+    	receiver.addListener("/testmessage", listener);
+    	receiver.startListening();
+    	System.out.println("Listening");
+    	System.in.read();
+    	receiver.close();
+    	
+        System.out.println( "Done." );
+		
+		
+//		testOSC();
 		
     	ArrayList<Object> arguments = new ArrayList<Object>();
     	arguments.add("whatever");

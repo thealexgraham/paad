@@ -40,8 +40,7 @@ import java.awt.event.WindowEvent;
 
 public class MainWindow extends JFrame implements SCMessageListener {
 	JPanel mainPanel;
-	JPanel bottomPanel;
-	
+		
 	MainSplitLayout splitLayout;
 
 	JTextField avgCPUField;
@@ -78,11 +77,14 @@ public class MainWindow extends JFrame implements SCMessageListener {
 	}
 	
 	public void setupBottomPanel() {
+		
+		// Bottom Panel
 		JPanel bottomWrapper = new JPanel();
 		bottomWrapper.setLayout(new BoxLayout(bottomWrapper, BoxLayout.X_AXIS));
 		
-		//Bottom Panel//
-		bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		//Bottom Split//
+		JPanel bottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JPanel bottomLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		// Blinkers //
 		inFlasher = new FlashButton(FLASH_LENGTH, Color.GREEN);
@@ -92,69 +94,31 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		avgCPUField = new JTextField(4);
 		peakCPUField = new JTextField(4);
 		
-		bottomPanel.add(new JLabel("Avg CPU:"));
-		bottomPanel.add(avgCPUField);
-		bottomPanel.add(new JLabel("Peak CPU:"));
-		bottomPanel.add(peakCPUField);
-
-		JPanel bottomButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton consoleButton = new JButton("Console");
 		
-		consoleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				consoleAction();
-			}
-		});
+		bottomRight.add(new JLabel("Avg CPU:"));
+		bottomRight.add(avgCPUField);
+		bottomRight.add(new JLabel("Peak CPU:"));
+		bottomRight.add(peakCPUField);
 		
-		consoleButton.setMargin(new Insets(0, 0, 0, 0));
-		bottomButtons.add(consoleButton);
-		
-		bottomButtons.add(inFlasher);
-		bottomButtons.add(outFlasher);
-		
-		JButton rebootButton = new JButton("Reboot");
-		rebootButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				rebootAction();
-			}
-		});
-		
-		bottomWrapper.add(rebootButton);
-		
-		JButton saveButton = new JButton("Save");
-		saveButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				saveAction();
-			}
-		});
-		
-		bottomWrapper.add(saveButton);
+		bottomLeft.add(inFlasher);
+		bottomLeft.add(outFlasher);
 		
 		
-		JButton loadButton = new JButton("Load");
-		loadButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				loadAction();
-			}
-		});
-		
-		bottomWrapper.add(loadButton);
-		
-		bottomWrapper.add(bottomButtons);
-		bottomWrapper.add(bottomPanel);
-				
+		bottomWrapper.add(bottomLeft);
+		bottomWrapper.add(bottomRight);
 		add(bottomWrapper, BorderLayout.PAGE_END);
 		
 		//App.sc.addCPUUpdateListener(this);
 		//App.sc.addUpdateListener(SCCPUListener.class, this);
 		createCPUListeners();
+	}
+	
+	// Menu Bar actions 
+	// --------------------------
+	
+	public void newAction() {
+		App.data.clearData();
+		this.setTitle("Untitled");
 	}
 	
 	public void saveAction() {
@@ -187,6 +151,9 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		consoleDialog.openDialog();
 	}
 	
+	// Setup SuperCollider Info 
+	// ----------------------------------
+	
 	public void createCPUListeners() {
 
 		App.sc.addPropertyChangeListener(SCLangProperties.avgCPU, new PropertyChangeListener() {
@@ -217,6 +184,25 @@ public class MainWindow extends JFrame implements SCMessageListener {
       
 	}
 	
+	// SCMessage Listener
+	// --------------------
+
+	@Override
+	public void oscMessageOut() {
+		outFlasher.flash();
+	}
+
+	@Override
+	public void messageIn(boolean oscMessage) {
+		
+		if (!oscMessage) {
+			inFlasher.flash(inFlasher.blinkColor.darker().darker().darker());
+		}
+	}
+	
+	// Create menu bar
+	// --------------------- 
+	
 	public JMenuBar createMenuBar() {
 		JMenuBar menuBar;
 		JMenu file, menu;
@@ -239,7 +225,20 @@ public class MainWindow extends JFrame implements SCMessageListener {
         menuItem.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				newAction();
+			}
+		});
+        file.add(menuItem);
+        
+        // Open File
+        menuItem = new JMenuItem("Open", KeyEvent.VK_O);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loadAction();
 			}
 		});
         file.add(menuItem);
@@ -266,19 +265,6 @@ public class MainWindow extends JFrame implements SCMessageListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveAction();
-			}
-		});
-        file.add(menuItem);
-        
-        // Open File
-        menuItem = new JMenuItem("Open", KeyEvent.VK_O);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-        
-        menuItem.addActionListener(new ActionListener() {	
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				loadAction();
 			}
 		});
         file.add(menuItem);
@@ -330,20 +316,57 @@ public class MainWindow extends JFrame implements SCMessageListener {
         return menuBar;
 	}
 	
-	// SCMessage Listener
-	// --------------------
-
-	@Override
-	public void oscMessageOut() {
-		outFlasher.flash();
-	}
-
-	@Override
-	public void messageIn(boolean oscMessage) {
+	public void setupSCButtons(JPanel bottomWrapper) {
 		
-		if (!oscMessage) {
-			inFlasher.flash(inFlasher.blinkColor.darker().darker().darker());
-		}
+		JPanel bottomButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		JButton consoleButton = new JButton("Console");
+		bottomButtons.add(consoleButton);
+		
+		consoleButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				consoleAction();
+			}
+		});
+		
+		consoleButton.setMargin(new Insets(0, 0, 0, 0));
+		
+		JButton rebootButton = new JButton("Reboot");
+		rebootButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				rebootAction();
+			}
+		});
+		
+		bottomWrapper.add(rebootButton);
+		
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveAction();
+			}
+		});
+		
+		bottomWrapper.add(saveButton);
+		
+		
+		JButton loadButton = new JButton("Load");
+		loadButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				loadAction();
+			}
+		});
+		
+		bottomWrapper.add(loadButton);
 	}
+	
+
 
 }

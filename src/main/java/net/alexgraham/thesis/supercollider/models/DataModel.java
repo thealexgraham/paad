@@ -63,7 +63,12 @@ public class DataModel {
 		return list;
 	}
 	
-	
+	public void clearData() {
+		// Close all instances first
+		lineConnectPanel.refreshModules(); // Deletes everything
+		synthModel = new SynthModel();
+		synthModel.closeInstances();
+	}
 	
 	public void saveData(File outFile){
     	// Write to disk with FileOutputStream
