@@ -91,7 +91,7 @@ public class SCLang extends ChangeSender {
 	public String getScIde() {
 		String system = System.getProperty("os.name");
 		if (system.equals("Mac OS X")) {
-			return "/Applications/SuperCollider.app/Contents/Resources/scide";
+			return "/Applications/SuperCollider.app/Contents/MacOS/SuperCollider";
 		} else {
 			return "C:/Users/Alex/supercollider/scide.exe";
 		}
@@ -305,16 +305,16 @@ public class SCLang extends ChangeSender {
 			
 			@Override
 			public void serverReady() {
+				
+		    	ArrayList<RoutinePlayer> players = App.synthModel.getPlayers();
+		    	for (RoutinePlayer player : players) {
+		    		player.reset();
+		    	}
+				
 		    	ArrayList<Instance> instances= App.synthModel.getInstances();
 		    	for (Instance instance : instances) {
 		    		instance.start();
 				}
-    	
-		    	ArrayList<RoutinePlayer> players = App.playerModel.getPlayers();
-		    	for (RoutinePlayer player : players) {
-		    		player.reset();
-		    		player.start();
-		    	}
 		    	
 		    	ArrayList<Connection> connections = App.connectionModel.getConnections();
 		    	for (Connection connection : connections) {

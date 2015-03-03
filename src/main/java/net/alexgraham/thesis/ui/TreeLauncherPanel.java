@@ -165,7 +165,8 @@ public class TreeLauncherPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RoutinePlayer player = new RoutinePlayer();
-				App.playerModel.addPlayer(player);
+//				App.playerModel.addPlayer(player);
+				App.synthModel.addInstance(player);
 			}
 		});
 		

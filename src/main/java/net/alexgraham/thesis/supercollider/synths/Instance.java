@@ -30,7 +30,7 @@ public class Instance implements Connectable, Serializable {
 	public void setLocation(Point location) { this.location = location; }
 	
 	public Instance() {
-
+		id = new SimpleID();
 	}
 	
 	public Instance(Def def) {

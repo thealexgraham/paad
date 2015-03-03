@@ -16,8 +16,8 @@ import org.apache.commons.io.FilenameUtils;
 
 public class SaveHelper {
 	
-	private static String directory = System.getProperty("user.home") + "\\superpad\\";
-	private static String extension = "spd";
+	private static String directory = System.getProperty("user.home") + "/thesis-files";
+	private static String extension = "agt";
 	public SaveHelper() {
 		
 	}
@@ -48,7 +48,7 @@ public class SaveHelper {
 		
 	    chooser.setCurrentDirectory(new File(directory));
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-	        "SuperPAD Files", "spd");
+	        "Thesis Files", "agt");
 	    chooser.setFileFilter(filter);
 	    //int returnVal = chooser.showOpenDialog(parent);
 	    int returnVal = chooser.showDialog(null, buttonText);

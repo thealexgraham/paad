@@ -15,7 +15,11 @@ public class FlashButton extends JButton {
 	
 	public FlashButton(int flashLength, Color blinkColor) {
 		this.blinkColor = blinkColor;
+		
+		setOpaque(true);
+		setBorderPainted(false);
 		setBackground(idleColor);
+		
 		
 		ActionListener taskPerformer = new ActionListener() {
 		      public void actionPerformed(ActionEvent evt) {
@@ -27,6 +31,15 @@ public class FlashButton extends JButton {
 		  };
 		  
 		  timer = new Timer(flashLength, taskPerformer);
+		  
+		  addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				flash();
+			}
+		});
 	}
 	
 	public void flash() {

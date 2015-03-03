@@ -45,7 +45,7 @@ public class Def implements java.io.Serializable {
 	}
 	
 	public void createFileDef() {
-		File fout = new File( System.getProperty("user.home") + "\\superpad\\" + defName + ".scd");
+		File fout = new File( System.getProperty("user.home") + "/" + defName + ".scd");
 		
 		try {
 			FileOutputStream fos = new FileOutputStream(fout);

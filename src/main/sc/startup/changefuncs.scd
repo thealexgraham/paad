@@ -12,6 +12,7 @@
 	[[\walkAmount, 0, 100, 10]]
 
 );
+// Chance to go up or down
 
 ~java.addDefinition("TrueRandom",
 	\changeFunc,

@@ -45,6 +45,7 @@
 			);
 		});
 		net.sendMsg("/def/func", defName, function.def.sourceCode);
+		^("Definition Added");
 	}
 
 }

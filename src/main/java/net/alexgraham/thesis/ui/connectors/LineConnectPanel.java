@@ -35,6 +35,7 @@ import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.tests.demos.simplemvc.Model;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
@@ -97,7 +98,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		// Listen for synths being added
 		App.synthModel.addListener(this);
-		App.playerModel.addListener(this);
+		//App.playerModel.addListener(this);
 	}
 	
 	public void addSynthSelectListener(SynthSelectListener listener) {
@@ -442,6 +443,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			module = new ChangeFuncModule(100, 300, (ChangeFunc) instance);
 		} else if (instance.getClass() == PatternGen.class) {
 			module = new PatternGenModule(100, 300, (PatternGen) instance);
+		} else if (instance.getClass() == RoutinePlayer.class){
+			module = new RoutinePlayerModule((RoutinePlayer) instance);
 		} else {
 			System.err.println("No module for class");
 			return;
@@ -487,7 +490,76 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	void instanceAdded(Instance instance) {
 		addModuleForInstance(instance);
 	}
+
 	
+	// PlayerModelListener
+	// -------------------------
+	@Override
+	public void playerAdded(RoutinePlayer player) {
+		// Create the routine player's panel
+		RoutinePlayerModule playerPanel = new RoutinePlayerModule(player);
+		playerPanel.setInstance(player);
+		playerPanel.setLocation(10, 10);
+		
+		boxes.addAll(playerPanel.getConnectablePanels());
+		add(playerPanel);
+		
+		modules.add(playerPanel);
+		
+		updateUI();
+	}
+
+	@Override
+	public void playerRemoved(RoutinePlayer player) {
+		
+		
+	}
+	
+	// Saving and Loading
+	// ------------------------
+	
+	public void saveModules() throws IOException {
+    	// Write to disk with FileOutputStream
+    	String filename = "test.modules";
+    	File out = new File(System.getProperty("user.home") + "\\test\\" + filename);
+    	
+    	FileOutputStream f_out = new 
+    		FileOutputStream(out);
+
+    	// Write object with ObjectOutputStream
+    	ObjectOutputStream obj_out = new
+    		ObjectOutputStream (f_out);
+
+    	// Write object out to disk
+    	obj_out.writeObject ( modules );
+    	obj_out.close();
+    	f_out.close();
+	}
+	
+
+	public void loadModules() throws IOException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+    	String filename = "test.modules";
+    	File in = new File(System.getProperty("user.home") + "\\test\\" + filename);
+		
+        FileInputStream fileIn = new FileInputStream(in);
+        ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+        Object o = objectIn.readObject();
+        if (o instanceof CopyOnWriteArrayList<?>) {
+        	modules = (CopyOnWriteArrayList<ModulePanel>) o;
+        	removeAll();
+        	for (ModulePanel modulePanel : modules) {
+        		add(modulePanel);
+			}
+        }
+        objectIn.close();
+        fileIn.close();	
+        
+		updateUI();
+		repaint();
+	}
+
+// SynthModel Listener Old
 	@Override
 	public void synthAdded(Synth synth) {
 		addModuleForInstance(synth);
@@ -594,75 +666,6 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		updateUI();
 		repaint();
 	}
-	
-	// PlayerModelListener
-	// -------------------------
-	@Override
-	public void playerAdded(RoutinePlayer player) {
-		// Create the routine player's panel
-		RoutinePlayerModule playerPanel = new RoutinePlayerModule(player);
-		playerPanel.setInstance(player);
-		playerPanel.setLocation(10, 10);
-		
-		boxes.addAll(playerPanel.getConnectablePanels());
-		add(playerPanel);
-		
-		modules.add(playerPanel);
-		
-		updateUI();
-	}
-
-	@Override
-	public void playerRemoved(RoutinePlayer player) {
-		
-		
-	}
-	
-	// Saving and Loading
-	// ------------------------
-	
-	public void saveModules() throws IOException {
-    	// Write to disk with FileOutputStream
-    	String filename = "test.modules";
-    	File out = new File(System.getProperty("user.home") + "\\test\\" + filename);
-    	
-    	FileOutputStream f_out = new 
-    		FileOutputStream(out);
-
-    	// Write object with ObjectOutputStream
-    	ObjectOutputStream obj_out = new
-    		ObjectOutputStream (f_out);
-
-    	// Write object out to disk
-    	obj_out.writeObject ( modules );
-    	obj_out.close();
-    	f_out.close();
-	}
-	
-
-	public void loadModules() throws IOException, ClassNotFoundException {
-		// TODO Auto-generated method stub
-    	String filename = "test.modules";
-    	File in = new File(System.getProperty("user.home") + "\\test\\" + filename);
-		
-        FileInputStream fileIn = new FileInputStream(in);
-        ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-        Object o = objectIn.readObject();
-        if (o instanceof CopyOnWriteArrayList<?>) {
-        	modules = (CopyOnWriteArrayList<ModulePanel>) o;
-        	removeAll();
-        	for (ModulePanel modulePanel : modules) {
-        		add(modulePanel);
-			}
-        }
-        objectIn.close();
-        fileIn.close();	
-        
-		updateUI();
-		repaint();
-	}
-
-
 
 
 }

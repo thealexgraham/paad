@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instance;
@@ -66,35 +67,6 @@ public class SynthModel implements Serializable {
 		listeners.add(l);
 	}
 	
-	public void fireSynthAdded(Synth synth) {
-		for (SynthModelListener synthModelListener : listeners) {
-			synthModelListener.synthAdded(synth);
-		}
-	}
-	
-	public void fireInstAdded(Instrument inst) {
-		for (SynthModelListener synthModelListener : listeners) {
-			synthModelListener.instAdded(inst);
-		}
-	}
-	
-	public void fireEffectAdded(Effect effect) {
-		for (SynthModelListener synthModelListener : listeners) {
-			synthModelListener.effectAdded(effect);
-		}
-	}
-	
-	public void fireChangeFuncAdded(ChangeFunc changeFunc) {
-		for (SynthModelListener synthModelListener : listeners) {
-			synthModelListener.changeFuncAdded(changeFunc);
-		}
-	}
-	
-	public void firePatternGenFuncAdded(PatternGen patternGen) {
-		for (SynthModelListener synthModelListener : listeners) {
-			synthModelListener.patternGenAdded(patternGen);
-		}
-	}
 	
 	public void fireInstanceAdded(Instance instance) {
 		for (SynthModelListener synthModelListener : listeners) {
@@ -115,6 +87,19 @@ public class SynthModel implements Serializable {
 		return insts;
 	}
 	
+	public ArrayList<RoutinePlayer> getPlayers() {
+		ArrayList<RoutinePlayer> players = new ArrayList<RoutinePlayer>();
+		
+		for (Enumeration<Instance> e = synthListModel.elements(); e.hasMoreElements();)  {
+			Instance synth = e.nextElement();
+			if (synth.getClass() == RoutinePlayer.class) {
+				players.add((RoutinePlayer) synth);
+			}
+		}
+		
+		return players;
+	}
+	
 	public ArrayList<Synth> getSynths() {
 		ArrayList<Synth> synths = new ArrayList<Synth>();
 		
@@ -132,6 +117,11 @@ public class SynthModel implements Serializable {
 
 		for (Enumeration<Instance> e = synthListModel.elements(); e.hasMoreElements();)  {
 			Instance instance = (Instance) e.nextElement();
+			
+//			if (instance.getClass() == RoutinePlayer.class) {
+//				App.playerModel.addPlayer((RoutinePlayer) instance);
+//				continue;
+//			}
 			instance.start();
 			instance.refresh();
 
@@ -192,5 +182,47 @@ public class SynthModel implements Serializable {
 		synths.put(instance.getID(), instance);
 //		fireSynthAdded(synth);
 		fireInstanceAdded(instance);
+	}
+	
+	public void addInstance(Instance instance) {
+
+		instance.start();
+		
+		synthListModel.addElement(instance);
+		synths.put(instance.getID(), instance);
+//		fireSynthAdded(synth);
+		fireInstanceAdded(instance);
+	}
+	
+	
+	//Old
+	public void fireSynthAdded(Synth synth) {
+		for (SynthModelListener synthModelListener : listeners) {
+			synthModelListener.synthAdded(synth);
+		}
+	}
+	
+	public void fireInstAdded(Instrument inst) {
+		for (SynthModelListener synthModelListener : listeners) {
+			synthModelListener.instAdded(inst);
+		}
+	}
+	
+	public void fireEffectAdded(Effect effect) {
+		for (SynthModelListener synthModelListener : listeners) {
+			synthModelListener.effectAdded(effect);
+		}
+	}
+	
+	public void fireChangeFuncAdded(ChangeFunc changeFunc) {
+		for (SynthModelListener synthModelListener : listeners) {
+			synthModelListener.changeFuncAdded(changeFunc);
+		}
+	}
+	
+	public void firePatternGenFuncAdded(PatternGen patternGen) {
+		for (SynthModelListener synthModelListener : listeners) {
+			synthModelListener.patternGenAdded(patternGen);
+		}
 	}
 }

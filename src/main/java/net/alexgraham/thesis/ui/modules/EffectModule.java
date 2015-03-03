@@ -56,7 +56,7 @@ public class EffectModule extends ModulePanel {
 		super(width, height);
 		
 		this.effect = effect;
-		effect.getDef().createFileDef();
+		//effect.getDef().createFileDef();
 		nameLabel = new JLabel(effect.getName());
 		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
 		

@@ -31,7 +31,7 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 			new CopyOnWriteArrayList<RoutinePlayer.PlayerListener>();
 	
 	protected String name;
-	private UUID id;
+//	private UUID id;
 	boolean playing = false;
 	
 	private Instrument instrument = null;
@@ -39,7 +39,8 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 	private PlayState state = PlayState.DISABLED;
 	
 	public RoutinePlayer() {
-		this.id = UUID.randomUUID();
+		super();
+//		this.id = UUID.randomUUID();
 		App.sc.sendMessage("/routplayer/add", id.toString());
 		init();
 	}
@@ -61,6 +62,10 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		playing = false;
 		state = PlayState.DISABLED;
 		firePlayStateChange();
+	}
+	
+	public void refresh() {
+		reset();
 	}
 	
 	public void addListener(PlayerListener l) {
@@ -98,19 +103,19 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 	}
 	
 	public void connectPatternObject(PatternGen patternObj) {
-		App.sc.sendMessage("/routplayer/connect/pattern", this.getIDString(), patternObj.getDefName(), patternObj.getID(), 0);
+		App.sc.sendMessage("/routplayer/connect/pattern", this.getID(), patternObj.getDefName(), patternObj.getID(), 0);
 	}
 	
 	public void disconnectPatternObject(PatternGen patternObj) {
-		App.sc.sendMessage("/routplayer/disconnect/pattern", this.getIDString(), patternObj.getDefName(), patternObj.getID(), 0);	
+		App.sc.sendMessage("/routplayer/disconnect/pattern", this.getID(), patternObj.getDefName(), patternObj.getID(), 0);	
 	}
 	
 	public void connectPlayAction(Instance target) {
-		App.sc.sendMessage("/routplayer/connect/playaction", this.getIDString(), target.getDefName(), target.getID(), 0);
+		App.sc.sendMessage("/routplayer/connect/playaction", this.getID(), target.getDefName(), target.getID(), 0);
 	}
 	
 	public void disconnectPlayAction(Instance target) {
-		App.sc.sendMessage("/routplayer/disconnect/playaction", this.getIDString(), target.getDefName(), target.getID(), 0);	
+		App.sc.sendMessage("/routplayer/disconnect/playaction", this.getID(), target.getDefName(), target.getID(), 0);	
 	}
 	
 	public void playOrPause() {
