@@ -24,6 +24,7 @@ public class SendOSC {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
 
     			System.out.println(message.getArguments());
+    			System.out.println(message.getArguments().get(0).getClass());
     			System.out.println(" ");
     		}
     		

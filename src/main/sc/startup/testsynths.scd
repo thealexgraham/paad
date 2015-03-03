@@ -1,55 +1,27 @@
 (
-// SXynthdefs
-SynthDef(\PanFM3OP, { | outBus = 0, car_freq, mod_ratio1, mod_ratio2, mod_index1, mod_index2, pan = 0, gain = 0.3 |
-	var fm = SinOsc.ar(car_freq +
-		(SinOsc.ar(car_freq*mod_ratio1 +
-			(SinOsc.ar(car_freq*mod_ratio2) * mod_index2)) * mod_index1));
-	//var env = EnvGen.kr(Env.linen, doneAction: 2);
-	Out.ar(outBus, Pan2.ar(fm * gain, pan));
-}).readyLoad;
+~java.addDefinition("scale", \synth,
+	{ | outBus=0, gain = 0.5 |
+		var trig, div, freq, oct, reps, env, osc, flt;
+		oct = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3];
+		trig = Impulse.kr(2);
+		env = EnvGen.kr(Env.perc(0.01, 0.1), trig, 0.5);
+		freq = (Stepper.kr(trig, 0, 42, 56, 2, 42)).midicps;
+		osc = Saw.ar(freq * [1, 1.01], env);
+		//flt = RLPF.ar(osc, freq * 2, 0.7);
+		Out.ar(outBus, Pan2.ar(osc * gain, 0));
 
-SynthDef(\sinWave, { | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
-	Out.ar(outBus, Pan2.ar(SinOsc.ar(freq) * gain, pan));
-}).readyLoad;
-
-SynthDef(\sawWave, { | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
-	Out.ar(outBus, Pan2.ar(Saw.ar(freq) * gain, pan));
-
-}).readyLoad;
-
-
-SynthDef(\scale, { | outBus=0, gain = 0.5 |
-	var trig, div, freq, oct, reps, env, osc, flt;
-	oct = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3];
-	trig = Impulse.kr(2);
-	env = EnvGen.kr(Env.perc(0.01, 0.1), trig, 0.5);
-	freq = (Stepper.kr(trig, 0, 42, 56, 2, 42)).midicps;
-	osc = Saw.ar(freq * [1, 1.01], env);
-	//flt = RLPF.ar(osc, freq * 2, 0.7);
-	Out.ar(outBus, Pan2.ar(osc * gain, 0));
-
-}).readyLoad;
-
-~java.addDefinition("scale", \synth, []);
-
-SynthDef(\sawsinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan = 0, gain = 1 |
-	var sig, env;
-	env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
-	sig = SinOsc.ar(freq);
-	sig = sig + (Saw.ar(freq) * saw);
-	sig = sig * env * amp;
-	Out.ar(outBus, Pan2.ar(sig, pan, gain));
-}).readyLoad;
-
-SynthDef(\sinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 1 |
-	var sig, env;
-	env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
-	sig = SinOsc.ar(freq);
-	sig = sig * env * amp;
-	Out.ar(outBus, Pan2.ar(sig, pan, gain));
-}).readyLoad;
+	},
+	[]
+);
 
 ~java.addDefinition("PanFM3OP", \synth,
+	{ | outBus = 0, car_freq, mod_ratio1, mod_ratio2, mod_index1, mod_index2, pan = 0, gain = 0.3 |
+		var fm = SinOsc.ar(car_freq +
+			(SinOsc.ar(car_freq*mod_ratio1 +
+				(SinOsc.ar(car_freq*mod_ratio2) * mod_index2)) * mod_index1));
+		//var env = EnvGen.kr(Env.linen, doneAction: 2);
+		Out.ar(outBus, Pan2.ar(fm * gain, pan));
+	},
 	[[\mod_ratio1, 0.0, 5.0, 0.2],
 		[\mod_ratio2, 0, 5, 1],
 		[\mod_index1, 0, 1000, 100],
@@ -59,14 +31,36 @@ SynthDef(\sinInst, { | outBus = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 
 		[\gain, 0.0, 1.0, 0]]);
 
 ~java.addDefinition("sinWave", \synth,
+	{ | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
+		Out.ar(outBus, Pan2.ar(SinOsc.ar(freq) * gain, pan));
+	},
 	[[\freq, 0, 1000, 440]]);
 
 ~java.addDefinition("sawWave", \synth,
+	{ | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
+		Out.ar(outBus, Pan2.ar(Saw.ar(freq) * gain, pan));
+	},
 	[[\freq, 0, 1000, 440]]);
 
 ~java.addDefinition("sawsinInst", \instrument,
+	{ | outBus = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan = 0, gain = 1 |
+		var sig, env;
+		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
+		sig = SinOsc.ar(freq);
+		sig = sig + (Saw.ar(freq) * saw);
+		sig = sig * env * amp;
+		Out.ar(outBus, Pan2.ar(sig, pan, gain));
+	},
 	[[\saw, 0, 1, 1]]);
 
-~java.addDefinition("sinInst", \instrument, []);
+~java.addDefinition("sinInst", \instrument,
+	{ | outBus = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 1 |
+		var sig, env;
+		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
+		sig = SinOsc.ar(freq);
+		sig = sig * env * amp;
+		Out.ar(outBus, Pan2.ar(sig, pan, gain));
+	},
+	[]);
 
 )

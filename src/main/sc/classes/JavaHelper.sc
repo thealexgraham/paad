@@ -115,10 +115,16 @@ JavaHelper {
 	/* Add a new definition, if java is ready, send them right away,
 	* Otherwise, add it to the pending list
 	*/
-	addDefinition { |name, type, params|
+	addDefinition { |name, type, function, params|
+		// Load the SynthDef if it's a SynthDef
+		if (type == \synth ||
+			type == \instrument ||
+			type == \effect,
+			{ SynthDef(name, function).readyLoad;});
+
 		if(ready != true,
-			{ definitions.put(name, [name, type, params]); },
-			{ sendDefinition(name, type, params); }
+			{ definitions.put(name, [name, type, function, params]); },
+			{ sendDefinition(name, type, function, params); }
 		);
 	}
 
@@ -126,15 +132,15 @@ JavaHelper {
 	sendDefinitions {
 		definitions.keysValuesDo({
 			|key, value|
-			var name = value[0], type = value[1], params = value[2];
+			var name = value[0], type = value[1], function = [2], params = value[3];
 
-			this.sendDefinition(name, type, params);
+			this.sendDefinition(name, type, function, params);
 		});
 	}
 
 
 	/* Send a single definition to Java */
-	sendDefinition { |name, type, params|
+	sendDefinition { |name, type, function, params|
 		postln("Creating instrument " + name);
 		switch(type,
 			\synth, {
@@ -147,10 +153,10 @@ JavaHelper {
 				this.newEffect(name, params);
 			},
 			\changeFunc, {
-				this.newChangeFunc(name, params[0], params[1]);
+				this.newChangeFunc(name, function, params);
 			},
 			\patternGen, {
-				this.newPatternGen(name, params[0], params[1]);
+				this.newPatternGen(name, function, params);
 			},
 			{
 				postln("No type for "++type.asString);

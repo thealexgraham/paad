@@ -1,4 +1,4 @@
-~java.addDefinition("SimpleScale", \patternGen, [
+~java.addDefinition("SimpleScale", \patternGen,
 	{
 		|lengthMin, lengthMax, scale, root, octaveMin, octaveMax|
 
@@ -39,10 +39,9 @@
 		[\root, \int, 0, 127, 62],
 		[\octaveMin, \int, -5, 5, 0],
 		[\octaveMax, \int, -5, 5, 1]]
-	]
 );
 
-~java.addDefinition("RandomlyRandom", \patternGen, [
+~java.addDefinition("RandomlyRandom", \patternGen,
 	{
 		|lengthMin, lengthMax, noteMin, noteMax|
 
@@ -66,7 +65,6 @@
 		[\lengthMax, \int, 0, 24, 10],
 		[\noteMin, \int, 25, 125, 45],
 		[\noteMax, \int, 25, 125, 110]]
-	]
 );
 
 // ~java.newChooser(\scale,
