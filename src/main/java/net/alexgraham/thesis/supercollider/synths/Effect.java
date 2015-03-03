@@ -19,7 +19,6 @@ public class Effect extends Synth implements Connectable {
 	public Effect(Def def) {
 		super(def);
 		init();
-		this.start();
 	}
 	
 	public void init() {

@@ -52,4 +52,13 @@
 		[\feedback, 0, 1, 0.9]]
 );
 
+~java.addDefinition(\combDelay, \effect,
+	{ | inBus = 0, outBus = 0, delaytime = 4, decaytime = 4 |
+		Out.ar(outBus,
+			CombC.ar(In.ar(inBus, 2), 10, delaytime, decaytime))
+	},
+	[[\delayTime, 0, 10, 4],
+		[\decayTime, 0, 4, 10]]
+);
+
 )

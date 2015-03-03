@@ -186,6 +186,7 @@ public class SynthModel implements Serializable {
 			default:
 				break;
 		}
+		instance.start();
 		
 		synthListModel.addElement(instance);
 		synths.put(instance.getID(), instance);

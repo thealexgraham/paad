@@ -15,7 +15,6 @@ public class ChangeFunc extends Synth implements Connectable {
 		super(def);
 		// TODO Auto-generated constructor stub
 		init();
-		this.start();
 	}
 
 	public void init() {

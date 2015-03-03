@@ -46,8 +46,6 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		// Create default values
 		createParamModels();
 		init();
-		start();
-
 	}
 	
 	public void init() {

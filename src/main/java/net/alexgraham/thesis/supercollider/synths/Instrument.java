@@ -20,7 +20,6 @@ public class Instrument extends Synth implements Connectable {
 	public Instrument(Def def) {
 		super(def);
 		init();
-		this.start();
 	}
 	
 	public void init() {
@@ -93,6 +92,9 @@ public class Instrument extends Synth implements Connectable {
 		// No connections were made, so return false
 		return false;
 	}
+	
+	
+	
 	
 	// Older, crappier functions
 	

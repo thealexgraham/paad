@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.UUID;
 
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.SimpleID;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
@@ -21,7 +22,7 @@ public class Instance implements Connectable, Serializable {
 	
 	protected Def def;
 	protected String name;
-	protected UUID id;
+	protected SimpleID id;
 
 	protected Point location = new Point(200, 200);
 	
@@ -34,7 +35,9 @@ public class Instance implements Connectable, Serializable {
 	
 	public Instance(Def def) {
 		this.def = def;
-		id = UUID.randomUUID();
+		id = new SimpleID();
+		this.name = def.getDefName() + "-" + id;
+		//id = UUID.randomUUID();
 	}
 
 	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);

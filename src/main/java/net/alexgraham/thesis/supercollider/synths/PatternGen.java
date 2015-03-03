@@ -47,7 +47,6 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 	public PatternGen(Def def) {
 		super(def);		
 		// Create default values
-		this.start();
 		createParamModels();
 		init();
 	}

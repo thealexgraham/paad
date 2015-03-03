@@ -116,12 +116,12 @@ JavaHelper {
 	* Otherwise, add it to the pending list
 	*/
 	addDefinition { |name, type, function, params|
+		postln("Name " + name + "type" + type);
 		// Load the SynthDef if it's a SynthDef
-		if (type == \synth ||
-			type == \instrument ||
-			type == \effect,
-			{ SynthDef(name, function).readyLoad;});
-		function.postln;
+		if (type == \synth || type == \instrument || type == \effect || type == \synth,
+			{
+				postln("Adding " + name);
+				SynthDef(name, function).readyLoad;});
 		if(ready != true,
 			{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
 			{ sendDefinition(name, type, function, params); }
@@ -139,7 +139,6 @@ JavaHelper {
 
 	/* Send a single definition to Java */
 	sendDefinition { |name, type, function, params|
-		function.postln;
 		postln("Creating instrument " + name);
 
 		// Create all the storage
