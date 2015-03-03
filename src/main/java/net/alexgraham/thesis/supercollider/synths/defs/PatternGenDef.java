@@ -25,7 +25,6 @@ public class PatternGenDef extends Def implements java.io.Serializable {
 	public PatternGenDef(String defName) {
 		super(defName);
 		this.defName = defName;
-		
 		parameters = new ArrayList<Param>(); // Blank array for params
 	}
 

@@ -64,7 +64,6 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 	public void createParamModels() {
 		PatternGenDef def = (PatternGenDef) this.def;
 		for (Param baseParam : def.getParams()) {
-			
 			if (baseParam.getClass() == IntParam.class) {
 				IntParam param = (IntParam) baseParam;
 				IntParamModel model = new IntParamModel(param.getValue(), param.getMin(), param.getMax());

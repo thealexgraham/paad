@@ -107,13 +107,12 @@ public class DefModel {
     			final String paramType = (String) arguments.get(2);
     			
     			Def def = synthdefs.get(name);
-    			
     			switch (paramType) {
     				case "int":
     	    			final int intMin = AGHelper.convertToInt(arguments.get(3));
     	    			final int intMax = AGHelper.convertToInt(arguments.get(4));
     	    			final int intValue = AGHelper.convertToInt(arguments.get(5));
-    	    			def.addParameter(paramName, intMin, intMax, intValue);
+    	    			((PatternGenDef)def).addParameter(paramName, intMin, intMax, intValue);
     	    			break;
     				case "choice":
     					final String choiceName = (String) arguments.get(3);
@@ -136,6 +135,22 @@ public class DefModel {
     		}
     	};
     	
+    	OSCListener defaultParamListener = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+
+    			List<Object> arguments = message.getArguments();
+    			final String name = (String) arguments.get(0);
+    			final String paramName = (String) arguments.get(1);
+    			
+    			Def def = synthdefs.get(name);
+
+    			final float floatMin = AGHelper.convertToFloat(arguments.get(2));
+    			final float floatMax = AGHelper.convertToFloat(arguments.get(3));
+    			final float floatValue = AGHelper.convertToFloat(arguments.get(4));
+    			def.addParameter(paramName, floatMin, floatMax, floatValue);
+    		}
+    	};
+    	
     	OSCListener functionListener = new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
 
@@ -150,6 +165,7 @@ public class DefModel {
 
     	App.sc.createListener("/def/add", defListener);
     	App.sc.createListener("/def/param", paramlistener);
+    	App.sc.createListener("/def/param/default", defaultParamListener);
     	App.sc.createListener("/def/func", functionListener);
 	}
 	

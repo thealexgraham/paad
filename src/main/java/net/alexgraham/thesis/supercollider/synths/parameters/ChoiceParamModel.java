@@ -23,6 +23,7 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	public ChoiceParamModel(String choiceName, Object[] choiceArray) {
 		this.choiceName = choiceName;
 		this.choiceArray = Arrays.copyOf(choiceArray, choiceArray.length);
+		addConnector(ConnectorType.CHOICE_CHANGE_IN);
 	}
 	
 	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);

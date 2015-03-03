@@ -6,8 +6,7 @@
 		// Should we wait for callback?
 		params.do({ |item, i|
 			var param = item[0].asString;
-			switch(item.size,
-				5, { // Type is specified
+			if((item[1].isNumber != true), { // Type is specified
 					var paramType = item[1];
 					switch(paramType,
 						\int, {
@@ -37,13 +36,12 @@
 							net.sendMsg("/def/param", defName, param, paramType, min, max, default);
 						}
 					);
-				},
-				4, { // Type isn't specified, send as float
+				}, { // Type isn't specified, send as float
 					var min = item[1];
 					var max = item[2];
 					var default = item[3];
-					net.sendMsg("/def/param", defName, param, \float, min, max, default);
-				}, {}
+					net.sendMsg("/def/param/default", defName, param, min, max, default);
+				}
 			);
 		});
 		net.sendMsg("/def/func", defName, function.def.sourceCode);

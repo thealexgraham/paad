@@ -24,7 +24,6 @@
 		[\mix, -1, 0, 1]]
 );
 
-
 // Simple Reverb
 ~java.addDefinition(\verb, \effect,
 	{ |inBus, outBus = 0, mix = 0.33, room = 0.5, damp = 0.5, mul = 1, add = 0, gain = 1|
