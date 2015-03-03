@@ -1,7 +1,9 @@
 package net.alexgraham.thesis.supercollider;
 
+import java.io.Serializable;
 
-public class SimpleID {
+
+public class SimpleID implements Serializable {
 	static long current = 0;
 	private long id = 0;
 	public SimpleID() {

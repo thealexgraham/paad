@@ -118,7 +118,7 @@ JavaHelper {
 	addDefinition { |name, type, function, params|
 		postln("Name " + name + "type" + type);
 		// Load the SynthDef if it's a SynthDef
-		if (type == \synth || type == \instrument || type == \effect || type == \synth,
+		if ((type == \synth) || (type == \instrument) || (type == \effect),
 			{
 				postln("Adding " + name);
 				SynthDef(name, function).readyLoad;});
