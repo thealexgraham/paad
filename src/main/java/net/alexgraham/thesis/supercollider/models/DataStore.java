@@ -15,7 +15,9 @@ public class DataStore implements Serializable {
 
 	private DefaultListModel<Instance> synthListModel = new DefaultListModel<Instance>();
 	private CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
+	
 	private DefaultListModel<Def> defListModel = new DefaultListModel<Def>();
+	
 	private Hashtable<String, Def> defTable = new Hashtable<String, Def>();
 	
 //	private CopyOnWriteArrayList<ModulePanel> modules = new CopyOnWriteArrayList<ModulePanel>();
