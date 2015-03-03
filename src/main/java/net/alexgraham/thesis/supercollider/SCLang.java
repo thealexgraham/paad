@@ -82,6 +82,21 @@ public class SCLang extends ChangeSender {
 	
 	public DefModel defModel;
 	
+	private String scDir = "";
+	
+	public String getScDir() {
+		return scDir;
+	}
+	
+	public String getScIde() {
+		String system = System.getProperty("os.name");
+		if (system.equals("Mac OS X")) {
+			return "/Applications/SuperCollider.app/Contents/Resources/scide";
+		} else {
+			return "C:/Users/Alex/supercollider/scide.exe";
+		}
+	}
+	
 
 	public SCLang(int sendPort, int receivePort) throws SocketException,
 			UnknownHostException {
@@ -138,7 +153,8 @@ public class SCLang extends ChangeSender {
 	public void startSCLang(String scDir, String scExec, int scPort, String runFile, String onRun)
 			throws IOException {
 		running = true;
-
+		this.scDir = scDir;
+		
 		// Create Process to run sclang
 		ProcessBuilder pb = new ProcessBuilder(scDir + scExec, "-u",
 				String.valueOf(scPort));// , runFile);

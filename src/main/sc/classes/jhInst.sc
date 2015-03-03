@@ -1,17 +1,6 @@
 + JavaHelper {
 
 	newInstrument { |instName, params|
-		// Tell Java about the instrument
-		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
-		params = this.addDefaultParams(params);
-		net.sendMsg("/instdef/add", instName);
-
-		params.do({ |item, i|
-			var param = item[0].asString;
-			var min = item[1], max = item[2], default = item[3];
-			net.sendMsg("/instdef/param", instName, param, min, max, default);
-		});
-
 		// Create a dictionary to store the running instruments
 		instName.tildaPut(Dictionary.new);
 	}

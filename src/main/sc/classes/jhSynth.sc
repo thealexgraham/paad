@@ -10,15 +10,6 @@
 	* Tells java all about the synth definition
 	*/
 	newSynth { |synthName, params|
-		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
-		params = this.addDefaultParams(params);
-		net.sendMsg("/synthdef/add", synthName);
-
-		params.do({ |item, i|
-			var param = item[0].asString;
-			var min = item[1], max = item[2], default = item[3];
-			net.sendMsg("/synthdef/param", synthName, param, min, max, default);
-		});
 
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
 		synthName.tildaPut(Dictionary.new);

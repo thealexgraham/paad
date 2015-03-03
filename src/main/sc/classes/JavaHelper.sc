@@ -121,9 +121,9 @@ JavaHelper {
 			type == \instrument ||
 			type == \effect,
 			{ SynthDef(name, function).readyLoad;});
-
+		function.postln;
 		if(ready != true,
-			{ definitions.put(name, [name, type, function, params]); },
+			{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
 			{ sendDefinition(name, type, function, params); }
 		);
 	}
@@ -132,21 +132,24 @@ JavaHelper {
 	sendDefinitions {
 		definitions.keysValuesDo({
 			|key, value|
-			var name = value[0], type = value[1], function = [2], params = value[3];
-
-			this.sendDefinition(name, type, function, params);
+			this.sendDefinition(value.at(\name), value.at(\type), value.at(\function), value.at(\params));
 		});
 	}
 
 
 	/* Send a single definition to Java */
 	sendDefinition { |name, type, function, params|
+		function.postln;
 		postln("Creating instrument " + name);
+
+		// Create all the storage
 		switch(type,
 			\synth, {
+				params = this.addDefaultParams(params);
 				this.newSynth(name, params);
 			},
 			\instrument, {
+				params = this.addDefaultParams(params);
 				this.newInstrument(name, params);
 			},
 			\effect, {
@@ -162,6 +165,8 @@ JavaHelper {
 				postln("No type for "++type.asString);
 			}
 		);
+
+		this.newDef(name, type, function, params); // Send the definition
 	}
 
 

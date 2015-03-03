@@ -16,15 +16,8 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 public class Effect extends Synth implements Connectable {
 
 
-	public Effect(Def def, SCLang sc) {
-		super(def, sc);
-		init();
-		this.start();
-	}
-	
-	public Effect(Def def, SCLang sc, String name) {
-		this(def, sc);
-		this.name = name;
+	public Effect(Def def) {
+		super(def);
 		init();
 		this.start();
 	}

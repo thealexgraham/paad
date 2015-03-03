@@ -15,17 +15,17 @@
 );
 
 ~java.addDefinition("PanFM3OP", \synth,
-	{ | outBus = 0, car_freq, mod_ratio1, mod_ratio2, mod_index1, mod_index2, pan = 0, gain = 0.3 |
+	{ | outBus = 0, car_freq, ratio1, ratio2,index1,index2, pan = 0, gain = 0.3 |
 		var fm = SinOsc.ar(car_freq +
-			(SinOsc.ar(car_freq*mod_ratio1 +
-				(SinOsc.ar(car_freq*mod_ratio2) * mod_index2)) * mod_index1));
+			(SinOsc.ar(car_freq*ratio1 +
+				(SinOsc.ar(car_freq*ratio2) * index2)) * index1));
 		//var env = EnvGen.kr(Env.linen, doneAction: 2);
 		Out.ar(outBus, Pan2.ar(fm * gain, pan));
 	},
-	[[\mod_ratio1, 0.0, 5.0, 0.2],
-		[\mod_ratio2, 0, 5, 1],
-		[\mod_index1, 0, 1000, 100],
-		[\mod_index2, 0, 1000, 200],
+	[[\ratio1, 0.0, 5.0, 0.2],
+		[\ratio2, 0, 5, 1],
+		[\index1, 0, 1000, 100],
+		[\index2, 0, 1000, 200],
 		[\car_freq, 100, 1000, 200],
 		[\pan, -1, 1, 0],
 		[\gain, 0.0, 1.0, 0]]);

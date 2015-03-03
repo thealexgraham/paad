@@ -23,17 +23,6 @@
 	* Tells java all about the changeFunc definition
 	*/
 	newChangeFunc { |changeFuncName, function, params|
-		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
-
-		// Get changeFunc ready in Java
-		net.sendMsg("/changefuncdef/add", changeFuncName);
-
-		// Should we wait for callback?
-		params.do({ |item, i|
-			var param = item[0].asString;
-			var min = item[1], max = item[2], default = item[3];
-			net.sendMsg("/changefuncdef/param", changeFuncName, param, min, max, default);
-		});
 
 		// Store the definition
 		this.putChangeFuncDef(changeFuncName, (function: function, params: params));

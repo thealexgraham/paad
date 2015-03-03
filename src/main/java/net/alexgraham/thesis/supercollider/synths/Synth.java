@@ -40,19 +40,14 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	protected String startCommand = "/synth/add";
 	protected String paramChangeCommand = "/synth/paramc";
 	protected String closeCommand = "/synth/remove";
-		
-	public Synth(Def def, SCLang sc) {
-		super(def, sc);
 	
+	public Synth(Def def) {
+		super(def);
 		// Create default values
 		createParamModels();
 		init();
-	}
-	
-	public Synth(Def def, SCLang sc, String name) {
-		this(def, sc);
-		this.name = name;
-		init();
+		start();
+
 	}
 	
 	public void init() {

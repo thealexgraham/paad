@@ -10,15 +10,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import net.alexgraham.thesis.supercollider.synths.defs.Def;
-import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
-import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 import net.alexgraham.thesis.ui.SynthCardsPanel;
-import net.alexgraham.thesis.ui.SynthLauncherPanel.SynthLauncherDelegate;
 import net.alexgraham.thesis.ui.TreeLauncherPanel;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 
-public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
+public class MainSplitLayout extends JPanel {
 	
 	JSplitPane mainSplitPane;
 	JSplitPane sideSplitPane;
@@ -26,9 +22,7 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 	TreeLauncherPanel synthSelector;
 	
 	JPanel mainCardPanel;
-	private JButton testButton;
-	private JButton otherButton;
-	
+
 	LineConnectPanel lineConnect;
 	
 
@@ -80,21 +74,4 @@ public class MainSplitLayout extends JPanel implements SynthLauncherDelegate {
 		setLayout(new GridLayout());
 	}
 
-	@Override
-	public void launchSynth(Def def) {
-//		runningSynths.launchSynth(def);
-	}
-
-	@Override
-	public void addInstrument(InstDef instdef) {
-		
-//		runningSynths.addInstrument(instdef);
-		
-	}
-
-	@Override
-	public void addEffect(EffectDef effectDef) {
-		
-		
-	}
 }

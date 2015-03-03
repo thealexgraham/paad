@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="net/alexgraham/thesis/ui/macstyle/|net/alexgraham/thesis/ui/old/" kind="src" output="target/classes" path="src/main/java">
+	<classpathentry excluding="net/alexgraham/thesis/ui/macstyle/|net/alexgraham/thesis/ui/old/|net/alexgraham/thesis/old/|net/alexgraham/thesis/tests/panels/GridbagMoveable.java" kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>

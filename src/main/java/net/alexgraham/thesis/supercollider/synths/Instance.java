@@ -32,8 +32,7 @@ public class Instance implements Connectable, Serializable {
 
 	}
 	
-	public Instance(Def def, SCLang sc) {
-		// TODO Auto-generated constructor stub
+	public Instance(Def def) {
 		this.def = def;
 		id = UUID.randomUUID();
 	}
@@ -47,6 +46,9 @@ public class Instance implements Connectable, Serializable {
 		connectors.put(type, new Connector(this, type));
 	}
 	
+	public Def getDef() {
+		return def;
+	}
 	
 	public String getDefName() {
 		return def.getDefName();

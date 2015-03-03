@@ -60,6 +60,158 @@ public class DefModel {
 	
 	public void createListeners() throws SocketException {
 		
+		OSCListener defListener = new OSCListener() {
+			@Override
+			public void acceptMessage(Date time, OSCMessage message) {
+				// TODO Auto-generated method stub
+    			List<Object> arguments = message.getArguments();
+    			final String defName = (String) arguments.get(0);
+    			final String type = (String) arguments.get(1);
+    			
+    			Def def = null;
+    			
+    			switch (type) {
+					case "synth":
+						def = new SynthDef(defName);
+						break;
+					case "instrument":
+						def = new InstDef(defName);
+						break;
+					case "effect":
+						def = new EffectDef(defName);
+						break;
+					case "changeFunc":
+						def = new ChangeFuncDef(defName);
+						break;
+					case "patternGen":
+						def = new PatternGenDef(defName);
+						break;
+					default:
+						break;
+				}
+    			
+    			def.setType(type);
+    			
+    			synthdefs.put(defName, def);
+    			defListModel.addElement(def);
+    			App.launchTreeModel.addSynthDef(def);	
+			}
+		};
+    	
+    	OSCListener paramlistener = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+
+    			List<Object> arguments = message.getArguments();
+    			final String name = (String) arguments.get(0);
+    			final String paramName = (String) arguments.get(1);
+    			final String paramType = (String) arguments.get(2);
+    			
+    			Def def = synthdefs.get(name);
+    			
+    			switch (paramType) {
+    				case "int":
+    	    			final int intMin = AGHelper.convertToInt(arguments.get(3));
+    	    			final int intMax = AGHelper.convertToInt(arguments.get(4));
+    	    			final int intValue = AGHelper.convertToInt(arguments.get(5));
+    	    			def.addParameter(paramName, intMin, intMax, intValue);
+    	    			break;
+    				case "choice":
+    					final String choiceName = (String) arguments.get(3);
+    					// The rest of the arguments should be the array
+    					// Can probaably check how long this is instead, to see if it is just one number
+    					List<Object> choiceList = arguments.subList(4, arguments.size() - 1);
+    					// Assume its a pattern gen because this is the only thing that accepts it right now!
+    					((PatternGenDef)def).addParameter(paramName, choiceName, choiceList.toArray()); //TODO: FIX THIS
+    					break;
+    				case "float":
+    	    			final float floatMin = AGHelper.convertToFloat(arguments.get(3));
+    	    			final float floatMax = AGHelper.convertToFloat(arguments.get(4));
+    	    			final float floatValue = AGHelper.convertToFloat(arguments.get(5));
+    	    			def.addParameter(paramName, floatMin, floatMax, floatValue);
+    					break;
+    				default:
+    					break;
+    					
+    			}
+    		}
+    	};
+    	
+    	OSCListener functionListener = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+
+    			List<Object> arguments = message.getArguments();
+    			final String synthName = (String) arguments.get(0);
+    			final String functionString = (String) arguments.get(1);
+    			
+    			Def synth = synthdefs.get(synthName);
+    			synth.setFunctionString(functionString);
+    		}
+    	};
+
+    	App.sc.createListener("/def/add", defListener);
+    	App.sc.createListener("/def/param", paramlistener);
+    	App.sc.createListener("/def/func", functionListener);
+	}
+	
+	
+	// Old 
+	
+	public void createGenListeners() throws SocketException {
+    	App.sc.createListener("/patterngendef/add", new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+    			List<Object> arguments = message.getArguments();
+    			final String synthName = (String) arguments.get(0);
+
+    			PatternGenDef def = new PatternGenDef(synthName, App.sc);
+    			synthdefs.put(synthName, def);
+    			defListModel.addElement(def);
+    			System.out.println("Addding def " + def.getClass());
+    			App.launchTreeModel.addSynthDef(def);
+    		}
+    	});
+		
+    	OSCListener paramlistener = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+
+    			List<Object> arguments = message.getArguments();
+    			final String name = (String) arguments.get(0);
+    			final String paramName = (String) arguments.get(1);
+    			final String paramType = (String) arguments.get(2);
+    			
+    			PatternGenDef def = (PatternGenDef) synthdefs.get(name);
+    			
+    			switch (paramType) {
+    				case "int":
+    	    			final int intMin = AGHelper.convertToInt(arguments.get(3));
+    	    			final int intMax = AGHelper.convertToInt(arguments.get(4));
+    	    			final int intValue = AGHelper.convertToInt(arguments.get(5));
+    	    			def.addParameter(paramName, intMin, intMax, intValue);
+    	    			break;
+    				case "choice":
+    					final String choiceName = (String) arguments.get(3);
+    					// The rest of the arguments should be the array
+    					// Can probaably check how long this is instead, to see if it is just one number
+    					List<Object> choiceList = arguments.subList(4, arguments.size() - 1);
+    					def.addParameter(paramName, choiceName, choiceList.toArray());
+    					break;
+    				case "float":
+    	    			final float floatMin = AGHelper.convertToFloat(arguments.get(3));
+    	    			final float floatMax = AGHelper.convertToFloat(arguments.get(4));
+    	    			final float floatValue = AGHelper.convertToFloat(arguments.get(5));
+    	    			def.addParameter(paramName, floatMin, floatMax, floatValue);
+    					break;
+    				default:
+    					break;
+    					
+    			}
+    		}
+    	};
+		App.sc.createListener("/patterngendef/param", paramlistener);
+    	
+	}
+	
+	public void createOldListeners() {
+		
     	App.sc.createListener("/synthdef/add", new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
     			List<Object> arguments = message.getArguments();
@@ -89,7 +241,7 @@ public class DefModel {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
     			List<Object> arguments = message.getArguments();
     			final String synthName = (String) arguments.get(0);
-    			//SynthDef synth = new SynthDef(synthName, App.sc);
+
     			EffectDef effectDef = new EffectDef(synthName, App.sc);
     			synthdefs.put(synthName, effectDef);
     			defListModel.addElement(effectDef);
@@ -131,58 +283,11 @@ public class DefModel {
     		}
     	};
     	
+    	
     	App.sc.createListener("/synthdef/param", paramlistener);
     	App.sc.createListener("/instdef/param", paramlistener);
     	App.sc.createListener("/effectdef/param", paramlistener);
     	App.sc.createListener("/changefuncdef/param", paramlistener);
-    	createGenListeners();
-	}
-	
-	public void createGenListeners() throws SocketException {
-    	App.sc.createListener("/patterngendef/add", new OSCListener() {
-    		public void acceptMessage(java.util.Date time, OSCMessage message) {
-    			List<Object> arguments = message.getArguments();
-    			final String synthName = (String) arguments.get(0);
-
-    			PatternGenDef def = new PatternGenDef(synthName, App.sc);
-    			synthdefs.put(synthName, def);
-    			defListModel.addElement(def);
-    			System.out.println("Addding def " + def.getClass());
-    			App.launchTreeModel.addSynthDef(def);
-    		}
-    	});
-		
-    	OSCListener paramlistener = new OSCListener() {
-    		public void acceptMessage(java.util.Date time, OSCMessage message) {
-
-    			List<Object> arguments = message.getArguments();
-    			final String name = (String) arguments.get(0);
-    			final String paramName = (String) arguments.get(1);
-    			final String paramType = (String) arguments.get(2);
-    			
-    			PatternGenDef def = (PatternGenDef) synthdefs.get(name);
-    			
-    			switch (paramType) {
-    				case "int":
-    	    			final int min = AGHelper.convertToInt(arguments.get(3));
-    	    			final int max = AGHelper.convertToInt(arguments.get(4));
-    	    			final int value = AGHelper.convertToInt(arguments.get(5));
-    	    			def.addParameter(paramName, min, max, value);
-    	    			break;
-    				case "choice":
-    					final String choiceName = (String) arguments.get(3);
-    					// The rest of the arguments should be the array
-    					// Can probaably check how long this is instead, to see if it is just one number
-    					List<Object> choiceList = arguments.subList(4, arguments.size() - 1);
-    					def.addParameter(paramName, choiceName, choiceList.toArray());
-    					break;
-    				default:
-    					break;
-    					
-    			}
-    		}
-    	};
-		App.sc.createListener("/patterngendef/param", paramlistener);
     	
 	}
 	

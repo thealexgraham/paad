@@ -11,8 +11,8 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class ChangeFunc extends Synth implements Connectable {
 
-	public ChangeFunc(Def def, SCLang sc) {
-		super(def, sc);
+	public ChangeFunc(Def def) {
+		super(def);
 		// TODO Auto-generated constructor stub
 		init();
 		this.start();

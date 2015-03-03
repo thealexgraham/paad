@@ -22,40 +22,6 @@
 	* Tells java all about the patternGen definition
 	*/
 	newPatternGen { |patternGenName, function, params|
-		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
-
-		// Get patternGen ready in Java
-		net.sendMsg("/patterngendef/add", patternGenName);
-
-		// Should we wait for callback?
-		params.do({ |item, i|
-			var param = item[0].asString;
-			var type = item[1];
-			postln(item);
-			switch(type,
-				\int, {
-					var min = item[2];
-					var max = item[3];
-					var default = item[4];
-					net.sendMsg("/patterngendef/param", patternGenName, param, type, min, max, default);
-				},
-				\choice, {
-					var choiceName = item[2][0];
-					var choiceValue = item[2][1]; // Assume array
-					//var message = choiceValue.insertAll(0, "/patterngendef/param", param, type, choiceName);
-					var message = ["/patterngendef/param", patternGenName, param, type, choiceName].addAll(choiceValue);
-					net.sendBundle(0, message);
-				},
-				{
-					var min = item[2];
-					var max = item[3];
-					var default = item[4];
-					net.sendMsg("/patterngendef/param", patternGenName, param, type, min, max, default);
-				}
-			);
-
-
-		});
 
 		// Store the definition
 		this.putPatternGenDef(patternGenName, (function: function, params: params));

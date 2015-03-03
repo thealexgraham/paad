@@ -17,15 +17,8 @@ public class Instrument extends Synth implements Connectable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Instrument(Def def, SCLang sc) {
-		super(def, sc);
-		init();
-		this.start();
-	}
-	
-	public Instrument(Def def, SCLang sc, String name) {
-		this(def, sc);
-		this.name = name;
+	public Instrument(Def def) {
+		super(def);
 		init();
 		this.start();
 	}

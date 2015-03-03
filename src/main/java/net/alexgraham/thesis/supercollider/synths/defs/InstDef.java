@@ -4,6 +4,10 @@ import net.alexgraham.thesis.supercollider.SCLang;
 
 public class InstDef extends Def {
 	
+	public InstDef(String defName) {
+		super(defName);
+	}
+
 	public InstDef(String synthName, SCLang sc) {
 		super(synthName, sc);
 		

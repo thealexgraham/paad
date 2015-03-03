@@ -19,6 +19,8 @@ import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
+import net.alexgraham.thesis.supercollider.synths.defs.PatternGenDef;
+import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 
 public class SynthModel implements Serializable {
@@ -161,57 +163,33 @@ public class SynthModel implements Serializable {
 		
 	}
 	
-	public void launchSynth(Def def) {
+	public void addInstance(Def def) {
+		String type = def.getType();
+		Instance instance = null;
 		
-		// Create the synth and its panel
-		Synth synth = new Synth(def, App.sc);
-		synth.start();
+		switch (type) {
+			case "synth":
+				instance = new Synth(def);
+				break;
+			case "instrument":
+				instance = new Instrument(def);
+				break;
+			case "effect":
+				instance = new Effect(def);
+				break;
+			case "changeFunc":
+				instance = new ChangeFunc(def);
+				break;
+			case "patternGen":
+				instance = new PatternGen(def);
+				break;
+			default:
+				break;
+		}
 		
-		synthListModel.addElement(synth);
-		synths.put(synth.getID(), synth);
+		synthListModel.addElement(instance);
+		synths.put(instance.getID(), instance);
 //		fireSynthAdded(synth);
-		fireInstanceAdded(synth);
-		
+		fireInstanceAdded(instance);
 	}
-	
-	public void addInstrument(InstDef instDef) {
-		// Create the synth and its panel
-		Instrument inst = new Instrument(instDef, App.sc);
-
-		synthListModel.addElement(inst);
-		synths.put(inst.getID(), inst);
-		fireInstanceAdded(inst);
-	}
-
-	public void addEffect(EffectDef synthDef) {
-		// Create the synth and its panel
-		Effect effect = new Effect(synthDef, App.sc);
-
-		synthListModel.addElement(effect);
-		synths.put(effect.getID(), effect);
-		fireInstanceAdded(effect);
-	}
-	
-	//TODO: Refactor this nonsense into one function, they're all doing the same thing
-	public void addChangeFunc(ChangeFuncDef synthDef) {
-		// Create the synth and its panel
-		ChangeFunc changeFunc = new ChangeFunc(synthDef, App.sc);
-
-		synthListModel.addElement(changeFunc);
-		synths.put(changeFunc.getID(), changeFunc);
-		fireInstanceAdded(changeFunc);
-	}
-	
-	//TODO: Refactor this nonsense into one function, they're all doing the same thing
-	public void addPatternGen(Def def) {
-		// Create the synth and its panel
-		PatternGen changeFunc = new PatternGen(def, App.sc);
-
-		synthListModel.addElement(changeFunc);
-		synths.put(changeFunc.getID(), changeFunc);
-		fireInstanceAdded(changeFunc);
-	}
-
-	
-	
 }

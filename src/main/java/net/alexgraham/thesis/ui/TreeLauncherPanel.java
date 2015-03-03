@@ -47,13 +47,7 @@ import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
 public class TreeLauncherPanel extends JPanel {
-	
-	public interface SynthLauncherDelegate {
-		void launchSynth(Def def);
-		void addInstrument(InstDef instdef);
-		void addEffect(EffectDef effectDef);
-	}
-	
+		
 	JPanel topPanel;
 	JPanel bottomPanel;
 	JPanel middlePanel;
@@ -62,9 +56,7 @@ public class TreeLauncherPanel extends JPanel {
 
 	JList<Def> synthList;
 	JTree tree;
-	
-	SynthLauncherDelegate delegate;
-	
+		
 	JButton launchButton;
 		
 	int lastInt = 0;
@@ -184,17 +176,7 @@ public class TreeLauncherPanel extends JPanel {
 	
 	public void launchSynth(Def def) {
 		// Launch the Synth based on the type of Synth
-		if (def.getClass() == SynthDef.class) {
-			App.synthModel.launchSynth(def);
-		} else if (def.getClass() == InstDef.class) {
-			App.synthModel.addInstrument( (InstDef)def );
-		} else if(def.getClass() == EffectDef.class) {
-			App.synthModel.addEffect((EffectDef)def);
-		} else if(def.getClass() == ChangeFuncDef.class) {
-			App.synthModel.addChangeFunc((ChangeFuncDef)def);
-		} else if(def.getClass() == PatternGenDef.class) {
-			App.synthModel.addPatternGen((PatternGenDef)def);
-		}
+		App.synthModel.addInstance(def);
 	}
 	
 	

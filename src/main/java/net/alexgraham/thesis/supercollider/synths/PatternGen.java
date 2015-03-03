@@ -44,17 +44,11 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 	protected String paramChangeCommand = "/patterngen/paramc";
 	protected String closeCommand = "/patterngen/remove";
 	
-	public PatternGen(Def def, SCLang sc) {
-		super(def, sc);		
+	public PatternGen(Def def) {
+		super(def);		
 		// Create default values
 		this.start();
 		createParamModels();
-		init();
-	}
-	
-	public PatternGen(Def def, SCLang sc, String name) {
-		this(def, sc);
-		this.name = name;
 		init();
 	}
 	

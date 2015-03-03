@@ -4,19 +4,6 @@
 	* Tells java all about the effect definition
 	*/
 	newEffect { |effectName, params|
-		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
-		// Need default params for effect?
-		params = this.addDefaultParams(params, [[\gain, 0.0, 1.0, 0.5]]);
-
-		// Get effect ready in Java
-		net.sendMsg("/effectdef/add", effectName);
-
-		// Should we wait for callback?
-		params.do({ |item, i|
-			var param = item[0].asString;
-			var min = item[1], max = item[2], default = item[3];
-			net.sendMsg("/effectdef/param", effectName, param, min, max, default);
-		});
 
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
 		//effectName.tildaPut(Dictionary.new);

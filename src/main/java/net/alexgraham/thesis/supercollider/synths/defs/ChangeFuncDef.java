@@ -8,5 +8,10 @@ public class ChangeFuncDef extends Def {
 		super(synthName, sc);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public ChangeFuncDef(String defName) {
+		super(defName);
+		// TODO Auto-generated constructor stub
+	}
 
 }
