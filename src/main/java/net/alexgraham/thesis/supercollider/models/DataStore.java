@@ -1,6 +1,7 @@
 package net.alexgraham.thesis.supercollider.models;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListModel;
@@ -15,8 +16,13 @@ public class DataStore implements Serializable {
 	private DefaultListModel<Instance> synthListModel = new DefaultListModel<Instance>();
 	private CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
 	private DefaultListModel<Def> defListModel = new DefaultListModel<Def>();
-
+	private Hashtable<String, Def> defTable = new Hashtable<String, Def>();
+	
 //	private CopyOnWriteArrayList<ModulePanel> modules = new CopyOnWriteArrayList<ModulePanel>();
+	
+	public Hashtable<String, Def> getDefTable() {
+		return defTable;
+	}
 	
 	public DefaultListModel<Def> getDefListModel() {
 		return defListModel;

@@ -41,7 +41,6 @@ public class Def implements java.io.Serializable {
 	
 	public void addParameter(String name, double min, double max, double value) {
 		parameters.add(new Parameter(name, min, max, value));
-		
 	}
 	
 	public void createFileDef() {

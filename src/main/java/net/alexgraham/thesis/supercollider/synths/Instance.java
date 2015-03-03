@@ -5,8 +5,10 @@ import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.UUID;
 
+import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.SimpleID;
+import net.alexgraham.thesis.supercollider.models.DefModel;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
@@ -34,12 +36,15 @@ public class Instance implements Connectable, Serializable {
 	}
 	
 	public Instance(Def def) {
-		this.def = def;
 		id = new SimpleID();
-		this.name = def.getDefName() + "-" + id;
+		this.name = def.getDefName() + "-" + getID();
+		this.def = new Def(def.getDefName() + "-" + getID(), def); // Make a copy of the def
+		App.defModel.addDef(def);
 		//id = UUID.randomUUID();
 	}
 
+	// Connector Business
+	// ---------------------
 	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
 	public Connector getConnector(ConnectorType type) {
 		return connectors.get(type); //TODO: might not be the best way to do this
@@ -49,6 +54,8 @@ public class Instance implements Connectable, Serializable {
 		connectors.put(type, new Connector(this, type));
 	}
 	
+	// Getters / Setters
+	// ---------------------------
 	public Def getDef() {
 		return def;
 	}
@@ -72,17 +79,21 @@ public class Instance implements Connectable, Serializable {
 		return this.name;
 	}
 	
+	// Interface 
+	// ----------------
 	public void start() {
 		//TODO: Should this be an interface
 	}
 	
 	public void close() {
+	
 	}
 	
 	public void refresh() {
-		
 	}
 	
+	// Connectable
+	// ---------------------
 	@Override
 	public boolean connect(Connection connection) {
 		// TODO Auto-generated method stub
