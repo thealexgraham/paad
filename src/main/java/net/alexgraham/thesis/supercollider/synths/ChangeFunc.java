@@ -3,8 +3,8 @@ package net.alexgraham.thesis.supercollider.synths;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
-import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.ParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
@@ -31,13 +31,13 @@ public class ChangeFunc extends Synth implements Connectable {
 	}
 	
 	public void connectToParameter(DoubleParamModel param) {
-		Synth owner = param.getOwner();
-		App.sc.sendMessage("/changefunc/connect/param", this.getSynthName(), this.getID(), owner.getSynthName(), owner.getID(), param.getName());
+		Instance owner = param.getOwner();
+		App.sc.sendMessage("/changefunc/connect/param", this.getSynthName(), this.getID(), owner.getName(), owner.getID(), param.getName());
 	}
 	
 	public void disconnectFromParameter(DoubleParamModel param) {
-		Synth owner = param.getOwner();
-		App.sc.sendMessage("/changefunc/disconnect/param", this.getSynthName(), this.getID(), owner.getSynthName(), owner.getID(), param.getName());
+		Instance owner = param.getOwner();
+		App.sc.sendMessage("/changefunc/disconnect/param", this.getSynthName(), this.getID(), owner.getName(), owner.getID(), param.getName());
 	}
 	
 	

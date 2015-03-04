@@ -23,7 +23,9 @@
 			chooser.addPattern([[10,1], [5, 0.5], [10, 0.5],[10, 0.2],[10, 0.7]], 25);
 			player.connectPatternObject(chooser);
 
-			dictName.nameGet.put(id, player);
+			this.idPut(dictName, id, player).postln;
+
+			this.idGet(dictName, id).postln;
 			("Routine player created at" + id).postln;
 		}).add;
 
@@ -31,7 +33,7 @@
 		OSCresponder(nil, "/routplayer/remove", { arg time, resp, msg;
 			// Free synth defs at this id
 			var id = msg[1];
-			dictName.nameGet.removeAt(id);
+			dictName.idRemove(id);
 			("Routine player removed at" + id).postln;
 		}).add;
 

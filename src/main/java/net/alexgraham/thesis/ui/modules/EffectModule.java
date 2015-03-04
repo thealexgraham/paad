@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoundedRangeModel;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -24,8 +25,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.Effect;
-import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
@@ -56,6 +58,7 @@ public class EffectModule extends ModulePanel {
 		super(width, height);
 		
 		this.effect = effect;
+		this.instance = effect;
 		//effect.getDef().createFileDef();
 		nameLabel = new JLabel(effect.getName());
 		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -72,7 +75,7 @@ public class EffectModule extends ModulePanel {
 			}
 		});
 		
-		ampDial = new DialD(effect.getModelForParameterName("gain"));
+		ampDial = new DialD((BoundedRangeModel) effect.getModelForParameterName("gain"));
 		ampDial.setBehavior(Dial.Behavior.NORMAL);
 		ampDial.setName("Gain");
 		
@@ -142,49 +145,56 @@ public class EffectModule extends ModulePanel {
 		pane.add(bottomPanel, BorderLayout.SOUTH);	
 
 	}
+	
 	public void addParameters() {
-		ArrayList<Parameter> getParameters = effect.getParameters();
-		for (Parameter parameter : getParameters) {
-			DoubleParamModel model = (DoubleParamModel) effect.getModelForParameterName(parameter.getName());
-			JLabel paramNameLabel = new JLabel(parameter.getName());
-			JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
-			model.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
-				}
-			});
-			
-//			JPanel togetherPanel = new JPanel(new GridLayout(1, 0, 0, 0));
-			JPanel togetherPanel = new JPanel();
-			togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
-			JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
-			
-		
-			paramPanel.add(paramNameLabel);
-			//paramPanel.add(paramValueLabel);
-			ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-
-			JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			DialD dial = new DialD(model);
-			dial.setForcedSize(new Dimension(15, 15));
-			dial.setDrawText(false);
-			dialPanel.add(leftConnectable);
-			this.addConnectablePanel(leftConnectable);
-			dialPanel.add(dial);
-			dialPanel.add(paramValueLabel);
-			//dialPanel.add(paramNameLabel);
-			
-			ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-			paramPanel.add(connectablePanel);
-			this.addConnectablePanel(connectablePanel);
-			
-
-			togetherPanel.add(dialPanel);
-			togetherPanel.add(Box.createHorizontalGlue());
-			togetherPanel.add(paramPanel);
-			middlePanel.add(togetherPanel);
+		for (ParamModel paramModel : getInstance().getParamModels()) {
+			if (paramModel.getClass() == DoubleParamModel.class) {
+				addDoubleParam((DoubleParamModel) paramModel); 
+			}
 		}
+	}
+	
+	public void addDoubleParam(DoubleParamModel model) {
+
+		JLabel paramNameLabel = new JLabel(model.getName());
+		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
+		model.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
+			}
+		});
+		
+//			JPanel togetherPanel = new JPanel(new GridLayout(1, 0, 0, 0));
+		JPanel togetherPanel = new JPanel();
+		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
+		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
+		
+	
+		paramPanel.add(paramNameLabel);
+		//paramPanel.add(paramValueLabel);
+		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
+
+		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		DialD dial = new DialD(model);
+		dial.setForcedSize(new Dimension(15, 15));
+		dial.setDrawText(false);
+		dialPanel.add(leftConnectable);
+		this.addConnectablePanel(leftConnectable);
+		dialPanel.add(dial);
+		dialPanel.add(paramValueLabel);
+		//dialPanel.add(paramNameLabel);
+		
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
+		paramPanel.add(connectablePanel);
+		this.addConnectablePanel(connectablePanel);
+		
+
+		togetherPanel.add(dialPanel);
+		togetherPanel.add(Box.createHorizontalGlue());
+		togetherPanel.add(paramPanel);
+		middlePanel.add(togetherPanel);
+
 	}
 	
 //    public void setup(Container pane) {

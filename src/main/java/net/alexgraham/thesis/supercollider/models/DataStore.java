@@ -14,10 +14,7 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 public class DataStore implements Serializable {
 
 	private DefaultListModel<Instance> synthListModel = new DefaultListModel<Instance>();
-	private CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
-	
-	private DefaultListModel<Def> defListModel = new DefaultListModel<Def>();
-	
+	private CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();	
 	private Hashtable<String, Def> defTable = new Hashtable<String, Def>();
 	
 //	private CopyOnWriteArrayList<ModulePanel> modules = new CopyOnWriteArrayList<ModulePanel>();
@@ -25,10 +22,7 @@ public class DataStore implements Serializable {
 	public Hashtable<String, Def> getDefTable() {
 		return defTable;
 	}
-	
-	public DefaultListModel<Def> getDefListModel() {
-		return defListModel;
-	}
+
 	public DefaultListModel<Instance> getSynthListModel() {
 		return synthListModel;
 	}

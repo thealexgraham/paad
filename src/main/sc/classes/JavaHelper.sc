@@ -69,6 +69,30 @@ JavaHelper {
 		net.sendMsg(args);
 	}
 
+
+	instances {
+		if (~instances == nil, {
+			// Create dictionary if not created yet
+			~instances = Dictionary.new;
+		});
+
+		^~instances;
+	}
+
+	// Gets whatever is at the ID (defining the type)
+	idGet { |type, id|
+		^this.instances.at(id);
+	}
+
+	idPut { |type, id, value|
+		^this.instances.put(id, value);
+	}
+
+	idRemove { |type, id|
+		^this.instances.removeAt(id);
+	}
+
+/*
 	// Gets whatever is at the ID (defining the type)
 	idPut { |type, id, value|
 		^type.tildaGet.put(id, value);
@@ -86,7 +110,7 @@ JavaHelper {
 	idRemove { |type, id|
 		^type.tildaGet.removeAt(id);
 	}
-
+*/
 	setupTypeStorage { |type|
 		^type.tildaPut(Dictionary.new);
 	}
@@ -112,18 +136,29 @@ JavaHelper {
 		);
 	}
 
+	updateDefinition { |name, type, function, params|
+		// Need to add definition in such a way that can send the listener an update when it is done adding
+		// This needs to be for both the SynthDef and the Definitions created in JavaHelper
+
+		this.addDefinition(name, type, function, params);
+	}
+
 	/* Add a new definition, if java is ready, send them right away,
 	* Otherwise, add it to the pending list
 	*/
 	addDefinition { |name, type, function, params|
 		// Load the SynthDef if it's a SynthDef
 		if ((type == \synth) || (type == \instrument) || (type == \effect),
-			{
-				SynthDef(name, function).readyLoad;});
+			{ SynthDef(name, function).readyLoad;});
 		if(ready != true,
 			{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
-			{ sendDefinition(name, type, function, params); }
+			{ this.sendDefinition(name, type, function, params); }
 		);
+	}
+
+	updateDefinition { |name, type, function, params|
+		if ((type == \synth) || (type == \instrument) || (type == \effect),
+			{ SynthDef(name, function).readyLoad;});
 	}
 
 	/* Sends all pending instruments to java */

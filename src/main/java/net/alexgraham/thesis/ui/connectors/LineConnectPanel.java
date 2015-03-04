@@ -606,65 +606,65 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	
 	@Override
 	public void effectAdded(Effect effect) {
-		
-		EffectModule module = new EffectModule(100, 300, effect);
-		module.setInstance(effect);
-		
-		module.setSize(module.getPreferredSize());
-		module.validate();
-		
-		module.setLocation(200, 200);
-		add(module);
-		boxes.addAll(module.getConnectablePanels());
-		
-		module.setOwner(this);
-		
-		modules.add(module);
-		
-		updateUI();
-		repaint();
+//		
+//		EffectModule module = new EffectModule(100, 300, effect);
+//		module.setInstance(effect);
+//		
+//		module.setSize(module.getPreferredSize());
+//		module.validate();
+//		
+//		module.setLocation(200, 200);
+//		add(module);
+//		boxes.addAll(module.getConnectablePanels());
+//		
+//		module.setOwner(this);
+//		
+//		modules.add(module);
+//		
+//		updateUI();
+//		repaint();
 	}
 	
 	//TODO: This is also literally the same thing....
 	@Override
 	public void changeFuncAdded(ChangeFunc changeFunc) {
 		// TODO Auto-generated method stub
-		ChangeFuncModule module = new ChangeFuncModule(100, 300, changeFunc);
-		module.setInstance(changeFunc);
-		
-		module.setSize(module.getPreferredSize());
-		module.validate();
-		
-		module.setLocation(200, 200);
-		add(module);
-		boxes.addAll(module.getConnectablePanels());
-		
-		module.setOwner(this);
-		
-		modules.add(module);
-		
-		updateUI();
-		repaint();
+//		ChangeFuncModule module = new ChangeFuncModule(100, 300, changeFunc);
+//		module.setInstance(changeFunc);
+//		
+//		module.setSize(module.getPreferredSize());
+//		module.validate();
+//		
+//		module.setLocation(200, 200);
+//		add(module);
+//		boxes.addAll(module.getConnectablePanels());
+//		
+//		module.setOwner(this);
+//		
+//		modules.add(module);
+//		
+//		updateUI();
+//		repaint();
 	}
 	
 	@Override
 	public void patternGenAdded(PatternGen patternGen) {
-		PatternGenModule module = new PatternGenModule(100, 300, patternGen);
-		module.setInstance(patternGen);
-		
-		module.setSize(module.getPreferredSize());
-		module.validate();
-		
-		module.setLocation(200, 200);
-		add(module);
-		boxes.addAll(module.getConnectablePanels());
-		
-		module.setOwner(this);
-		
-		modules.add(module);
-		
-		updateUI();
-		repaint();
+//		PatternGenModule module = new PatternGenModule(100, 300, patternGen);
+//		module.setInstance(patternGen);
+//		
+//		module.setSize(module.getPreferredSize());
+//		module.validate();
+//		
+//		module.setLocation(200, 200);
+//		add(module);
+//		boxes.addAll(module.getConnectablePanels());
+//		
+//		module.setOwner(this);
+//		
+//		modules.add(module);
+//		
+//		updateUI();
+//		repaint();
 	}
 
 

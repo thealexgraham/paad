@@ -10,6 +10,10 @@ import java.util.ArrayList;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
+import net.alexgraham.thesis.supercollider.synths.parameters.ChoiceParam;
+import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParam;
+import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
+import net.alexgraham.thesis.supercollider.synths.parameters.Param;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 
 public class Def implements java.io.Serializable {
@@ -18,47 +22,71 @@ public class Def implements java.io.Serializable {
 	 * 
 	 */
 	protected String defName;
-	private ArrayList<Parameter> parameters;
+	private ArrayList<Param> parameters;	
 	private String functionString = "";
 	private String type = "";
 
 	public Def(String defName, SCLang sc) {
 		this.defName = defName;
-		parameters = new ArrayList<Parameter>(); // Blank array for params
+		parameters = new ArrayList<Param>(); // Blank array for params
 	}
 	
 	public Def(String defName) {
 		this.defName = defName;
-		parameters = new ArrayList<Parameter>(); // Blank array for params
+		parameters = new ArrayList<Param>(); // Blank array for params
 	}
 	
 	public Def(String defName, Def copyDef) {
 		this.defName = defName;
-		this.parameters = new ArrayList<Parameter>(parameters);
+		this.parameters = new ArrayList<Param>(copyDef.getParams());
 		this.functionString = copyDef.functionString;
 		this.type = copyDef.type;
 	}
 	
-	public void addParameter(String name, double min, double max, double value) {
-		parameters.add(new Parameter(name, min, max, value));
+	
+	/**
+	 * Removes all parameters so Def can start fresh
+	 */
+	public void clearParameters() {
+		parameters = new ArrayList<Param>();
 	}
 	
-	public void createFileDef() {
+	public void addParameter(String name, double min, double max, double value) {
+		parameters.add(new DoubleParam(name, min, max, value));
+	}
+	
+	public void addParameter(String name, int min, int max, int value) {
+		parameters.add(new IntParam(name, min, max, value));
+	}
+	
+	public void addParameter(String name, String choiceName, Object[] choiceArray) {
+		parameters.add(new ChoiceParam(name, choiceName, choiceArray));
+	}
+	
+	public ArrayList<Param> getParams() {
+		return parameters;
+	}
+
+	
+	public File createFileDef() {
 		File fout = new File( System.getProperty("user.home") + "/" + defName + ".scd");
 		
 		try {
 			FileOutputStream fos = new FileOutputStream(fout);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
-			bw.write("~java.sendDefinition(");
+			bw.write("~java.addDefinition(");
 			bw.write("\\" + this.defName + ", \\" + type + ",");
 			bw.newLine();
 			
 			bw.write("\t" + functionString + ",");
 			bw.newLine();
 			bw.write("\t[\n");
-			for (Parameter parameter : parameters) {
-				bw.write(String.format("\t\t[\\%s, %.2f, %.2f, %.2f],", parameter.name, parameter.min, parameter.max, parameter.value));
+			for (Param parameter : parameters) {
+				if (parameter.getClass() == DoubleParam.class) {
+					DoubleParam param = (DoubleParam) parameter;
+					bw.write(String.format("\t\t[\\%s, %.2f, %.2f, %.2f],", param.name, param.min, param.max, param.value));
+				}
 				bw.newLine();
 			}
 			bw.write("\t]\n);");
@@ -73,6 +101,8 @@ public class Def implements java.io.Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return fout;
 	}
 	
 	public void openIde(File file) {
@@ -97,7 +127,7 @@ public class Def implements java.io.Serializable {
 	public String getDefName() { return defName; }
 	public void setDefName(String defName) { this.defName = defName; }
 	
-	public ArrayList<Parameter> getParameters() { return parameters; }
+	public ArrayList<Param> getParameters() { return parameters; }
 
 	public String toString() {
 		return this.defName + " (" + this.getClass().getSimpleName() + ")";

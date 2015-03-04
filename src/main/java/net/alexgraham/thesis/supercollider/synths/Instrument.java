@@ -44,13 +44,7 @@ public class Instrument extends Synth implements Connectable {
 		//var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];
 		App.sc.sendMessage("/inst/disconnect/effect", this.getSynthName(), this.id.toString(), effect.getSynthName(), effect.getID());
 	}
-	
-	@Override
-	public void changeParameter(String paramName, double value) {
-		
-		super.changeParameter(paramName, value);
-	}
-	
+
 	
 	
 	// Implementations //
@@ -60,22 +54,6 @@ public class Instrument extends Synth implements Connectable {
 	// Connectable
 	// -------------- 
 	
-	@Override
-	public boolean disconnect(Connection connection) {
-		Connectable target = connection.getTargetConnector(this).getConnectable();
-		
-		if (target.getClass() == Effect.class) {
-			// Instrument output into Effect input, valid, check if connectors are correct
-			if (connection.isConnectionType(this, ConnectorType.AUDIO_OUTPUT, ConnectorType.AUDIO_INPUT)) {
-				// Should return the effect we want, so connect to it
-				disconnectEffect((Effect) target);
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
 	@Override
 	public boolean connect(Connection connection) {
 		Connectable target = connection.getTargetConnector(this).getConnectable();
@@ -93,58 +71,20 @@ public class Instrument extends Synth implements Connectable {
 		return false;
 	}
 	
-	
-	
-	
-	// Older, crappier functions
-	
 	@Override
-	public boolean connect(Connector thisConnector, Connector targetConnector) {
-		Connectable target = targetConnector.getConnectable();
+	public boolean disconnect(Connection connection) {
+		Connectable target = connection.getTargetConnector(this).getConnectable();
 		
 		if (target.getClass() == Effect.class) {
 			// Instrument output into Effect input, valid, check if connectors are correct
-			if (thisConnector.getConnectorType() == ConnectorType.AUDIO_OUTPUT &&
-					targetConnector.getConnectorType() == ConnectorType.AUDIO_INPUT) {
+			if (connection.isConnectionType(this, ConnectorType.AUDIO_OUTPUT, ConnectorType.AUDIO_INPUT)) {
 				// Should return the effect we want, so connect to it
-				connectToEffect((Effect) targetConnector.getConnectable());
-				return true;
-			}
-		}
-		
-		// No connections were made, so return false
-		return false;
-	}
-	
-	@Override
-	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
-		
-		Connectable target = targetConnector.getConnectable();
-		
-		if (target.getClass() == Effect.class) {
-			// Instrument output into Effect input, valid, check if connectors are correct
-			if (thisConnector.getConnectorType() == ConnectorType.AUDIO_OUTPUT &&
-					targetConnector.getConnectorType() == ConnectorType.AUDIO_INPUT) {
-				// Should return the effect we want, so connect to it
-				disconnectEffect((Effect) targetConnector.getConnectable());
+				disconnectEffect((Effect) target);
 				return true;
 			}
 		}
 		
 		return false;
 	}
-	
-	
-	
-	@Override
-	public boolean connectWith(Connectable otherConnectable) {
-		return false;
-	}
-
-	@Override
-	public boolean removeConnectionWith(Connectable otherConnectable) {
-		return false;
-	}
-
 
 }

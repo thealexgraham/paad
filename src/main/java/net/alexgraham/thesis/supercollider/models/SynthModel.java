@@ -123,7 +123,7 @@ public class SynthModel implements Serializable {
 //				continue;
 //			}
 			instance.start();
-			instance.refresh();
+			instance.refreshModels();
 
 			// Fire instance added for everyone
 			for (SynthModelListener synthModelListener : listeners) {

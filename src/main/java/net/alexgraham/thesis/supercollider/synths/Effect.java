@@ -7,6 +7,8 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
@@ -44,7 +46,8 @@ public class Effect extends Synth implements Connectable {
     	// Add the current parameters
     	for (String paramName : parameterModels.keySet()) {
     		
-    		DoubleBoundedRangeModel model = getDoubleModelForParameterName(paramName);
+    		//FIXME: Shouldn't assume these are doubles
+    		DoubleParamModel model = (DoubleParamModel) getModelForParameterName(paramName);
     		
 			arguments.add(paramName);
 			arguments.add(model.getDoubleValue());
@@ -61,12 +64,6 @@ public class Effect extends Synth implements Connectable {
 	
 	public void disconnectOutput(Effect effect) {
 		App.sc.sendMessage("/effect/disconnect/output", this.getSynthName(), this.getID());
-	}
-	
-	@Override
-	public void changeParameter(String paramName, double value) {
-		
-		super.changeParameter(paramName, value);
 	}
 
 	// Implementations //
@@ -108,33 +105,5 @@ public class Effect extends Synth implements Connectable {
 		return false;
 	}
 
-	// Older, uglier methods
-	
-	@Override
-	public boolean connectWith(Connectable otherConnectable) {
-		
-		if (otherConnectable instanceof Synth) 
-		{
-			return true;
-		}		
-		
-		return false;
-		
-	}
-	@Override
-	public boolean removeConnectionWith(Connectable otherConnectable) {
-		return true;
-	}
-
-	@Override
-	public boolean connect(Connector thisConnector, Connector targetConnector) {
-		
-		return false;
-	}
-
-	@Override
-	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
-		return false;
-	}
 
 }
