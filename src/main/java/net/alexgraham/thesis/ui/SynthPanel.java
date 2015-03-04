@@ -19,6 +19,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.ParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
@@ -75,10 +77,11 @@ public class SynthPanel extends JPanel  {
 		
 		setupWindow();
 		
-		// Go through each parameter and add a slider for it
-		for (Parameter param : synth.getParameters()) {
-			System.out.println("Adding parameter " + param.getName());
-			addParameter(param);
+		for (ParamModel model : synth.getParamModels()) {
+			if (model.getClass() == DoubleParamModel.class) {
+				addDial( (DoubleParamModel)model );
+			}
+
 		}
 		
 		JButton closeButton = new JButton("Close");
@@ -98,16 +101,11 @@ public class SynthPanel extends JPanel  {
 		return this.synth;
 	}
 	
-	public void addParameter(final Parameter param) {
-
-//		JSliderD paramSlider = new JSliderD(JSlider.HORIZONTAL, 
-//				getSynth().getModelForParameterName(param.getName()));
-//		middlePanel.add(new JLabel(param.name));
-//		middlePanel.add(paramSlider);
+	public void addDial(DoubleParamModel model) {
 		
-		DialD paramDial = new DialD(getSynth().getModelForParameterName(param.getName()));
-		paramDial.setName(param.getName());
-		if (param.getName() == "pan") {
+		DialD paramDial = new DialD(model);
+		paramDial.setName(model.getName());
+		if (model.getName() == "pan") {
 			paramDial.setBehavior(Dial.Behavior.CENTER);
 		}
 		

@@ -40,7 +40,7 @@ public class DataModel {
 	public void init() {
 		synthModel.setSynthListModel(dataStore.getSynthListModel());
 		connectionModel.setConnections(dataStore.getConnections());
-		defModel.setDefListModel(dataStore.getDefListModel());
+		defModel.setDefTable(dataStore.getDefTable());
 		
 	}
 	

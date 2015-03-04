@@ -29,7 +29,7 @@ public class ModulePanel extends JPanel {
 	private JPanel interior;
 	private ArrayList<ConnectablePanel> connectables = new ArrayList<ConnectablePanel>();
 	
-	private Instance instance;
+	protected Instance instance;
 	
 	public Instance getInstance() { return instance; }
 	public void setInstance(Instance instance) { this.instance = instance; }

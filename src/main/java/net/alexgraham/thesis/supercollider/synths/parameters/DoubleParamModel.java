@@ -11,9 +11,11 @@ import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
@@ -21,19 +23,19 @@ import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class DoubleParamModel extends DoubleBoundedRangeModel implements Connectable, Serializable {
+public class DoubleParamModel extends DoubleBoundedRangeModel implements ParamModel, Connectable, Serializable {
 	
 	private String name;
-	private Synth owner;
+	private Instance owner;
 
 	public DoubleParamModel(int decimals, double min, double max, double value) {
 		super(decimals, min, max, value);
 		addConnector(ConnectorType.PARAM_CHANGE_IN);
 		// TODO Auto-generated constructor stub
 	}
-	
-	public Synth getOwner() { return owner; }
-	public void setOwner(Synth owner) { 
+
+	public Instance getOwner() { return owner; }
+	public void setOwner(Instance owner) { 
 		this.owner = owner; 
 		App.sc.createListener("/" + owner.getID() + "/" + this.getName() + "/change", new OSCListener() {
 			
@@ -47,6 +49,10 @@ public class DoubleParamModel extends DoubleBoundedRangeModel implements Connect
     				setDoubleValue(newValue);
 			}
 		});
+	}
+	
+	public Object getObjectValue() {
+		return getDoubleValue();
 	}
 	
 	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
@@ -78,31 +84,6 @@ public class DoubleParamModel extends DoubleBoundedRangeModel implements Connect
 
 	@Override
 	public boolean disconnect(Connection connection) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	// Old
-	@Override
-	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean connect(Connector thisConnector, Connector targetConnector) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean connectWith(Connectable otherConnectable) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeConnectionWith(Connectable otherConnectable) {
 		// TODO Auto-generated method stub
 		return false;
 	}

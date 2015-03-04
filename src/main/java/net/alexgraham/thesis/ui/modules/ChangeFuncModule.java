@@ -19,6 +19,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
+import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.ParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
@@ -146,26 +148,31 @@ public class ChangeFuncModule extends ModulePanel {
 		pane.add(bottomPanel, BorderLayout.SOUTH);	
 
 	}
+	
 	public void addParameters() {
-		ArrayList<Parameter> getParameters = changeFunc.getParameters();
-		for (Parameter parameter : getParameters) {
-			DoubleBoundedRangeModel model = (DoubleBoundedRangeModel) changeFunc.getModelForParameterName(parameter.getName());
-			JLabel paramNameLabel = new JLabel(parameter.getName());
-			JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
-			model.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
-				}
-			});
-			
-			JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-			paramPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-			
-			paramPanel.add(paramNameLabel);
-			paramPanel.add(paramValueLabel);
-			
-			middlePanel.add(paramPanel);
+		for (ParamModel paramModel : getInstance().getParamModels()) {
+			if (paramModel.getClass() == DoubleParamModel.class) {
+				addDoubleParam((DoubleParamModel) paramModel); 
+			}
 		}
+	}
+	
+	public void addDoubleParam(DoubleParamModel model) {
+		JLabel paramNameLabel = new JLabel(model.getName());
+		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
+		model.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
+			}
+		});
+		
+		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		paramPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		
+		paramPanel.add(paramNameLabel);
+		paramPanel.add(paramValueLabel);
+		
+		middlePanel.add(paramPanel);
 	}
 }

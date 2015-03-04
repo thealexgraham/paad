@@ -31,13 +31,13 @@ public class ChangeFunc extends Synth implements Connectable {
 	}
 	
 	public void connectToParameter(DoubleParamModel param) {
-		Synth owner = param.getOwner();
-		App.sc.sendMessage("/changefunc/connect/param", this.getSynthName(), this.getID(), owner.getSynthName(), owner.getID(), param.getName());
+		Instance owner = param.getOwner();
+		App.sc.sendMessage("/changefunc/connect/param", this.getSynthName(), this.getID(), owner.getName(), owner.getID(), param.getName());
 	}
 	
 	public void disconnectFromParameter(DoubleParamModel param) {
-		Synth owner = param.getOwner();
-		App.sc.sendMessage("/changefunc/disconnect/param", this.getSynthName(), this.getID(), owner.getSynthName(), owner.getID(), param.getName());
+		Instance owner = param.getOwner();
+		App.sc.sendMessage("/changefunc/disconnect/param", this.getSynthName(), this.getID(), owner.getName(), owner.getID(), param.getName());
 	}
 	
 	

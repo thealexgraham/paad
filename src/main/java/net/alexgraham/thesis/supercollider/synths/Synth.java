@@ -31,67 +31,24 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	private CopyOnWriteArrayList<SynthListener> synthListeners = 
 			new CopyOnWriteArrayList<Synth.SynthListener>();
 	
-	private Hashtable<String, Double> parameters = 
-			new Hashtable<String, Double>();
-	
-	protected Hashtable<String, BoundedRangeModel> parameterModels = 
-			new Hashtable<String, BoundedRangeModel>();
-	
-	protected String startCommand = "/synth/add";
-	protected String paramChangeCommand = "/synth/paramc";
-	protected String closeCommand = "/synth/remove";
-	
 	public Synth(Def def) {
 		super(def);
 		// Create default values
-		createParamModels();
 		init();
 	}
 	
 	public void init() {
+		startCommand = "/synth/add";
+		paramChangeCommand = "/synth/paramc";
+		closeCommand = "/synth/remove";
 		addConnector(ConnectorType.AUDIO_OUTPUT);
 	}
 		
 	public void addSynthListener(SynthListener listener) {
 		synthListeners.add(listener);
 	}
-	
-	public void createParamModels() {
-		for (Parameter param : def.getParameters()) {
+		
 
-			DoubleParamModel model = 
-					new DoubleParamModel(2, param.getMin(), param.getMax(), param.getValue());
-			
-			model.setName(param.getName());
-			model.setOwner(this);
-
-			model.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					// Update the SuperCollider
-					changeParameter(param.getName(), model.getDoubleValue());
-				}
-			});
-
-			parameterModels.put(param.getName(), model);
-			parameters.put(param.getName(), Double.valueOf(param.getValue()));
-		}
-	}
-	
-	@Override
-	public void refresh() {
-		for (BoundedRangeModel model : parameterModels.values()) {
-			model.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					// Update the SuperCollider
-					changeParameter(((DoubleParamModel)model).getName(), ((DoubleParamModel)model).getDoubleValue());
-				}
-			});
-			
-			((DoubleParamModel)model).setOwner(this);
-		}
-	}
 	
 	@Override
 	public void start() {
@@ -111,19 +68,6 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
     	App.sc.sendMessage(startCommand, arguments.toArray());
 	}
 	
-	public void changeParameter(String paramName, double value) {
-		//if (value != parameters.get(paramName)) {
-			App.sc.sendMessage(paramChangeCommand, def.getDefName(), paramName, id.toString(), value);
-		//	parameters.put(paramName, value);		
-		//}
-	}
-	
-	public void updateParameter(String paramName, double value) {
-		DoubleBoundedRangeModel model = (DoubleBoundedRangeModel) getModelForParameterName(paramName);
-		if (value != model.getDoubleValue()) {
-			model.setDoubleValue(value);
-		}
-	}
 	
 	public void close() {
 		// Stop the synth at ID
@@ -135,62 +79,10 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		}
 	}
 	
-	
-	/**
-	 *  Returns the parameter Name, null if not found
-	 * @param name
-	 * @return
-	 */
-	public Parameter getParameterWithName(String name) {
-		for (Parameter parameter : def.getParameters()) {
-			if (parameter.getName().equals(name)) {
-				return parameter;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 *  Returns the model for the named parameter
-	 * @param name
-	 * @return
-	 */
-	public BoundedRangeModel getModelForParameterName(String name) {
-		return parameterModels.get(name);
-	}
-	
-	/**
-	 *  Returns the model for the named parameter
-	 * @param name
-	 * @return
-	 */
-	public DoubleBoundedRangeModel getDoubleModelForParameterName(String name) {
-		return (DoubleBoundedRangeModel) parameterModels.get(name);
-	}
-	
-	/**
-	 *  Returns the model for the named parameter
-	 * @param name
-	 * @return
-	 */
-	public double getValueForParameterName(String name) {
-		DoubleBoundedRangeModel model = getDoubleModelForParameterName(name);
-		return model.getDoubleValue();
-	}
-	
-	
-	public ArrayList<Parameter> getParameters() {
-		return def.getParameters();
-	}
-	
 	public String getSynthName() {
 		return def.getDefName();
 	}
-	
-	public String toString() {
-		return this.name;
-	}
-	
+
 	
 	public void connectToEffect(Effect effect) {
 		//var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];
@@ -238,26 +130,4 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		// No connections were made, so return false
 		return false;
 	}
-	
-	@Override
-	public boolean connect(Connector thisConnector, Connector targetConnector) {
-		// 
-		return false;
-	}
-	@Override
-	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
-		return false;
-	}
-
-	@Override
-	public boolean connectWith(Connectable otherConnectable) {
-		return false;
-	}
-
-	@Override
-	public boolean removeConnectionWith(Connectable otherConnectable) {
-		return false;
-	}
-
-
 }

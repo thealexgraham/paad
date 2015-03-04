@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,11 +55,11 @@ public class InstrumentModule extends ModulePanel {
 			}
 		});
 
-		ampDial = new DialD(instrument.getModelForParameterName("gain"));
+		ampDial = new DialD((BoundedRangeModel) instrument.getModelForParameterName("gain"));
 		ampDial.setBehavior(Dial.Behavior.NORMAL);
 		ampDial.setName("Gain");
 
-		panDial = new DialD(instrument.getModelForParameterName("pan"));
+		panDial = new DialD((BoundedRangeModel) instrument.getModelForParameterName("pan"));
 		panDial.setBehavior(Dial.Behavior.CENTER);
 		panDial.setName("Pan");
 

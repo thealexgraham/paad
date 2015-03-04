@@ -26,6 +26,12 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 		addConnector(ConnectorType.CHOICE_CHANGE_IN);
 	}
 	
+
+	@Override
+	public Object getObjectValue() {
+		return choiceArray[0];
+	}
+	
 	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
 	public Connector getConnector(ConnectorType type) {
 		return connectors.get(type); //TODO: might not be the best way to do this
@@ -61,33 +67,5 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	public boolean disconnect(Connection connection) {
 		return false;
 	}
-
-	// Old
-	
-	@Override
-	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean connect(Connector thisConnector, Connector targetConnector) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean connectWith(Connectable otherConnectable) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean removeConnectionWith(Connectable otherConnectable) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-
 
 }

@@ -14,11 +14,11 @@ public class Connector implements java.io.Serializable {
 		boolean connect(Connection connection);
 		boolean disconnect(Connection connection);
 		
-		boolean disconnect(Connector thisConnector, Connector targetConnector);
-		boolean connect(Connector thisConnector, Connector targetConnector);
-		
-		public boolean connectWith(Connectable otherConnectable);
-		public boolean removeConnectionWith(Connectable otherConnectable);
+//		boolean disconnect(Connector thisConnector, Connector targetConnector);
+//		boolean connect(Connector thisConnector, Connector targetConnector);
+//		
+//		public boolean connectWith(Connectable otherConnectable);
+//		public boolean removeConnectionWith(Connectable otherConnectable);
 	}
 
 	private Connectable connectable;

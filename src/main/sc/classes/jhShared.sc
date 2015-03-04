@@ -1,12 +1,15 @@
 + JavaHelper {
 	newDef { |defName, type, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
+
 		net.sendMsg("/def/add", defName, type);
 
-		// Should we wait for callback?
-		params.do({ |item, i|
-			var param = item[0].asString;
-			if((item[1].isNumber != true), { // Type is specified
+		// Wait until Java is ready to receive the rest
+		OSCdef((defName++"/ready").asSymbol, { |msg, time, addr|
+			// Should we wait for callback?
+			params.do({ |item, i|
+				var param = item[0].asString;
+				if((item[1].isNumber != true), { // Type is specified
 					var paramType = item[1];
 					switch(paramType,
 						\int, {
@@ -36,15 +39,17 @@
 							net.sendMsg("/def/param", defName, param, paramType, min, max, default);
 						}
 					);
-				}, { // Type isn't specified, send as float
-					var min = item[1];
-					var max = item[2];
-					var default = item[3];
-					net.sendMsg("/def/param/default", defName, param, min, max, default);
-				}
-			);
-		});
-		net.sendMsg("/def/func", defName, function.def.sourceCode);
+					}, { // Type isn't specified, send as float
+						var min = item[1];
+						var max = item[2];
+						var default = item[3];
+						net.sendMsg("/def/param/default", defName, param, min, max, default);
+					}
+				);
+			});
+			net.sendMsg("/def/func", defName, function.def.sourceCode);
+		}, ("/"++defName++"/ready").asSymbol, recvPort:NetAddr.langPort).oneShot;
+
 		^("Definition Added");
 	}
 

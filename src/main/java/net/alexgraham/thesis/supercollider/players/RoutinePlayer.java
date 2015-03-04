@@ -1,15 +1,13 @@
 package net.alexgraham.thesis.supercollider.players;
 
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.sun.swing.internal.plaf.metal.resources.metal;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
+import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -83,7 +81,8 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		for (PlayerListener playerListener : listeners) {
 			playerListener.instrumentConnected(inst);
 		}
-		inst.getDoubleModelForParameterName("gain").setDoubleValue(0.3);;
+		//TODO: Fix me
+		((DoubleParamModel)inst.getModelForParameterName("gain")).setDoubleValue(0.3);;
 		playStateChange();
 		
 	}
@@ -241,36 +240,4 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		
 		return false;
 	}
-	
-	// Older, uglier methods
-	@Override
-	public boolean connect(Connector thisConnector, Connector targetConnector) {
-		return false;
-	}
-	
-	@Override
-	public boolean disconnect(Connector thisConnector, Connector targetConnector) {
-		return false;
-	}
-	
-	@Override
-	public boolean connectWith(Connectable otherConnectable) {
-		if (otherConnectable instanceof Instrument) {
-			connectInstrument((Instrument) otherConnectable);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean removeConnectionWith(Connectable otherConnectable) {
-		System.out.println("Got a remove connection call");
-		
-		if (otherConnectable instanceof Instrument) {
-			System.out.println("Disconnecting Instrument");
-			disconnectInstrument((Instrument) otherConnectable);
-		}
-		return true;
-	}
-	
 }

@@ -68,7 +68,31 @@ JavaHelper {
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		net.sendMsg(args);
 	}
+	
+	
+	instances {
+		if (~instances == nil, {
+			// Create dictionary if not created yet
+			~instances = Dictionary.new;
+		});
 
+		^~instances;
+	}
+	
+	// Gets whatever is at the ID (defining the type)
+	idGet { |type, id|
+		^this.instances.at(id);
+	}
+
+	idPut { |type, id, value|
+		^this.instances.put(id, value);
+	}
+
+	idRemove { |type, id|
+		^this.instances.removeAt(id);
+	}
+
+/*
 	// Gets whatever is at the ID (defining the type)
 	idPut { |type, id, value|
 		^type.tildaGet.put(id, value);
@@ -86,7 +110,7 @@ JavaHelper {
 	idRemove { |type, id|
 		^type.tildaGet.removeAt(id);
 	}
-
+*/
 	setupTypeStorage { |type|
 		^type.tildaPut(Dictionary.new);
 	}
@@ -118,8 +142,7 @@ JavaHelper {
 	addDefinition { |name, type, function, params|
 		// Load the SynthDef if it's a SynthDef
 		if ((type == \synth) || (type == \instrument) || (type == \effect),
-			{
-				SynthDef(name, function).readyLoad;});
+			{ SynthDef(name, function).readyLoad;});
 		if(ready != true,
 			{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
 			{ sendDefinition(name, type, function, params); }

@@ -13,4 +13,8 @@ public interface ParamModel {
 
 	public Connector getConnector(ConnectorType type);
 	public void addConnector(ConnectorType type);
+	
+	public Object getObjectValue();
+	
+
 }

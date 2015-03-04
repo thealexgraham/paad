@@ -23,32 +23,24 @@ import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
 public class DefModel {
-	
-	private DefaultListModel<Def> defListModel = new DefaultListModel<Def>();
-	
-	private Hashtable<String, Def> synthdefs = new Hashtable<String, Def>();
+		
+	private Hashtable<String, Def> defTable = new Hashtable<String, Def>();
 
-	public void setDefListModel(DefaultListModel<Def> model) {
-		this.defListModel = model;
-	}
-	
+	public Hashtable<String, Def> getDefTable() { return defTable; }
+	public void setDefTable(Hashtable<String, Def> defTable) { this.defTable = defTable; }
+
 	public DefModel() throws SocketException {
 		createListeners();
 	}
-
-	public DefaultListModel<Def> getSynthDefListModel() {
-		return defListModel;
-	}
 	
-	public void clearSynthDefListModel() {
-		defListModel = new DefaultListModel<Def>();
-		synthdefs = new Hashtable<String, Def>();
+	public void clearDefModel() {
+		defTable = new Hashtable<String, Def>();
 	}
 	
 	public ArrayList<InstDef> getInstDefs() {
 		ArrayList<InstDef> instDefs = new ArrayList<InstDef>();
 		
-		for (Def def : synthdefs.values()) {
+		for (Def def : defTable.values()) {
 			if (def.getClass() == InstDef.class) {
 				instDefs.add((InstDef) def);
 			}
@@ -61,8 +53,7 @@ public class DefModel {
 	 * @param def
 	 */
 	public void addDef(Def def) {
-		synthdefs.put(def.getDefName(), def);
-		defListModel.addElement(def);
+		defTable.put(def.getDefName(), def);
 	}
 	
 	public void createListeners() throws SocketException {
@@ -70,13 +61,26 @@ public class DefModel {
 		OSCListener defListener = new OSCListener() {
 			@Override
 			public void acceptMessage(Date time, OSCMessage message) {
-				// TODO Auto-generated method stub
+
     			List<Object> arguments = message.getArguments();
     			final String defName = (String) arguments.get(0);
     			final String type = (String) arguments.get(1);
     			
+    			// Keep existing defs in memory since a Synth might point to it
+    			if (defTable.containsKey(defName)) {
+    				// Clear def so it can be recreated
+    				Def def = defTable.get(defName);
+    				def.setType(type); // Necessary?
+    				def.setFunctionString("");
+    				def.clearParameters();
+        			App.sc.sendMessage("/"+defName+"/ready", 1);
+    				return;    				
+    			}
+    			
+    			// Create a new Def
     			Def def = null;
     			
+    			// Make sure it gets the right type
     			switch (type) {
 					case "synth":
 						def = new SynthDef(defName);
@@ -98,13 +102,12 @@ public class DefModel {
 				}
     			
     			def.setType(type);
-    			
-    			synthdefs.put(defName, def);
-    			defListModel.addElement(def);
-    			App.launchTreeModel.addSynthDef(def);	
+    			defTable.put(defName, def);
+    			App.launchTreeModel.addSynthDef(def);
+    			App.sc.sendMessage("/"+defName+"/ready", 1);
 			}
 		};
-    	
+    	// TODO: 
     	OSCListener paramlistener = new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
 
@@ -113,7 +116,7 @@ public class DefModel {
     			final String paramName = (String) arguments.get(1);
     			final String paramType = (String) arguments.get(2);
     			
-    			Def def = synthdefs.get(name);
+    			Def def = defTable.get(name);
     			switch (paramType) {
     				case "int":
     	    			final int intMin = AGHelper.convertToInt(arguments.get(3));
@@ -149,7 +152,7 @@ public class DefModel {
     			final String name = (String) arguments.get(0);
     			final String paramName = (String) arguments.get(1);
     			
-    			Def def = synthdefs.get(name);
+    			Def def = defTable.get(name);
 
     			final float floatMin = AGHelper.convertToFloat(arguments.get(2));
     			final float floatMax = AGHelper.convertToFloat(arguments.get(3));
@@ -165,7 +168,7 @@ public class DefModel {
     			final String synthName = (String) arguments.get(0);
     			final String functionString = (String) arguments.get(1);
     			
-    			Def synth = synthdefs.get(synthName);
+    			Def synth = defTable.get(synthName);
     			synth.setFunctionString(functionString);
     		}
     	};

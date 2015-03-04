@@ -295,7 +295,7 @@ public class SCLang extends ChangeSender {
     	App.sc.stopSCLang();
     	
     	// Do this since the server will send new versions
-    	App.defModel.clearSynthDefListModel();
+    	App.defModel.clearDefModel();
     	
     	App.sc.startSCLang();
     	
