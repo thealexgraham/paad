@@ -19,9 +19,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
-import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.ParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
@@ -55,6 +55,7 @@ public class ChangeFuncModule extends ModulePanel {
 	public ChangeFuncModule(int width, int height, ChangeFunc changeFunc) {
 		super(width, height);
 		this.changeFunc = changeFunc;
+		setInstance(changeFunc);
 		init();
 	}
 	

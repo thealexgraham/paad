@@ -19,9 +19,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.ParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 

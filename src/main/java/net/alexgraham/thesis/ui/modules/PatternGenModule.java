@@ -19,9 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
-import net.alexgraham.thesis.supercollider.synths.parameters.ChoiceParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.IntParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.ParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.IntParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;

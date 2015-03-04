@@ -2,6 +2,7 @@ package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -24,7 +25,7 @@ import com.sun.swing.internal.plaf.metal.resources.metal;
 import net.alexgraham.thesis.AGHelper.TestEnum;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 
-public class ModulePanel extends JPanel {
+public abstract class ModulePanel extends JPanel {
 
 	private JPanel interior;
 	private ArrayList<ConnectablePanel> connectables = new ArrayList<ConnectablePanel>();
@@ -57,6 +58,20 @@ public class ModulePanel extends JPanel {
 					ModulePanel.this.removeSelf();
 				}
 			});
+			add(anItem);
+			
+			anItem = new JMenuItem("Edit Definition");
+			anItem.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					boolean shouldRefresh = getInstance().editDef();
+					if (shouldRefresh) {
+						setupWindow(getInterior());
+					}
+				}
+			});
+			
 			add(anItem);
 		}
 	}
@@ -98,6 +113,9 @@ public class ModulePanel extends JPanel {
 
 		createKeyListeners();
 	}
+	
+	// Responsible for setting up internal
+	public abstract void setupWindow(Container pane);
 	
 	public void refresh() {
 		setFocusable(true);

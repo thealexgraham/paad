@@ -21,7 +21,7 @@
 			// The rest are the defaults
 
 			// Create a dictionary of busses for this instrument at its ID
-			instName.nameGet.put(id, Dictionary.new);
+			instName.idPut(id, Dictionary.new);
 			instDict = instName.idGet(id);
 
 			instDict.put(\outBus, Bus.control.set(0)); // Default out bus is 0

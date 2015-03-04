@@ -63,7 +63,7 @@ public class InstrumentModule extends ModulePanel {
 		panDial.setBehavior(Dial.Behavior.CENTER);
 		panDial.setName("Pan");
 
-		setup(this.getInterior());
+		setupWindow(this.getInterior());
 	}
 
 	public Instrument getInstrument() {
@@ -77,7 +77,7 @@ public class InstrumentModule extends ModulePanel {
 		instrument.close();
 	}
 
-	public void setup(Container pane) {
+	public void setupWindow(Container pane) {
 
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();

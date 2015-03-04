@@ -7,7 +7,7 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
-import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -39,12 +39,12 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 	public RoutinePlayer() {
 		super();
 //		this.id = UUID.randomUUID();
-		App.sc.sendMessage("/routplayer/add", id.toString());
+//		App.sc.sendMessage("/routplayer/add", id.toString());
 		init();
 	}
 	
 	public void start() {
-		App.sc.sendMessage("/routplayer/add", getIDString());
+		App.sc.sendMessage("/routplayer/add", getID());
 	}
 	
 	public void init() {
@@ -62,7 +62,7 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		firePlayStateChange();
 	}
 	
-	public void refresh() {
+	public void refreshModels() {
 		reset();
 	}
 	

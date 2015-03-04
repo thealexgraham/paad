@@ -75,7 +75,7 @@ public class Def implements java.io.Serializable {
 			FileOutputStream fos = new FileOutputStream(fout);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
-			bw.write("~java.sendDefinition(");
+			bw.write("~java.addDefinition(");
 			bw.write("\\" + this.defName + ", \\" + type + ",");
 			bw.newLine();
 			
