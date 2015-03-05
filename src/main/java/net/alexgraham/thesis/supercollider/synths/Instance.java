@@ -1,6 +1,7 @@
 package net.alexgraham.thesis.supercollider.synths;
 
 import java.awt.Point;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import javax.swing.SpinnerNumberModel;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SimpleID;
+import net.alexgraham.thesis.supercollider.Synchronizer;
+import net.alexgraham.thesis.supercollider.Synchronizer.DefAction;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.parameters.Param;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
@@ -151,47 +154,81 @@ public abstract class Instance implements Connectable, Serializable {
                         options[0]);
         if (n == JOptionPane.YES_OPTION) {
         	
-			// Add the new definition to SuperCollider
-    		App.sc.sendCommand("\"" + defFile.getAbsolutePath().replace("\\", "/") + "\"" + ".load.postln");
+
 			// Wait till it is added ?
 			  		
 			// Stop the current running synth
-			
-    		close();
-			
-			// Edit param model mins and maxes / add and remove, keep current values
-			
-    		for (Param baseParam : def.getParams()) {
-    			// Get a copy and create a blank Hashmap so any removed values don't exist anymore
-    			LinkedHashMap<String, ParamModel> modelMapCopy = new LinkedHashMap<String, ParamModel>(parameterModels);
-    			parameterModels = new LinkedHashMap<String, ParamModel>();
-    			
-    			ParamModel model = modelMapCopy.get(baseParam.getName());
-				// Check if the model exists already
-    			if (model != null) {
-    				// Just update the bounds
-    				model.updateBounds(baseParam);
-    			} else {
-    				// Create a new model
-    				model = ParamModelFactory.createParamModel(baseParam);
-    			}
-    			
-    			parameterModels.put(baseParam.getName(), model);
+        	
+    		// Disconnect all connections (but do not remove them!)
+        	for (Connection connection : App.connectionModel.getConnectionsInvolving(this)) {
+				connection.disconnectModules();
 			}
+			
+        	// Stop the currently running synth 
+        	//(Does this need to wait for the connections to be done??)
+    		close(); 
+
+    		Synchronizer syncer = new Synchronizer();
     		
-//    		JOptionPane.showOptionDialog(null,
-//                    "Definition Edited",
-//                    "Refresh from changse, or discard?",
-//                    JOptionPane.YES_NO_OPTION,
-//                    JOptionPane.QUESTION_MESSAGE,
-//                    null,
-//                    options,
-//                    options[0]);
+    		syncer.setStartAction(new DefAction() {
+				
+				@Override
+				public void doAction() {
+					// Add the new DefFile to SuperCollider
+					App.sc.sendCommand("\"" + defFile.getAbsolutePath().replace("\\", "/") + "\"" + ".load.postln");
+				}
+			});
     		
-			// Start the new synth
+			// Edit param model mins and maxes / add and remove, keep current values when the Definition has been added to supercollider
+    		syncer.addMessageListener(def.getDefName(), App.sc.defModel, new DefAction() {
+				
+				@Override
+				public void doAction() {
+					
+					// Def was created, so we can update the parameters
+			    	for (Param baseParam : def.getParams()) {
+		    			// Get a copy and create a blank Hashmap so any removed values don't exist anymore
+		    			LinkedHashMap<String, ParamModel> modelMapCopy = new LinkedHashMap<String, ParamModel>(parameterModels);
+		    			parameterModels = new LinkedHashMap<String, ParamModel>();
+		    			
+		    			ParamModel model = modelMapCopy.get(baseParam.getName());
+						// Check if the model exists already
+		    			if (model != null) {
+		    				// Just update the bounds
+		    				model.updateBounds(baseParam);
+		    			} else {
+		    				// Create a new model
+		    				model = ParamModelFactory.createParamModel(baseParam);
+		    			}
+		    			
+		    			parameterModels.put(baseParam.getName(), model);
+					}
+			    	
+			    	// This is probably when we'd need to call the module to update it
+				}
+			});
+
+    		// Syncer should also wait for the Definition to be ready in SuperCollider
+			syncer.addOSCListener("/def/ready/" + def.getDefName()); // Should this have a port to know its from SuperCollider?
+			
+			// Set what the syncer should do when all of the steps have been completed
+    		syncer.setFinalAction( new DefAction() {
+				
+				@Override
+				public void doAction() {
+					// Start up the Instance in Java and supercollider
+					start();
+					
+					// Reconnect everything
+		        	for (Connection connection : App.connectionModel.getConnectionsInvolving(Instance.this)) {
+						connection.disconnectModules();
+					}
+				}
+    		});
     		
-    		start();
-    		
+    		// Start the syncer
+    		syncer.start();
+
     		// Delete the file
     		defFile.delete();
 			// Adjust modules and such

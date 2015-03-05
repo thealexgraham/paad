@@ -10,6 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.DefaultListModel;
 
 import sun.misc.JavaAWTAccess;
+import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.connectors.Connection;
 
@@ -41,6 +42,23 @@ public class ConnectionModel implements Serializable {
 		for (Enumeration<Connection> e = Collections.enumeration(connections); e.hasMoreElements();)  {
 			Connection connection = e.nextElement();
 			list.add(connection);
+		}
+		return list;
+	}
+	
+	/**
+	 * Returns an ArrayList of connections that the instance passed in is a part of, either destination or origin
+	 * @param instance
+	 * @return
+	 */
+	public ArrayList<Connection> getConnectionsInvolving(Instance instance) {
+		ArrayList<Connection> list = new ArrayList<Connection>();
+		for (Enumeration<Connection> e = Collections.enumeration(connections); e.hasMoreElements();)  {
+			Connection connection = e.nextElement();
+			if (connection.getDestinationConnectable() == instance || connection.getOriginConnectable() == instance) {
+				// This instance is involved in this connection, so return it
+				list.add(connection);
+			}
 		}
 		return list;
 	}

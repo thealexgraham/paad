@@ -123,7 +123,9 @@ JavaHelper {
 	}
 
 	removePendingDef { |name|
+		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		pendingDefs.remove(name);
+		net.sendMsg("/defs/ready/"++name, 1); // Should this go somewhere else?
 		this.tryReadyMessage;
 	}
 
@@ -140,6 +142,9 @@ JavaHelper {
 		// Need to add definition in such a way that can send the listener an update when it is done adding
 		// This needs to be for both the SynthDef and the Definitions created in JavaHelper
 
+		if ((type == \synth) || (type == \instrument) || (type == \effect),
+			{ SynthDef(name, function).readyLoad;});
+
 		this.addDefinition(name, type, function, params);
 	}
 
@@ -154,11 +159,6 @@ JavaHelper {
 			{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
 			{ this.sendDefinition(name, type, function, params); }
 		);
-	}
-
-	updateDefinition { |name, type, function, params|
-		if ((type == \synth) || (type == \instrument) || (type == \effect),
-			{ SynthDef(name, function).readyLoad;});
 	}
 
 	/* Sends all pending instruments to java */

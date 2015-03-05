@@ -41,6 +41,7 @@
 
 		// Create the storage
 		this.setupTypeStorage(chooserName);
+		net.sendMsg("/defs/ready/"++name, 1);
 	}
 
 	/* createchooserListeners

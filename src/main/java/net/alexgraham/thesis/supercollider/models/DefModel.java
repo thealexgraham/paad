@@ -2,20 +2,14 @@ package net.alexgraham.thesis.supercollider.models;
 
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Deque;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
-
-import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.Messenger;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
@@ -26,7 +20,13 @@ import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
-public class DefModel {
+public class DefModel implements Messenger {
+
+	public interface MessageListener {
+		public void doAction();
+	}
+	
+	private Hashtable<String, ArrayList<MessageListener>> messageListeners = new Hashtable<String, ArrayList<MessageListener>>();
 		
 	private Hashtable<String, Def> defTable = new Hashtable<String, Def>();
 
@@ -58,6 +58,36 @@ public class DefModel {
 	 */
 	public void addDef(Def def) {
 		defTable.put(def.getDefName(), def);
+	}
+	
+	public void addMessageListener(String message, MessageListener listener) {
+		//TODO: Allow for multiple listeners
+		ArrayList<MessageListener> listenersList = messageListeners.get(message);
+		if (listenersList == null) {
+			// Create a new list and add it to the listeners list
+			listenersList = new ArrayList<MessageListener>();
+			messageListeners.put(message, listenersList);
+		}
+		listenersList.add(listener);
+	}
+	
+	public void removeMessageListener(String message, MessageListener listener) {
+		ArrayList<MessageListener> listenersList = messageListeners.get(message);
+		if (listenersList != null) {
+			// If the list even exists, remove the listener
+			listenersList.remove(listener);
+		}
+	}
+	
+	public void fireDefCreatedMessage(Def def) {
+		// Assuming def name is the message
+		ArrayList<MessageListener> listenersList = messageListeners.get(def.getDefName());
+		if (listenersList != null) {
+			for (MessageListener messageListener : listenersList) {
+				messageListener.doAction();
+			}
+		}
+		
 	}
 	
 	public void createListeners() throws SocketException {
@@ -201,6 +231,8 @@ public class DefModel {
         			}
     			}
     			
+    			// Def is done, fire an update about it
+    			fireDefCreatedMessage(def);
 
     		}
     	};
