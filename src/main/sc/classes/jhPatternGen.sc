@@ -21,14 +21,14 @@
 	/* newpatternGen
 	* Tells java all about the patternGen definition
 	*/
-	newPatternGen { |patternGenName, function, params|
+	newPatternGen { |name, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		// Store the definition
-		this.putPatternGenDef(patternGenName, (function: function, params: params));
+		this.putPatternGenDef(name, (function: function, params: params));
 
 		// Create the storage
-		this.setupTypeStorage(patternGenName);
-		
+		this.setupTypeStorage(name);
+
 		net.sendMsg("/defs/ready/"++name, 1);
 	}
 

@@ -154,20 +154,12 @@ public abstract class Instance implements Connectable, Serializable {
                         options[0]);
         if (n == JOptionPane.YES_OPTION) {
         	
-
-			// Wait till it is added ?
-			  		
-			// Stop the current running synth
         	
     		// Disconnect all connections (but do not remove them!)
         	for (Connection connection : App.connectionModel.getConnectionsInvolving(this)) {
 				connection.disconnectModules();
 			}
 			
-        	// Stop the currently running synth 
-        	//(Does this need to wait for the connections to be done??)
-    		close(); 
-
     		Synchronizer syncer = new Synchronizer();
     		
     		syncer.setStartAction(new DefAction() {
@@ -180,7 +172,7 @@ public abstract class Instance implements Connectable, Serializable {
 			});
     		
 			// Edit param model mins and maxes / add and remove, keep current values when the Definition has been added to supercollider
-    		syncer.addMessageListener(def.getDefName(), App.sc.defModel, new DefAction() {
+    		syncer.addMessageListener(def.getDefName(), App.defModel, new DefAction() {
 				
 				@Override
 				public void doAction() {
@@ -216,13 +208,24 @@ public abstract class Instance implements Connectable, Serializable {
 				
 				@Override
 				public void doAction() {
+					
+		        	// Stop the currently running synth 
+		        	//(Does this need to wait for the connections to be done??)
+		    		close();
+					
 					// Start up the Instance in Java and supercollider
 					start();
 					
+					
+					// This needs to wait for start to finish
 					// Reconnect everything
 		        	for (Connection connection : App.connectionModel.getConnectionsInvolving(Instance.this)) {
-						connection.disconnectModules();
+						connection.connectModules();
 					}
+		        	
+		        	// Delete the file
+		    		defFile.delete();
+
 				}
     		});
     		
@@ -230,7 +233,6 @@ public abstract class Instance implements Connectable, Serializable {
     		syncer.start();
 
     		// Delete the file
-    		defFile.delete();
 			// Adjust modules and such
     		return true;
         	

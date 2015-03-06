@@ -82,6 +82,8 @@ public class Synchronizer {
 	 * @param address
 	 */
 	public void addOSCListener(String address) {
+		actionsLeft = actionsLeft + 1;
+		
 		App.sc.createListener(address, new OSCListener() {
 			
 			@Override
@@ -99,6 +101,6 @@ public class Synchronizer {
 	}
 	
 	public void setFinalAction(DefAction finalAction) {
-		finalAction = this.finalAction;
+		this.finalAction = finalAction;
 	}
 }

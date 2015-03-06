@@ -80,8 +80,6 @@ public class SCLang extends ChangeSender {
 	private CopyOnWriteArrayList<SCConsoleListener> consoleListeners = 
 			new CopyOnWriteArrayList<SCLang.SCConsoleListener>();
 	
-	public DefModel defModel;
-	
 	private String scDir = "";
 	
 	public String getScDir() {

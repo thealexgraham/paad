@@ -22,13 +22,13 @@
 	/* newchangeFunc
 	* Tells java all about the changeFunc definition
 	*/
-	newChangeFunc { |changeFuncName, function, params|
+	newChangeFunc { |name, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		// Store the definition
-		this.putChangeFuncDef(changeFuncName, (function: function, params: params));
+		this.putChangeFuncDef(name, (function: function, params: params));
 
 		// Create the storage
-		this.setupTypeStorage(changeFuncName);
+		this.setupTypeStorage(name);
 		net.sendMsg("/defs/ready/"++name, 1);
 	}
 

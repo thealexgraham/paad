@@ -125,7 +125,7 @@ JavaHelper {
 	removePendingDef { |name|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		pendingDefs.remove(name);
-		net.sendMsg("/defs/ready/"++name, 1); // Should this go somewhere else?
+		net.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
 		this.tryReadyMessage;
 	}
 
