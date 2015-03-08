@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javafx.scene.layout.Pane;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.Box;
@@ -41,11 +43,7 @@ public class EffectModule extends ModulePanel {
 	
 	// Components
 	private JLabel nameLabel;
-	private JLabel synthdefLabel;
-	private JLabel idLabel;
-	private DialD ampDial;
-	private DialD panDial;
-	
+
 	
 	ConnectablePanel topPanel;
 	ConnectablePanel bottomPanel;
@@ -60,12 +58,6 @@ public class EffectModule extends ModulePanel {
 		this.effect = effect;
 		this.instance = effect;
 		//effect.getDef().createFileDef();
-		nameLabel = new JLabel(effect.getName());
-		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
-		
-		synthdefLabel = new JLabel(effect.getSynthName());
-		idLabel = new JLabel(effect.getID());
-		
 		closeButton = new JButton("X");
 		
 		closeButton.addActionListener(new ActionListener() {
@@ -75,19 +67,7 @@ public class EffectModule extends ModulePanel {
 			}
 		});
 		
-		ampDial = new DialD((BoundedRangeModel) effect.getModelForParameterName("gain"));
-		ampDial.setBehavior(Dial.Behavior.NORMAL);
-		ampDial.setName("Gain");
-		
-//		panDial = new DialD(effect.getModelForParameterName("pan"));
-//		panDial.setBehavior(Dial.Behavior.CENTER);
-//		panDial.setName("Pan");
-		
 		setupWindow(this.getInterior());
-		
-		// Resize based on innards
-		setSize(getPreferredSize());
-		validate();
 	}
 	
 	public Effect getEffect() {
@@ -109,9 +89,6 @@ public class EffectModule extends ModulePanel {
 		
 		topPanel = new ConnectablePanel(new FlowLayout());
 		topPanel.addConnector(Location.TOP, effect.getConnector(ConnectorType.AUDIO_INPUT));
-		
-//		ConnectablePanel connectablePanel = new ConnectablePanel(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
-//		topPanel.add(connectablePanel);
 		this.addConnectablePanel(topPanel);
 		
 		JLabel topLabel = new JLabel(effect.getName());
@@ -120,48 +97,46 @@ public class EffectModule extends ModulePanel {
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-
 		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 		addParameters();
-		//scrollPane = new JScrollPane(middlePanel);
-		
 		
 		//Bottom Panel//
 
 		bottomPanel = new ConnectablePanel(new FlowLayout());
-
+		bottomPanel.addConnector(Location.BOTTOM, effect.getConnector(ConnectorType.AUDIO_OUTPUT));
+		this.addConnectablePanel(bottomPanel);
+		
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);
-
 		bottomPanel.setBackground(Color.GRAY);
-		
-		bottomPanel.addConnector(Location.BOTTOM, effect.getConnector(ConnectorType.AUDIO_OUTPUT));
-		// Create connectors //
-		this.addConnectablePanel(bottomPanel);
+
 
 		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);	
+		pane.add(bottomPanel, BorderLayout.SOUTH);
+		
+		// Resize based on innards
+		setSize(getPreferredSize());
+		validate();
 
 	}
 	
 	public void addParameters() {
 		for (ParamModel paramModel : getInstance().getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
-				addDoubleParam((DoubleParamModel) paramModel); 
+				addDoubleParam((DoubleParamModel) paramModel, middlePanel); 
 			}
 		}
 	}
 	
-	public void addDoubleParam(DoubleParamModel model) {
+	public void addDoubleParam(DoubleParamModel model, Container pane) {
 
 		JLabel paramNameLabel = new JLabel(model.getName());
 		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
 		model.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
+				paramValueLabel.setText(String.format("%.2f", model.getDoubleValue()));
 			}
 		});
 		
@@ -189,11 +164,11 @@ public class EffectModule extends ModulePanel {
 		paramPanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
 		
-
+		dialPanel.add(Box.createHorizontalStrut(15));
 		togetherPanel.add(dialPanel);
 		togetherPanel.add(Box.createHorizontalGlue());
 		togetherPanel.add(paramPanel);
-		middlePanel.add(togetherPanel);
+		pane.add(togetherPanel);
 
 	}
 	

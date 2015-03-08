@@ -94,9 +94,9 @@ public class DataModel {
 		// Have models point to new datastore (necessary?)
 		init();
 		
+		
 		// Start and read to lineconnect
 		synthModel.refreshInstances();
-
 		
 		// Reconnect connections in SCLang
 		for (Connection connection : dataStore.getConnections()){

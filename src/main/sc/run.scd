@@ -5,6 +5,7 @@ o = ServerOptions.new;
 
 s = Server(\javaSCServer, NetAddr("127.0.0.1", 57320), o);
 Server.default = s;
+~server = s;
 "my file is running".postln;
 
 s.waitForBoot({
@@ -32,7 +33,7 @@ s.waitForBoot({
 	n = NetAddr("127.0.0.1", NetAddr.langPort);
 
 	// Create a new java helper at the default port
-	~java = JavaHelper.new(1250);
+	~java = JavaHelper.new(1280);
 
 	// Load all files in "startup" dir
 	(thisProcess.nowExecutingPath.dirname ++ "/startup/*").pathMatch.do({

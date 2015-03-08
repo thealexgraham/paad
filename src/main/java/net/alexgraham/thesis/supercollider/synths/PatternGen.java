@@ -67,6 +67,12 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 	}
 	
 	@Override
+	public void stop() {
+		// Stop the synth at ID
+    	App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());
+	}
+	
+	@Override
 	public void close() {
 		// Stop the synth at ID
     	App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());

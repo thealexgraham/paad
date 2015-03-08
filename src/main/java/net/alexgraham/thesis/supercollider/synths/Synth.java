@@ -59,13 +59,23 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
     	arguments.add(id.toString());
     	
     	
-    	// Add the current parameters
-    	for (String paramName : parameterModels.keySet()) {
-			arguments.add(paramName);
-			arguments.add(getValueForParameterName(paramName));
-		}
+//    	// Add the current parameters
+//    	for (String paramName : parameterModels.keySet()) {
+//			arguments.add(paramName);
+//			arguments.add(getValueForParameterName(paramName));
+//		}
+    	
+    	for (ParamModel model : parameterModels.values()) {
+    		arguments.add(model.getName());
+    		arguments.add(model.getObjectValue());
+    	}
     	
     	App.sc.sendMessage(startCommand, arguments.toArray());
+	}
+	
+	public void stop() {
+		// Stop the synth at ID
+    	App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());
 	}
 	
 	

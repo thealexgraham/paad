@@ -85,6 +85,12 @@ public class DoubleParamModel extends DoubleBoundedRangeModel implements ParamMo
 	public void addConnector(ConnectorType type) {
 		connectors.put(type, new Connector(this, type));
 	}
+	
+	public void removeConnectorUIs () {
+		for (Connector connector : connectors.values()) {
+			connector.removeConnectorUIs();
+		}
+	}
 		
 	public String getName() {
 		return name;

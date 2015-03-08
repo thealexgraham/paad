@@ -14,7 +14,23 @@ n.sendBundle(0, p);
 n.sendMsg(0, "/mytest", 0, 1, 2);
 n.sendRaw(p);
 
+
+
 (
+OSCresponder(nil, "/testing", { arg time, resp, msg;
+	msg.postln;
+}).add;
+
+)
+
+
+
+(
+
+n = NetAddr("127.0.0.1", NetAddr.langPort);
+n.sendMsg("/verify/testing", 1);
+)
+
 
 )
 

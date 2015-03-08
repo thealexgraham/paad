@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
 import com.sun.swing.internal.plaf.metal.resources.metal;
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
 
 import net.alexgraham.thesis.AGHelper.TestEnum;
 import net.alexgraham.thesis.supercollider.synths.Instance;
@@ -110,8 +111,31 @@ public abstract class ModulePanel extends JPanel {
 		DragListener listener = new DragListener();
 		this.addMouseListener(listener);
 		this.addMouseMotionListener(listener);
-
+		
+		setBorder(BorderFactory.createEmptyBorder());
 		createKeyListeners();
+	}
+	
+	public void refreshInterior() {
+		instance.removeConnectorUIs();
+		
+		getOwner().removeConnectablePanels(connectables);
+		// remove all Connectables since they will be added again
+		connectables = new ArrayList<ConnectablePanel>();
+		
+		remove(interior);
+		
+		interior = new JPanel();
+		add(interior);
+		
+		setupWindow(interior);
+		
+		// Refresh size
+		setSize(getPreferredSize());
+		validate();
+		
+		getOwner().addConnectablePanels(connectables);
+		
 	}
 	
 	// Responsible for setting up internal
@@ -135,12 +159,20 @@ public abstract class ModulePanel extends JPanel {
 		requestFocusInWindow();
 		selected = true;
 		setBorder(BorderFactory.createLineBorder(Color.black));
+		
+		// Refresh size
+		setSize(getPreferredSize());
+		validate();
 
 	}
 
 	public void deselect() {
 		selected = false;
 		setBorder(BorderFactory.createEmptyBorder());
+		
+		// Refresh size
+		setSize(getPreferredSize());
+		validate();
 	}
 
 	public boolean isSelected() {

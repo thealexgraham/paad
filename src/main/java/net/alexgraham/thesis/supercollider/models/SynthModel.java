@@ -10,6 +10,10 @@ import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.sync.ParallelSyncer;
+import net.alexgraham.thesis.supercollider.sync.StepSynchronizer;
+import net.alexgraham.thesis.supercollider.sync.SyncAction;
+import net.alexgraham.thesis.supercollider.sync.Syncer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instance;
@@ -129,8 +133,63 @@ public class SynthModel implements Serializable {
 			for (SynthModelListener synthModelListener : listeners) {
 					synthModelListener.instanceAdded(instance);
 			}
+			
 
 		}
+		
+		StepSynchronizer stepSync = new StepSynchronizer();
+
+		ParallelSyncer definitionsSyncer = new ParallelSyncer();
+		stepSync.addStep(new SyncAction() {
+			
+			@Override
+			public void doAction() {
+				//As steps: 
+				// step 1: load definitions of instances (Paralell)
+
+				for (Instance instance : getInstances()) {
+					// Get the syncer to load the instance's definition
+					Syncer instanceSendDefSyncer = instance.createSendDefinitionSyncer();
+					definitionsSyncer.addSyncerFinish(instanceSendDefSyncer); // Have this step wait for this to finish
+					instanceSendDefSyncer.start(); // Send the definition (do this somewhere else?)
+				}
+				
+				definitionsSyncer.start();
+			}
+		}, definitionsSyncer);
+		
+		// step 2: Start all instances (paralell)
+		ParallelSyncer startInstanceSyncer = new ParallelSyncer();
+		stepSync.addStep(new SyncAction() {
+			@Override
+			public void doAction() {
+				
+				for (Instance instance : getInstances()) {
+					// Start each synth in paralell
+					SyncAction startAction = new SyncAction() {
+						@Override
+						public void doAction() {
+							instance.start();
+							instance.refreshModels();
+						}
+					};
+					
+					startInstanceSyncer.addStartAction(startAction);
+					
+					startInstanceSyncer.addOSCListener(instance.getStartCommand() + "/ready");
+				}
+				// Begin starting the instances
+				startInstanceSyncer.start();
+			}
+		}, startInstanceSyncer);
+		
+		// finally: Connect all instances (whenever)
+		stepSync.addStep(new SyncAction() {	
+			@Override
+			public void doAction() {
+				// Connect all instances
+			}
+		});
 	}
 	
 	public void closeInstances() {
@@ -145,8 +204,6 @@ public class SynthModel implements Serializable {
 
 		}
 	}
-
-	
 
 	public void removeInstance(Instance instance) {
 		synthListModel.removeElement(instance);

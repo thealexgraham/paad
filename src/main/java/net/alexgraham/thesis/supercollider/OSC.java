@@ -8,13 +8,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.alexgraham.thesis.App;
 
+import com.illposed.osc.AddressSelector;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
+import com.illposed.osc.utility.OSCPatternAddressSelector;
 
 public class OSC {
 	private static int sendPort;
@@ -22,6 +26,9 @@ public class OSC {
 	
 	private static OSCPortOut sender;
 	private static OSCPortIn receiver;
+	
+	private static ConcurrentHashMap<OSCListener, AddressSelector> listeners = 
+			new ConcurrentHashMap<OSCListener, AddressSelector>();
 	
 	static public void start(int send, int receive) throws SocketException, UnknownHostException {
 		
@@ -37,6 +44,17 @@ public class OSC {
 		
 		receiver = new OSCPortIn(receivePort);
 		receiver.startListening();
+	}
+	
+	static public OSCPortIn newReceiver() {
+		OSCPortIn newReceiver = null;
+		try {
+			newReceiver = new OSCPortIn(receivePort);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return newReceiver;
 	}
 	
 	static public void setSendPort(int port) throws SocketException, UnknownHostException {
@@ -88,9 +106,52 @@ public class OSC {
 	}
 	
 	public static void createListener(String address, OSCListener listener) {
-		receiver.addListener(address, listener);
+		
+		OSCPatternAddressSelector addressSelector = new OSCPatternAddressSelector(address);
+		receiver.addListener(addressSelector, listener);
+		listeners.put(listener, addressSelector);
+	}
+	public static void addListener(String address, OSCListener listener) {
+		
+		OSCPatternAddressSelector addressSelector = new OSCPatternAddressSelector(address);
+		receiver.addListener(addressSelector, listener);
+		listeners.put(listener, addressSelector);
+	}
+	public static void addListener(AddressSelector addressSelector, OSCListener listener) {
+		receiver.addListener(addressSelector, listener);
+		listeners.put(listener, addressSelector);
 	}
 	
+	public static void removeAddressSelector(AddressSelector addressSelector) {
+		// Rewrite with blank message
+		receiver.addListener(addressSelector, new OSCListener() {
+			
+			@Override
+			public void acceptMessage(Date time, OSCMessage message) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	public static void removeListener(OSCListener listener) {
+		
+		// Get the address selector associated with this listener
+		AddressSelector addressSelector = listeners.get(listener);
+		
+		// Rewrite with blank message (or delete it)
+		receiver.addListener(addressSelector, new OSCListener() {
+			
+			@Override
+			public void acceptMessage(Date time, OSCMessage message) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		// Remove listener from list
+		listeners.remove(listener);
+	}
+		
 	public static double round(double val) {
 		return Math.round(val * 100.0) / 100.0;
 	}

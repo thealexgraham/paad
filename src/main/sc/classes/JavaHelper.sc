@@ -66,7 +66,8 @@ JavaHelper {
 
 	sendMsg { arg ... args;
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
-		net.sendMsg(args);
+		args.postln;
+		net.sendBundle(1, args);
 	}
 
 
@@ -90,6 +91,12 @@ JavaHelper {
 
 	idRemove { |type, id|
 		^this.instances.removeAt(id);
+	}
+
+	addOSCResponder { | path, func |
+		// Can add whatever the hell function wrapping I want here
+		// If has /verify as first argument, send the verification etc
+		OSCdef(path.asSymbol, func, path.asSymbol).verify(this.sendPort);
 	}
 
 /*
@@ -125,7 +132,7 @@ JavaHelper {
 	removePendingDef { |name|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		pendingDefs.remove(name);
-		net.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
+		this.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
 		this.tryReadyMessage;
 	}
 
@@ -139,11 +146,8 @@ JavaHelper {
 	}
 
 	updateDefinition { |name, type, function, params|
-		// Need to add definition in such a way that can send the listener an update when it is done adding
-		// This needs to be for both the SynthDef and the Definitions created in JavaHelper
-
 		if ((type == \synth) || (type == \instrument) || (type == \effect),
-			{ SynthDef(name, function).readyLoad;});
+			{ SynthDef.removeAt(name); });
 
 		this.addDefinition(name, type, function, params);
 	}
@@ -153,12 +157,25 @@ JavaHelper {
 	*/
 	addDefinition { |name, type, function, params|
 		// Load the SynthDef if it's a SynthDef
-		if ((type == \synth) || (type == \instrument) || (type == \effect),
-			{ SynthDef(name, function).readyLoad;});
-		if(ready != true,
-			{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
-			{ this.sendDefinition(name, type, function, params); }
-		);
+		Routine.run {
+			var c = Condition.new;
+
+			if ((type == \synth) || (type == \instrument) || (type == \effect),
+				{
+					this.addPendingDef(name);
+					SynthDef(name, function).add;
+					~server.sync(c);
+					/*this.sendMsg("/def/ready/"++name, 1);*/
+					this.removePendingDef(name);
+			});
+
+
+
+			if(ready != true,
+				{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
+				{ this.sendDefinition(name, type, function, params); }
+			);
+			}
 	}
 
 	/* Sends all pending instruments to java */

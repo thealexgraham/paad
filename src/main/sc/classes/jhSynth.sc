@@ -24,8 +24,8 @@
 
 		~synthsGroup = Group.head(Server.default);
 
-		// Whenever an synthrument is added, this will create busses for this synthance of the synth
-		OSCresponder(nil, "/synth/add", { arg time, resp, msg;
+		// Add synth
+		this.addOSCResponder('/synth/add', { |msg|
 			var synthName = msg[1];
 			var id = msg[2];
 			var synthDict;
@@ -43,12 +43,11 @@
 
 			// Store the synth and the inBus
 			synthDict.put(\synth, Synth.head(~synthsGroup, synthName, msg));
-
 			("Synth added" + id).postln;
-		}).add;
+		});
 
-		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/synth/remove", { arg time, resp, msg;
+		// Remove synth
+		this.addOSCResponder('/synth/remove', { |msg|
 			// Free synth defs at this id
 			var synthName = msg[1];
 			var id = msg[2];
@@ -58,10 +57,10 @@
 			synthName.nameGet.removeAt(id);
 
 			("Inst disconnected, freeing busses at" + id).postln;
-		}).add;
+		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/synth/paramc", { arg time, resp, msg;
+		this.addOSCResponder('/synth/paramc', { arg msg;
 				// Set float1
 			var synthName = msg[1], param = msg[2], id = msg[3], val = msg[4];
 
@@ -69,9 +68,9 @@
 			synthName.idGet(id).at(\synth).set(param, val);
 
 			postSilent("Changing" + synthName + id + param + val);
-		}).add;
+		});
 
-		OSCresponder(nil, "/synth/connect/effect", { arg time, resp, msg;
+		this.addOSCResponder('/synth/connect/effect', { arg msg;
 			var synthName = msg[1], synthId = msg[2], effectName = msg[3], effectId = msg[4];
 			var synthDict, effectDict;
 
@@ -83,9 +82,9 @@
 			synthDict.at(\synth).set(\outBus, effectDict.at(\inBus).index);
 
 			("Connected synthrument to effect").postln;
-		}).add;
+		});
 
-		OSCresponder(nil, "/synth/disconnect/effect", { arg time, resp, msg;
+		this.addOSCResponder('/synth/disconnect/effect', { arg msg;
 			var synthName = msg[1], synthId = msg[2], effectName = msg[3], effectId = msg[4];
 			var synthDict, effectDict;
 
@@ -95,7 +94,7 @@
 			// Change synthrument's output bus back to default (0)
 			synthDict.at(\synth).set(\outBus, 0);
 			("Disconnected synthrument from effect").postln;
-		}).add;
+		});
 
 		^("OSC Responders ready");
 	}

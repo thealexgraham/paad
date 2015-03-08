@@ -29,7 +29,7 @@
 
 		// Create the storage
 		this.setupTypeStorage(name);
-		net.sendMsg("/defs/ready/"++name, 1);
+		net.sendMsg("/def/ready/"++name, 1);
 	}
 
 	/* createchangeFuncListeners
@@ -40,7 +40,7 @@
 		var defaultParams;
 
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		OSCresponder(nil, "/changefunc/add", { arg time, resp, msg;
+		this.addOSCResponder('/changefunc/add', { arg msg;
 			var changeFuncName = msg[1];
 			var id = msg[2];
 			var changeFuncDef, changeFunc;
@@ -54,34 +54,34 @@
 			changeFuncName.idPut(id, changeFunc);
 
 			("changeFunc added, adding changeFunc at" + id).postln;
-		}).add;
+		});
 
 		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/changefunc/stop", { arg time, resp, msg;
+		this.addOSCResponder('/changefunc/remove', { arg msg;
 			// Free synth defs at this id
 			var changeFuncName = msg[1];
 			var id = msg[2];
 			var changeFunc = changeFuncName.idGet(id);
 
 			("changeFunc disconnected, freeing changeFunc at" + id).postln;
-		}).add;
+		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/changefunc/paramc", { arg time, resp, msg;
+		this.addOSCResponder('/changefunc/paramc', { arg msg;
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
 			// Set the value directly
 			name.idGet(id).setParam(param, val); // Change the value at the bus
-		}).add;
+		});
 
 				// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/changefunc/doaction", { arg time, resp, msg;
+		this.addOSCResponder('/changefunc/doaction', { arg msg;
 			// Set float1
 			var name = msg[1], id = msg[2];
 			name.idGet(id).doAction;
-		}).add;
+		});
 
-		OSCresponder(nil, "/changefunc/connect/param", { arg time, resp, msg;
+		this.addOSCResponder('/changefunc/connect/param', { arg msg;
 			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
 			var changeFunc, parameter, owner;
 
@@ -102,9 +102,9 @@
 			changeFunc.addListener(parameter); // IS THIS THE OBJECT???
 
 			("Connected changeFuncs").postln;
-		}).add;
+		});
 
-		OSCresponder(nil, "/changefunc/disconnect/param", { arg time, resp, msg;
+		this.addOSCResponder('/changefunc/disconnect/param', { arg msg;
 			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
 			var changeFunc, owner, parameter;
 
@@ -115,7 +115,7 @@
 			changeFunc.removeListener(parameter);
 
 			("Disconnected changeFuncs").postln;
-		}).add;
+		});
 
 
 		^("OSC Responders ready");

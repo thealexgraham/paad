@@ -68,9 +68,21 @@ public class MainWindow extends JFrame implements SCMessageListener {
 			
 			@Override
 			public void acceptMessage(Date time, OSCMessage message) {
+				System.out.println("java{ msg in: " + message.getArguments().toString());
+				System.out.println("Received a message");
 				inFlasher.flash();
 			}
 		});
+		
+//		App.sc.createListener("*", new OSCListener() {
+//			
+//			@Override
+//			public void acceptMessage(Date time, OSCMessage message) {
+//				System.out.println("java{ msg in: " + message.getArguments().toString());
+//				System.out.println("Received a message");
+//				inFlasher.flash();
+//			}
+//		});
 		
 		this.setJMenuBar(createMenuBar());
 		//add(bottomPanel, BorderLayout.PAGE_END);

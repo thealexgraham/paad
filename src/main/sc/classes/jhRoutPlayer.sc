@@ -11,7 +11,7 @@
 		dictName.toLower.asSymbol.envirPut(Dictionary.new);
 
 		// Whenever an instrument is added, this will create busses for this instance of the synth
-		OSCresponder(nil, "/routplayer/add", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/add', { arg msg;
 			var id = msg[1];
 			var player = RoutinePlayer.new;
 			var chooser = PatternChooser.new;
@@ -27,35 +27,35 @@
 
 			this.idGet(dictName, id).postln;
 			("Routine player created at" + id).postln;
-		}).add;
+		});
 
 		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/routplayer/remove", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/remove', { arg msg;
 			// Free synth defs at this id
 			var id = msg[1];
 			dictName.idRemove(id);
 			("Routine player removed at" + id).postln;
-		}).add;
+		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/routplayer/play", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/play', { arg msg;
 				// Set float1
 			var id = msg[1];
 			var player = dictName.idGet(id);
 			player.play;
 			("Trying to play routine player" + id).postln;
-		}).add;
+		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/routplayer/stop", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/stop', { arg msg;
 				// Set float1
 			var id = msg[1];
 			var player = dictName.idGet(id);
 			player.stop;
 			("Trying to stop routine player" + id).postln;
-		}).add;
+		});
 
-		OSCresponder(nil,"/routplayer/connect/inst", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/connect/inst', { arg msg;
 			// Set float1
 			var id = msg[1], instName = msg[2], instId = msg[3];
 			var player, instDict;
@@ -66,18 +66,18 @@
 			player.connectInstrument(instName, instDict);
 
 			("Connected instrument" + instName + "to player at ID"+id).postln;
-		}).add;
+		});
 
-		OSCresponder(nil,"/routplayer/remove/inst", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/remove/inst', { arg msg;
 			// Set float1
 			var id = msg[1];
 			var player, instDict;
 			player = dictName.idGet(id);
 			player.removeInstrument();
 			("Removed instrument").postln;
-		}).add;
+		});
 
-		OSCresponder(nil,"/routplayer/connect/pattern", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/connect/pattern', { arg msg;
 			// Set float1
 			var id = msg[1], patternName = msg[2], patternId = msg[3];
 			var player, patternObj;
@@ -87,18 +87,18 @@
 			player.connectPatternObject(patternObj);
 
 			("Connected Pattern Object to player at ID"+id).postln;
-		}).add;
+		});
 
-		OSCresponder(nil,"/routplayer/remove/pattern", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/remove/pattern', { arg msg;
 			// Set float1
 			var id = msg[1];
 			var player, instDict;
 			player = dictName.idGet(id);
 			player.removeInstrument();
 			("Removed instrument").postln;
-		}).add;
+		});
 
-		OSCresponder(nil,"/routplayer/connect/playaction", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/connect/playaction', { arg msg;
 			// Set float1
 			var id = msg[1], targetName = msg[2], targetId = msg[3];
 			var player, targetObj;
@@ -108,9 +108,9 @@
 			player.addListener(targetObj);
 
 			("Connected Player Object to player at ID"+id).postln;
-		}).add;
+		});
 
-		OSCresponder(nil,"/routplayer/remove/playaction", { arg time, resp, msg;
+		this.addOSCResponder('/routplayer/remove/playaction', { arg msg;
 			// Set float1
 			var id = msg[1], targetName = msg[2], targetId = msg[3];
 			var player, targetObj;
@@ -119,7 +119,7 @@
 			targetObj = targetName.idGet(targetId);
 			player.removeListener(targetObj);
 			("Removed instrument").postln;
-		}).add;
+		});
 
 	}
 

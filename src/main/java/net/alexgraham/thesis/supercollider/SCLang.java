@@ -31,6 +31,7 @@ import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
+import com.sun.corba.se.spi.activation._ActivatorImplBase;
 
 public class SCLang extends ChangeSender {
 	
@@ -349,6 +350,14 @@ public class SCLang extends ChangeSender {
 
 	public void createListener(String address, OSCListener listener) {
 		OSC.createListener(address, listener);
+//		OSC.createListener(address, new OSCListener() {
+//			
+//			@Override
+//			public void acceptMessage(Date time, OSCMessage message) {
+//				// FIXME: Only do this when debugging
+//				System.out.println("java[ msg in: " + message.getAddress() + " " + message.getArguments().toString());
+//			}
+//		});
 
 	}
 	

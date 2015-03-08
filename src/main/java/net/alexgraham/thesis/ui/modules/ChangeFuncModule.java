@@ -3,6 +3,7 @@ package net.alexgraham.thesis.ui.modules;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -11,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -108,13 +111,16 @@ public class ChangeFuncModule extends ModulePanel {
 		
 		//Middle Panel//
 		middlePanel = new ConnectablePanel();
-		middlePanel.addConnector(Location.LEFT, changeFunc.getConnector(ConnectorType.ACTION_IN));
-		this.addConnectablePanel(middlePanel);
+
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
 		middlePanel.setLayout(new GridLayout(0, 1));
 		
-		JButton actionButton = new JButton("Do it");
+		ConnectablePanel buttonPanel = new ConnectablePanel();
+		buttonPanel.addConnector(Location.LEFT, changeFunc.getConnector(ConnectorType.ACTION_IN));
+		this.addConnectablePanel(buttonPanel);
+		
+		JButton actionButton = new JButton("Perform Action");
 		actionButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -122,9 +128,9 @@ public class ChangeFuncModule extends ModulePanel {
 				changeFunc.doAction();
 			}
 		});
-		middlePanel.add(actionButton);
-//		middlePanel.add(new JLabel("testing "));
-//		middlePanel.add(new JLabel("testing"));
+		buttonPanel.add(actionButton);
+		
+		middlePanel.add(buttonPanel);
 		addParameters();
 		//scrollPane = new JScrollPane(middlePanel);
 		
@@ -159,6 +165,7 @@ public class ChangeFuncModule extends ModulePanel {
 	}
 	
 	public void addDoubleParam(DoubleParamModel model) {
+
 		JLabel paramNameLabel = new JLabel(model.getName());
 		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
 		model.addChangeListener(new ChangeListener() {
@@ -168,12 +175,56 @@ public class ChangeFuncModule extends ModulePanel {
 			}
 		});
 		
-		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		paramPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+//			JPanel togetherPanel = new JPanel(new GridLayout(1, 0, 0, 0));
+		JPanel togetherPanel = new JPanel();
+		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
+		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
 		
+	
 		paramPanel.add(paramNameLabel);
-		paramPanel.add(paramValueLabel);
+		//paramPanel.add(paramValueLabel);
+		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
+
+		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		DialD dial = new DialD(model);
+		dial.setForcedSize(new Dimension(15, 15));
+		dial.setDrawText(false);
+		dialPanel.add(leftConnectable);
+		this.addConnectablePanel(leftConnectable);
+		dialPanel.add(dial);
+		dialPanel.add(paramValueLabel);
+		//dialPanel.add(paramNameLabel);
 		
-		middlePanel.add(paramPanel);
+		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
+		paramPanel.add(connectablePanel);
+		this.addConnectablePanel(connectablePanel);
+		
+		dialPanel.add(Box.createHorizontalStrut(15));
+		togetherPanel.add(dialPanel);
+
+		togetherPanel.add(Box.createHorizontalGlue());
+
+		togetherPanel.add(paramPanel);
+		middlePanel.add(togetherPanel);
+
 	}
+	
+//	public void addDoubleParam(DoubleParamModel model) {
+//		JLabel paramNameLabel = new JLabel(model.getName());
+//		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
+//		model.addChangeListener(new ChangeListener() {
+//			@Override
+//			public void stateChanged(ChangeEvent e) {
+//				paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
+//			}
+//		});
+//		
+//		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+//		paramPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+//		
+//		paramPanel.add(paramNameLabel);
+//		paramPanel.add(paramValueLabel);
+//		
+//		middlePanel.add(paramPanel);
+//	}
 }

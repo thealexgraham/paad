@@ -9,7 +9,7 @@
 		~instrumentGroup = Group.head(Server.default);
 
 		// Whenever an instrument is added, this will create busses for this instance of the synth
-		OSCresponder(nil, "/inst/add", { arg time, resp, msg;
+		this.addOSCResponder('/inst/add', { arg msg;
 			var instName = msg[1];
 			var id = msg[2];
 			var instDict;
@@ -35,10 +35,10 @@
 			});
 
 			("Inst added and busses created at" + id).postln;
-		}).add;
+		});
 
 		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/inst/remove", { arg time, resp, msg;
+		this.addOSCResponder('/inst/remove', { arg msg;
 			// Free synth defs at this id
 			var instName = msg[1];
 			var id = msg[2];
@@ -51,19 +51,19 @@
 			});
 
 			("Inst disconnected, freeing busses at" + id).postln;
-		}).add;
+		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/inst/paramc", { arg time, resp, msg;
+		this.addOSCResponder('/inst/paramc', { arg msg;
 				// Set float1
 			var instName = msg[1], param = msg[2], id = msg[3], val = msg[4];
 			// Set the bus at param
 			instName.idGet(id).at(param).set(val);
 
 			postSilent("Changing" + instName + id + param + val);
-		}).add;
+		});
 
-		OSCresponder(nil, "/inst/connect/effect", { arg time, resp, msg;
+		this.addOSCResponder('/inst/connect/effect', { arg msg;
 			var instName = msg[1], instId = msg[2], effectName = msg[3], effectId = msg[4];
 			var instDict, effectDict;
 
@@ -75,9 +75,9 @@
 			instDict.at(\outBus).set(effectDict.at(\inBus).index);
 
 			("Connected instrument to effect").postln;
-		}).add;
+		});
 
-		OSCresponder(nil, "/inst/disconnect/effect", { arg time, resp, msg;
+		this.addOSCResponder('/inst/disconnect/effect', { arg msg;
 			var instName = msg[1], instId = msg[2], effectName = msg[3], effectId = msg[4];
 			var instDict, effectDict;
 
@@ -87,6 +87,6 @@
 			// Change instrument's output bus back to default (0)
 			instDict.at(\outBus).set(0);
 			("Disconnected instrument from effect").postln;
-		}).add;
+		});
 	}
 }

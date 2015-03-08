@@ -17,21 +17,42 @@ public class SendOSC {
 		OSCPortOut sender;
 		OSCPortIn receiver;
 		sender = new OSCPortOut(InetAddress.getLocalHost(), 57120);
-		receiver = new OSCPortIn(1253);
+		receiver = new OSCPortIn(1260);
+		
+		
 		
 		
 		OSCListener listener = new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
-
-    			System.out.println(message.getArguments());
-    			System.out.println(message.getArguments().get(0).getClass());
-    			System.out.println(" ");
+    			System.out.println("Received verification");
     		}
     		
     	};
     	
     	
-    	receiver.addListener("/testmessage", listener);
+    	receiver.addListener("/test/done", listener);
+    	
+
+    	ArrayList<Object> arguments = new ArrayList<Object>();
+    	arguments.add("whatever");
+    	OSCMessage msg = new OSCMessage("/test", arguments);
+    	
+    	try {
+			sender.send(msg);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+
+    	OSCListener listener2 = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+    			System.out.println("Received message 2");
+    		}
+    		
+    	};
+    	receiver.addListener("/testmessage", listener2);
+
+    	
     	receiver.startListening();
     	System.out.println("Listening");
     	System.in.read();
@@ -42,15 +63,7 @@ public class SendOSC {
 		
 //		testOSC();
 		
-    	ArrayList<Object> arguments = new ArrayList<Object>();
-    	arguments.add("whatever");
-    	OSCMessage msg = new OSCMessage("/porter", arguments);
-    	
-    	try {
-			sender.send(msg);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+
     	
     	System.out.println("Sent Message");
 	}

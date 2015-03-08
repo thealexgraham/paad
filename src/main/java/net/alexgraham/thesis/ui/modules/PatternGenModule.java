@@ -64,8 +64,7 @@ public class PatternGenModule extends ModulePanel {
 				patternGen.close();
 			}
 		});
-		
-		
+
 		setupWindow(this.getInterior());
 		
 		setSize(getPreferredSize());
@@ -133,8 +132,8 @@ public class PatternGenModule extends ModulePanel {
 
 		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);	
-
+		pane.add(bottomPanel, BorderLayout.SOUTH);
+	
 	}
 	public void addParameters() {
 		ArrayList<ParamModel> models = patternGen.getParamModels(); //((PatternGenDef)patternGen.getDef()).getParams());

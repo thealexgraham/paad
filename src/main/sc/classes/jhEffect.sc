@@ -19,7 +19,7 @@
 		~effectsGroup = Group.tail(Server.default);
 
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		OSCresponder(nil, "/effect/add", { arg time, resp, msg;
+		this.addOSCResponder('/effect/add', { arg msg;
 			var effectName = msg[1];
 			var id = msg[2];
 			var effectDict;
@@ -64,10 +64,10 @@
 			effectDict.put(\inBus, inBus);
 
 			("Effect added, adding effect at" + id).postln;
-		}).add;
+		});
 
 		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/effect/remove", { arg time, resp, msg;
+		this.addOSCResponder('/effect/remove', { arg msg;
 			// Free synth defs at this id
 			var effectName = msg[1];
 			var id = msg[2];
@@ -81,19 +81,19 @@
 			effectName.idRemove(id);
 
 			("Effect disconnected, freeing effect at" + id).postln;
-		}).add;
+		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/effect/paramc", { arg time, resp, msg;
+		this.addOSCResponder('/effect/paramc', { arg msg;
 			// Set float1
 			var effectName = msg[1], param = msg[2], id = msg[3], val = msg[4];
 
 			// Set the value directly
 			//effectName.idGet(id).at(\synth).set(param, val);
 			effectName.idGet(id).at(param).setSilent(val); // Change the value at the bus
-		}).add;
+		});
 
-		OSCresponder(nil, "/effect/connect/effect", { arg time, resp, msg;
+		this.addOSCResponder('/effect/connect/effect', { arg msg;
 			var effectName = msg[1], effectId = msg[2], toEffectName = msg[3], toEffectId = msg[4];
 			var toEffectDict, effectDict, toEffectInBus, effectSynth;
 
@@ -108,9 +108,9 @@
 			effectSynth.set(\outBus, toEffectInBus.index);
 
 			("Connected effects").postln;
-		}).add;
+		});
 
-		OSCresponder(nil, "/effect/disconnect/effect", { arg time, resp, msg;
+		this.addOSCResponder('/effect/disconnect/effect', { arg msg;
 			var effectName = msg[1], effectId = msg[2];
 			var effectDict, effectSynth;
 
@@ -121,10 +121,10 @@
 			// Set outBus back to 0 since it isn't connected to anything
 			effectSynth.set(\outBus, 0);
 			("Connected effects").postln;
-		}).add;
+		});
 		
 		// Disconnect this output
-		OSCresponder(nil, "/effect/disconnect/output", { arg time, resp, msg;
+		this.addOSCResponder('/effect/disconnect/output', { arg msg;
 			var effectName = msg[1], effectId = msg[2];
 			var effectDict, effectSynth;
 
@@ -135,7 +135,7 @@
 			// Set outBus back to 0 since it isn't connected to anything
 			effectSynth.set(\outBus, 0);
 			("Connected effects").postln;
-		}).add;
+		});
 
 		^("OSC Responders ready");
 	}

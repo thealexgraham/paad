@@ -22,9 +22,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>com.illposed.osc</groupId>
-    	<artifactId>javaosc-core</artifactId>
-    	<version>0.3</version>
+    	<groupId>de.sciss</groupId>
+    	<artifactId>netutil</artifactId>
+    	<version>1.0.0</version>
     </dependency>
     <dependency>
 		<groupId>commons-io</groupId>

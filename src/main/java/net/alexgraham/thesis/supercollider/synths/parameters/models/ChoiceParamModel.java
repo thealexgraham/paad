@@ -56,6 +56,12 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 		connectors.put(type, new Connector(this, type));
 	}
 	
+	public void removeConnectorUIs () {
+		for (Connector connector : connectors.values()) {
+			connector.removeConnectorUIs();
+		}
+	}
+	
 	public String getChoiceName() {
 		return choiceName;
 	}

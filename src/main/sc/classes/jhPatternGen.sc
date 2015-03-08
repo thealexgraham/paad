@@ -29,7 +29,7 @@
 		// Create the storage
 		this.setupTypeStorage(name);
 
-		net.sendMsg("/defs/ready/"++name, 1);
+		net.sendMsg("/def/ready/"++name, 1);
 	}
 
 	/* createpatternGenListeners
@@ -40,7 +40,7 @@
 		var defaultParams;
 
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		OSCresponder(nil, "/patterngen/add", { arg time, resp, msg;
+		this.addOSCResponder('/patterngen/add', { arg msg;
 			var patternGenName = msg[1];
 			var id = msg[2];
 			var patternGenDef, patternGen;
@@ -55,34 +55,34 @@
 			patternGenName.idPut(id, patternGen);
 
 			("patternGen added, adding patternGen at" + id).postln;
-		}).add;
+		});
 
 		// Whenever the plugin is removed (or killed internally) this will free the synth
-		OSCresponder(nil, "/patterngen/stop", { arg time, resp, msg;
+		this.addOSCResponder('/patterngen/remove', { arg msg;
 			// Free synth defs at this id
 			var patternGenName = msg[1];
 			var id = msg[2];
 			var patternGen = patternGenName.idGet(id);
 
 			("patternGen disconnected, freeing patternGen at" + id).postln;
-		}).add;
+		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/patterngen/paramc", { arg time, resp, msg;
+		this.addOSCResponder('/patterngen/paramc', { arg msg;
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
 			// Set the value on the pattern object
 			name.idGet(id).setParam(param, val);
-		}).add;
+		});
 
 				// [/synth/newparam, synthName, paramName, id, value]
-		OSCresponder(nil,"/patterngen/doaction", { arg time, resp, msg;
+		this.addOSCResponder('/patterngen/doaction', { arg msg;
 			// Set float1
 			var name = msg[1], id = msg[2];
 			name.idGet(id).doAction;
-		}).add;
+		});
 
-		OSCresponder(nil, "/patternGen/connect/param", { arg time, resp, msg;
+		this.addOSCResponder('/patternGen/connect/param', { arg msg;
 			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
 			var patternGen, parameter;
 
@@ -95,9 +95,9 @@
 			patternGen.addListener(parameter); // IS THIS THE OBJECT???
 
 			("Connected patternGens").postln;
-		}).add;
+		});
 
-		OSCresponder(nil, "/patternGen/disconnect/param", { arg time, resp, msg;
+		this.addOSCResponder('/patternGen/disconnect/param', { arg msg;
 			var cfName, cfId, ownerName, ownerId, paramName;
 			var patternGen, parameter;
 
@@ -108,8 +108,7 @@
 			patternGen.removeListener(parameter);
 
 			("Connected patternGens").postln;
-		}).add;
-
+		});
 
 		^("OSC Responders ready");
 	}

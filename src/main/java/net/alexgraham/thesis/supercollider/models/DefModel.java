@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
@@ -26,7 +27,7 @@ public class DefModel implements Messenger {
 		public void doAction();
 	}
 	
-	private Hashtable<String, ArrayList<MessageListener>> messageListeners = new Hashtable<String, ArrayList<MessageListener>>();
+	private Hashtable<String, CopyOnWriteArrayList<MessageListener>> messageListeners = new Hashtable<String, CopyOnWriteArrayList<MessageListener>>();
 		
 	private Hashtable<String, Def> defTable = new Hashtable<String, Def>();
 
@@ -62,26 +63,32 @@ public class DefModel implements Messenger {
 	
 	public void addMessageListener(String message, MessageListener listener) {
 		//TODO: Allow for multiple listeners
-		ArrayList<MessageListener> listenersList = messageListeners.get(message);
+		CopyOnWriteArrayList<MessageListener> listenersList = messageListeners.get(message);
 		if (listenersList == null) {
 			// Create a new list and add it to the listeners list
-			listenersList = new ArrayList<MessageListener>();
+			listenersList = new CopyOnWriteArrayList<MessageListener>();
 			messageListeners.put(message, listenersList);
 		}
 		listenersList.add(listener);
 	}
 	
 	public void removeMessageListener(String message, MessageListener listener) {
-		ArrayList<MessageListener> listenersList = messageListeners.get(message);
+		CopyOnWriteArrayList<MessageListener> listenersList = messageListeners.get(message);
 		if (listenersList != null) {
 			// If the list even exists, remove the listener
 			listenersList.remove(listener);
 		}
 	}
 	
+	public void removeMessageListener(MessageListener listener) {
+		for (CopyOnWriteArrayList<MessageListener> listenersList : messageListeners.values()) {
+			listenersList.remove(listener);
+		}
+	}
+	
 	public void fireDefCreatedMessage(Def def) {
 		// Assuming def name is the message
-		ArrayList<MessageListener> listenersList = messageListeners.get(def.getDefName());
+		CopyOnWriteArrayList<MessageListener> listenersList = messageListeners.get(def.getDefName());
 		if (listenersList != null) {
 			for (MessageListener messageListener : listenersList) {
 				messageListener.doAction();
@@ -204,7 +211,7 @@ public class DefModel implements Messenger {
         	    			final int intMin = AGHelper.convertToInt(arguments.removeFirst());
         	    			final int intMax = AGHelper.convertToInt(arguments.removeFirst());
         	    			final int intValue = AGHelper.convertToInt(arguments.removeFirst());
-        	    			((PatternGenDef)def).addParameter(paramName, intMin, intMax, intValue);
+        	    			def.addParameter(paramName, intMin, intMax, intValue);
         	    			break;
         				case "choice":
         					final String choiceName = (String) arguments.removeFirst();
@@ -218,7 +225,7 @@ public class DefModel implements Messenger {
         						choiceArray[i] = (Object) arguments.removeFirst();
         					}
         					// Assume its a pattern gen because this is the only thing that accepts it right now!
-        					((PatternGenDef)def).addParameter(paramName, choiceName, choiceArray); //TODO: FIX THIS
+        					def.addParameter(paramName, choiceName, choiceArray); //TODO: FIX THIS
         					break;
         				case "float":
         	    			final float floatMin = AGHelper.convertToFloat(arguments.removeFirst());

@@ -85,7 +85,13 @@ public class Def implements java.io.Serializable {
 			for (Param parameter : parameters) {
 				if (parameter.getClass() == DoubleParam.class) {
 					DoubleParam param = (DoubleParam) parameter;
-					bw.write(String.format("\t\t[\\%s, %.2f, %.2f, %.2f],", param.name, param.min, param.max, param.value));
+					bw.write(String.format("\t\t[\\%s, \\float, %.2f, %.2f, %.2f],", param.name, param.min, param.max, param.value));
+				} else if (parameter.getClass() == IntParam.class) {
+					IntParam param = (IntParam) parameter;
+					bw.write(String.format("\t\t[\\%s, \\int, %d, %d, %d],", param.name, param.min, param.max, param.value));
+				} else if (parameter.getClass() == ChoiceParam.class) {
+					ChoiceParam param = (ChoiceParam) parameter;
+					bw.write(String.format("\t\t[\\%s, \\choice, [\"%s\", %s]],", param.name, param.choiceName, choiceArrayToString(param.choiceArray)));
 				}
 				bw.newLine();
 			}
@@ -93,7 +99,7 @@ public class Def implements java.io.Serializable {
  
 			bw.close();
 			
-			openIde(fout);
+			return fout;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -103,6 +109,17 @@ public class Def implements java.io.Serializable {
 		}
 		
 		return fout;
+	}
+	
+	public String choiceArrayToString(Object[] choiceArray) {
+		String choiceString = "[";
+		for (Object object : choiceArray) {
+			choiceString = choiceString + object.toString() + ", ";
+		}
+		choiceString = choiceString.substring(0, choiceString.length() - 2); // Remove trailing ,
+		choiceString = choiceString + "]";
+		
+		return choiceString;
 	}
 	
 	public void openIde(File file) {

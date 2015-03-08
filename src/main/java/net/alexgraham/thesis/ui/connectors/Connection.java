@@ -24,6 +24,11 @@ public class Connection implements java.io.Serializable {
 	public Line2D getLine() {
 		// Find the closest connectorUIs
 		ConnectorUI[] closest = getOrigin().findClosestConnectorUI(getDestination());
+		
+		if (closest == null) {
+			// Currently missing connectors, return a blank line
+			return new Line2D.Float();
+		}
 		// Draw the line between them
 		return new Line2D.Float(closest[0].getCurrentCenter(), closest[1].getCurrentCenter()); 
 	}

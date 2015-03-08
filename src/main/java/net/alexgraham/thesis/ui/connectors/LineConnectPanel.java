@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
@@ -449,7 +450,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			System.err.println("No module for class");
 			return;
 		}
+		
 
+		
 		module.setInstance(instance);
 		module.setLocation(instance.getLocation());
 		module.setOwner(this);
@@ -457,6 +460,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		add(module);
 		boxes.addAll(module.getConnectablePanels());
 		modules.add(module);
+		
+		instance.setCurrentModule(module);
 		
 		App.data.addModule(module);
 		
@@ -479,6 +484,14 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		updateUI();
 		repaint();
+	}
+	
+	public void removeConnectablePanels(List<ConnectablePanel> panels) {
+		boxes.removeAll(panels);
+	}
+	
+	public void addConnectablePanels(List<ConnectablePanel> panels) {
+		boxes.addAll(panels);
 	}
 
 

@@ -23,7 +23,7 @@ import net.alexgraham.thesis.ui.connectors.Connection;
 public class App 
 {
 	static final int SC_PORT = 53120;
-	static final int JAVA_PORT = 1295;
+	static final int JAVA_PORT = 1280;
 	
 	public static SCLang sc;
 	public static LaunchTreeModel launchTreeModel;

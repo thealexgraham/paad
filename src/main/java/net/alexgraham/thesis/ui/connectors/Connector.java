@@ -62,7 +62,16 @@ public class Connector implements java.io.Serializable {
 		return connectorUIs;
 	}
 	
+	public void removeConnectorUIs() {
+		connectorUIs.clear();
+	}
+	
 	public ConnectorUI[] findClosestConnectorUI(Connector destination) {
+		
+		if (connectorUIs.isEmpty() || destination.getConnectorUIs().isEmpty()) {
+			// If either is missing connector UIs, return null
+			return null;
+		}
 		// Start with the first of each
 		ConnectorUI closestOrigin = connectorUIs.get(0);
 		ConnectorUI closestDestination = destination.getConnectorUIs().get(0); // Start with the first
