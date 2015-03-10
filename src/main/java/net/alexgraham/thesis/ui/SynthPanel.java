@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -19,6 +20,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.grouping.ExportGroupMenu;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
@@ -63,7 +66,6 @@ public class SynthPanel extends JPanel  {
 	        add(anItem);
 	    }
 	}
-
 	
 	
 	/**
@@ -109,24 +111,8 @@ public class SynthPanel extends JPanel  {
 			paramDial.setBehavior(Dial.Behavior.CENTER);
 		}
 		
-		paramDial.addMouseListener(new MouseAdapter() {
-		    public void mousePressed(MouseEvent e){
-		        if (e.isPopupTrigger())
-		            doPop(e);
-		    }
-
-		    public void mouseReleased(MouseEvent e){
-		        if (e.isPopupTrigger())
-		            doPop(e);
-		    }
-
-		    private void doPop(MouseEvent e){
-		        PopUpDemo menu = new PopUpDemo();
-		        menu.show(e.getComponent(), e.getX(), e.getY());
-		    }
-
-		});	
-		
+		paramDial.addMouseListener(new ParamMenuAdapter((ParamModel) model));
+				
 		//middlePanel.add(paramDial);
 		middlePanel.add(paramDial);
 		middlePanel.revalidate();

@@ -4,6 +4,8 @@ JavaHelper {
 	var <>synthDefaults;
 	var <>definitions;
 	var <>ready;
+	var <>readyAction;
+	var <>java;
 	var loaded;
 	var pendingDefs;
 
@@ -47,12 +49,19 @@ JavaHelper {
 		javaCommand("setListener");
 
 		synthDefaults = [[\gain, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
-		definitions = Dictionary.new;
 
+		definitions = Dictionary.new;
 		pendingDefs = IdentitySet.new;
 
 		ready = false;
 		loaded = false;
+		java = true;
+
+		this.createListeners;
+
+	}
+
+	createListeners {
 
 		this.createSynthListeners;
 		this.createInstListeners;
@@ -96,28 +105,9 @@ JavaHelper {
 	addOSCResponder { | path, func |
 		// Can add whatever the hell function wrapping I want here
 		// If has /verify as first argument, send the verification etc
-		OSCdef(path.asSymbol, func, path.asSymbol).verify(this.sendPort);
+		OSCdef(path.asSymbol, func, path.asSymbol).verify(this.sendPort); // Don't verify if no java
 	}
 
-/*
-	// Gets whatever is at the ID (defining the type)
-	idPut { |type, id, value|
-		^type.tildaGet.put(id, value);
-	}
-
-	idGet { |type, id|
-		if (type.tildaGet == nil, {
-			// Create dictionary if not created yet
-			type.tildaPut(Dictionary.new);
-		});
-
-		^type.tildaGet.at(id);
-	}
-
-	idRemove { |type, id|
-		^type.tildaGet.removeAt(id);
-	}
-*/
 	setupTypeStorage { |type|
 		^type.tildaPut(Dictionary.new);
 	}
@@ -141,6 +131,7 @@ JavaHelper {
 		if((ready == true) && (size < 1),
 			{
 				javaCommand("ready");
+				readyAction.value; // Run ready action
 			}
 		);
 	}
@@ -165,7 +156,6 @@ JavaHelper {
 					this.addPendingDef(name);
 					SynthDef(name, function).add;
 					~server.sync(c);
-					/*this.sendMsg("/def/ready/"++name, 1);*/
 					this.removePendingDef(name);
 			});
 
@@ -175,7 +165,7 @@ JavaHelper {
 				{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
 				{ this.sendDefinition(name, type, function, params); }
 			);
-			}
+		}
 	}
 
 	/* Sends all pending instruments to java */
@@ -214,6 +204,7 @@ JavaHelper {
 			}
 		);
 
+		// Don't need to do this if java
 		this.newDef(name, type, function, params); // Send the definition
 	}
 
@@ -252,3 +243,25 @@ JavaHelper {
 	// jhRoutPLayer
 
 }
+
+
+
+/*
+	// Gets whatever is at the ID (defining the type)
+	idPut { |type, id, value|
+		^type.tildaGet.put(id, value);
+	}
+
+	idGet { |type, id|
+		if (type.tildaGet == nil, {
+			// Create dictionary if not created yet
+			type.tildaPut(Dictionary.new);
+		});
+
+		^type.tildaGet.at(id);
+	}
+
+	idRemove { |type, id|
+		^type.tildaGet.removeAt(id);
+	}
+*/

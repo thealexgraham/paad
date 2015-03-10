@@ -159,7 +159,8 @@ public class ChangeFuncModule extends ModulePanel {
 	public void addParameters() {
 		for (ParamModel paramModel : getInstance().getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
-				addDoubleParam((DoubleParamModel) paramModel); 
+				//addDoubleParam((DoubleParamModel) paramModel); 
+				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
 			}
 		}
 	}

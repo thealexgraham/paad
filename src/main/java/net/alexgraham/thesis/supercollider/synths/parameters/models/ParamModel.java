@@ -3,6 +3,7 @@ package net.alexgraham.thesis.supercollider.synths.parameters.models;
 import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.Instance;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.Param;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
@@ -19,6 +20,9 @@ public interface ParamModel {
 	public void removeConnectorUIs();
 	
 	public Object getObjectValue();
+	
+	public ParamGroup getExportGroup();
+	public void setExportGroup(ParamGroup paramGroup);
 		
 	/**
 	 * Adds a change listener to this model to update the instance whenever the model is updated

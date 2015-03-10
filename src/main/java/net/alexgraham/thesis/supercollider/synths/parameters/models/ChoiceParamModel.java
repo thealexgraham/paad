@@ -9,6 +9,7 @@ import java.util.EnumMap;
 import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.Instance;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.Param;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
@@ -22,6 +23,8 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	
 	public String choiceName;
 	public Object[] choiceArray;
+	
+	private ParamGroup exportGroup = null;
 
 	public ChoiceParamModel(String choiceName, Object[] choiceArray) {
 		this.choiceName = choiceName;
@@ -87,6 +90,20 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	@Override
 	public boolean disconnect(Connection connection) {
 		return false;
+	}
+
+
+	@Override
+	public ParamGroup getExportGroup() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void setExportGroup(ParamGroup paramGroup) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

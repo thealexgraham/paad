@@ -18,6 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.EventListenerList;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.ChangeSender;
 import net.alexgraham.thesis.supercollider.models.DefModel;
@@ -82,6 +84,23 @@ public class SCLang extends ChangeSender {
 			new CopyOnWriteArrayList<SCLang.SCConsoleListener>();
 	
 	private String scDir = "";
+	
+	private BufferedWriter exportWriter = null;
+	
+
+	/**
+	 * While an export writer is set, OSC will write net send messages
+	 * to the output stream instead of sending OSC message. Used to
+	 * create an exported environment. Set to null to go back to normal
+	 * @param writer
+	 */
+	public void setExportWriter(BufferedWriter writer) {
+		this.exportWriter = writer;
+	}
+	
+	public void stopExportWriting() {
+		this.exportWriter = null;
+	}
 	
 	public String getScDir() {
 		return scDir;
@@ -345,7 +364,33 @@ public class SCLang extends ChangeSender {
     }
 
 	public void sendMessage(String address, Object... args) {
-		OSC.sendMessage(this.sendPort, address, args);
+		if (exportWriter == null) {
+			// Send message as normal
+			OSC.sendMessage(this.sendPort, address, args);			
+		} else {
+			// Write the messages to file
+			try {
+				exportWriter.write("net.sendMsg('" + address + "', ");
+				exportWriter.write(createArgumentsListString(args) + ");");
+				exportWriter.newLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	public String createArgumentsListString(Object[] arguments) {
+		String listString = "";
+		for (Object object : arguments) {
+			String argString = object.toString();
+			if (object instanceof String)
+				argString = "\"" + argString + "\"";
+			listString = listString + argString + ", ";
+		}
+		listString = listString.substring(0, listString.length() - 2); // Remove trailing ,		
+		return listString;
 	}
 
 	public void createListener(String address, OSCListener listener) {

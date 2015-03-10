@@ -38,7 +38,7 @@ public abstract class Syncer {
 		}
 	}
 	
-	public void start() {
+	public void run() {
 		
 	}
 	

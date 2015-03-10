@@ -17,6 +17,7 @@ import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
 import net.alexgraham.thesis.supercollider.synths.parameters.Param;
 import net.alexgraham.thesis.ui.connectors.Connection;
@@ -28,6 +29,8 @@ public class IntParamModel extends SpinnerNumberModel implements ParamModel, Con
 	
 	private String name;
 	private Instance owner;
+	
+	private ParamGroup exportGroup = null;
 	
 	public IntParamModel(int value, int min, int max) {
 		super(value, min, max, 1);
@@ -110,6 +113,16 @@ public class IntParamModel extends SpinnerNumberModel implements ParamModel, Con
 	public boolean disconnect(Connection connection) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public ParamGroup getExportGroup() {
+		return exportGroup;
+	}
+
+	@Override
+	public void setExportGroup(ParamGroup paramGroup) {
+		this.exportGroup = paramGroup;
 	}
 
 

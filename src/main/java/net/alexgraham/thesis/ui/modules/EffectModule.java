@@ -30,6 +30,7 @@ import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
+import net.alexgraham.thesis.ui.components.ColorIcon;
 import net.alexgraham.thesis.ui.components.Dial;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
@@ -124,7 +125,8 @@ public class EffectModule extends ModulePanel {
 	public void addParameters() {
 		for (ParamModel paramModel : getInstance().getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
-				addDoubleParam((DoubleParamModel) paramModel, middlePanel); 
+				//addDoubleParam((DoubleParamModel) paramModel, middlePanel); 
+				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
 			}
 		}
 	}
@@ -165,6 +167,7 @@ public class EffectModule extends ModulePanel {
 		this.addConnectablePanel(connectablePanel);
 		
 		dialPanel.add(Box.createHorizontalStrut(15));
+		
 		togetherPanel.add(dialPanel);
 		togetherPanel.add(Box.createHorizontalGlue());
 		togetherPanel.add(paramPanel);

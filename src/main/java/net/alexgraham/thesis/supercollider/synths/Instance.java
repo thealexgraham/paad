@@ -7,14 +7,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 
+import com.sun.swing.internal.plaf.metal.resources.metal;
+
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SimpleID;
 import net.alexgraham.thesis.supercollider.sync.ParallelSyncer;
-import net.alexgraham.thesis.supercollider.sync.StepSynchronizer;
+import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
 import net.alexgraham.thesis.supercollider.sync.Syncer;
 import net.alexgraham.thesis.supercollider.sync.Synchronizer;
@@ -177,10 +180,12 @@ public abstract class Instance implements Connectable, Serializable {
 				connection.disconnectModules();
 			}
 			
-    		Synchronizer syncer = new Synchronizer();
-    		
+        	// Maybe load the new information into memory here, and then send it to supercollider directly instead of from the file
+        	// This way its more controlled and we can reuse all of this code to add the def 
+    		ParallelSyncer addDefSyncer = new ParallelSyncer();
+
     		// Send the command to to add the new def file
-    		syncer.setStartAction(new SyncAction() {
+    		addDefSyncer.addStartAction(new SyncAction() {
 				
 				@Override
 				public void doAction() {
@@ -190,7 +195,7 @@ public abstract class Instance implements Connectable, Serializable {
 			});
     		
 			// Edit param model mins and maxes / add and remove, keep current values when the Definition has been added to supercollider
-    		syncer.addMessageListener(def.getDefName(), App.defModel, new SyncAction() {
+    		addDefSyncer.addMessageListener(def.getDefName(), App.defModel, new SyncAction() {
 				
 				@Override
 				public void doAction() {
@@ -221,7 +226,7 @@ public abstract class Instance implements Connectable, Serializable {
 			});
 
     		// Syncer should also wait for the Definition to be ready in SuperCollider
-			syncer.addOSCListener("/def/ready/" + def.getDefName(), new SyncAction() {
+			addDefSyncer.addOSCListener("/def/ready/" + def.getDefName(), new SyncAction() {
 				
 				@Override
 				public void doAction() {
@@ -230,57 +235,54 @@ public abstract class Instance implements Connectable, Serializable {
 			}); // Should this have a port to know its from SuperCollider?
 						
 			// Set what the syncer should do when all of the steps have been completed
-    		syncer.setFinalAction( new SyncAction() {
+    		addDefSyncer.addFinishAction( new SyncAction() {
 				
 				@Override
 				public void doAction() {
-					StepSynchronizer stepSync = new StepSynchronizer();
-					
-					// Stop the synth
-					stepSync.addStep(new SyncAction() {
-						@Override
-						public void doAction() {
-							// Stop the synth
-							stop();
-						}
-					}, closeCommand + "/done");
-					
-					// Start the synth
-					stepSync.addStep(new SyncAction() {
-						@Override
-						public void doAction() {
-							// Start up the Instance in Java and supercollider
-							start();
-							System.out.println("Starting");
-						}
-					}, startCommand + "/done");
-					
-					// Connect the modules
-					stepSync.addStep(new SyncAction() {
-						@Override
-						public void doAction() {
-							// This needs to wait for start to finish
-							// Reconnect everything
-				        	for (Connection connection : App.connectionModel.getConnectionsInvolving(Instance.this)) {
-								connection.connectModules();
-							}
-				        	
-				        	// Refresh Module
-				        	getCurrentModule().refreshInterior();
-						}
-					});
-					
-					stepSync.start();
-
 		        	// Delete the file
 		    		defFile.delete();
-		    		
-		    		syncer.stop();
 				}
     		});
     		
-    		// Start the syncer
-    		syncer.start();
+			StepSyncer stepSync = new StepSyncer();
+			
+			stepSync.addStep(addDefSyncer); // This will start the syncer and wait for it to finish
+			
+			// Stop the synth
+			stepSync.addStep(new SyncAction() { 
+				@Override
+				public void doAction() {
+					// Stop the synth
+					stop();
+				}
+			}, closeCommand + "/done");
+			
+			// Start the synth
+			stepSync.addStep(new SyncAction() {
+				@Override
+				public void doAction() {
+					// Start up the Instance in Java and supercollider
+					start();
+					System.out.println("Starting");
+				}
+			}, startCommand + "/done");
+			
+			// Connect the modules
+			stepSync.addStep(new SyncAction() {
+				@Override
+				public void doAction() {
+					// This needs to wait for start to finish
+					// Reconnect everything
+		        	for (Connection connection : App.connectionModel.getConnectionsInvolving(Instance.this)) {
+						connection.connectModules();
+					}
+		        	
+		        	// Refresh Module
+		        	getCurrentModule().refreshInterior();
+				}
+			});
+			
+			stepSync.run();
 
     		// Delete the file
 			// Adjust modules and such
@@ -375,6 +377,15 @@ public abstract class Instance implements Connectable, Serializable {
 	// ----------------
 	public abstract void start();
 	public abstract void stop();
+	
+	public Object[] getStartArguments() {
+		// Create the arguments list for this Synth
+    	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(def.getDefName());
+    	arguments.add(id.toString());
+
+    	return arguments.toArray();
+	}
 	
 	public void close() {
 		System.out.println("Bottom level close was called");

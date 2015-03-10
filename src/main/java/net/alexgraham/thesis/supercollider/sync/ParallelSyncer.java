@@ -100,7 +100,7 @@ public class ParallelSyncer extends Syncer{
 	}
 	
 	@Override
-	public void start() {
+	public void run() {
 		// Do all start actions
 		for (SyncAction syncAction : startActions) {
 			syncAction.doAction();

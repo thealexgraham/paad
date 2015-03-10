@@ -20,6 +20,7 @@ import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParam;
 import net.alexgraham.thesis.supercollider.synths.parameters.Param;
 import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
@@ -32,7 +33,8 @@ public class DoubleParamModel extends DoubleBoundedRangeModel implements ParamMo
 	
 	private String name;
 	private Instance owner;
-
+	private ParamGroup exportGroup = null;
+	
 	public DoubleParamModel(int decimals, double min, double max, double value) {
 		super(decimals, min, max, value);
 		addConnector(ConnectorType.PARAM_CHANGE_IN);
@@ -98,7 +100,17 @@ public class DoubleParamModel extends DoubleBoundedRangeModel implements ParamMo
 
 	public void setName(String name) {
 		this.name = name;
-	}	
+	}
+	
+	@Override
+	public ParamGroup getExportGroup() {
+		return exportGroup;
+	}
+
+	@Override
+	public void setExportGroup(ParamGroup paramGroup) {
+		this.exportGroup = paramGroup;
+	}
 	
 	
 	// Connectable

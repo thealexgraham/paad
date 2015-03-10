@@ -56,14 +56,7 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 	
 	@Override
 	public void start() {
-		// Create the arguments list for this Synth
-    	List<Object> arguments = new ArrayList<Object>();
-    	arguments.add(def.getDefName());
-    	arguments.add(id.toString());
-    	
-    	// Usually we'd add the arguments 
-    	
-    	App.sc.sendMessage(startCommand, arguments.toArray());
+    	App.sc.sendMessage(startCommand, getStartArguments());
 	}
 	
 	@Override
@@ -76,11 +69,6 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 	public void close() {
 		// Stop the synth at ID
     	App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());
-    	
-//		// Update Synth Listeners
-//		for (SynthListener synthListener : synthListeners) {
-//			synthListener.synthClosed(this);
-//		}
 	}
 	
 	@Override

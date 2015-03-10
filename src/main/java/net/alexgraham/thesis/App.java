@@ -13,6 +13,7 @@ import net.alexgraham.thesis.supercollider.models.ConnectionModel;
 import net.alexgraham.thesis.supercollider.models.DataModel;
 import net.alexgraham.thesis.supercollider.models.DefModel;
 import net.alexgraham.thesis.supercollider.models.LaunchTreeModel;
+import net.alexgraham.thesis.supercollider.models.ParamGroupModel;
 import net.alexgraham.thesis.supercollider.models.PlayerModel;
 import net.alexgraham.thesis.supercollider.models.SynthModel;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
@@ -32,6 +33,8 @@ public class App
 	public static PlayerModel playerModel;
 	public static ConnectionModel connectionModel;
 	
+	public static ParamGroupModel paramGroupModel;
+	
 	public static DataModel data;
 	
     public static void main( String[] args ) throws IOException
@@ -48,6 +51,7 @@ public class App
 		playerModel = data.getPlayerModel();
 		launchTreeModel = data.getLaunchTreeModel();
 		connectionModel = data.getConnectionModel();
+		paramGroupModel = data.getParamGroupModel();
 		
         //Schedule a job for the event-dispatching thread:
         //creating and showing this application's GUI.

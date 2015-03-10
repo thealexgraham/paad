@@ -52,25 +52,22 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	
 	@Override
 	public void start() {
-		
+    	App.sc.sendMessage(getStartCommand(), getStartArguments());
+	}
+	
+	@Override
+	public Object[] getStartArguments() {
 		// Create the arguments list for this Synth
     	List<Object> arguments = new ArrayList<Object>();
     	arguments.add(def.getDefName());
     	arguments.add(id.toString());
-    	
-    	
-//    	// Add the current parameters
-//    	for (String paramName : parameterModels.keySet()) {
-//			arguments.add(paramName);
-//			arguments.add(getValueForParameterName(paramName));
-//		}
-    	
+    	    	
     	for (ParamModel model : parameterModels.values()) {
     		arguments.add(model.getName());
     		arguments.add(model.getObjectValue());
     	}
     	
-    	App.sc.sendMessage(startCommand, arguments.toArray());
+    	return arguments.toArray();
 	}
 	
 	public void stop() {

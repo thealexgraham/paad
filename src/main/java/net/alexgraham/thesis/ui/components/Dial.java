@@ -33,6 +33,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
+
 import com.sun.xml.internal.ws.org.objectweb.asm.Label;
 
 
@@ -405,6 +408,19 @@ public class Dial extends JComponent {
 	
 	public void setDrawText(boolean drawText) {
 		this.drawText = drawText;
+	}
+	
+	public Color getBackground() {
+		return super.getBackground();
+	}
+	
+	public Color getGroupColor() {
+		if (getModel() instanceof ParamModel) {
+			ParamGroup group = ((ParamModel)getModel()).getExportGroup();
+			if (group != null)
+				return group.getGroupColor();
+		}
+		return super.getBackground();
 	}
 
 	private void drawDial(Graphics g,

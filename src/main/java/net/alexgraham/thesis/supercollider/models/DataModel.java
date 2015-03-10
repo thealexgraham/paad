@@ -1,11 +1,21 @@
 package net.alexgraham.thesis.supercollider.models;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import jdk.Exported;
+import net.alexgraham.thesis.App;
+import net.alexgraham.thesis.supercollider.FileHelper;
 import net.alexgraham.thesis.supercollider.SaveHelper;
+import net.alexgraham.thesis.supercollider.sync.StepSyncer;
+import net.alexgraham.thesis.supercollider.sync.SyncAction;
+import net.alexgraham.thesis.supercollider.sync.Syncer;
+import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
@@ -17,6 +27,7 @@ public class DataModel {
 	private SynthModel synthModel;
 	private PlayerModel playerModel;
 	private ConnectionModel connectionModel;
+	private ParamGroupModel paramGroupModel;
 	
 	private DataStore dataStore;
 
@@ -32,6 +43,7 @@ public class DataModel {
 		playerModel = new PlayerModel();
 		launchTreeModel = new LaunchTreeModel();
 		connectionModel = new ConnectionModel();
+		paramGroupModel = new ParamGroupModel();
 		
 		dataStore = new DataStore();
 		init();
@@ -94,15 +106,99 @@ public class DataModel {
 		// Have models point to new datastore (necessary?)
 		init();
 		
-		
 		// Start and read to lineconnect
-		synthModel.refreshInstances();
+		StepSyncer refreshSyncer = new StepSyncer();
 		
-		// Reconnect connections in SCLang
-		for (Connection connection : dataStore.getConnections()){
-			connection.connectModules();
-		}
+		refreshSyncer.addStep(synthModel.refreshInstances()); // Refresh the instances (Returns Syncer)
+		
+		// Reconnect Modules
+		refreshSyncer.addStep(new SyncAction() {
+			@Override
+			public void doAction() {
+				// Reconnect connections in SCLang
+				for (Connection connection : dataStore.getConnections()){
+					connection.connectModules();
+				}
+			}
+		});
+		
+		refreshSyncer.run();
 	}
+	
+	
+	public void createExportRunFile() {
+		// Create a file with all defs for each instance written explicitly
+		
+		File fout = null;
+		FileOutputStream fos = null;
+		BufferedWriter bw = null;
+		
+		try {
+			fout = new File(FileHelper.getSCCodeDir() + "/export/alldefinitions.scd");
+			fos = new FileOutputStream(fout);
+			bw = new BufferedWriter(new OutputStreamWriter(fos));
+			
+			for (Instance instance : synthModel.getInstances()) {
+				// Write definition
+				instance.getDef().writeDefintion(bw);
+				bw.newLine();
+			}
+			bw.close();
+			
+			// Start Messages
+			fout = new File(FileHelper.getSCCodeDir() + "/export/start.scd");
+			fos = new FileOutputStream(fout);
+			bw = new BufferedWriter(new OutputStreamWriter(fos));
+ 
+			bw.write("(");
+			bw.newLine();
+			
+			bw.write("var net = NetAddr.new(\"127.0.0.1\", NetAddr.langPort);");
+			bw.newLine();
+			
+			// Temporarily write messages to file instead of send OSC message
+			App.sc.setExportWriter(bw);
+			for (Instance instance : synthModel.getInstances()) {
+				instance.start();
+			}
+			
+			// Write sync messages???
+			
+			for (Connection connection : dataStore.getConnections()){
+				connection.connectModules();
+			}
+			
+			// Go back to sending OSC Messages
+			App.sc.stopExportWriting();
+			
+			bw.write(")");
+			bw.close();
+			
+			FileHelper.openIde(fout);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// Create file with server run
+		
+		// Load all defs here
+		
+		
+		
+		// add/start all instances in SC
+		// Connect all instances in SC
+		
+		// Create FMOD plugin with specified paramc stuff
+		
+		// Copy necessary files into a folder
+	}
+//	
+//	public void createPlugins() {
+//		String replaceFileString = "";
+//		replaceFileString.
+//	}
 
 	public LaunchTreeModel getLaunchTreeModel() {
 		return launchTreeModel;
@@ -151,6 +247,10 @@ public class DataModel {
 
 	public void setConnectionModel(ConnectionModel connectionModel) {
 		this.connectionModel = connectionModel;
+	}
+
+	public ParamGroupModel getParamGroupModel() {
+		return paramGroupModel;
 	}
 
 }

@@ -159,6 +159,10 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		}
 	}
 	
+	public void exportAction() {
+		App.data.createExportRunFile();
+	}
+	
 	public void consoleAction() {
 		consoleDialog.openDialog();
 	}
@@ -277,6 +281,21 @@ public class MainWindow extends JFrame implements SCMessageListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveAction();
+			}
+		});
+        file.add(menuItem);
+        
+        file.addSeparator();
+        
+        // Export
+        menuItem = new JMenuItem("Export", KeyEvent.VK_X);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_X, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exportAction();
 			}
 		});
         file.add(menuItem);

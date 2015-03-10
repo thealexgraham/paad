@@ -69,12 +69,32 @@ public class Def implements java.io.Serializable {
 
 	
 	public File createFileDef() {
-		File fout = new File( System.getProperty("user.home") + "/" + defName + ".scd");
-		
+		//File fout = new File( System.getProperty("user.home") + "/" + defName + ".scd");
+
 		try {
+			File fout = File.createTempFile(defName, ".scd");
+			
 			FileOutputStream fos = new FileOutputStream(fout);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
+			writeDefintion(bw);
+			
+			bw.close();
+			
+			return fout;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public void writeDefintion(BufferedWriter bw) {
+		try {
 			bw.write("~java.addDefinition(");
 			bw.write("\\" + this.defName + ", \\" + type + ",");
 			bw.newLine();
@@ -96,19 +116,11 @@ public class Def implements java.io.Serializable {
 				bw.newLine();
 			}
 			bw.write("\t]\n);");
- 
-			bw.close();
-			
-			return fout;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return fout;
+
 	}
 	
 	public String choiceArrayToString(Object[] choiceArray) {

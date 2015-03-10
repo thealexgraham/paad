@@ -24,6 +24,7 @@ import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
@@ -130,10 +131,9 @@ public class SynthModule extends ModulePanel {
 
 	}
 	public void addParameters() {
-	
 		for (ParamModel paramModel : synth.getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
-				addDoubleParam((DoubleParamModel) paramModel); 
+				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
 			}
 		}
 	}
@@ -160,6 +160,7 @@ public class SynthModule extends ModulePanel {
 
 		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		DialD dial = new DialD(model);
+
 		dial.setForcedSize(new Dimension(15, 15));
 		dial.setDrawText(false);
 		dialPanel.add(leftConnectable);
@@ -172,10 +173,12 @@ public class SynthModule extends ModulePanel {
 		paramPanel.add(connectablePanel);
 		this.addConnectablePanel(connectablePanel);
 		
-
+		dial.addMouseListener(new ParamMenuAdapter((ParamModel) model));
+		
 		togetherPanel.add(dialPanel);
 		togetherPanel.add(Box.createHorizontalGlue());
 		togetherPanel.add(paramPanel);
+		togetherPanel.addMouseListener(new ParamMenuAdapter((ParamModel) model));
 		middlePanel.add(togetherPanel);
 	}
    
