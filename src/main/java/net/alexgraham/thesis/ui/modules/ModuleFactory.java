@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.alexgraham.thesis.supercollider.synths.grouping.ExportIcon;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
@@ -34,9 +35,10 @@ public class ModuleFactory {
 		JPanel togetherPanel = new JPanel();
 		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
 		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
-		
-	
+
 		paramPanel.add(paramNameLabel);
+		paramPanel.add(new JLabel(new ExportIcon(model)));
+		
 		//paramPanel.add(paramValueLabel);
 		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
 

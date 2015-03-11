@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.synths.grouping;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
@@ -38,6 +40,14 @@ public class ExportGroupMenu extends JMenu {
                         "Export group");
                 ParamGroup group = App.paramGroupModel.newExportGroup(s);
                 paramModel.setExportGroup(group);
+                group.addParamModel(paramModel);
+                App.mainWindow.repaint();
+//
+//				while ((parent = parent.getParent()) != null) {
+//					System.out.println("Parent " + parent.getClass().getSimpleName() + " repaiting");
+//					parent.repaint();
+//				}
+                
 			}
                 
 		});
@@ -61,6 +71,7 @@ public class ExportGroupMenu extends JMenu {
 				if (currentGroup != null)
 					currentGroup.removeParamModel(paramModel);
 				paramModel.setExportGroup(null);
+                App.mainWindow.repaint();
 			}
 		});
         
@@ -80,6 +91,7 @@ public class ExportGroupMenu extends JMenu {
 					// Set the group and add it to the export
 					paramModel.setExportGroup(paramGroup);
 					paramGroup.addParamModel(paramModel);
+	                App.mainWindow.repaint();
 				}
 			});
 			

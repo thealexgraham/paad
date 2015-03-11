@@ -35,6 +35,8 @@ public class App
 	
 	public static ParamGroupModel paramGroupModel;
 	
+	public static MainWindow mainWindow;
+	
 	public static DataModel data;
 	
     public static void main( String[] args ) throws IOException
@@ -82,6 +84,8 @@ public class App
             	App.sc.stopSCLang();
         	}
         };
+        // TODO: Get rid of this
+        App.mainWindow = (MainWindow) frame;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.

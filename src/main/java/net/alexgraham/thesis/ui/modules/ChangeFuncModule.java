@@ -165,51 +165,6 @@ public class ChangeFuncModule extends ModulePanel {
 		}
 	}
 	
-	public void addDoubleParam(DoubleParamModel model) {
-
-		JLabel paramNameLabel = new JLabel(model.getName());
-		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
-		model.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
-			}
-		});
-		
-//			JPanel togetherPanel = new JPanel(new GridLayout(1, 0, 0, 0));
-		JPanel togetherPanel = new JPanel();
-		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
-		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
-		
-	
-		paramPanel.add(paramNameLabel);
-		//paramPanel.add(paramValueLabel);
-		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-
-		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		DialD dial = new DialD(model);
-		dial.setForcedSize(new Dimension(15, 15));
-		dial.setDrawText(false);
-		dialPanel.add(leftConnectable);
-		this.addConnectablePanel(leftConnectable);
-		dialPanel.add(dial);
-		dialPanel.add(paramValueLabel);
-		//dialPanel.add(paramNameLabel);
-		
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-		paramPanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
-		
-		dialPanel.add(Box.createHorizontalStrut(15));
-		togetherPanel.add(dialPanel);
-
-		togetherPanel.add(Box.createHorizontalGlue());
-
-		togetherPanel.add(paramPanel);
-		middlePanel.add(togetherPanel);
-
-	}
-	
 //	public void addDoubleParam(DoubleParamModel model) {
 //		JLabel paramNameLabel = new JLabel(model.getName());
 //		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));

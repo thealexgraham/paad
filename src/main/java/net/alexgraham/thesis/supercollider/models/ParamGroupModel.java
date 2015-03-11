@@ -29,6 +29,10 @@ public class ParamGroupModel {
 		return exportGroups;
 	}
 	
+	public void setExportGroups(List<ParamGroup> exportGroups) {
+		this.exportGroups = exportGroups;
+	}
+	
 	public void newExportGroup() {
 		// Get name?
 		String name = "new group";

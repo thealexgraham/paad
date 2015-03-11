@@ -3,36 +3,19 @@ package net.alexgraham.thesis.ui.modules;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
-import javafx.scene.layout.Pane;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoundedRangeModel;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import net.alexgraham.thesis.supercollider.synths.Effect;
-import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
-import net.alexgraham.thesis.ui.components.ColorIcon;
-import net.alexgraham.thesis.ui.components.Dial;
-import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
@@ -130,51 +113,7 @@ public class EffectModule extends ModulePanel {
 			}
 		}
 	}
-	
-	public void addDoubleParam(DoubleParamModel model, Container pane) {
 
-		JLabel paramNameLabel = new JLabel(model.getName());
-		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
-		model.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				paramValueLabel.setText(String.format("%.2f", model.getDoubleValue()));
-			}
-		});
-		
-//			JPanel togetherPanel = new JPanel(new GridLayout(1, 0, 0, 0));
-		JPanel togetherPanel = new JPanel();
-		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
-		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
-		
-	
-		paramPanel.add(paramNameLabel);
-		//paramPanel.add(paramValueLabel);
-		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-
-		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		DialD dial = new DialD(model);
-		dial.setForcedSize(new Dimension(15, 15));
-		dial.setDrawText(false);
-		dialPanel.add(leftConnectable);
-		this.addConnectablePanel(leftConnectable);
-		dialPanel.add(dial);
-		dialPanel.add(paramValueLabel);
-		//dialPanel.add(paramNameLabel);
-		
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-		paramPanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
-		
-		dialPanel.add(Box.createHorizontalStrut(15));
-		
-		togetherPanel.add(dialPanel);
-		togetherPanel.add(Box.createHorizontalGlue());
-		togetherPanel.add(paramPanel);
-		pane.add(togetherPanel);
-
-	}
-	
 //    public void setup(Container pane) {
 //
 //		pane.setLayout(new GridBagLayout());

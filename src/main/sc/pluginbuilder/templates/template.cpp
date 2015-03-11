@@ -133,7 +133,7 @@ public:
 	%%%PARAM_CLASS_DECS%%%
 	/// ================================
 
-	void sendParam(const char *, float);
+	void sendParam(const char *, const char *, const char *, float);
 	void sendMsg(const char *, float);
 	void setOSCID(int);
 
@@ -177,7 +177,7 @@ void FMODOtherState::reset()
 %%%PARAM_CLASS_FUNCTIONS%%%
 /// =======================================
 
-void FMODOtherState::sendParam(const char *addr, const char *instance_id, float value) {
+void FMODOtherState::sendParam(const char *addr, const char *param_name, const char *instance_id, float value) {
 
 	UdpTransmitSocket transmitSocket( IpEndpointName( ADDRESS, PORT ) );
     
@@ -186,7 +186,9 @@ void FMODOtherState::sendParam(const char *addr, const char *instance_id, float 
     
     p << osc::BeginBundleImmediate
         << osc::BeginMessage( addr )
-			<< instance_id <<
+			<< "instance"
+			<< param_name
+			<< instance_id
             << value << osc::EndMessage
         << osc::EndBundle;
     

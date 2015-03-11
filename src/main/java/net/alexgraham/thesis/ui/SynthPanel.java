@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.grouping.ExportGroupMenu;
+import net.alexgraham.thesis.supercollider.synths.grouping.ExportIcon;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
@@ -105,16 +106,25 @@ public class SynthPanel extends JPanel  {
 	
 	public void addDial(DoubleParamModel model) {
 		
+		JPanel dialPanel = new JPanel(new GridLayout(0, 1));
+		
 		DialD paramDial = new DialD(model);
-		paramDial.setName(model.getName());
+		//paramDial.setName(model.getName());
 		if (model.getName() == "pan") {
 			paramDial.setBehavior(Dial.Behavior.CENTER);
 		}
 		
 		paramDial.addMouseListener(new ParamMenuAdapter((ParamModel) model));
-				
+		
 		//middlePanel.add(paramDial);
-		middlePanel.add(paramDial);
+		dialPanel.add(paramDial);
+		
+		JPanel labelPanel = new JPanel();
+		labelPanel.add(new JLabel(model.getName()));
+		labelPanel.add(new JLabel(new ExportIcon(model)));
+		labelPanel.addMouseListener(new ParamMenuAdapter((ParamModel) model));
+		dialPanel.add(labelPanel);
+		middlePanel.add(dialPanel);
 		middlePanel.revalidate();
 	
 		//sliders.put(param.getName(), paramSlider);

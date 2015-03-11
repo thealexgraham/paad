@@ -1,7 +1,7 @@
 // Alex Graham
 // A class that generates FMOD plugins to control SuperCollider synths
 
-PluginBuilder {
+JPluginBuilder {
 	*generateCode { |pluginName, params, builddir = false |
 		var out, in, template, replace, blocks;
 		var batch;

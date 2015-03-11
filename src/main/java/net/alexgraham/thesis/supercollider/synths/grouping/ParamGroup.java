@@ -38,6 +38,10 @@ public class ParamGroup {
 		params.remove(model);
 	}
 	
+	public List<ParamModel> getParamModels() {
+		return params;
+	}
+	
 	// Getters / Setters
 	public String getName() {
 		return name;

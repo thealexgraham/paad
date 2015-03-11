@@ -8,14 +8,19 @@ import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import jdk.Exported;
+import org.apache.commons.io.FileUtils;
+
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.FileHelper;
 import net.alexgraham.thesis.supercollider.SaveHelper;
 import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
-import net.alexgraham.thesis.supercollider.sync.Syncer;
 import net.alexgraham.thesis.supercollider.synths.Instance;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
+import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.IntParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
@@ -53,6 +58,7 @@ public class DataModel {
 		synthModel.setSynthListModel(dataStore.getSynthListModel());
 		connectionModel.setConnections(dataStore.getConnections());
 		defModel.setDefTable(dataStore.getDefTable());
+		paramGroupModel.setExportGroups(dataStore.getExportGroups());
 		
 	}
 	
@@ -129,12 +135,20 @@ public class DataModel {
 	public void createExportRunFile() {
 		// Create a file with all defs for each instance written explicitly
 		
+		File exportDirectory = new File(System.getProperty("user.dir") + "/export");
+		exportDirectory.mkdirs();
+		
+		new File(System.getProperty("user.dir") + "/export/plugins").mkdirs();
+		
 		File fout = null;
 		FileOutputStream fos = null;
 		BufferedWriter bw = null;
 		
 		try {
-			fout = new File(FileHelper.getSCCodeDir() + "/export/alldefinitions.scd");
+			// Create file with server run
+
+			
+			fout = new File(exportDirectory.getAbsolutePath() + "/alldefinitions.scd");
 			fos = new FileOutputStream(fout);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
@@ -144,9 +158,10 @@ public class DataModel {
 				bw.newLine();
 			}
 			bw.close();
+			fos.close();
 			
 			// Start Messages
-			fout = new File(FileHelper.getSCCodeDir() + "/export/start.scd");
+			fout = new File(exportDirectory.getAbsolutePath() + "/start.scd");
 			fos = new FileOutputStream(fout);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
  
@@ -173,24 +188,63 @@ public class DataModel {
 			
 			bw.write(")");
 			bw.close();
+			fos.close();
 			
-			FileHelper.openIde(fout);
+
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		// Create file with server run
-		
-		// Load all defs here
-		
-		
-		
-		// add/start all instances in SC
-		// Connect all instances in SC
-		
+
+
 		// Create FMOD plugin with specified paramc stuff
+		
+		File pluginBuilderDirectory = new File(FileHelper.getSCCodeDir() + "/pluginbuilder");
+		
+		for (ParamGroup exportGroup : App.paramGroupModel.getExportGroups()) {
+
+			try {
+				
+				// Create temp plugin builder file
+				File buildSCCode = File.createTempFile("buildplugin", ".scd");
+				fos = new FileOutputStream(buildSCCode);
+				bw = new BufferedWriter(new OutputStreamWriter(fos));
+				
+				writePluginBuilderFile(bw, pluginBuilderDirectory, exportGroup);
+				
+				bw.close();
+							
+				FileHelper.openIde(buildSCCode);
+				// Read it into supercollider
+				App.sc.sendCommand("\"" + buildSCCode.getAbsolutePath().replace("\\", "/") + "\"" + ".load.postln");
+				// Wait to finish?
+				
+				Thread.sleep(1000);
+				
+				// Run the batch file, wait to finish
+				ProcessBuilder pb = new ProcessBuilder(pluginBuilderDirectory.getAbsolutePath() + "/build-plugin.bat");
+				pb.redirectErrorStream(true);
+				pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+				int batchFinished = pb.start().waitFor();
+				
+				if (batchFinished != 0) {
+					System.out.println("Problem, pluginbuilder failed");
+				}
+				
+				// Copy the plugin to the export folder TODO: Make it not platform specific
+				File pluginFile = new File(pluginBuilderDirectory.getAbsolutePath() + "/plugins/SC-" + exportGroup.getName() + ".dll");
+				FileUtils.copyFile(pluginFile, new File(exportDirectory.getAbsolutePath() + "/plugins/" + pluginFile.getName()));
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		// Copy necessary files into a folder
 	}
@@ -199,6 +253,43 @@ public class DataModel {
 //		String replaceFileString = "";
 //		replaceFileString.
 //	}
+	
+	public void writePluginBuilderFile(BufferedWriter bw, File pluginBuilderDirectory, ParamGroup group) {
+		try {
+			bw.write("JPluginBuilder.generateCode(");
+			bw.write("\"" + group.getName() + "\",");
+			bw.newLine();
+
+			bw.write("\t[\n");
+			
+			for (ParamModel model : group.getParamModels()) {
+				
+				Instance instance = model.getOwner();
+				
+				bw.write(String.format("\t\t[\\%s, \\%s, \\%s, \\%s, ", 
+						instance.getName(), instance.getDef().getType(), instance.getID(), model.getName()));
+				if (model.getClass() == DoubleParamModel.class) {
+					DoubleParamModel param = (DoubleParamModel) model;
+					bw.write(String.format("%.2f, %.2f, %.2f", 
+							param.getDoubleMinimum(), param.getDoubleMaximum(), param.getObjectValue()));
+				} else if (model.getClass() == IntParam.class) {
+					IntParamModel param = (IntParamModel) model;
+					bw.write(String.format("%d, %d, %d", 
+							param.getMinimum(), param.getMaximum(), param.getValue()));
+				}
+				bw.write("], ");
+				bw.newLine();
+			}
+			bw.write("\t], "
+					+ "\"" + pluginBuilderDirectory.getCanonicalPath().replace("\\", "/") + "\""
+					+ "\n);");		
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	public LaunchTreeModel getLaunchTreeModel() {
 		return launchTreeModel;

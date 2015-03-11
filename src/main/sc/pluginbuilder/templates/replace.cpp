@@ -1,11 +1,11 @@
 ### ITERATE_START ###
 	%%%PARAM_ENUMS%%%
-	FMOD_OTHER_PARAM_^^param_name^^,
+	FMOD_OTHER_PARAM_^^instance_name^^_^^param_name^^,
 ### ITERATE_END ###
 
 ### SINGLE_START ###
 %%%TOP_ROUTE%%%
-define TOP_ROUTE "/^patch_name^"
+define TOP_ROUTE "/^synth_name^"
 ### SINGLE_END ###
 
 ### ITERATE_START ###
@@ -20,7 +20,7 @@ static FMOD_DSP_PARAMETER_DESC p_^instance_name^_^param_name^; // p_^instance_na
 
 ### SINGLE_START ###
 	%%%DESC_NAME%%%
-    "SuperCollider ^patch_name^",
+    "SuperCollider ^synth_name^",
 ### SINGLE_END ###
 
 ### ITERATE_START ###
@@ -50,7 +50,7 @@ void FMODOtherState::set^^instance_name^_^param_name^(float value) {
 	%%%SET_PARAM_FLOAT%%%
 	case FMOD_OTHER_PARAM_^^instance_name^^_^^param_name^^:
 		state->set^^instance_name^_^param_name^(value);
-		state->sendParam("/^instance_type^/paramc", "^instance_id^", value);
+		state->sendParam("/^instance_type^/paramc", "^param_name^", "^instance_id^", value);
 		return FMOD_OK;
 ### ITERATE_END ###
 
@@ -58,6 +58,6 @@ void FMODOtherState::set^^instance_name^_^param_name^(float value) {
 	%%%GET_PARAM_FLOAT%%%
 	case FMOD_OTHER_PARAM_^^instance_name^^_^^param_name^^:
 		*value = state->^instance_name^_^param_name^();
-		if (valuestr) sprintf(valuestr, "% fl", state->^param_name^());
+		if (valuestr) sprintf(valuestr, "% fl", state->^instance_name^_^param_name^());
 		return FMOD_OK;
 ### ITERATE_END ###
