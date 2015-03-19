@@ -46,6 +46,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.event.MouseInputAdapter;
 
@@ -138,6 +140,12 @@ extends AbstractMultiSlider
 	
 	public void setLockBounds( boolean onOff ) {
 		lockBounds = onOff;
+	}
+	
+	public void getEnvelopeValues() {
+		for (Node node : nodes) {
+			System.out.println("x: " + node.x + " y: " + node.y);
+		}
 	}
 
 	protected void paintKnob( Graphics2D g2, int cw, int ch )
@@ -549,7 +557,7 @@ extends AbstractMultiSlider
 		for (Object object : replyArgs) {
 			System.out.println(object.toString());
 		}
-		System.out.println(replyArgs.toString());
+//		System.out.println(replyArgs.toAtoString());
 //		try {
 //			client.reply( new OSCMessage( "/values", replyArgs ));
 //		}
@@ -834,6 +842,42 @@ extends AbstractMultiSlider
 		}
 		numDirty = 0;
 	}
+	
+	public void addNode(float x, float y) {
+				
+		float[] xl = new float[nodes.length + 1];
+		float[] yl = new float[nodes.length + 1];
+		
+		boolean added = false;
+		int addIdx = 0;
+		
+		for (int i = 0; i < nodes.length; i++) {
+			if (!added && nodes[i].x > x) {
+				xl[addIdx] = x;
+				yl[addIdx] = y;
+				addIdx++;
+				added = true;
+			}
+			
+			xl[addIdx] = nodes[i].x;
+			yl[addIdx] = nodes[i].y;
+			addIdx++;
+		}
+		
+		setValues(xl, yl);
+
+	}
+	
+	public void removeNode( Node n ) {
+		ArrayList<Node> nodesList = new ArrayList<Node>();
+		nodesList.addAll(Arrays.asList(nodes));
+		nodesList.remove(n);
+		
+		nodes = new Node[nodesList.size()];
+		for (int i = 0; i < nodesList.size(); i++) {
+			nodes[i] = nodesList.get(i);
+		}
+	}
 
 	protected void dirty( Node n )
 	{
@@ -986,6 +1030,15 @@ extends AbstractMultiSlider
 			shiftDrag		= e.isShiftDown();
 			dragRubber		= n == null;
 			
+			if (n == null) {
+				int w = recentWidth;
+				int h = recentHeight;
+				
+				float x = (float) dragFirstPt.x / (float) w;
+				float y = 1f - ( (float) dragFirstPt.y / (float) h);
+				addNode(x, y);
+			}
+								
 			if( shiftDrag ) {
 				if( dragRubber ) return;
 				n.selected	= !n.selected;
@@ -1006,7 +1059,13 @@ extends AbstractMultiSlider
 					}
 				}
 				if( !dragRubber && !n.selected ) {
-					n.selected	= true;
+					if (e.getButton() == MouseEvent.BUTTON3) {
+						removeNode(n);
+					} else {
+						n.selected	= true;
+					}
+
+
 					dirty( n );
 					repaint		= true;
 					action		= true;
