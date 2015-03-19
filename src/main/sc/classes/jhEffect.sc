@@ -1,5 +1,4 @@
 + JavaHelper { // Effect Methods
-
 	/* newEffect
 	* Tells java all about the effect definition
 	*/
@@ -8,6 +7,15 @@
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
 		//effectName.tildaPut(Dictionary.new);
 		this.setupTypeStorage(effectName);
+	}
+
+	getMasterIn {
+		if (masterIn == nil,
+			{
+				^masterIn = Bus.audio(Server.default, 2);
+			},
+			{ ^masterIn; }
+		);
 	}
 
 	/* createEffectListeners
@@ -43,7 +51,7 @@
 
 			// Store the synth and the inBus
 			effectDict.put(\synth, Synth.tail(~effectsGroup, effectName,
-				[\inBus, inBus, \outBus, 0]));
+				[\inBus, inBus, \outBus, this.getMasterIn]));
 
 			// The rest of the parameters are quads, reshape so we can use them
 			msg.reshape((msg.size / 4).asInt, 4).do({ |item, i|
@@ -119,10 +127,10 @@
 			effectSynth = effectDict.at(\synth);
 
 			// Set outBus back to 0 since it isn't connected to anything
-			effectSynth.set(\outBus, 0);
+			effectSynth.set(\outBus, this.getMasterIn);
 			("Connected effects").postln;
 		});
-		
+
 		// Disconnect this output
 		this.addOSCResponder('/effect/disconnect/output', { arg msg;
 			var effectName = msg[1], effectId = msg[2];
@@ -133,8 +141,52 @@
 			effectSynth = effectDict.at(\synth);
 
 			// Set outBus back to 0 since it isn't connected to anything
-			effectSynth.set(\outBus, 0);
+			effectSynth.set(\outBus, this.getMasterIn);
 			("Connected effects").postln;
+		});
+
+
+		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
+		this.addOSCResponder('/effect/add/master', { arg msg;
+			var effectName = msg[1];
+			var id = msg[2];
+			var effectDict;
+			var inBus;
+			"Adding Effect".postln;
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+
+			// Create a new dictionary for this ID
+
+			effectName.idPut(id, Dictionary.new);
+			effectDict = effectName.idGet(id);
+
+			// Store the synth and the inBus
+			effectDict.put(\synth, Synth.tail(~effectsGroup, effectName,
+				[\inBus, this.getMasterIn, \outBus, 0]));
+
+			// The rest of the parameters are quads, reshape so we can use them
+			msg.reshape((msg.size / 4).asInt, 4).do({ |item, i|
+				var paramName = item[0];
+				var value = item[1];
+				var min = item[2];
+				var max = item[3];
+				var param = ParameterBus.new(paramName, value, min, max);
+				param.ownerId = id;
+				//var bus = Bus.control.set(value);
+
+				// Save the param bus
+				effectDict.put(paramName, param);
+				// Map the effect to it
+				effectDict.at(\synth).map(paramName, param.bus);
+			});
+			// Save the inBus
+			effectDict.put(\inBus, this.getMasterIn);
+
+			("Effect added, adding effect at" + id).postln;
 		});
 
 		^("OSC Responders ready");

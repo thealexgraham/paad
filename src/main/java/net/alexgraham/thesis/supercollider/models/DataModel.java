@@ -134,19 +134,22 @@ public class DataModel {
 	
 	public void createExportRunFile() {
 		// Create a file with all defs for each instance written explicitly
+		String pluginName = "testpatch";
+		File fmodDirectory = new File("C:/Program Files (x86)/FMOD SoundSystem/FMOD Studio 1.04.04");
 		
-		File exportDirectory = new File(System.getProperty("user.dir") + "/export");
+		File exportDirectory = new File(fmodDirectory.getAbsolutePath() + "/supercollider/fmod/" + pluginName);
+		File pluginBuilderDirectory = new File(FileHelper.getSCCodeDir() + "/pluginbuilder");
 		exportDirectory.mkdirs();
-		
-		new File(System.getProperty("user.dir") + "/export/plugins").mkdirs();
-		
+				
 		File fout = null;
 		FileOutputStream fos = null;
 		BufferedWriter bw = null;
 		
 		try {
 			// Create file with server run
-
+			
+			File pluginFile = new File(pluginBuilderDirectory.getAbsolutePath() + "/startup.scd");
+			FileUtils.copyFile(pluginFile, new File(exportDirectory.getAbsolutePath() + "/startup.scd"));
 			
 			fout = new File(exportDirectory.getAbsolutePath() + "/alldefinitions.scd");
 			fos = new FileOutputStream(fout);
@@ -190,6 +193,32 @@ public class DataModel {
 			bw.close();
 			fos.close();
 			
+			
+			// Create sclang_conf.yaml file
+			
+			fout = new File(exportDirectory.getAbsolutePath() + "/sclang_conf.yaml");
+			fos = new FileOutputStream(fout);
+			bw = new BufferedWriter(new OutputStreamWriter(fos));
+			
+			bw.write("includePaths:");
+			bw.newLine();
+			bw.write(String.format("\t[\"Extensions\", \"fmod/%s\"]", pluginName));
+			bw.newLine();
+			bw.write("excludePathsd:\n\t[]\npostInlineWarnings: false");
+			bw.close();
+			fos.close();
+			
+			// Create extPlatform.sc file
+			
+			fout = new File(exportDirectory.getAbsolutePath() + "/extPlatform.sc");
+			fos = new FileOutputStream(fout);
+			bw = new BufferedWriter(new OutputStreamWriter(fos));
+			
+			bw.write("+ Platform {\n\t startupFiles {\n");
+			bw.write(String.format("\t\t^[\"fmod/%s/startup.scd\"];", pluginName));
+			bw.write("\n\t}\n}");
+			bw.close();
+			fos.close();
 
 			
 		} catch (IOException e) {
@@ -200,8 +229,6 @@ public class DataModel {
 
 
 		// Create FMOD plugin with specified paramc stuff
-		
-		File pluginBuilderDirectory = new File(FileHelper.getSCCodeDir() + "/pluginbuilder");
 		
 		for (ParamGroup exportGroup : App.paramGroupModel.getExportGroups()) {
 

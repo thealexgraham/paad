@@ -36,7 +36,7 @@
 
 			// The rest are the defaults
 
-			msg = msg.addAll(["outBus", 0]);
+			msg = msg.addAll(["outBus", this.getMasterIn.index]);
 
 			synthName.idPut(id, Dictionary.new);
 			synthDict = synthName.idGet(id);
@@ -92,7 +92,7 @@
 			effectDict = this.idGet(effectName, effectId);
 
 			// Change synthrument's output bus back to default (0)
-			synthDict.at(\synth).set(\outBus, 0);
+			synthDict.at(\synth).set(\outBus, this.getMasterIn.index);
 			("Disconnected synthrument from effect").postln;
 		});
 

@@ -140,6 +140,7 @@ SynthDef(\discreet, { |in, out =0,
 	Out.ar(out, [record, record]);
 }).add;
 
+
 SynthDef(\scale, { | out=0 |
 	var trig, div, freq, oct, reps, env, osc, flt;
 	oct = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3];

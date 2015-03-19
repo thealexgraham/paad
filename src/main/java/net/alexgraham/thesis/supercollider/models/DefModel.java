@@ -61,6 +61,10 @@ public class DefModel implements Messenger {
 		defTable.put(def.getDefName(), def);
 	}
 	
+	public Def getDefByName(String name) {
+		return defTable.get(name);
+	}
+	
 	public void addMessageListener(String message, MessageListener listener) {
 		//TODO: Allow for multiple listeners
 		CopyOnWriteArrayList<MessageListener> listenersList = messageListeners.get(message);

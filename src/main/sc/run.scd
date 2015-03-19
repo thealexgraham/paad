@@ -34,6 +34,12 @@ s.waitForBoot({
 
 	// Create a new java helper at the default port
 	~java = JavaHelper.new(1280);
+	// Just make 5 faders, 4 mix, one Master, have the 4 mix automatically connect to the master
+	~java.addDefinition(\fader, \effect, { | out=0 inBus mute=1 amp=1 |
+			Out.ar(out, In.ar(inBus, 2) * mute * amp)
+		}, [[\amp, 0, 1, 0.5]]
+	);
+
 
 	// Load all files in "startup" dir
 	(thisProcess.nowExecutingPath.dirname ++ "/startup/*").pathMatch.do({

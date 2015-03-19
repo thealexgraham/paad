@@ -469,6 +469,10 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		repaint();
 	}
 	
+	public void addConnectablePanels(ArrayList<ConnectablePanel> panels) {
+		boxes.addAll(panels);
+	}
+	
 	public void refreshModules() {
 		// Remove anything currently here
 		removeAll();

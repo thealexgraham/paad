@@ -3,12 +3,13 @@ package net.alexgraham.thesis.supercollider.synths.grouping;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import javax.swing.Icon;
 
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 
-public class ExportIcon implements Icon {
+public class ExportIcon implements Icon, Serializable {
 	Dimension size = new Dimension(5, 5);
 	ParamModel model = null;
 	

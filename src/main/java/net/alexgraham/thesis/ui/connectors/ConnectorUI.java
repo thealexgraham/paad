@@ -80,6 +80,8 @@ public class ConnectorUI implements java.io.Serializable {
 		while (parent.getClass() != LineConnectPanel.class) {
 			parent = parent.getParent();
 		}
+		
+		
 		ownerLocation = SwingUtilities.convertPoint(owner.getParent(),
 				ownerLocation,
 				parent);

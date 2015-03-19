@@ -12,6 +12,7 @@ This example shows how to create a simple gain DSP effect.
 #include <math.h>
 #include <stdio.h>
 #include <assert.h>
+#include <windows.h>
 #include <iostream>
 #include <string>
 
@@ -138,6 +139,7 @@ public:
 	void setOSCID(int);
 
 	int osc_id() const { return m_osc_id; }
+	PROCESS_INFORMATION pi;
 
 private:
 
@@ -218,6 +220,27 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
     dsp_state->plugindata = (FMODOtherState *)FMOD_DSP_STATE_MEMALLOC(dsp_state, sizeof(FMODOtherState), FMOD_MEMORY_NORMAL, "FMODOtherState");
 
 	FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
+
+	char * command = "supercollider/sclang.exe";
+
+	STARTUPINFO si;
+
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &state->pi, sizeof(state->pi) );
+
+    // Start the child process. 
+    if( !CreateProcess( command,   // No module name (use command line)
+        " -d \"supercollider\" -l \"fmod/testpatch/sclang_conf.yaml\"",        // Command line
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to FALSE
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory 
+        &si,            // Pointer to STARTUPINFO structure
+        &state->pi )           // Pointer to PROCESS_INFORMATION structure
+    )
 
     if (!dsp_state->plugindata)
     {

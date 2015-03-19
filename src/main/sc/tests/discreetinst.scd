@@ -17,6 +17,18 @@ SynthDef(\verb, { |inBus, outBus = 0, mix = 0.33, room = 0.5, damp = 0.5, mul = 
 	Out.ar(outBus, sig * gain);
 }).add;
 
+SynthDef(\mix, { |inBus1, inBus2, inBus3, gain1 = 0.5, gain2 = 0.5, gain3 = 0.5|
+	var sig1, sig2, sig3;
+	sig1 = In.ar(inBus1, 2);
+	sig2 = In.ar(inBus2, 2);
+	sig3 = In.ar(inBus3, 2);
+	Out.ar(0, Mix.new([sig1 * gain1, sig2 * gain2, sig3 * gain3]));
+});
+
+)
+
+
+
 ~verbInBus.free;
 ~verbInBus = Bus.audio(s, 2);
 ~verb = Synth.tail(s, \verb, [\inBus, ~verbInBus, \outBus, 0, \mix, 0.5, \room, 1, \damp, 1]);

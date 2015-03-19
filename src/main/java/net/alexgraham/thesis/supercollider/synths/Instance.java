@@ -64,6 +64,9 @@ public abstract class Instance implements Connectable, Serializable {
 	public String getStartCommand() { return startCommand; }
 	public String getCloseCommand() { return closeCommand; }
 	
+	public void setStartCommand(String startCommand) { this.startCommand = startCommand; }
+	public void setCloseCommand(String closeCommand) { this.closeCommand = closeCommand; }
+
 	
 	public Instance() {
 		id = new SimpleID();

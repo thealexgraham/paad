@@ -8,6 +8,8 @@ JavaHelper {
 	var <>java;
 	var loaded;
 	var pendingDefs;
+	var masterIn;
+	var didReady;
 
 	*new { |sendPort|
 		^super.new.init(sendPort);
@@ -56,6 +58,7 @@ JavaHelper {
 		ready = false;
 		loaded = false;
 		java = true;
+		didReady = false;
 
 		this.createListeners;
 
@@ -128,10 +131,11 @@ JavaHelper {
 
 	tryReadyMessage {
 		var size = pendingDefs.size;
-		if((ready == true) && (size < 1),
+		if((ready == true) && (size < 1) && (didReady == false),
 			{
 				javaCommand("ready");
 				readyAction.value; // Run ready action
+				didReady = true;
 			}
 		);
 	}

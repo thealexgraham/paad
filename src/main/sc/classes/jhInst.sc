@@ -24,7 +24,7 @@
 			instName.idPut(id, Dictionary.new);
 			instDict = instName.idGet(id);
 
-			instDict.put(\outBus, Bus.control.set(0)); // Default out bus is 0
+			instDict.put(\outBus, Bus.control.set(this.getMasterIn.index)); // Default out bus is 0
 
 			// The rest of the parameters are pairs, reshape so we can use them
 			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
@@ -85,7 +85,7 @@
 			effectDict = this.idGet(effectName, effectId);
 
 			// Change instrument's output bus back to default (0)
-			instDict.at(\outBus).set(0);
+			instDict.at(\outBus).set(this.getMasterIn.index);
 			("Disconnected instrument from effect").postln;
 		});
 	}

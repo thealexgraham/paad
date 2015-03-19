@@ -72,7 +72,7 @@ public class Def implements java.io.Serializable {
 		//File fout = new File( System.getProperty("user.home") + "/" + defName + ".scd");
 
 		try {
-			File fout = File.createTempFile(defName, ".scd");
+			File fout = File.createTempFile(defName + "-temp", ".scd");
 			
 			FileOutputStream fos = new FileOutputStream(fout);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));

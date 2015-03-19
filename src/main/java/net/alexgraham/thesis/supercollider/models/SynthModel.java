@@ -162,6 +162,9 @@ public class SynthModel implements Serializable {
 			public void doAction() {
 				
 				for (Instance instance : getInstances()) {
+					if (instance.getName().equals("Master"))
+						continue;
+					
 					// Start each synth in paralell					
 					startInstanceSyncer.addStartAction(new SyncAction() {
 						@Override
@@ -171,6 +174,7 @@ public class SynthModel implements Serializable {
 							
 							// Fire instance added for everyone
 							for (SynthModelListener synthModelListener : listeners) {
+
 									synthModelListener.instanceAdded(instance);
 							}
 						}
@@ -190,6 +194,7 @@ public class SynthModel implements Serializable {
 	public void closeInstances() {
 		for (Enumeration<Instance> e = synthListModel.elements(); e.hasMoreElements();)  {
 			Instance instance = (Instance) e.nextElement();
+
 			instance.close();
 
 			// Fire instance added for everyone
@@ -237,13 +242,24 @@ public class SynthModel implements Serializable {
 	}
 	
 	public void addInstance(Instance instance) {
-
 		instance.start();
-		
 		synthListModel.addElement(instance);
 		synths.put(instance.getID(), instance);
-//		fireSynthAdded(synth);
-		fireInstanceAdded(instance);
+		
+		if (!instance.getName().equals("Master")) {
+			fireInstanceAdded(instance);			
+		}
+
+	}
+	
+	/**
+	 * Like addInstance but does not notify SynthModelListeners or start the instance
+	 * Used for app defined instances (ie faders)
+	 * @param instance
+	 */
+	public void addCustomInstance(Instance instance) {
+		synthListModel.addElement(instance);
+		synths.put(instance.getID(), instance);
 	}
 	
 	
