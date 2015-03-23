@@ -42,16 +42,17 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.BorderFactory;
 import javax.swing.event.MouseInputAdapter;
-
-import sun.text.normalizer.Replaceable;
 
 /**
  *	Swing implementation and extension of SCEnvelopeView by Jan Truetzschler.
@@ -108,6 +109,11 @@ extends AbstractMultiSlider
 	private Node[] 					dirtyNodes		= new Node[ 0 ];
 	private int						numDirty		= 0;
 	protected int					lastIndex		= -1;
+	
+	private float xMin = 0;
+	private float xMax = 1;
+	private float yMin = 0;
+	private float yMax = 1;
 		
 	static {
 		final float[] dash = new float[] { 4f, 4f };
@@ -127,7 +133,7 @@ extends AbstractMultiSlider
 		super();
 		this.clipThumbs = clipThumbs;
 		drawLines		= true;
-
+		setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 		final MouseAdapter ma = new MouseAdapter();
 		addMouseListener( ma );
 		addMouseMotionListener( ma );
@@ -144,8 +150,77 @@ extends AbstractMultiSlider
 	
 	public void getEnvelopeValues() {
 		for (Node node : nodes) {
-			System.out.println("x: " + node.x + " y: " + node.y);
+			float adjustedX = scale(node.x, 0, 1, xMin, xMax);
+			float adjustedY = scale(node.y, 0, 1, yMin, yMax);
+			System.out.println("x: " + adjustedX + " y: " + adjustedY);
 		}
+	}
+	
+	public float scale (float value, float oldMin, float oldMax, float newMin, float newMax) {
+		float newVal = ((value - oldMin) / (oldMax - oldMin) ) * (newMax - newMin) + newMin;
+		return newVal;
+	}
+	
+	public float scaleX(float x) {
+		return scale(x, 0, 1, xMin, xMax);
+	}
+	
+	public float scaleY(float y) {
+		return scale(y, 0, 1, yMin, yMax);
+	}
+	
+	public void setXRange(float min, float max) {
+		if (max < min) {
+			float temp = min;
+			min = max;
+			max = temp;
+		}
+		this.xMin = min;
+		this.xMax = max;
+	}
+	
+	public void setYRange(float min, float max) {
+		if (max < min) {
+			float temp = min;
+			min = max;
+			max = temp;
+		}
+		this.yMin = min;
+		this.yMax = max;
+	}
+	
+	public void setRange(String axis, float[] range) {
+		if (axis.toLowerCase().equals("x")) {
+			setXRange(range[0], range[1]);
+		} else if (axis.toLowerCase().equals("y")) {
+			setYRange(range[0], range[1]);
+		}
+	}
+	
+	public float[] getRange(String axis) {
+		float[] range = new float[2];
+		if (axis.toLowerCase().equals("x")) {
+			range[0] = xMin;
+			range[1] = xMax;
+		} else if (axis.toLowerCase().equals("y")) {
+			range[0] = yMin;
+			range[1] = yMax;
+		}
+		
+		return range;
+	}
+	
+	public void setxMin(float xMin) {
+		this.xMin = xMin;
+	}
+	public void setxMax(float xMax) {
+		this.xMax = xMax;
+	}
+	public void setyMin(float yMin) {
+		this.yMin = yMin;
+	}
+	public void setyMax(float yMax) {
+		this.yMax = yMax;
 	}
 
 	protected void paintKnob( Graphics2D g2, int cw, int ch )
@@ -168,7 +243,8 @@ extends AbstractMultiSlider
 			recentWidth		= cw;
 			recentHeight	= ch;
 		}
-		
+
+
 //		g2.setColor( getBackground() );
 //		g2.fillRect( 0, 0, getWidth(), getHeight() );
 //		g2.clearRect( 0, 0, getWidth(), getHeight() );
@@ -410,6 +486,11 @@ extends AbstractMultiSlider
 			for( int i = 0; i < numValues; i++ ) {
 				n = nodes[ i ];
 				if( n.selected ) {
+					
+					g2.setColor(Color.BLACK);
+					DecimalFormat df = new DecimalFormat("#.##");
+					g2.drawString(String.format("(%s, %s)", df.format(scaleX(n.x)), df.format(scaleY(n.y))), 
+							(int) n.r.getX(), (int) n.r.getY() - 2);
 					g2.setColor( selectionColor );
 					g2.fill( n.r );
 				} else {
@@ -449,8 +530,18 @@ extends AbstractMultiSlider
 			g2.setStroke( strkOrig );
 //			g2.setComposite( cmpOrig );
 		}
-		
 		g2.setClip( clipOrig );
+	}
+	
+	protected void paintLabels(Graphics2D g2, int cw, int ch) {
+		g2.setColor(Color.BLACK);
+		g2.drawString(String.valueOf(xMin), 0, ch);
+		g2.drawString(String.valueOf(xMax), cw - 25, ch);
+		g2.drawString(String.valueOf((xMax - xMin) / 2), cw / 2, ch);
+		
+		g2.drawString(String.valueOf(yMin), 0, ch - 10);
+		g2.drawString(String.valueOf(yMax), 0, 10);
+		g2.drawString(String.valueOf((yMax - yMin) / 2), 0, ch / 2);
 	}
 	
 	public void setClipThumbs( boolean onOff )
@@ -847,24 +938,50 @@ extends AbstractMultiSlider
 				
 		float[] xl = new float[nodes.length + 1];
 		float[] yl = new float[nodes.length + 1];
+		int[] shapes = new int[nodes.length + 1];
+		float[] curves = new float[nodes.length + 1];
 		
 		boolean added = false;
 		int addIdx = 0;
 		
+		Node n = null;
+		
 		for (int i = 0; i < nodes.length; i++) {
-			if (!added && nodes[i].x > x) {
+			
+			n = nodes[i];
+			
+			if (!added && n.x > x) {
 				xl[addIdx] = x;
 				yl[addIdx] = y;
+				
+				shapes[addIdx] = n.shape;
+				curves[addIdx] = n.curve;
+				
 				addIdx++;
 				added = true;
 			}
 			
-			xl[addIdx] = nodes[i].x;
-			yl[addIdx] = nodes[i].y;
+			xl[addIdx] = n.x;
+			yl[addIdx] = n.y;
+			
+			shapes[addIdx] = n.shape;
+			curves[addIdx] = n.curve;
 			addIdx++;
 		}
 		
-		setValues(xl, yl);
+		if (!added) {
+			xl[addIdx] = x;
+			yl[addIdx] = y;
+			
+			shapes[addIdx] = n.shape;
+			curves[addIdx] = n.curve;
+			
+			addIdx++;
+			added = true;
+		}
+		
+		setValues(xl, yl, shapes, curves);
+		
 
 	}
 	
@@ -881,10 +998,10 @@ extends AbstractMultiSlider
 
 	protected void dirty( Node n )
 	{
-		if( !n.dirty ) {
-			n.dirty = true;
-			dirtyNodes[ numDirty++ ] = n;
-		}
+//		if( !n.dirty ) {
+//			n.dirty = true;
+//			dirtyNodes[ numDirty++ ] = n;
+//		}
 	}
 	
 	/*
@@ -1030,16 +1147,22 @@ extends AbstractMultiSlider
 			shiftDrag		= e.isShiftDown();
 			dragRubber		= n == null;
 			
-			if (n == null) {
+			if (n == null && e.getClickCount() == 2) {
 				int w = recentWidth;
 				int h = recentHeight;
 				
 				float x = (float) dragFirstPt.x / (float) w;
 				float y = 1f - ( (float) dragFirstPt.y / (float) h);
 				addNode(x, y);
+			} else if (n != null) {
+				if (n.selected && e.getClickCount() == 2) {
+					removeNode(n);
+					repaint = true;
+					action = true;
+				}
 			}
 								
-			if( shiftDrag ) {
+			if( shiftDrag ) { // If shift dragging, 
 				if( dragRubber ) return;
 				n.selected	= !n.selected;
 				dirty( n );

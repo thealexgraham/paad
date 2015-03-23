@@ -8,6 +8,8 @@ import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import javax.swing.JProgressBar;
+
 import org.apache.commons.io.FileUtils;
 
 import net.alexgraham.thesis.App;
@@ -132,7 +134,7 @@ public class DataModel {
 	}
 	
 	
-	public void createExportRunFile() {
+	public boolean createExportRunFile() {
 		// Create a file with all defs for each instance written explicitly
 		String pluginName = "testpatch";
 		File fmodDirectory = new File("C:/Program Files (x86)/FMOD SoundSystem/FMOD Studio 1.04.04");
@@ -272,7 +274,8 @@ public class DataModel {
 				e.printStackTrace();
 			}
 		}
-		
+
+		return true;
 		// Copy necessary files into a folder
 	}
 //	

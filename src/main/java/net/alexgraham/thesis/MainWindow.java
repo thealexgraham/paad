@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -16,12 +18,15 @@ import java.util.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -35,8 +40,6 @@ import net.alexgraham.thesis.ui.components.FlashButton;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 
 public class MainWindow extends JFrame implements SCMessageListener {
 	JPanel mainPanel;
@@ -115,7 +118,6 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		bottomLeft.add(inFlasher);
 		bottomLeft.add(outFlasher);
 		
-		
 		bottomWrapper.add(bottomLeft);
 		bottomWrapper.add(bottomRight);
 		add(bottomWrapper, BorderLayout.PAGE_END);
@@ -160,7 +162,44 @@ public class MainWindow extends JFrame implements SCMessageListener {
 	}
 	
 	public void exportAction() {
-		App.data.createExportRunFile();
+		JDialog progressDialog = new JDialog(this, "Export Progress", true);
+		JProgressBar progressBar = new JProgressBar(0, 100);
+		progressBar.setIndeterminate(true);
+//		progressBar.setStringPainted(true);
+		
+		progressDialog.add(BorderLayout.CENTER, progressBar);
+		progressDialog.add(BorderLayout.NORTH, new JLabel("Exporting..."));
+		progressDialog.setSize(300, 75);
+		progressDialog.setLocationRelativeTo(this);
+//		progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		
+	    Thread t = new Thread(new Runnable() {
+	        public void run() {
+	          progressDialog.setVisible(true);
+
+	        }
+	      });
+	      t.start();
+	      
+		Thread export = new Thread(new Runnable() {
+		        public void run() {
+				boolean finished = App.data.createExportRunFile();
+				progressBar.setIndeterminate(false);
+				progressBar.setValue(100);
+				
+				if (finished) {
+					JOptionPane.showMessageDialog(MainWindow.this, "Export finished!");
+				} else {
+					JOptionPane.showMessageDialog(MainWindow.this, "Export failed.");
+				}
+
+		   	     progressDialog.dispose();
+
+		        }
+		      });
+		     export.start();
+
+
 	}
 	
 	public void consoleAction() {

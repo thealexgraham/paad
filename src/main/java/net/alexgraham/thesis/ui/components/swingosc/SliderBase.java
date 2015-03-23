@@ -178,7 +178,8 @@ implements FocusListener
 	public void paintComponent( Graphics g )
 	{
 //		super.paintComponent( g );
-		
+
+        
 		final Graphics2D		g2		= (Graphics2D) g;
 		final Insets			ins 	= getInsets();
 		final int				cw		= getWidth() - ins.left - ins.right;
@@ -187,6 +188,9 @@ implements FocusListener
 		final Shape         clipOrig	= g2.getClip();
 
         try {
+        	
+            paintLabels(g2, getWidth(), getHeight());
+        	
             g2.translate( ins.left, ins.top );
             if( backgroundPainted ) {
                 if( (bg != null) && (bg.getAlpha() > 0) ) {
@@ -213,14 +217,18 @@ implements FocusListener
                 g2.setColor( colrBdLRSh );
                 g2.drawLine( 1, 2, 1, ch - 2 );
                 g2.drawLine( cw - 2, 2, cw - 2, ch - 2 );
+                
+                
             }
+
             paintKnob( g2, cw, ch );
         } finally {
             g2.setTransform( atOrig );
             g2.setClip( clipOrig );
         }
 	}
-
+	protected abstract void paintLabels( Graphics2D g2, int w, int h );
+	
 	protected abstract void paintKnob( Graphics2D g2, int w, int h );
 
 //	 ---------------- FocusListener interface ----------------
