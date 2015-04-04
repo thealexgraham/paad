@@ -30,8 +30,8 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	
-	JPanel topPanel;
-	JPanel bottomPanel;
+	ConnectablePanel topPanel;
+	ConnectablePanel bottomPanel;
 	JPanel middlePanel;
 	JScrollPane scrollPane;
 	
@@ -90,14 +90,14 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 				
 		//Top Panel//
 		
-		topPanel = new JPanel(new FlowLayout());
+		topPanel = new ConnectablePanel();
+		topPanel.setLayout(new FlowLayout());
 		topLabel = new JLabel("Routine Player");
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
-		ConnectablePanel topConnectablePanel= new ConnectablePanel(Location.TOP, player.getConnector(ConnectorType.PATTERN_IN));
-		topPanel.add(topConnectablePanel);
-		this.addConnectablePanel(topConnectablePanel);
+		topPanel.addConnector(Location.TOP, player.getConnector(ConnectorType.PATTERN_IN));
+		this.addConnectablePanel(topPanel);
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
@@ -110,8 +110,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		
 		
 		//Bottom Panel//
-
-		bottomPanel = new JPanel(new FlowLayout());
+		bottomPanel = new ConnectablePanel(new FlowLayout());
 
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);
@@ -119,9 +118,8 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		bottomPanel.setBackground(Color.GRAY);
 		
 		// Create connectors //
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.BOTTOM, player.getConnector(ConnectorType.INST_PLAY_OUT));
-		bottomPanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
+		bottomPanel.addConnector(Location.BOTTOM, player.getConnector(ConnectorType.INST_PLAY_OUT));
+		this.addConnectablePanel(bottomPanel);
 
 
 		pane.add(topPanel, BorderLayout.NORTH);

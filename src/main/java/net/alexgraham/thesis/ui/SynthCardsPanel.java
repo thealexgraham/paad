@@ -2,6 +2,7 @@ package net.alexgraham.thesis.ui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.Hashtable;

@@ -2,7 +2,7 @@
 // A class that generates FMOD plugins to control SuperCollider synths
 
 JPluginBuilder {
-	*generateCode { |pluginName, params, builddir = false |
+	*generateCode { |pluginName, langPort, params, builddir = false |
 		var out, in, template, replace, blocks;
 		var batch;
 		var iterates, singles, chars;
@@ -69,6 +69,7 @@ JPluginBuilder {
 			final = final ++ code.replace("^^synth_name^^", pluginName.toUpper)
 			.replace("^^synth_name^", this.firstToUpper(pluginName))
 			.replace("^synth_name^", pluginName)
+			.replace("^lang_port^", langPort)
 			.replace("define", "#define"); // Because Im not very good at regex
 
 			blocks.add([position, final]);

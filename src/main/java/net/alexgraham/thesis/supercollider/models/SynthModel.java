@@ -137,6 +137,11 @@ public class SynthModel implements Serializable {
 				// step 1: load definitions of instances (Paralell)
 
 				for (Instance instance : getInstances()) {
+					
+					// Don't need to do this for routine player, since there's no definition
+					if (instance.getClass() == RoutinePlayer.class)
+						continue;
+					
 					definitionsSyncer.addStartAction(new SyncAction() {
 						@Override
 						public void doAction() {
@@ -160,10 +165,12 @@ public class SynthModel implements Serializable {
 		stepSync.addStep(new SyncAction() {
 			@Override
 			public void doAction() {
-				
 				for (Instance instance : getInstances()) {
+					
 					if (instance.getName().equals("Master"))
 						continue;
+					
+					instance.createNewID();
 					
 					// Start each synth in paralell					
 					startInstanceSyncer.addStartAction(new SyncAction() {
@@ -179,7 +186,7 @@ public class SynthModel implements Serializable {
 							}
 						}
 					});
-					startInstanceSyncer.addOSCListener(instance.getStartCommand() + "/ready");
+					startInstanceSyncer.addOSCListener(instance.getStartCommand() + "/done");
 				}
 				
 				// Begin starting the instances

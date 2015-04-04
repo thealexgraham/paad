@@ -108,7 +108,7 @@ public class Connector implements java.io.Serializable {
 		}
 		
 		if(AGHelper.allEquals(type, ConnectorType.PARAM_CHANGE_IN, ConnectorType.PARAM_CHANGE_OUT)) {
-			color = Color.BLUE;
+			color = Color.cyan;
 		}
 		
 		if(AGHelper.allEquals(type, ConnectorType.ACTION_IN, ConnectorType.ACTION_OUT)) {
@@ -117,6 +117,10 @@ public class Connector implements java.io.Serializable {
 		
 		if(AGHelper.allEquals(type, ConnectorType.PATTERN_IN, ConnectorType.PATTERN_OUT)) {
 			color = Color.MAGENTA;
+		}
+		
+		if (AGHelper.allEquals(type, ConnectorType.INST_PLAY_IN, ConnectorType.INST_PLAY_OUT)) {
+			color = Color.GREEN;
 		}
 		
 		return color;

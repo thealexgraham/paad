@@ -22,10 +22,9 @@ This example shows how to create a simple gain DSP effect.
 #include "../inc/fmod.hpp"
 
 #define ADDRESS "127.0.0.1"
-#define PORT 57120
 
 ///=============================
-%%%TOP_ROUTE%%%
+%%%CONST_DEFINES%%%
 ///=============================
 
 #define OUTPUT_BUFFER_SIZE 1024
@@ -65,8 +64,6 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamint  (FMOD_DSP_STATE *dsp_state, int index, int *value, char *valuestr);
 FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparambool (FMOD_DSP_STATE *dsp_state, int index, bool *value, char *valuestr);
 FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, int index, void **value, unsigned int *length, char *valuestr);
-FMOD_RESULT F_CALLBACK FMOD_Other_shouldiprocess  (FMOD_DSP_STATE *dsp_state, bool inputsidle, unsigned int length, FMOD_CHANNELMASK inmask, int inchannels, FMOD_SPEAKERMODE speakermode);
-
 
 /// ==========================
 %%%STATIC_PARAM_DESC%%%
@@ -104,7 +101,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
     0, // FMOD_Other_dspgetparamint,
     0, //FMOD_Other_dspgetparambool,
     0, // FMOD_Other_dspgetparamdata,
-    FMOD_Other_shouldiprocess,
+    0,
     0
 };
 
@@ -167,7 +164,7 @@ void FMODOtherState::setOSCID(int theID) {
 
 void FMODOtherState::process(float *inbuffer, float *outbuffer, unsigned int length, int channels)
 {
-
+	sendMsg("/process", 1);
 }
 
 void FMODOtherState::reset()
@@ -199,8 +196,8 @@ void FMODOtherState::sendParam(const char *addr, const char *param_name, const c
 
 void FMODOtherState::sendMsg(const char *addr, float value) {
 
-	std::string address = TOP_ROUTE;
-	address += addr;
+	//std::string address = TOP_ROUTE;
+	//address += addr;
 
 	UdpTransmitSocket transmitSocket( IpEndpointName( ADDRESS, PORT ) );
     
@@ -208,7 +205,7 @@ void FMODOtherState::sendMsg(const char *addr, float value) {
     osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
     
     p << osc::BeginBundleImmediate
-        << osc::BeginMessage( address.c_str() )
+        << osc::BeginMessage( addr )
             << value << osc::EndMessage
         << osc::EndBundle;
     
@@ -231,7 +228,9 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
 
     // Start the child process. 
     if( !CreateProcess( command,   // No module name (use command line)
-        " -d \"supercollider\" -l \"fmod/testpatch/sclang_conf.yaml\"",        // Command line
+        /// =====================================
+		%%%PROC_ARGS%%%
+		/// =====================================
         NULL,           // Process handle not inheritable
         NULL,           // Thread handle not inheritable
         FALSE,          // Set handle inheritance to FALSE
@@ -252,6 +251,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
 FMOD_RESULT F_CALLBACK FMOD_Other_dsprelease(FMOD_DSP_STATE *dsp_state)
 {
     FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
+	TerminateProcess(state->pi.hProcess, 1);
 	//state->sendMsg("/dying", state->osc_id());
     FMOD_DSP_STATE_MEMFREE(dsp_state, state, FMOD_MEMORY_NORMAL, "FMODOtherState");
     return FMOD_OK;
@@ -296,15 +296,4 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	}
 
     return FMOD_ERR_INVALID_PARAM;
-}
-
-FMOD_RESULT F_CALLBACK FMOD_Other_shouldiprocess(FMOD_DSP_STATE * /*dsp_state*/, bool inputsidle, unsigned int /*length*/, FMOD_CHANNELMASK /*inmask*/, int /*inchannels*/, FMOD_SPEAKERMODE /*speakermode*/)
-{
-    if (inputsidle)
-    {
-        //return FMOD_ERR_DSP_DONTPROCESS;
-		return FMOD_OK;
-    }
-
-    return FMOD_OK;
 }

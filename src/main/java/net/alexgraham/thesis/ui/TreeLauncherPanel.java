@@ -155,7 +155,6 @@ public class TreeLauncherPanel extends JPanel {
 		        for (int i = 0; i < tree.getRowCount(); i++) {
 		            tree.expandRow(i);
 		        }
-			
 			}
 		});
 		
@@ -165,6 +164,7 @@ public class TreeLauncherPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RoutinePlayer player = new RoutinePlayer();
+				player.setName("ThisPlayer");
 //				App.playerModel.addPlayer(player);
 				App.synthModel.addInstance(player);
 			}

@@ -69,6 +69,7 @@ public abstract class Instance implements Connectable, Serializable {
 
 	
 	public Instance() {
+		System.out.println("Creating new ID");
 		id = new SimpleID();
 	}
 	
@@ -363,6 +364,10 @@ public abstract class Instance implements Connectable, Serializable {
 	
 	public String getID() {
 		return id.toString();
+	}
+	
+	public void createNewID() {
+		id = new SimpleID();
 	}
 
 	public void setName(String name) {

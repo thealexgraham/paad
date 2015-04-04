@@ -53,12 +53,12 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 		App.data.setLineConnectPanel(lineConnect);
 		
 		JScrollPane scroller = new JScrollPane(lineConnect);
-		faderPanel = new FaderPanel();
+
 		
-		middleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroller, faderPanel);
+		//middleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroller, faderPanel);
 		
 		sideSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				synthSelector, middleSplitPane);
+				synthSelector, scroller);
 		
 		
 		sideSplitPane.setResizeWeight(0);
@@ -71,7 +71,11 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 		cardsPanel.setMaximumSize(new Dimension(160, 100));
 		lineConnect.addSynthSelectListener(cardsPanel);
 		
-		JSplitPane wholeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideSplitPane, cardsPanel);
+		faderPanel = new FaderPanel();
+		JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, cardsPanel, faderPanel);
+		rightSplitPane.setDividerLocation(600);
+		
+		JSplitPane wholeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideSplitPane, rightSplitPane);
 		wholeSplitPane.setResizeWeight(1);
 		wholeSplitPane.setDividerLocation(1000);
 		//add(sideSplitPane);
@@ -110,7 +114,7 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 			
 			faderAddSyncer.addOSCListener(masterFader.getStartCommand() + "/done");
 
-			for (int i = 1; i <= 4; i++) {
+			for (int i = 1; i <= 0; i++) {
 				Effect fader = new Effect(faderDef);
 				fader.setName("fader" + i);
 				faders.add(fader);
@@ -138,6 +142,8 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 					}
 					
 					faderPanel.setup(faders, masterFader);
+					faderPanel.revalidate();
+					faderPanel.repaint();
 //					lineConnect.addConnectablePanels(faderPanel.getConnectablePanels());
 				}
 			});

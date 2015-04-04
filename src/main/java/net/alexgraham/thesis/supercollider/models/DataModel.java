@@ -8,16 +8,13 @@ import java.io.OutputStreamWriter;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import javax.swing.JProgressBar;
-
-import org.apache.commons.io.FileUtils;
-
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.FileHelper;
 import net.alexgraham.thesis.supercollider.SaveHelper;
 import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
 import net.alexgraham.thesis.supercollider.synths.Instance;
+import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
@@ -26,6 +23,8 @@ import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.LineConnectPanel;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
+
+import org.apache.commons.io.FileUtils;
 
 public class DataModel {
 	
@@ -97,7 +96,7 @@ public class DataModel {
 	}
 	
 	public void loadData(File inFile) {
-		
+		System.out.println("Loading");
 		// Close all instances first
 		synthModel.closeInstances();
 		
@@ -123,6 +122,7 @@ public class DataModel {
 		refreshSyncer.addStep(new SyncAction() {
 			@Override
 			public void doAction() {
+				System.out.println("Connecting modules");
 				// Reconnect connections in SCLang
 				for (Connection connection : dataStore.getConnections()){
 					connection.connectModules();
@@ -134,13 +134,21 @@ public class DataModel {
 	}
 	
 	
-	public boolean createExportRunFile() {
+	public boolean createExportRunFile(String patchName) {
+		
+		int langPort = 57125; // Port where SCLang will start on (Should give option to set)
+		
 		// Create a file with all defs for each instance written explicitly
-		String pluginName = "testpatch";
+		String pluginName = patchName;
 		File fmodDirectory = new File("C:/Program Files (x86)/FMOD SoundSystem/FMOD Studio 1.04.04");
 		
-		File exportDirectory = new File(fmodDirectory.getAbsolutePath() + "/supercollider/fmod/" + pluginName);
+		// Directory where plugin will be exported
+		File exportDirectory = new File(fmodDirectory.getAbsolutePath() + "/supercollider/fmod/" + pluginName); 
+		
+		// Directory where plugin build tools are found
 		File pluginBuilderDirectory = new File(FileHelper.getSCCodeDir() + "/pluginbuilder");
+		
+		// Make the export directory if it isn't found
 		exportDirectory.mkdirs();
 				
 		File fout = null;
@@ -148,8 +156,7 @@ public class DataModel {
 		BufferedWriter bw = null;
 		
 		try {
-			// Create file with server run
-			
+			// Copy the startup file to the plugin directory
 			File pluginFile = new File(pluginBuilderDirectory.getAbsolutePath() + "/startup.scd");
 			FileUtils.copyFile(pluginFile, new File(exportDirectory.getAbsolutePath() + "/startup.scd"));
 			
@@ -188,11 +195,20 @@ public class DataModel {
 				connection.connectModules();
 			}
 			
+			for (Instance instance : synthModel.getInstances()) {
+				if (instance.getClass() == RoutinePlayer.class) {
+					((RoutinePlayer) instance).sendPlay();
+				}
+			}
+			
 			// Go back to sending OSC Messages
 			App.sc.stopExportWriting();
 			
 			bw.write(")");
 			bw.close();
+			
+			FileHelper.openIde(fout);
+			
 			fos.close();
 			
 			
@@ -241,11 +257,12 @@ public class DataModel {
 				fos = new FileOutputStream(buildSCCode);
 				bw = new BufferedWriter(new OutputStreamWriter(fos));
 				
-				writePluginBuilderFile(bw, pluginBuilderDirectory, exportGroup);
+				writePluginBuilderFile(bw, pluginBuilderDirectory, pluginName, langPort, exportGroup);
 				
 				bw.close();
 							
 				FileHelper.openIde(buildSCCode);
+				
 				// Read it into supercollider
 				App.sc.sendCommand("\"" + buildSCCode.getAbsolutePath().replace("\\", "/") + "\"" + ".load.postln");
 				// Wait to finish?
@@ -263,9 +280,9 @@ public class DataModel {
 				}
 				
 				// Copy the plugin to the export folder TODO: Make it not platform specific
-				File pluginFile = new File(pluginBuilderDirectory.getAbsolutePath() + "/plugins/SC-" + exportGroup.getName() + ".dll");
+				File pluginFile = new File(pluginBuilderDirectory.getAbsolutePath() + "/plugins/SC-" + pluginName + ".dll");
 				FileUtils.copyFile(pluginFile, new File(exportDirectory.getAbsolutePath() + "/plugins/" + pluginFile.getName()));
-				
+				buildSCCode.delete();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -284,10 +301,11 @@ public class DataModel {
 //		replaceFileString.
 //	}
 	
-	public void writePluginBuilderFile(BufferedWriter bw, File pluginBuilderDirectory, ParamGroup group) {
+	public void writePluginBuilderFile(BufferedWriter bw, File pluginBuilderDirectory, String pluginName, int langPort, ParamGroup group) {
 		try {
 			bw.write("JPluginBuilder.generateCode(");
-			bw.write("\"" + group.getName() + "\",");
+			bw.write("\"" + pluginName + "\","); // or group.getName()
+			bw.write(" " + langPort + ",");
 			bw.newLine();
 
 			bw.write("\t[\n");

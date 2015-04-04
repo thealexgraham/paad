@@ -3,6 +3,7 @@ package net.alexgraham.thesis;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 
@@ -38,6 +39,8 @@ public class App
 	public static MainWindow mainWindow;
 	
 	public static DataModel data;
+	
+	public static Preferences prefs = Preferences.systemRoot().node("net.alexgraham.thesis.App");
 	
     public static void main( String[] args ) throws IOException
     {

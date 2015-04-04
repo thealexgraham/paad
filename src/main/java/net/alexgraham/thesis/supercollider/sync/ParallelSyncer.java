@@ -30,6 +30,7 @@ public class ParallelSyncer extends Syncer{
 		addOSCListener(address, null);
 	}
 	public void addOSCListener(String address, SyncAction finishAction) {
+		System.out.println("Adding a sync step with address " + address);
 		// Add this listener to the queue
 		addListener();
 		

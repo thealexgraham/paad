@@ -1,21 +1,22 @@
 package net.alexgraham.thesis.ui.modules;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import net.alexgraham.thesis.supercollider.synths.Instrument;
-import net.alexgraham.thesis.ui.components.Dial;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
@@ -23,116 +24,98 @@ import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class InstrumentModule extends ModulePanel {
-
-	private Instrument instrument;
-
+	
+	private Instrument synth;
+	
 	// Components
 	private JLabel nameLabel;
 	private JLabel synthdefLabel;
 	private JLabel idLabel;
 	private DialD ampDial;
 	private DialD panDial;
-
+    
 	private JButton closeButton;
+	
+	ConnectablePanel topPanel;
+	ConnectablePanel bottomPanel;
+	JPanel middlePanel;
+	JScrollPane scrollPane;
+    
 
-	public InstrumentModule(int width, int height, Instrument instrument) {
-		super(width, height, instrument);
-
-		this.instrument = instrument;
-
-		nameLabel = new JLabel(instrument.getName());
-		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
-
-		synthdefLabel = new JLabel(instrument.getSynthName());
-		idLabel = new JLabel(instrument.getID());
-
-		closeButton = new JButton("X");
-
-		closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				instrument.close();
-			}
-		});
-
-		ampDial = new DialD((BoundedRangeModel) instrument.getModelForParameterName("gain"));
-		ampDial.setBehavior(Dial.Behavior.NORMAL);
-		ampDial.setName("Gain");
-
-		panDial = new DialD((BoundedRangeModel) instrument.getModelForParameterName("pan"));
-		panDial.setBehavior(Dial.Behavior.CENTER);
-		panDial.setName("Pan");
+	public InstrumentModule(int width, int height, Instrument synth) {
+		super(width, height);
+		
+		this.synth = synth;
 
 		setupWindow(this.getInterior());
+		
+		// Resize based on innards
+		setSize(getPreferredSize());
+		validate();
 	}
-
+	
 	public Instrument getInstrument() {
-		return instrument;
+		return synth;
 	}
-
+	
 	@Override
 	public void removeSelf() {
-
+		
 		super.removeSelf();
-		instrument.close();
+		synth.close();
 	}
-
+	
 	public void setupWindow(Container pane) {
+		//pane.setSize(300, 150);
+		pane.setLayout(new BorderLayout());
+				
+		//Top Panel//
+		
+		topPanel = new ConnectablePanel(new FlowLayout());
+		
+		JLabel topLabel = new JLabel(synth.getName());
+		topLabel.setForeground(Color.WHITE);
+		topPanel.add(topLabel);
+		
+		topPanel.addConnector(Location.TOP, synth.getConnector(ConnectorType.INST_PLAY_IN));
+		this.addConnectablePanel(topPanel);
+		
+		//Middle Panel//
+		middlePanel = new JPanel();
+		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
-		pane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+		addParameters();
+		//scrollPane = new JScrollPane(middlePanel);
+		
+		
+		//Bottom Panel//
 
-		c.fill = GridBagConstraints.BOTH;
+		bottomPanel = new ConnectablePanel(new FlowLayout());
 
-		ConnectablePanel topConnectable = new ConnectablePanel(Location.TOP,
-				instrument.getConnector(ConnectorType.INST_PLAY_IN));
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weighty = 0;
-		c.gridy = 0;
-		c.gridx = 1;
-		topConnectable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		pane.add(topConnectable, c);
-		addConnectablePanel(topConnectable);
+		// Set up panels //
+		topPanel.setBackground(Color.DARK_GRAY);
 
-		JPanel titlePanel = new JPanel();
-		// testPanel.setLayout(new GridLayout(1, 1));
-		JLabel titleLabel = new JLabel(this.instrument.getSynthName());
+		bottomPanel.setBackground(Color.GRAY);
+		
+		bottomPanel.addConnector(Location.BOTTOM, synth.getConnector(ConnectorType.AUDIO_OUTPUT));
+		this.addConnectablePanel(bottomPanel);
 
-		titlePanel.add(titleLabel);
-		titlePanel.setBackground(Color.LIGHT_GRAY);
-		titlePanel.setOpaque(true);
-		// testPanel.setAlignmentX(0.5f);
+		pane.add(topPanel, BorderLayout.NORTH);
+		pane.add(middlePanel, BorderLayout.CENTER);
+		pane.add(bottomPanel, BorderLayout.SOUTH);	
 
-		c.fill = GridBagConstraints.BOTH;
-		c.gridwidth = 3;
-		c.weighty = 0.5;
-		c.weightx = 1;
-		c.gridx = 0;
-		c.gridy = 1;
-		pane.add(titlePanel, c);
-
-		// Add amp dials
-		c.gridwidth = 1;
-		c.gridy = 2;
-		c.gridx = 0;
-		c.weightx = 0.5;
-		pane.add(ampDial, c);
-
-		c.gridy = 2;
-		c.gridx = 2;
-		c.weightx = 0.5;
-		pane.add(panDial, c);
-
-		ConnectablePanel bottomConnectable = new ConnectablePanel(
-				Location.BOTTOM, instrument.getConnector(ConnectorType.AUDIO_OUTPUT));
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridwidth = 3;
-		c.weighty = 1;
-		c.gridy = 3;
-		c.gridx = 1;
-		pane.add(bottomConnectable, c);
-		addConnectablePanel(bottomConnectable);
-
+		setSize(getPreferredSize());
+		validate();
+		
 	}
-
+	public void addParameters() {
+		for (ParamModel paramModel : synth.getParamModels()) {
+			if (paramModel.getClass() == DoubleParamModel.class) {
+				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+			}
+		}
+	}
+   
 }
+

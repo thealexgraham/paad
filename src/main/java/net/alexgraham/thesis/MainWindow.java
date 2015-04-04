@@ -31,6 +31,8 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.io.FilenameUtils;
+
 import net.alexgraham.thesis.supercollider.SCLang.SCConsoleListener;
 import net.alexgraham.thesis.supercollider.SCLang.SCLangProperties;
 import net.alexgraham.thesis.supercollider.SCLang.SCMessageListener;
@@ -53,12 +55,16 @@ public class MainWindow extends JFrame implements SCMessageListener {
 	FlashButton inFlasher;
 	FlashButton outFlasher;
 	
+	String patchName = "Untitled";
+	
 	final int FLASH_LENGTH = 150;
 	
 	public MainWindow() throws SocketException {
 		setSize(1280, 800);
 		setLayout(new BorderLayout());
 		createConsoleDialog();
+		
+		this.setTitle(patchName);
 		
 		splitLayout = new MainSplitLayout();
 		add(splitLayout, BorderLayout.CENTER);
@@ -139,6 +145,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		File file = SaveHelper.chooseFile("Save");
 		if (file != null) {
 			App.data.saveData(file);
+			patchName = FilenameUtils.removeExtension(file.getName());
 			this.setTitle(file.getName());
 		}
 
@@ -148,6 +155,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		File file = SaveHelper.chooseFile("Load");
 		if (file != null) {
 			App.data.loadData(file);
+			patchName = FilenameUtils.removeExtension(file.getName());
 			this.setTitle(file.getName());
 		}
 	}
@@ -162,6 +170,11 @@ public class MainWindow extends JFrame implements SCMessageListener {
 	}
 	
 	public void exportAction() {
+		
+		if (patchName == "Untitled") {
+			saveAction();
+		}
+		
 		JDialog progressDialog = new JDialog(this, "Export Progress", true);
 		JProgressBar progressBar = new JProgressBar(0, 100);
 		progressBar.setIndeterminate(true);
@@ -171,7 +184,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		progressDialog.add(BorderLayout.NORTH, new JLabel("Exporting..."));
 		progressDialog.setSize(300, 75);
 		progressDialog.setLocationRelativeTo(this);
-//		progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		
 	    Thread t = new Thread(new Runnable() {
 	        public void run() {
@@ -183,7 +196,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 	      
 		Thread export = new Thread(new Runnable() {
 		        public void run() {
-				boolean finished = App.data.createExportRunFile();
+				boolean finished = App.data.createExportRunFile(patchName);
 				progressBar.setIndeterminate(false);
 				progressBar.setValue(100);
 				

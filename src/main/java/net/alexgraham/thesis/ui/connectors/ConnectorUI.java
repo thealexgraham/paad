@@ -8,8 +8,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 
 import javax.swing.SwingUtilities;
+
+import com.sun.swing.internal.plaf.metal.resources.metal;
 
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.ui.components.TriangleShape;
@@ -73,37 +76,50 @@ public class ConnectorUI implements java.io.Serializable {
 	
 	public Point getCurrentPosition() {
 		Point location = null;
-		Point ownerLocation = owner.getLocation();
-		Dimension ownerSize = owner.getSize();
 
-		Container parent = owner;
-		while (parent.getClass() != LineConnectPanel.class) {
-			parent = parent.getParent();
+		
+		try {
+			Point ownerLocation = owner.getLocation();
+			Dimension ownerSize = owner.getSize();
+			Container parent = owner;
+			
+			
+			
+			while (parent.getClass() != LineConnectPanel.class) {
+				parent = parent.getParent();
+				if (parent == null) {
+					return new Point(0,0);
+				}
+			}
+			
+			
+			ownerLocation = SwingUtilities.convertPoint(owner.getParent(),
+					ownerLocation,
+					parent);
+
+			switch (drawLocation) {
+				case RIGHT:
+					location = new Point(ownerLocation.x + owner.getSize().width,
+							ownerLocation.y + owner.getSize().height / 2);
+					break;
+				case LEFT:
+					location = new Point(ownerLocation.x,
+							ownerLocation.y + owner.getSize().height / 2);
+					break;
+				case BOTTOM:
+					location = new Point(ownerLocation.x + (ownerSize.width / 2), ownerLocation.y + owner.getSize().height);
+					break;
+				case TOP:
+					location = new Point(ownerLocation.x + (ownerSize.width / 2), ownerLocation.y);
+					break;
+				default:
+					break;
+			}
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			return new Point(0,0);
 		}
 		
-		
-		ownerLocation = SwingUtilities.convertPoint(owner.getParent(),
-				ownerLocation,
-				parent);
-
-		switch (drawLocation) {
-			case RIGHT:
-				location = new Point(ownerLocation.x + owner.getSize().width,
-						ownerLocation.y + owner.getSize().height / 2);
-				break;
-			case LEFT:
-				location = new Point(ownerLocation.x,
-						ownerLocation.y + owner.getSize().height / 2);
-				break;
-			case BOTTOM:
-				location = new Point(ownerLocation.x + (ownerSize.width / 2), ownerLocation.y + owner.getSize().height);
-				break;
-			case TOP:
-				location = new Point(ownerLocation.x + (ownerSize.width / 2), ownerLocation.y);
-				break;
-			default:
-				break;
-		}
 
 		return location;
 	}
@@ -112,29 +128,47 @@ public class ConnectorUI implements java.io.Serializable {
 		Point currentPositon = getCurrentPosition();
 		Point location = null;
 		
-		switch (drawLocation) {
-			case RIGHT:
-				location = new Point(currentPositon.x + width / 2, currentPositon.y);
-				break;
-			case LEFT:
-				location = new Point(currentPositon.x + width, currentPositon.y);
-				break;
-			case BOTTOM:
-				location = new Point(currentPositon.x, currentPositon.y + height / 2);
-				break;
-			case TOP:
-				location = new Point(currentPositon.x, currentPositon.y - height / 2);
-				break;
-			default:
-				return new Point(currentPositon.x + width / 2, currentPositon.y
-						+ height / 2);
-		}
+		TriangleShape triangle = getCurrentTriangle();
+		Rectangle boundRect = triangle.getTranslatedBounds();
+		location = new Point((int)boundRect.getCenterX(), (int)boundRect.getCenterY());
+		
+
+		
+		return location;
+	}
+	
+	public Point getCurrentOutside() {
+		Point location = null;
 		
 		TriangleShape triangle = getCurrentTriangle();
 		Rectangle boundRect = triangle.getTranslatedBounds();
 		location = new Point((int)boundRect.getCenterX(), (int)boundRect.getCenterY());
 		
+		switch (drawLocation) {
+			case RIGHT:
+				location = new Point(location.x + width / 2, location.y);
+				break;
+			case LEFT:
+				location = new Point(location.x - width / 2, location.y);
+				break;
+			case BOTTOM:
+				location = new Point(location.x, location.y + height / 2);
+				break;
+			case TOP:
+				location = new Point(location.x, location.y - height / 2);
+				break;
+			default:
+				break;
+		}
+		
 		return location;
+	}
+	
+	public Point getCurrentApex() {
+		Point apex = null;
+		TriangleShape triangle = getCurrentTriangle();
+		
+		return triangle.getApex();
 	}
 	
 	public int getRotationFromLocation() {
@@ -172,8 +206,10 @@ public class ConnectorUI implements java.io.Serializable {
 	public void drawSelf(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
 		if (hovered) {
-			g2.setStroke(new BasicStroke(2));
+			g2.setStroke(new BasicStroke(3));
 		} else {
 			g2.setStroke(new BasicStroke(1));
 		}
@@ -184,8 +220,14 @@ public class ConnectorUI implements java.io.Serializable {
 		g2.setColor(getColor());
 		
 		TriangleShape triangle = new TriangleShape(currentPosition, getTriangleOrigin(), getRotationFromLocation(), width, height);
-		triangle.draw(g2);
-	
+		triangle.fill(g2);
+		
+		if (hovered) {
+			g2.setColor(getColor().brighter());
+			triangle.draw(g2);
+		}
+
+		
 //		g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);	
 	}
 

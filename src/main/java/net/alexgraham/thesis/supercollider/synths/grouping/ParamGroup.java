@@ -1,6 +1,7 @@
 package net.alexgraham.thesis.supercollider.synths.grouping;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,7 +10,7 @@ import java.util.Set;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 
 
-public class ParamGroup {
+public class ParamGroup implements Serializable {
 	private String name;
 	private List<ParamModel> params = new ArrayList<ParamModel>();
 	private Color groupColor;

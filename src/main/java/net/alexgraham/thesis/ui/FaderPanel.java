@@ -31,13 +31,22 @@ public class FaderPanel extends JPanel {
 	
 	public void setup(ArrayList<Effect> faders, Effect master) {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		
+		System.out.println("Setting up");
 		for (Effect fader : faders) {
 			add(createPanelForFader(fader));
 		}
 		
 		add(Box.createHorizontalStrut(15));
 		add(createPanelForFader(master));
+	}
+	
+	public void setup(Effect master) {
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		System.out.println("Setting up");
+		add(createPanelForFader(master));
+		
+		repaint();
+		revalidate();
 	}
 	
 	public JPanel createPanelForFader(Effect fader) {

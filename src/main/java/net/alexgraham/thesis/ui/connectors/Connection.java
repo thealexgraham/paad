@@ -30,7 +30,7 @@ public class Connection implements java.io.Serializable {
 			return new Line2D.Float();
 		}
 		// Draw the line between them
-		return new Line2D.Float(closest[0].getCurrentCenter(), closest[1].getCurrentCenter()); 
+		return new Line2D.Float(closest[0].getCurrentOutside(), closest[1].getCurrentOutside()); 
 	}
 		
 	public Connection(Connector origin, Connector destination) {

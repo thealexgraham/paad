@@ -85,7 +85,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public LineConnectPanel() {
 		
 		setOpaque(true);
-		setBackground(Color.LIGHT_GRAY.brighter());
+		setBackground(Color.DARK_GRAY.darker());
 		setLayout(null);
 		
 		// Set able to be focusable for key clicks
@@ -350,11 +350,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
-		super.paintComponent(g);
-		g2.setStroke(new BasicStroke(0));
-		g.drawString("This is my custom Panel!", 10, 20);
-			
-		
+		super.paintComponent(g);	
 	}
 	
 	@Override
@@ -390,7 +386,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 				g2.setStroke(new BasicStroke(3));
 			else
 				g2.setStroke(new BasicStroke(1));
-			
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2.draw(line);
 			g2.setStroke(new BasicStroke(1));
 		}
@@ -435,8 +431,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		} else if (instance.getClass() == Instrument.class) {
 			
 			module = new InstrumentModule(100, 100, (Instrument) instance);
-			module.setPreferredSize(new Dimension(75, 100));
-			module.setSize(new Dimension(100, 75));
+//			module.setPreferredSize(new Dimension(75, 100));
+//			module.setSize(new Dimension(100, 75));
 		
 		} else if (instance.getClass() == Effect.class) {
 			module = new EffectModule(100, 300, (Effect) instance);

@@ -1,23 +1,13 @@
 package net.alexgraham.thesis.supercollider.synths;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.BoundedRangeModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
-import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
-import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
-import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 

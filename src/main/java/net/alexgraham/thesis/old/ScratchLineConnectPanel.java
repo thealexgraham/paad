@@ -70,7 +70,7 @@ public class ScratchLineConnectPanel extends JPanel implements SynthModelListene
 	public ScratchLineConnectPanel() {
 		
 		setOpaque(true);
-		setBackground(Color.WHITE);
+		setBackground(Color.DARK_GRAY);
 		setLayout(null);
 		
 		// Set able to be focusable for key clicks
@@ -372,8 +372,6 @@ public class ScratchLineConnectPanel extends JPanel implements SynthModelListene
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
 		super.paintComponent(g);
-		g2.setStroke(new BasicStroke(0));
-		g.drawString("This is my custom Panel!", 10, 20);
 			
 		
 	}

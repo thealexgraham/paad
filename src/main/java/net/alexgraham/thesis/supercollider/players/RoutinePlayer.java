@@ -3,10 +3,12 @@ package net.alexgraham.thesis.supercollider.players;
 import java.io.Serializable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
+import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
@@ -43,11 +45,19 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		init();
 	}
 	
+	public RoutinePlayer(Def def) {
+		super(def);
+		init();
+	}
 	public void start() {
 		App.sc.sendMessage("/routplayer/add", getID());
 	}
 	
 	public void init() {
+		startCommand = "/routplayer/add";
+		paramChangeCommand = "/routplayer/paramc";
+		closeCommand = "/routplayer/remove";
+		
 		addConnector(ConnectorType.ACTION_OUT);
 		addConnector(ConnectorType.INST_PLAY_OUT);
 		addConnector(ConnectorType.PATTERN_IN);
@@ -125,9 +135,13 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		}
 	}
 	
+	public void sendPlay() {
+		App.sc.sendMessage("/routplayer/play", this.id.toString());
+	}
+	
 	public void play() {
 		if (canPlay() && !playing) {
-			App.sc.sendMessage("/routplayer/play", this.id.toString());
+			sendPlay();
 			playing = true;
 			playStateChange();
 		}

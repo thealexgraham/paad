@@ -15,6 +15,11 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class DataStore implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private DefaultListModel<Instance> synthListModel = new DefaultListModel<Instance>();
 	private CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();	
 	private Hashtable<String, Def> defTable = new Hashtable<String, Def>();
