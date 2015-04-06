@@ -20,6 +20,7 @@ import javax.swing.JSpinner;
 
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel.ChoiceChangeListener;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.IntParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
@@ -162,6 +163,13 @@ public class PatternGenModule extends ModulePanel {
 				ChoiceParamModel model = (ChoiceParamModel) baseModel;
 				JLabel paramNameLabel = new JLabel(model.getName());
 				JLabel paramValueLabel = new JLabel(model.getChoiceName());
+				
+				model.addChoiceChangeListener(new ChoiceChangeListener() {
+					@Override
+					public void choiceChanged(String newChoice) {
+						paramValueLabel.setText(newChoice);
+					}
+				});
 				
 				leftPanel.add(paramNameLabel);
 				rightPanel.add(paramValueLabel);

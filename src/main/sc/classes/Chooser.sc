@@ -4,7 +4,7 @@ Chooser {
 	var listeners; // Should be ChoiceParams
 
 	*new { |newChoices|
-		super.new.init(newChoices);
+		^super.new.init(newChoices);
 	}
 
 	init { |newChoices|
@@ -15,6 +15,7 @@ Chooser {
 	}
 
 	addListener { |obj|
+		"Adding listener".postln;
 		listeners.add(obj);
 		// Update the param choice now
 		this.updateParamChoice(obj);
@@ -30,11 +31,13 @@ Chooser {
 	}
 
 	getCurrentChoice {
+		choices.postln;
 		^choices[choiceIndex];
 	}
 
 	updateListeners {
 		listeners.do({ |item, i|
+			"Updating listener".postln;
 			this.updateParamChoice(item);
 		});
 	}

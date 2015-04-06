@@ -16,12 +16,14 @@ import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
 import net.alexgraham.thesis.supercollider.sync.Syncer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
+import net.alexgraham.thesis.supercollider.synths.Chooser;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
+import net.alexgraham.thesis.supercollider.synths.defs.ChooserDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
@@ -236,6 +238,9 @@ public class SynthModel implements Serializable {
 				break;
 			case "patternGen":
 				instance = new PatternGen(def);
+				break;
+			case "chooser":
+				instance = new Chooser(def);
 				break;
 			default:
 				break;

@@ -10,7 +10,7 @@
 		);
 	}
 
-	getChooserDefs { |name|
+	getChooserDef { |name|
 		^this.chooserDefs.at(name.asSymbol);
 	}
 
@@ -24,17 +24,7 @@
 	newChooser { |chooserName, choices|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 
-		// Get chooser ready in Java
-		net.sendMsg("/chooserdef/add", chooserName);
-
-		// Should we wait for callback?
-		choices.do({ |item, i|
-			var choiceName = item[0];
-			var choiceArray = item[1]; //lets assume it is a single dimension array for now
-			// Create the message as a list
-			var message = choiceArray.insert(0, choiceName).insert(0, chooserName).insert(0, "/chooserdef/param");
-			net.sendBundle(0, message);
-		});
+		this.newChooserDef(chooserName, choices);
 
 		// Store the definition
 		this.putChooserDef(chooserName, (choices: choices));
@@ -42,6 +32,23 @@
 		// Create the storage
 		this.setupTypeStorage(chooserName);
 		net.sendMsg("/def/ready/"++chooserName, 1);
+	}
+
+	newChooserDef { |defName, function|
+		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
+		var message = ["/def/add/chooser", defName, \chooser];
+		var choices = function.value; // Array of choices is what the function returns
+		message = message.add(function.def.sourceCode); // Function source code for editing later
+
+		// Go through the choices and add them to the message
+		choices.do({ |item, i|
+			var choiceName = item[0].asString; // First is the name of the choice
+			message.add(choiceName);
+			// Possibly add the actual value, but we won't do that for now
+		});
+
+		net.sendBundle(0, message);
+		^("Chooser Definition Added");
 	}
 
 	/* createchooserListeners
@@ -58,10 +65,10 @@
 			var chooserDef, chooser;
 
 			"Adding chooser".postln;
-			chooserDef = this.getchooserDef(chooserName);
+			chooserDef = this.getChooserDef(chooserName);
 
 			// Create the actual object
-			chooser = chooser.new(chooserDef.at(\choices));
+			chooser = Chooser.new(chooserDef.at(\choices).value); // choices is a funciton
 
 			// Store the object
 			chooserName.idPut(id, chooser);
@@ -84,6 +91,7 @@
 			// Set float1
 			var name = msg[1], id = msg[2], index = msg[3];
 			// Set the value on the pattern object
+			name.idGet(id).postln;
 			name.idGet(id).choose(index);
 		});
 
@@ -101,7 +109,7 @@
 			chooser = cName.idGet(cId);
 
 			// Get the actual parameter object
-			parameter = ownerName.idGet(ownerId).at(paramName);
+			parameter = ownerName.idGet(ownerId).paramAt(paramName);
 
 			// Tell the change func to listen for this parameter
 			chooser.addListener(parameter);

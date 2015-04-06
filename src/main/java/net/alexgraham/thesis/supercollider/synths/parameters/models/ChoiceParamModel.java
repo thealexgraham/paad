@@ -4,10 +4,18 @@ import java.io.Serializable;
 import java.security.acl.Owner;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.ChangeListener;
 
+import com.illposed.osc.OSCListener;
+import com.illposed.osc.OSCMessage;
+
+import net.alexgraham.thesis.AGHelper;
+import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.Param;
@@ -18,6 +26,9 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 
+	public interface ChoiceChangeListener {
+		public void choiceChanged(String newChoice);
+	}
 	private Instance owner;
 	private String name;
 	
@@ -25,6 +36,8 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	public Object[] choiceArray;
 	
 	private ParamGroup exportGroup = null;
+	
+	private CopyOnWriteArrayList<ChoiceChangeListener> listeners = new CopyOnWriteArrayList<ChoiceParamModel.ChoiceChangeListener>();
 
 	public ChoiceParamModel(String choiceName, Object[] choiceArray) {
 		this.choiceName = choiceName;
@@ -50,6 +63,16 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 		//
 	}
 	
+	public void addChoiceChangeListener(ChoiceChangeListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void fireChoiceChangeUpdate() {
+		for (ChoiceChangeListener listener : listeners) {
+			listener.choiceChanged(this.choiceName);
+		}
+	}
+	
 	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
 	public Connector getConnector(ConnectorType type) {
 		return connectors.get(type); //TODO: might not be the best way to do this
@@ -69,11 +92,29 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 		return choiceName;
 	}
 	
+	public void setChoiceName(String choiceName) {
+		this.choiceName = choiceName;
+		fireChoiceChangeUpdate();
+	}
+	
 	public Instance getOwner() {
 		return this.owner;
 	}
 	public void setOwner(Instance owner) {
 		this.owner = owner;
+		
+		App.sc.createListener("/" + owner.getID() + "/" + this.getName() + "/change", new OSCListener() {
+			
+			@Override
+			public void acceptMessage(Date time, OSCMessage message) {
+				// TODO Auto-generated method stub
+				System.out.println("Getting a message");
+    			List<Object> arguments = message.getArguments();
+    			final String newValue = (String) arguments.get(0);
+   				setChoiceName(newValue);;
+			}
+		});
+		
 	}
 	public String getName() {
 		return name;

@@ -1,4 +1,5 @@
 (
+~vols = [0,1,0];
 SynthDef(\envtest, {
 	var sig, env, trig, freqy;
 	freqy = 440;
@@ -12,7 +13,7 @@ SynthDef(\envtest, {
 
 )
 (
-
+~vols = [0,0.2,0];
 Synth(\envtest, [\freqy, 440]);
 )
 

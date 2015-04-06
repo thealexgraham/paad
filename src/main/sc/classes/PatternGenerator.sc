@@ -29,7 +29,9 @@ PatternGenerator {
 				\choice, {
 					var choiceName = item[2][0];
 					var value = item[2][1];
-					argsDict.put(name, ChoiceParam.new(name, choiceName, value));
+					var choiceParam = ChoiceParam.new(name, choiceName, value);
+					argsDict.put(name, choiceParam);
+					choiceParam.ownerId = id;
 				},
 				{
 					var min = item[2];

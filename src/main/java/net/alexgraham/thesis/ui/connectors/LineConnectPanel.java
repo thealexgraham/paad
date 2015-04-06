@@ -31,6 +31,7 @@ import net.alexgraham.thesis.supercollider.models.PlayerModel.PlayerModelListene
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
+import net.alexgraham.thesis.supercollider.synths.Chooser;
 import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
@@ -38,6 +39,7 @@ import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.tests.demos.simplemvc.Model;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
+import net.alexgraham.thesis.ui.modules.ChooserModule;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.PatternGenModule;
@@ -442,6 +444,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			module = new PatternGenModule(100, 300, (PatternGen) instance);
 		} else if (instance.getClass() == RoutinePlayer.class){
 			module = new RoutinePlayerModule((RoutinePlayer) instance);
+		} else if (instance.getClass() == Chooser.class){
+			module = new ChooserModule(100, 300, (Chooser)instance); 
 		} else {
 			System.err.println("No module for class");
 			return;

@@ -12,6 +12,7 @@ import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.Messenger;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
+import net.alexgraham.thesis.supercollider.synths.defs.ChooserDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
@@ -101,7 +102,157 @@ public class DefModel implements Messenger {
 		
 	}
 	
+	public ArrayList<Object> parseChoiceList(String choices) {
+		ArrayList<Object> currentList = new ArrayList<Object>();
+		// go to next character
+		// Everything to next comma is the entry (unless there is an open [
+		// open [ is a new ArrayList
+		
+		
+		return null;
+		
+	}
+	
 	public void createListeners() throws SocketException {
+    	
+    	OSCListener fullDefListener = new OSCListener() {
+    		public void acceptMessage(java.util.Date time, OSCMessage message) {
+
+    			LinkedList<Object> arguments = new LinkedList<Object>();
+    			arguments.addAll(message.getArguments());
+    			
+    			final String defName = (String) arguments.removeFirst();
+    			final String type = (String) arguments.removeFirst();
+    			
+    			Def def = addNewDef(defName, type);
+    			
+    			final String functionString = (String) arguments.removeFirst();
+    			def.setFunctionString(functionString);
+    			
+    			while (!arguments.isEmpty()) {
+    				// While there are still parameters to add
+    				
+        			final String paramName = (String) arguments.removeFirst();
+        			final String paramType = (String) arguments.removeFirst();
+
+        			switch (paramType) {
+        				case "int":
+        	    			final int intMin = AGHelper.convertToInt(arguments.removeFirst());
+        	    			final int intMax = AGHelper.convertToInt(arguments.removeFirst());
+        	    			final int intValue = AGHelper.convertToInt(arguments.removeFirst());
+        	    			def.addParameter(paramName, intMin, intMax, intValue);
+        	    			break;
+        				case "choice":
+        					final String choiceName = (String) arguments.removeFirst();
+        					final int choiceListSize = (int) arguments.removeFirst();
+        					
+        					final Object[] choiceArray = new Object[choiceListSize];
+        					
+        					// The rest of the arguments should be the array
+        					// Can probaably check how long this is instead, to see if it is just one number
+        					for (int i = 0; i < choiceListSize; i++) {
+        						choiceArray[i] = (Object) arguments.removeFirst();
+        					}
+        					// Assume its a pattern gen because this is the only thing that accepts it right now!
+        					def.addParameter(paramName, choiceName, choiceArray); //TODO: FIX THIS
+        					break;
+        				case "float":
+        	    			final float floatMin = AGHelper.convertToFloat(arguments.removeFirst());
+        	    			final float floatMax = AGHelper.convertToFloat(arguments.removeFirst());
+        	    			final float floatValue = AGHelper.convertToFloat(arguments.removeFirst());
+        	    			def.addParameter(paramName, floatMin, floatMax, floatValue);
+        					break;
+        				default:
+        					break;
+        			}
+    			}
+    			
+    			// Def is done, fire an update about it
+    			fireDefCreatedMessage(def);
+
+    		}
+    	};
+    	
+    	OSCListener chooserListener = new OSCListener() {
+			
+			@Override
+			public void acceptMessage(Date time, OSCMessage message) {
+    			LinkedList<Object> arguments = new LinkedList<Object>();
+    			arguments.addAll(message.getArguments());
+    			
+    			final String defName = (String) arguments.removeFirst();
+    			final String type = (String) arguments.removeFirst();
+    			
+    			ChooserDef def = (ChooserDef) addNewDef(defName, type);
+    			
+    			final String functionString = (String) arguments.removeFirst();
+    			def.setFunctionString(functionString);
+    			
+    			// Choosers don't have parameters, they have choices
+    			while (!arguments.isEmpty()) {
+    				final String choiceName = (String) arguments.removeFirst();
+    				def.addChoice(choiceName);
+    			}
+    			
+    			// Maybe chooser could have parameters since it is technically a function
+    			// but don't worry about that for now
+			}
+		};
+    	
+		App.sc.createListener("/def/add/chooser", chooserListener);
+    	App.sc.createListener("/def/add/full", fullDefListener);
+    	
+    	createSeperateListeners();
+	}
+	
+	public Def addNewDef(String defName, String type) {
+		
+		// Keep existing defs in memory since a Synth might point to it
+		if (defTable.containsKey(defName)) {
+			// Clear def so it can be recreated
+			Def def = defTable.get(defName);
+			def.setType(type); // Necessary?
+			def.setFunctionString("");
+			def.clearParameters();
+			App.sc.sendMessage("/"+defName+"/ready", 1);
+			return def;    				
+		}
+		
+		// Create a new Def
+		Def def = null;
+		
+		// Make sure it gets the right type
+		switch (type) {
+			case "synth":
+				def = new SynthDef(defName);
+				break;
+			case "instrument":
+				def = new InstDef(defName);
+				break;
+			case "effect":
+				def = new EffectDef(defName);
+				break;
+			case "changeFunc":
+				def = new ChangeFuncDef(defName);
+				break;
+			case "patternGen":
+				def = new PatternGenDef(defName);
+				break;
+			case "chooser":
+				def = new ChooserDef(defName);
+			default:
+				break;
+		}
+		
+		def.setType(type);
+		defTable.put(defName, def);
+		App.launchTreeModel.addSynthDef(def);
+		
+		return def;
+	}
+	
+	public void createSeperateListeners() {
+		
 		
 		OSCListener defListener = new OSCListener() {
 			@Override
@@ -189,65 +340,7 @@ public class DefModel implements Messenger {
     			}
     		}
     	};
-    	
-    	OSCListener fullDefListener = new OSCListener() {
-    		public void acceptMessage(java.util.Date time, OSCMessage message) {
-
-    			LinkedList<Object> arguments = new LinkedList<Object>();
-    			arguments.addAll(message.getArguments());
-    			
-    			final String defName = (String) arguments.removeFirst();
-    			final String type = (String) arguments.removeFirst();
-    			
-    			Def def = addNewDef(defName, type);
-    			
-    			final String functionString = (String) arguments.removeFirst();
-    			def.setFunctionString(functionString);
-    			
-    			while (!arguments.isEmpty()) {
-    				// While there are still parameters to add
-    				
-        			final String paramName = (String) arguments.removeFirst();
-        			final String paramType = (String) arguments.removeFirst();
-
-        			switch (paramType) {
-        				case "int":
-        	    			final int intMin = AGHelper.convertToInt(arguments.removeFirst());
-        	    			final int intMax = AGHelper.convertToInt(arguments.removeFirst());
-        	    			final int intValue = AGHelper.convertToInt(arguments.removeFirst());
-        	    			def.addParameter(paramName, intMin, intMax, intValue);
-        	    			break;
-        				case "choice":
-        					final String choiceName = (String) arguments.removeFirst();
-        					final int choiceListSize = (int) arguments.removeFirst();
-        					
-        					final Object[] choiceArray = new Object[choiceListSize];
-        					
-        					// The rest of the arguments should be the array
-        					// Can probaably check how long this is instead, to see if it is just one number
-        					for (int i = 0; i < choiceListSize; i++) {
-        						choiceArray[i] = (Object) arguments.removeFirst();
-        					}
-        					// Assume its a pattern gen because this is the only thing that accepts it right now!
-        					def.addParameter(paramName, choiceName, choiceArray); //TODO: FIX THIS
-        					break;
-        				case "float":
-        	    			final float floatMin = AGHelper.convertToFloat(arguments.removeFirst());
-        	    			final float floatMax = AGHelper.convertToFloat(arguments.removeFirst());
-        	    			final float floatValue = AGHelper.convertToFloat(arguments.removeFirst());
-        	    			def.addParameter(paramName, floatMin, floatMax, floatValue);
-        					break;
-        				default:
-        					break;
-        			}
-    			}
-    			
-    			// Def is done, fire an update about it
-    			fireDefCreatedMessage(def);
-
-    		}
-    	};
-    	
+		
     	OSCListener defaultParamListener = new OSCListener() {
     		public void acceptMessage(java.util.Date time, OSCMessage message) {
 
@@ -275,56 +368,11 @@ public class DefModel implements Messenger {
     			synth.setFunctionString(functionString);
     		}
     	};
-
+		
     	App.sc.createListener("/def/add", defListener);
-    	App.sc.createListener("/def/add/full", fullDefListener);
     	App.sc.createListener("/def/param", paramlistener);
     	App.sc.createListener("/def/param/default", defaultParamListener);
     	App.sc.createListener("/def/func", functionListener);
-	}
-	
-	public Def addNewDef(String defName, String type) {
-		
-		// Keep existing defs in memory since a Synth might point to it
-		if (defTable.containsKey(defName)) {
-			// Clear def so it can be recreated
-			Def def = defTable.get(defName);
-			def.setType(type); // Necessary?
-			def.setFunctionString("");
-			def.clearParameters();
-			App.sc.sendMessage("/"+defName+"/ready", 1);
-			return def;    				
-		}
-		
-		// Create a new Def
-		Def def = null;
-		
-		// Make sure it gets the right type
-		switch (type) {
-			case "synth":
-				def = new SynthDef(defName);
-				break;
-			case "instrument":
-				def = new InstDef(defName);
-				break;
-			case "effect":
-				def = new EffectDef(defName);
-				break;
-			case "changeFunc":
-				def = new ChangeFuncDef(defName);
-				break;
-			case "patternGen":
-				def = new PatternGenDef(defName);
-				break;
-			default:
-				break;
-		}
-		
-		def.setType(type);
-		defTable.put(defName, def);
-		App.launchTreeModel.addSynthDef(def);
-		
-		return def;
 	}
 
 }

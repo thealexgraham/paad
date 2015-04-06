@@ -211,13 +211,19 @@ JavaHelper {
 			\patternGen, {
 				this.newPatternGen(name, function, params);
 			},
+			\chooser, {
+				this.newChooser(name, function); // Sends the definition itself
+			},
 			{
 				postln("No type for "++type.asString);
 			}
 		);
 
+		if ((type != \chooser), {
+			this.newDef(name, type, function, params); // Send the definition
+		});
 		// Don't need to do this if java
-		this.newDef(name, type, function, params); // Send the definition
+
 	}
 
 

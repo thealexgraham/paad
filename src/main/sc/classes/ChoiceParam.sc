@@ -11,15 +11,17 @@ ChoiceParam {
 	init { |newName, newChoiceName, newValue|
 		name = newName;
 		value = newValue;
+		choiceName = newChoiceName;
 	}
 
 	set { |newChoiceName, newValue|
 		var net;
 		if (value != newValue, {
+			ownerId.postln;
 			net = NetAddr("127.0.0.1", ~java.sendPort);
 			value = newValue;
-			net.sendMsg("/"++ownerId++"/"++name++"/change", value);
-			choiceName = newValue;
+			net.sendMsg("/"++ownerId++"/"++name++"/change", newChoiceName);
+			choiceName = newChoiceName;
 		});
 
 		^value;
