@@ -3,6 +3,7 @@ package net.alexgraham.thesis.ui.modules;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -23,7 +26,12 @@ import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayState;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayerListener;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
+import net.alexgraham.thesis.supercollider.synths.grouping.ExportIcon;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
+import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
+import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
@@ -87,7 +95,8 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	public void setupWindow(Container pane) {
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
-				
+		
+
 		//Top Panel//
 		
 		topPanel = new ConnectablePanel();
@@ -97,7 +106,14 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		topPanel.add(topLabel);
 		
 		topPanel.addConnector(Location.TOP, player.getConnector(ConnectorType.PATTERN_IN));
+		topPanel.addConnector(Location.RIGHT, player.getConnector(ConnectorType.ACTION_OUT));
 		this.addConnectablePanel(topPanel);
+		
+		ConnectablePanel topWrapper = new ConnectablePanel();
+		topWrapper.setLayout(new BoxLayout(topWrapper, BoxLayout.Y_AXIS));
+		topWrapper.addConnector(Location.TOP, player.getConnector(ConnectorType.PATTERN_IN));
+		this.addConnectablePanel(topWrapper);
+		topWrapper.add(topPanel);
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
@@ -122,7 +138,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		this.addConnectablePanel(bottomPanel);
 
 
-		pane.add(topPanel, BorderLayout.NORTH);
+		pane.add(topWrapper, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);
 		pane.add(bottomPanel, BorderLayout.SOUTH);	
 		
@@ -171,13 +187,35 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 
 		});
 		
-		middlePanel.add(playButton);
-		middlePanel.add(closeButton);
-		middlePanel.add(instLabel);
+		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 		
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, player.getConnector(ConnectorType.ACTION_OUT));
-		middlePanel.add(connectablePanel);
-		this.addConnectablePanel(connectablePanel);
+		middlePanel.add(createButtonPanel(playButton, "play"));
+		middlePanel.add(createButtonPanel(closeButton, "stop"));
+		middlePanel.add(instLabel);
+	
+	}
+	
+	public JPanel createButtonPanel(JButton button, String action) {
+		JPanel togetherPanel = new JPanel();
+		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
+		
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0 ,0));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		
+		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, player.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
+		this.addConnectablePanel(leftConnectable);
+
+		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, player.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
+		this.addConnectablePanel(rightConnectable);
+
+		panel.add(leftConnectable);
+		panel.add(button);
+		panel.add(rightConnectable);
+		
+			
+//		togetherPanel.add(panel);
+		return panel;
+		
 	}
 	@Override
 	public void removeSelf() {

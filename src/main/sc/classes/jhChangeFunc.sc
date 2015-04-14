@@ -45,6 +45,10 @@
 			var id = msg[2];
 			var changeFuncDef, changeFunc;
 
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
 			"Adding changeFunc".postln;
 			// The rest are the defaults
 			changeFuncDef = this.getChangeFuncDef(changeFuncName);
@@ -52,6 +56,13 @@
 			// Create the actual function
 			changeFunc = ChangeFunc.new(changeFuncDef.at(\function), changeFuncDef.at(\params));
 			changeFuncName.idPut(id, changeFunc);
+
+			// The rest of the parameters are quads, reshape so we can use them
+			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
+				var paramName = item[0];
+				var value = item[1];
+				changeFunc.setParam(paramName, value);
+			});
 
 			("changeFunc added, adding changeFunc at" + id).postln;
 		});
@@ -70,6 +81,7 @@
 		this.addOSCResponder('/changefunc/paramc', { arg msg;
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
+			"PARAM CHANIGNG".postln;
 			// Set the value directly
 			name.idGet(id).setParam(param, val); // Change the value at the bus
 		});

@@ -4,16 +4,18 @@ RoutinePlayer {
 	var <>playedAction;
 	var <>instName;
 	var <>instDict;
+	var instanceId;
 	var listeners;
 
 	var rout;
 
-	*new {
-		^super.new.init;
+	*new { |id|
+		^super.new.init(id);
 	}
 
-	init {
+	init { |id|
 
+		instanceId = id;
 		pattern = nil;
 		template = nil;
 		listeners = IdentitySet.new;
@@ -54,6 +56,10 @@ RoutinePlayer {
 	}
 
 	doPlayedAction { |obj|
+		var net = NetAddr("127.0.0.1", ~java.sendPort);
+		// JAVA ONLY
+		net.sendMsg("/"++instanceId++"/action/sent", 1);
+
 		listeners.do({ |item, i|
 			item.doAction;
 		});
@@ -115,6 +121,14 @@ RoutinePlayer {
 		// Stop the routine first
 		rout.stop;
 		pattern = nil;
+	}
+
+	doAction { |action|
+		switch ( action,
+			\play, { this.play; },
+			\stop, { this.stop; },
+			{}
+		);
 	}
 
 }

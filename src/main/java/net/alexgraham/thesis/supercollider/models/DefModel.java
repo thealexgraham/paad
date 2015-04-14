@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.Messenger;
+import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.defs.ChooserDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
@@ -18,6 +19,7 @@ import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 import net.alexgraham.thesis.supercollider.synths.defs.PatternGenDef;
 import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.TaskRunnerDef;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -113,6 +115,56 @@ public class DefModel implements Messenger {
 		
 	}
 	
+	public Def addNewDef(String defName, String type) {
+		
+		// Keep existing defs in memory since a Synth might point to it
+		if (defTable.containsKey(defName)) {
+			// Clear def so it can be recreated
+			Def def = defTable.get(defName);
+			def.setType(type); // Necessary?
+			def.setFunctionString("");
+			def.clearParameters();
+			App.sc.sendMessage("/"+defName+"/ready", 1);
+			return def;    				
+		}
+		
+		// Create a new Def
+		Def def = null;
+		
+		// Make sure it gets the right type
+		switch (type.toLowerCase()) {
+			case "synth":
+				def = new SynthDef(defName);
+				break;
+			case "instrument":
+				def = new InstDef(defName);
+				break;
+			case "effect":
+				def = new EffectDef(defName);
+				break;
+			case "changefunc":
+				def = new ChangeFuncDef(defName);
+				break;
+			case "patterngen":
+				def = new PatternGenDef(defName);
+				break;
+			case "chooser":
+				def = new ChooserDef(defName);
+				break;
+			case "taskrunner":
+				def = new TaskRunnerDef(defName);
+				break;
+			default:
+				return null;
+		}
+		
+		def.setType(type);
+		defTable.put(defName, def);
+		App.launchTreeModel.addSynthDef(def);
+		
+		return def;
+	}
+	
 	public void createListeners() throws SocketException {
     	
     	OSCListener fullDefListener = new OSCListener() {
@@ -125,6 +177,11 @@ public class DefModel implements Messenger {
     			final String type = (String) arguments.removeFirst();
     			
     			Def def = addNewDef(defName, type);
+    			
+    			if (def == null) {
+    				// If we couldn't create a def
+    				return;
+    			}
     			
     			final String functionString = (String) arguments.removeFirst();
     			def.setFunctionString(functionString);
@@ -205,51 +262,12 @@ public class DefModel implements Messenger {
     	createSeperateListeners();
 	}
 	
-	public Def addNewDef(String defName, String type) {
-		
-		// Keep existing defs in memory since a Synth might point to it
-		if (defTable.containsKey(defName)) {
-			// Clear def so it can be recreated
-			Def def = defTable.get(defName);
-			def.setType(type); // Necessary?
-			def.setFunctionString("");
-			def.clearParameters();
-			App.sc.sendMessage("/"+defName+"/ready", 1);
-			return def;    				
-		}
-		
-		// Create a new Def
-		Def def = null;
-		
-		// Make sure it gets the right type
-		switch (type) {
-			case "synth":
-				def = new SynthDef(defName);
-				break;
-			case "instrument":
-				def = new InstDef(defName);
-				break;
-			case "effect":
-				def = new EffectDef(defName);
-				break;
-			case "changeFunc":
-				def = new ChangeFuncDef(defName);
-				break;
-			case "patternGen":
-				def = new PatternGenDef(defName);
-				break;
-			case "chooser":
-				def = new ChooserDef(defName);
-			default:
-				break;
-		}
-		
-		def.setType(type);
-		defTable.put(defName, def);
-		App.launchTreeModel.addSynthDef(def);
-		
-		return def;
-	}
+
+	
+	
+	
+	// Old Functions
+	// ---------------------
 	
 	public void createSeperateListeners() {
 		

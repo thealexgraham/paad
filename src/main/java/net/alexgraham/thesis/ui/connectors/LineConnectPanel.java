@@ -37,6 +37,7 @@ import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.tests.demos.simplemvc.Model;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.ChooserModule;
@@ -45,6 +46,7 @@ import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.PatternGenModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
 import net.alexgraham.thesis.ui.modules.SynthModule;
+import net.alexgraham.thesis.ui.modules.TaskRunnerModule;
 
 public class LineConnectPanel extends JPanel implements SynthModelListener, PlayerModelListener {
 	
@@ -379,8 +381,13 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		
 		// Paint connections
 		for (Connection connection : getConnections()) {
-			
-			g2.setColor(Connector.getColorForType(connection.getOrigin().getConnectorType()));
+					
+			if (connection.isFlashing()) {
+				g2.setColor(Color.white);
+			} else {
+				g2.setColor(connection.getOrigin().getColor());
+
+			}
 			
 			Line2D line = connection.getLine();
 			
@@ -388,6 +395,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 				g2.setStroke(new BasicStroke(3));
 			else
 				g2.setStroke(new BasicStroke(1));
+			
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2.draw(line);
 			g2.setStroke(new BasicStroke(1));
@@ -446,6 +454,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			module = new RoutinePlayerModule((RoutinePlayer) instance);
 		} else if (instance.getClass() == Chooser.class){
 			module = new ChooserModule(100, 300, (Chooser)instance); 
+		} else if (instance.getClass() == TaskRunner.class) {
+			module = new TaskRunnerModule((TaskRunner)instance);
 		} else {
 			System.err.println("No module for class");
 			return;

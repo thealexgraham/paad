@@ -36,7 +36,7 @@
 			//msg = msg.addAll(["inBus", inBus, "outBus", 0]);
 
 			// Create a new dictionary for this ID
-
+			msg.postln;
 			effectName.idPut(id, Dictionary.new);
 			effectDict = effectName.idGet(id);
 			this.getMasterIn.postln;
@@ -59,6 +59,7 @@
 				// Map the effect to it
 				effectDict.at(\synth).map(paramName, param.bus);
 			});
+
 			// Save the inBus
 			effectDict.put(\inBus, inBus);
 

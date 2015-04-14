@@ -41,13 +41,14 @@ public class ModuleFactory {
 		
 		//paramPanel.add(paramValueLabel);
 		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-
+		module.addConnectablePanel(leftConnectable);
+		
 		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		DialD dial = new DialD(model);
 		dial.setForcedSize(new Dimension(15, 15));
 		dial.setDrawText(false);
 		dialPanel.add(leftConnectable);
-		module.addConnectablePanel(leftConnectable);
+
 		dialPanel.add(dial);
 		dialPanel.add(paramValueLabel);
 		//dialPanel.add(paramNameLabel);

@@ -24,11 +24,20 @@ public class CommandLine {
 	static int RECEIVE_PORT = 1291;
 	static int SEND_PORT = 27320;
 
+	public enum TestType {
+		TEST_ME,
+		OTHER_TEST
+	}
+	
 	public static void main(String[] args) throws IOException {
 //		String command = "cd";
 //		
 //		SCLang sc = new SCLang(SEND_PORT, RECEIVE_PORT);
 //		sc.startSCLang();
+		
+		TestType type = TestType.TEST_ME;
+		System.out.println(type.toString());
+		
 		
 		Function<String, String> myFun = new Function<String, String>() {
 
@@ -48,6 +57,9 @@ public class CommandLine {
     	System.in.read();
 		System.out.println("Done.");
     	Runtime.getRuntime().exit(1);
+    	
+    	
+    	
     	
 
 	}

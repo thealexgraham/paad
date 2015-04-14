@@ -73,6 +73,7 @@ JavaHelper {
 		this.createChangeFuncListeners;
 		this.createChooserListeners;
 		this.createPatternGenListeners;
+		this.createTaskRunnerListeners;
 
 	}
 
@@ -213,6 +214,9 @@ JavaHelper {
 			},
 			\chooser, {
 				this.newChooser(name, function); // Sends the definition itself
+			},
+			\taskRunner, {
+				this.newTaskRunner(name, function, params);
 			},
 			{
 				postln("No type for "++type.asString);

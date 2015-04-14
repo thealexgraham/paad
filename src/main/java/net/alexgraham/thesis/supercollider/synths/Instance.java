@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -333,13 +334,23 @@ public abstract class Instance implements Connectable, Serializable {
 
 	// Connector Business
 	// ---------------------
-	EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
+	//EnumMap<ConnectorType, Connector> connectors = new EnumMap<ConnectorType, Connector>(ConnectorType.class);
+	HashMap<String, Connector> connectors = new HashMap<String, Connector>();
+	
 	public Connector getConnector(ConnectorType type) {
-		return connectors.get(type); //TODO: might not be the best way to do this
+		return connectors.get(type.toString()); //TODO: might not be the best way to do this
 	}
 	
 	public void addConnector(ConnectorType type) {
-		connectors.put(type, new Connector(this, type));
+		connectors.put(type.toString(), new Connector(this, type));
+	}
+	
+	public Connector getConnector(ConnectorType type, String actionType) {
+		return connectors.get(type.toString() + actionType);
+	}
+	
+	public void addConnector(ConnectorType type, String actionType) {
+		connectors.put(type.toString() +  actionType, new Connector(this, type, actionType));
 	}
 	
 	public void removeConnectorUIs () {

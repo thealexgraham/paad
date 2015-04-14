@@ -48,8 +48,12 @@ public class ConnectorUI implements java.io.Serializable {
 		this.connector = connector;
 		this.drawLocation = location;
 		
-		if (AGHelper.allEquals(type, ConnectorType.PARAM_CHANGE_IN)) {
+		if (AGHelper.allEquals(type, ConnectorType.PARAM_CHANGE_IN, ConnectorType.ACTION_IN)) {
 			height = 6; width = 6;
+		}
+		
+		if (AGHelper.allEquals(type, ConnectorType.ACTION_OUT)) {
+			height = 12; width = 12;
 		}
 		
 	}
@@ -200,6 +204,9 @@ public class ConnectorUI implements java.io.Serializable {
 	}
 	
 	public Color getColor() {
+		if (connector.isFlashing()) {
+			return Color.WHITE;
+		}
 		return Connector.getColorForType(type);
 	}
 

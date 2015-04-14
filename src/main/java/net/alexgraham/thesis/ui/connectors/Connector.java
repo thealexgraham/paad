@@ -1,10 +1,17 @@
 package net.alexgraham.thesis.ui.connectors;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.Timer;
 
 import net.alexgraham.thesis.AGHelper;
+import net.alexgraham.thesis.App;
 
 
 public class Connector implements java.io.Serializable {
@@ -26,6 +33,66 @@ public class Connector implements java.io.Serializable {
 	
 	transient ArrayList<ConnectorUI> connectorUIs = new ArrayList<ConnectorUI>();
 	
+	private boolean flashing = false;
+	private Timer flashTimer;
+	
+	// Optional
+	private String actionType = "default";
+	public String getActionType() {
+		return actionType;
+	}
+	
+	private List<Connection> connections = new CopyOnWriteArrayList<Connection>();
+	
+	public void addConnection(Connection connection) {
+		connections.add(connection);
+	}
+	public void removeConnection(Connection connection) {
+		connections.remove(connection);
+	}
+	public List<Connection> getConnections() { return connections; }
+	
+	
+	public void setFlashing(boolean flashing) {
+		this.flashing = flashing;
+	}
+	
+	public boolean isFlashing() {
+		return flashing;
+	}
+	
+	public void createFlashTimer(int flashLength) {
+		
+		ActionListener taskPerformer = new ActionListener() {
+		      public void actionPerformed(ActionEvent evt) {
+		    	  if(!flashTimer.isRunning())
+		    		  flashing = false;
+		    	  else
+		    		  flashing = false;
+		  		refreshUIs();
+		      }
+		  };
+		  
+		  flashTimer = new Timer(flashLength, taskPerformer);
+	}
+	
+	public void flashConnection() {
+		for (Connection connection : connections) {
+			connection.flashTarget(this);
+		}
+		flash();
+	}
+	public void flash() {
+		flashTimer.stop();
+		flashing = true;
+		refreshUIs();
+		flashTimer.start();
+	}
+	
+	public void refreshUIs() {
+		App.mainWindow.repaint();
+	}
+	
 	public enum ConnectorType {
 		AUDIO_INPUT, AUDIO_OUTPUT, 
 		INST_PLAY_IN, INST_PLAY_OUT, 
@@ -38,12 +105,26 @@ public class Connector implements java.io.Serializable {
 	
 	public Connector() {
 		connectorUIs = new ArrayList<ConnectorUI>();
+		init();
 	}
 
 	public Connector(Connectable connectable, ConnectorType type) {
 
 		this.connectable = connectable;
 		this.type = type;
+		init();
+	}
+	
+	public Connector(Connectable connectable, ConnectorType type, String actionType) {
+
+		this.connectable = connectable;
+		this.type = type;
+		this.actionType = actionType;
+		init();
+	}
+	
+	public void init() {
+		createFlashTimer(75);
 	}
 
 	public Connectable getConnectable() {
@@ -94,6 +175,11 @@ public class Connector implements java.io.Serializable {
 		
 		// Return the two closest
 		return closest;
+	}
+	
+	public Color getColor() {
+		return Connector.getColorForType(type);
+		
 	}
 	
 	public static Color getColorForType(ConnectorType type) {

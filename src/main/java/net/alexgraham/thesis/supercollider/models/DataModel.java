@@ -14,6 +14,7 @@ import net.alexgraham.thesis.supercollider.SaveHelper;
 import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
 import net.alexgraham.thesis.supercollider.synths.Instance;
+import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
@@ -199,6 +200,10 @@ public class DataModel {
 				if (instance.getClass() == RoutinePlayer.class) {
 					((RoutinePlayer) instance).sendPlay();
 				}
+				
+				if (instance.getClass() == TaskRunner.class) {
+					((TaskRunner) instance).sendPlay();
+				}
 			}
 			
 			// Go back to sending OSC Messages
@@ -315,7 +320,7 @@ public class DataModel {
 				Instance instance = model.getOwner();
 				
 				bw.write(String.format("\t\t[\\%s, \\%s, \\%s, \\%s, ", 
-						instance.getName(), instance.getDef().getType(), instance.getID(), model.getName()));
+						instance.getName(), instance.getDef().getType().toLowerCase(), instance.getID(), model.getName()));
 				if (model.getClass() == DoubleParamModel.class) {
 					DoubleParamModel param = (DoubleParamModel) model;
 					bw.write(String.format("%.2f, %.2f, %.2f", 

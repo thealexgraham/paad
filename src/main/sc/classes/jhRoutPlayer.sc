@@ -13,7 +13,7 @@
 		// Whenever an instrument is added, this will create busses for this instance of the synth
 		this.addOSCResponder('/routplayer/add', { arg msg;
 			var id = msg[1];
-			var player = RoutinePlayer.new;
+			var player = RoutinePlayer.new(id);
 			var chooser = PatternChooser.new;
 			// test pattern for now
 			player.pattern = [[1,1], [2, 0.5], [1, 0.5], [10, 1]];
@@ -98,26 +98,28 @@
 			("Removed instrument").postln;
 		});
 
+		// New Functions
+
 		this.addOSCResponder('/routplayer/connect/playaction', { arg msg;
 			// Set float1
-			var id = msg[1], targetName = msg[2], targetId = msg[3];
+			var id = msg[1], targetName = msg[2], targetId = msg[3], action = msg[4];
 			var player, targetObj;
 
 			player = dictName.idGet(id);
 			targetObj = targetName.idGet(targetId);
-			player.addListener(targetObj);
+			player.addListener(targetObj, action.asSymbol);
 
 			("Connected Player Object to player at ID"+id).postln;
 		});
 
 		this.addOSCResponder('/routplayer/remove/playaction', { arg msg;
 			// Set float1
-			var id = msg[1], targetName = msg[2], targetId = msg[3];
+			var id = msg[1], targetName = msg[2], targetId = msg[3], action = msg[4];
 			var player, targetObj;
 
 			player = dictName.idGet(id);
 			targetObj = targetName.idGet(targetId);
-			player.removeListener(targetObj);
+			player.removeListener(targetObj, action.asSymbol);
 			("Removed instrument").postln;
 		});
 

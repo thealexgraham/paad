@@ -1,8 +1,13 @@
 package net.alexgraham.thesis.supercollider.players;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
+
+import com.illposed.osc.OSCListener;
+import com.illposed.osc.OSCMessage;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
@@ -61,6 +66,18 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		addConnector(ConnectorType.ACTION_OUT);
 		addConnector(ConnectorType.INST_PLAY_OUT);
 		addConnector(ConnectorType.PATTERN_IN);
+		addConnector(ConnectorType.ACTION_IN, "play");
+		addConnector(ConnectorType.ACTION_IN, "stop");
+		
+		// Create a listener so the connection knows to flash when an action is sent
+		App.sc.createListener("/" + this.getID() + "/action/sent", new OSCListener() {
+			@Override
+			public void acceptMessage(Date time, OSCMessage message) {
+				Connector actionOutConnector = getConnector(ConnectorType.ACTION_OUT);
+				actionOutConnector.flashConnection();
+			}
+		});
+		
 	}
 	
 	/*
@@ -119,12 +136,12 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		App.sc.sendMessage("/routplayer/disconnect/pattern", this.getID(), patternObj.getDefName(), patternObj.getID(), 0);	
 	}
 	
-	public void connectPlayAction(Instance target) {
-		App.sc.sendMessage("/routplayer/connect/playaction", this.getID(), target.getDefName(), target.getID(), 0);
+	public void connectPlayAction(Instance target, String actionType) {
+		App.sc.sendMessage("/routplayer/connect/playaction", this.getID(), target.getDefName(), target.getID(), actionType);
 	}
 	
-	public void disconnectPlayAction(Instance target) {
-		App.sc.sendMessage("/routplayer/disconnect/playaction", this.getID(), target.getDefName(), target.getID(), 0);	
+	public void disconnectPlayAction(Instance target, String actionType) {
+		App.sc.sendMessage("/routplayer/disconnect/playaction", this.getID(), target.getDefName(), target.getID(), actionType);	
 	}
 	
 	public void playOrPause() {
@@ -204,6 +221,8 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 	@Override
 	public boolean connect(Connection connection) {
 		Connectable target = connection.getTargetConnector(this).getConnectable();
+		Connector targetConnector = connection.getTargetConnector(this);
+		
 		if (target instanceof Instrument) {
 			if (connection.isConnectionType(this, ConnectorType.INST_PLAY_OUT, ConnectorType.INST_PLAY_IN)) {
 				connectInstrument((Instrument) target);	
@@ -220,7 +239,7 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		
 		if (target instanceof Instance) {
 			if (connection.isConnectionType(this, ConnectorType.ACTION_OUT, ConnectorType.ACTION_IN)) {
-				connectPlayAction((Instance) target);
+				connectPlayAction((Instance) target, targetConnector.getActionType());
 				return true;
 			}
 		}
@@ -231,6 +250,8 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 	@Override
 	public boolean disconnect(Connection connection) {
 		Connectable target = connection.getTargetConnector(this).getConnectable();
+		Connector targetConnector = connection.getTargetConnector(this);
+		
 		if (target instanceof Instrument) {
 			if (connection.isConnectionType(this, ConnectorType.INST_PLAY_OUT, ConnectorType.INST_PLAY_IN)) {
 				disconnectInstrument((Instrument) target);
@@ -247,7 +268,7 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 		
 		if (target instanceof Instance) {
 			if (connection.isConnectionType(this, ConnectorType.ACTION_OUT, ConnectorType.ACTION_IN)) {
-				disconnectPlayAction((Instance) target);
+				disconnectPlayAction((Instance) target, targetConnector.getActionType());
 				return true;
 			}
 		}

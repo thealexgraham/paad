@@ -18,8 +18,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 
+import com.sun.java.swing.plaf.motif.MotifBorders.BevelBorder;
 import com.sun.swing.internal.plaf.metal.resources.metal;
 import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
 
@@ -112,7 +114,7 @@ public abstract class ModulePanel extends JPanel {
 		this.addMouseListener(listener);
 		this.addMouseMotionListener(listener);
 		
-		setBorder(BorderFactory.createEmptyBorder());
+		setBorder(createDefaultBorder());
 		createKeyListeners();
 	}
 	
@@ -158,8 +160,8 @@ public abstract class ModulePanel extends JPanel {
 
 		requestFocusInWindow();
 		selected = true;
-		setBorder(BorderFactory.createLineBorder(Color.black));
-		
+//		setBorder(BorderFactory.createDashedBorder(Color.DARK_GRAY.brighter().brighter()));
+		setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		// Refresh size
 		setSize(getPreferredSize());
 		validate();
@@ -168,11 +170,18 @@ public abstract class ModulePanel extends JPanel {
 
 	public void deselect() {
 		selected = false;
-		setBorder(BorderFactory.createEmptyBorder());
+		
+//		setBorder(BorderFactory.createEmptyBorder());
+		setBorder(createDefaultBorder());
+		
 		
 		// Refresh size
 		setSize(getPreferredSize());
 		validate();
+	}
+	
+	public Border createDefaultBorder() {
+		return BorderFactory.createLineBorder(Color.DARK_GRAY.brighter().brighter());
 	}
 
 	public boolean isSelected() {

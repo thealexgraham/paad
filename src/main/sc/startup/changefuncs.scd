@@ -21,3 +21,41 @@
 		rrand(min, max);
 	}
 );
+
+~java.addDefinition("SteadyAction",
+	\taskRunner,
+	{
+		| object, timeBetween |
+		loop { // Go forever
+			"Performing action message".postln;
+			object.sendActionMessage; // Could concievably split up into multiple actions
+			timeBetween.value.wait;
+		}
+	},
+	[[\timeBetween, 0, 10, 1]]
+);
+
+~java.addDefinition("SimpleAction",
+	\taskRunner,
+	{
+		| object |
+		"I am a task and I did it".postln;
+		object.sendActionMessage; // Could concievably split up into multiple actions
+
+	}
+);
+
+~java.addDefinition("RandomAction",
+	\taskRunner,
+	{
+		| object, minSeconds, maxSeconds |
+		loop { // Go forever
+			var secondsToWait = rrand(minSeconds.value, maxSeconds.value);
+			"Performing action message".postln;
+			object.sendActionMessage; // Could concievably split up into multiple actions
+			secondsToWait.wait;
+		}
+	},
+	[[\minSeconds, 0, 10, 1],
+		[\maxSeconds, 0, 10, 2]]
+);

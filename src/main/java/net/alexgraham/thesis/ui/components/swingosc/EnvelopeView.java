@@ -771,6 +771,15 @@ extends AbstractMultiSlider
 		protoNode.thumbHeight = h;
 		repaint();
 	}
+	
+	public void updateEnds() {
+		final int numVals = nodes.length;
+		nodes[0].y = nodes[1].y;
+		nodes[0].invalid = true;
+		nodes[numVals - 1].y = nodes[numVals - 2].y;
+		nodes[numVals - 1].invalid = true;
+		repaint();
+	}
 
 	public void setValues( float[] x, float[] y )
 	{
@@ -804,8 +813,16 @@ extends AbstractMultiSlider
 			nodes[ i ].x = x[ i ];
 			nodes[ i ].y = y[ i ];
 			nodes[ i ].invalid = true;
-		}
+			
+			if (i == 0 || i == newNumVals - 1) {
 
+				nodes[i].readOnly = true;
+				nodes[i].thumbHeight = 0;
+				nodes[i].thumbWidth = 0;
+			}
+		}
+		
+		updateEnds();
 		repaint();
 	}
 
@@ -843,8 +860,24 @@ extends AbstractMultiSlider
 			nodes[ i ].shape	= shapes[ i ];
 			nodes[ i ].curve	= curves[ i ];
 			nodes[ i ].invalid	= true;
+			
+			nodes[i].readOnly = false;
+			nodes[i].thumbHeight = 5f;
+			nodes[i].thumbWidth = 5f;
+			
+			
+			if (i == 0) {
+				nodes[i].y = nodes[1].y;
+			}
+			
+			if (i == 0 || i == newNumVals - 1) {
+				
+				nodes[i].readOnly = true;
+				nodes[i].thumbHeight = 0;
+				nodes[i].thumbWidth = 0;
+			}
 		}
-
+		updateEnds();
 		repaint();
 	}
 
@@ -1156,9 +1189,12 @@ extends AbstractMultiSlider
 				addNode(x, y);
 			} else if (n != null) {
 				if (n.selected && e.getClickCount() == 2) {
-					removeNode(n);
-					repaint = true;
-					action = true;
+					if (!n.readOnly) {
+						removeNode(n);
+						repaint = true;
+						action = true;
+					}
+
 				}
 			}
 								
@@ -1414,9 +1450,11 @@ extends AbstractMultiSlider
 //				}
 
 			}
-
+			
+			if (repaint) updateEnds();
 			if( repaint ) repaint();
 			if( action ) fireActionPerformed();
+
 
 //			if( selectedIndex != -1 ) {
 //				nodeJump( e );

@@ -12,6 +12,8 @@ public class Connection implements java.io.Serializable {
 
 	private boolean clicked = false;
 	
+	private Connector flashOrigin = null;
+	
 	public boolean isClicked()  {return clicked; }
 	public void setClicked(boolean clicked) { this.clicked = clicked; }
 	
@@ -32,6 +34,23 @@ public class Connection implements java.io.Serializable {
 		// Draw the line between them
 		return new Line2D.Float(closest[0].getCurrentOutside(), closest[1].getCurrentOutside()); 
 	}
+	
+	public boolean isFlashing() {
+		if (flashOrigin == null) {
+			return false;
+		} else {
+			return flashOrigin.isFlashing();
+		}
+	}
+	
+	public void flashTarget(Connector connector) {
+		if (connector == origin)
+			destination.flash();
+		if (connector == destination)
+			origin.flash();
+		
+		flashOrigin = connector;
+	}
 		
 	public Connection(Connector origin, Connector destination) {
 		
@@ -43,8 +62,10 @@ public class Connection implements java.io.Serializable {
 	 * Attempts to disconnect this connection's connectables
 	 */
 	public boolean disconnectModules() {
-		if (getOriginConnectable().disconnect(this) &&
-				getDestinationConnectable().disconnect(this)) {
+		if (getOriginConnectable().disconnect(this) || getDestinationConnectable().disconnect(this)) {
+			// Remove this from connections
+			origin.removeConnection(this);
+			destination.removeConnection(this);
 			return true;
 		} else {
 			return false;
@@ -56,8 +77,10 @@ public class Connection implements java.io.Serializable {
 	 */
 	public boolean connectModules() {
 		// We have a destination and an origin
-		if (getOriginConnectable().connect(this) || 
-				getDestinationConnectable().connect(this)) {
+		if (getOriginConnectable().connect(this) || getDestinationConnectable().connect(this)) {
+			origin.addConnection(this);
+			destination.addConnection(this);
+			// Add this to connections
 			return true;
 		} else {
 			return false;

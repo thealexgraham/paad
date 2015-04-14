@@ -22,6 +22,7 @@ import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.defs.ChooserDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
@@ -223,7 +224,7 @@ public class SynthModel implements Serializable {
 		String type = def.getType();
 		Instance instance = null;
 		
-		switch (type) {
+		switch (type.toLowerCase()) {
 			case "synth":
 				instance = new Synth(def);
 				break;
@@ -233,17 +234,21 @@ public class SynthModel implements Serializable {
 			case "effect":
 				instance = new Effect(def);
 				break;
-			case "changeFunc":
+			case "changefunc":
 				instance = new ChangeFunc(def);
 				break;
-			case "patternGen":
+			case "patterngen":
 				instance = new PatternGen(def);
 				break;
 			case "chooser":
 				instance = new Chooser(def);
 				break;
-			default:
+			case "taskrunner":
+				instance = new TaskRunner(def);
 				break;
+			default:
+				System.err.println("Could not find any instance type for " + type);
+				return;
 		}
 		instance.start();
 		
