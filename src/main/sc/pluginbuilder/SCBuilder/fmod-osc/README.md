@@ -1,0 +1,1 @@
+This is a prototype of an FMOD Plugin that can be used to send parameter data to software such as SuperCollider and MaxMSP. If you are interested in this or would like to use it, please email me at alex@alexgraham.net. 
