@@ -26,7 +26,49 @@
 	{ | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
 		Out.ar(outBus, Pan2.ar(Saw.ar(freq) * gain, pan));
 	},
-	[[\freq, 0, 1000, 440]]);
+	[[\freq, 0, 1000, 440]]
+);
+
+~java.addDefinition(\sawWave, \synth,
+	{ | outBus, freq, pan, gain |
+		var sig = Saw.ar(freq) * gain;
+		Out.ar(outBus, Pan2.ar(sig, pan));
+	},
+	[
+		[\freq, 0, 1000, 440],
+		[\pan, \float, -1.00, 1.00, 0.00],
+		[\gain, \float, 0.00, 1.00, 0.00]
+	]
+);
+
+~java.addDefinition(\sawWave, \synth,
+	{ | outBus = 0, freq = 440, speed = 0.5, pan = 0, gain = 0.5 |
+		var sig = Saw.ar(freq);
+		sig = sig * SinOsc.ar(speed, 0, 0.5, 1);
+		Out.ar(outBus, Pan2.ar(sig * gain, pan));
+	},
+	[
+		[\freq, \float, 0.00, 1000.00, 440.00],
+		[\speed, \float, 0.00, 5.00, 0.50],
+		[\gain, \float, 0.00, 1.00, 0.00],
+		[\pan, \float, -1.00, 1.00, 0.00],
+	]
+);
+
+~java.addDefinition(\sawWaveVib, \synth,
+	{ | outBus, freq, vibSpeed, vibAmount, pan, gain |
+		var mod = SinOsc.ar(vibSpeed, mul: vibAmount);
+		var sig = Saw.ar(freq + mod);
+		Out.ar(outBus, Pan2.ar(sig * gain, pan));
+	},
+	[
+		[\freq, \float, 0.00, 1000.00, 440.00],
+		[\vibAmount, \float, 0.00, 100.00, 5.00],
+		[\vibSpeed, \float, 0.00, 5.00, 0.50],
+		[\gain, \float, 0.00, 1.00, 0.00],
+		[\pan, \float, -1.00, 1.00, 0.00],
+	]
+);
 
 
 ~java.addDefinition("scale", \synth,

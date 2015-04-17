@@ -82,6 +82,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		super();
 		
 		this.player = player;
+		setInstance(player);
 
 		player.addListener(this);
 		setupWindow(this.getInterior());
@@ -101,7 +102,8 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		
 		topPanel = new ConnectablePanel();
 		topPanel.setLayout(new FlowLayout());
-		topLabel = new JLabel("Routine Player");
+		
+		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

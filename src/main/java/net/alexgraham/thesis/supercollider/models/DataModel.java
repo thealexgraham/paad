@@ -321,6 +321,7 @@ public class DataModel {
 				
 				bw.write(String.format("\t\t[\\%s, \\%s, \\%s, \\%s, ", 
 						instance.getName(), instance.getDef().getType().toLowerCase(), instance.getID(), model.getName()));
+				
 				if (model.getClass() == DoubleParamModel.class) {
 					DoubleParamModel param = (DoubleParamModel) model;
 					bw.write(String.format("%.2f, %.2f, %.2f", 

@@ -50,6 +50,7 @@ public class PatternGenModule extends ModulePanel {
 		super(width, height);
 		
 		this.patternGen = patternGen;
+		setInstance(patternGen);
 		
 		nameLabel = new JLabel(patternGen.getName());
 		nameLabel.setFont(new Font("Tahoma", Font.PLAIN, 19));
@@ -95,7 +96,7 @@ public class PatternGenModule extends ModulePanel {
 //		topPanel.add(connectablePanel);
 //		this.addConnectablePanel(connectablePanel);
 //		
-		JLabel topLabel = new JLabel(patternGen.getName());
+		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

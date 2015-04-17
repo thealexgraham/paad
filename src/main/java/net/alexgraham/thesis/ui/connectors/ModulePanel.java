@@ -11,12 +11,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
@@ -27,6 +31,7 @@ import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.
 
 import net.alexgraham.thesis.AGHelper.TestEnum;
 import net.alexgraham.thesis.supercollider.synths.Instance;
+import net.alexgraham.thesis.ui.modules.ModuleFactory;
 
 public abstract class ModulePanel extends JPanel {
 
@@ -94,6 +99,34 @@ public abstract class ModulePanel extends JPanel {
 
 	public ModulePanel() {
 		setup();
+	}
+	
+	protected JLabel getTitleLabel() {
+		
+		JLabel label = new JLabel(instance.getName());
+		
+//		String type = instance.getDef().getType().toLowerCase();
+//		
+//	    URL imageResource = getClass().getResource("/images/" + type + ".png");
+//	    
+//	    if (imageResource != null) {
+//			ImageIcon icon = ModuleFactory.getScaledIcon(imageResource, 25, 25);
+//			
+//			if (icon != null) {
+//		        label.setHorizontalTextPosition(SwingConstants.LEADING);
+//		        label.setAlignmentX(SwingConstants.RIGHT);
+//		        label.setIcon(icon);
+//			}
+//	    } else {
+//	    	System.err.println("No image icon");
+//	    }
+		
+//        label.setHorizontalTextPosition(SwingConstants.CENTER);
+//        label.setAlignmentX(SwingConstants.CENTER);
+		
+
+        
+		return label;
 	}
 
 	public void setOwner(LineConnectPanel owner) {

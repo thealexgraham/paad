@@ -18,6 +18,8 @@ import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
+import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.FaderPanel;
 import net.alexgraham.thesis.ui.SynthCardsPanel;
 import net.alexgraham.thesis.ui.TreeLauncherPanel;
@@ -87,6 +89,14 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 	
 	@Override
 	public void serverReady() {
+		
+		String mainExportName = "Main";
+		ParamGroup mainExportGroup = App.paramGroupModel.getExportGroupByName(mainExportName);
+		 if (mainExportGroup == null) {
+			 mainExportGroup = App.paramGroupModel.newExportGroup(mainExportName);
+		 }
+	
+
 		// Create faders
 		Def faderDef = App.defModel.getDefByName("fader");
 		ArrayList<Effect> faders = new ArrayList<Effect>();
@@ -104,6 +114,11 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 			masterFader.setCloseCommand("/do/nothing");
 			
 			App.synthModel.addCustomInstance(masterFader);
+			
+			// Set master amp to the main export group
+			ParamModel masterAmp = masterFader.getModelForParameterName("amp");
+			masterAmp.setExportGroup(mainExportGroup);
+			mainExportGroup.addParamModel(masterAmp);
 			
 			faderAddSyncer.addStartAction(new SyncAction() {
 				@Override
@@ -151,6 +166,10 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 			stepSyncer.run();
 
 		}
+		
+
+		
+		
 		
 	}
 

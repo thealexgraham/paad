@@ -55,7 +55,7 @@ public class SynthModule extends ModulePanel {
     
 
 	public SynthModule(int width, int height, Synth synth) {
-		super(width, height);
+		super(width, height, synth);
 		
 		this.synth = synth;
 		
@@ -100,7 +100,7 @@ public class SynthModule extends ModulePanel {
 		
 		topPanel = new ConnectablePanel(new FlowLayout());
 		
-		JLabel topLabel = new JLabel(synth.getName());
+		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

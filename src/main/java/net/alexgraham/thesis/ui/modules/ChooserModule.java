@@ -55,7 +55,7 @@ public class ChooserModule extends ModulePanel {
 		
 		topPanel = new ConnectablePanel(new FlowLayout());
 		
-		JLabel topLabel = new JLabel(chooser.getName());
+		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

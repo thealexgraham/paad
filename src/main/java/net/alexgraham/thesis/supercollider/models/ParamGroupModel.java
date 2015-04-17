@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.sun.corba.se.spi.orb.StringPair;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 
+import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 
 public class ParamGroupModel {
@@ -23,6 +24,17 @@ public class ParamGroupModel {
     private int colorIndex = 0;
 	
 	public ParamGroupModel() {
+	}
+	
+	public ParamGroup getExportGroupByName(String name) {
+		ParamGroup nameGroup = null;
+		
+		for (ParamGroup group : exportGroups) {
+			if (group.getName().equals(name)) 
+				nameGroup = group;
+		}
+		
+		return nameGroup;
 	}
 	
 	public List<ParamGroup> getExportGroups() {

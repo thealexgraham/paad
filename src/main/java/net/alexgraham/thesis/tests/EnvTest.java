@@ -3,13 +3,20 @@ package net.alexgraham.thesis.tests;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 
 import javafx.beans.property.FloatProperty;
@@ -21,39 +28,110 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.EnvelopeModel;
+import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.components.swingosc.EnvelopeView;
 
 
 
 public class EnvTest {
+		
+	public static class EnvelopeGroupPanel extends JPanel {
+		DoubleParamModel positionModel;
+		JPanel envelopesPanel;
+		EnvelopeView envView;
+		public EnvelopeGroupPanel(DoubleParamModel positionModel) {
+			this.positionModel = positionModel;
+			
+		    setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		    
+		    envelopesPanel = new JPanel();
+		    envelopesPanel.setLayout(new BoxLayout(envelopesPanel, BoxLayout.Y_AXIS));
+//		    add(envelopesPanel);
+		    
+		    
+		    positionModel.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					repaint();
+				}
+			});
+		}
+
+		public void addEnvelopeView(EnvelopeView view) {
+			envView = view;
+			add(view);
+		}
+		
+		@Override
+		public void paint(Graphics g) {
+			super.paint(g);
+			Rectangle bounds = envView.getBounds();
+			Graphics2D g2 = (Graphics2D) g;
+			Insets insets = envView.getInsets();
+			int posX = (int)((bounds.getWidth() - (insets.left + insets.right)) * positionModel.getDoubleValue()) + insets.left;
+			Line2D.Float line = new Line2D.Float(new Point(posX, 0), new Point(posX, getHeight()));
+			g2.draw(line);
+		}
+		
+		
+	}
+	
 	  public static void main(String[] argv) throws IOException {
+		  
+		  	EnvelopeModel envModel = new EnvelopeModel();
+		  
 		    JFrame frame = new JFrame();
 		    EnvelopeView env = new EnvelopeView();
+		    env.setModel(envModel);
+  
 		    env.setValues(new float[]{0.0f, 0.1f, 0.2f, 1f}, 
 		    		new float[]{0.0f, 0.5f, 1.0f, 0.5f});
 //		    		new int[]{5, 5, 5, 5}, new float[]{-2f,0.5f,0.5f,0.5f});
 		    env.setHorizontalEditMode(EnvelopeView.HEDIT_CLAMP);
 		    env.setSelectionColor(Color.red);
-		    env.sendDirtyValues(0);
+		    
+		    env.setRange("y", new float[]{0f, 100f});
+		    
+		    EnvelopeView env2 = new EnvelopeView(envModel);
+		    env2.setHorizontalEditMode(EnvelopeView.HEDIT_CLAMP);
+		    env2.setSelectionColor(Color.red);
+		    
+		    
 		    JPanel panel = new JPanel();
 		    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-		    JButton button = new JButton("Output");
-		    panel.add(env);		    
 		    
-		    panel.add(createAdjustPanel(env));
+			DoubleParamModel positionModel = new DoubleParamModel(100, 0, 1, 0.5);
+			DialD positionDial = new DialD(positionModel);
+		    panel.add(positionDial);
+		    
+		    EnvelopeGroupPanel envPanel = new EnvelopeGroupPanel(positionModel);
+
+
+		    envPanel.addEnvelopeView(env);		 
+		    envPanel.addEnvelopeView(env2);
+
+		    
+//		    panel.add(createAdjustPanel(env));
+		    JButton button = new JButton("Output");
 		    panel.add(button);
 		    button.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
-					env.getEnvelopeValues();
+					envModel.toSuperColliderVersion();
 				}
 			});
+
+		    panel.add(envPanel);
+		    
 		    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		    frame.getContentPane().add(panel);
 		    frame.setSize(400, 500);

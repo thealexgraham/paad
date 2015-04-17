@@ -55,7 +55,6 @@ import javax.swing.BorderFactory;
 import javax.swing.event.MouseInputAdapter;
 
 import net.alexgraham.thesis.supercollider.synths.parameters.models.EnvelopeModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.EnvelopeModel.EnvelopeListener;
 
 /**
  *	Swing implementation and extension of SCEnvelopeView by Jan Truetzschler.
@@ -63,8 +62,8 @@ import net.alexgraham.thesis.supercollider.synths.parameters.models.EnvelopeMode
  *	@author		Hanns Holger Rutz
  *	@version	0.61, 23-Apr-09
  */
-public class EnvelopeView
-extends AbstractMultiSlider implements EnvelopeListener
+public class BackupEnvelopeView
+extends AbstractMultiSlider
 {
 	/**
 	 * 	Horizontal editing mode: Points can be freely moved unconstrainted
@@ -128,17 +127,12 @@ extends AbstractMultiSlider implements EnvelopeListener
 		}
 	}
 	
-	public EnvelopeView(EnvelopeModel model) {
-		this(true);
-		setModel(model);
-	}
-	
-	public EnvelopeView()
+	public BackupEnvelopeView()
 	{
 		this( true );
 	}
 
-	public EnvelopeView( boolean clipThumbs )
+	public BackupEnvelopeView( boolean clipThumbs )
 	{
 		super();
 		this.clipThumbs = clipThumbs;
@@ -147,27 +141,7 @@ extends AbstractMultiSlider implements EnvelopeListener
 		final MouseAdapter ma = new MouseAdapter();
 		addMouseListener( ma );
 		addMouseMotionListener( ma );
-		
-		model.addListener(this);
 	}
-	
-	public void setModel(EnvelopeModel model) {
-		this.model = model;
-		model.addListener(this);
-	}
-	
-	@Override
-	public void envelopeChanged(EnvelopeModel model) {
-		setValues(model.getX(), model.getY(), model.getShapes(), model.getCurves());
-	}
-	
-	@Override
-	public void rangesChanged(float xMin, float xMax, float yMin, float yMax) {
-		setXRange(xMin, xMax);
-		setYRange(yMin, yMax);
-	}
-	
-	
 	
 	public void setHorizontalEditMode( int mode )
 	{
@@ -207,8 +181,6 @@ extends AbstractMultiSlider implements EnvelopeListener
 		}
 		this.xMin = min;
 		this.xMax = max;
-		
-		model.setXRange(xMin, xMax);
 	}
 	
 	public void setYRange(float min, float max) {
@@ -219,8 +191,6 @@ extends AbstractMultiSlider implements EnvelopeListener
 		}
 		this.yMin = min;
 		this.yMax = max;
-		
-		model.setYRange(yMin, yMax);
 	}
 	
 	public void setRange(String axis, float[] range) {
@@ -813,7 +783,6 @@ extends AbstractMultiSlider implements EnvelopeListener
 		nodes[numVals - 1].y = nodes[numVals - 2].y;
 		nodes[numVals - 1].invalid = true;
 		repaint();
-		model.updateFromNodes(nodes, this);
 	}
 
 	public void setValues( float[] x, float[] y )
@@ -1062,13 +1031,11 @@ extends AbstractMultiSlider implements EnvelopeListener
 		for (int i = 0; i < nodesList.size(); i++) {
 			nodes[i] = nodesList.get(i);
 		}
-		
-		updateEnds();
 	}
 
 	protected void dirty( Node n )
 	{
-		model.updateFromNodes(nodes, this);
+		System.out.println("Value being changes");
 	}
 	
 	/*
@@ -1497,7 +1464,7 @@ extends AbstractMultiSlider implements EnvelopeListener
 		}
 	}
 
-	public static class Node
+	private static class Node
 	{
 		private static final Node[]		NO_CONNECTIONS	= new Node[ 0 ];
 		
@@ -1510,10 +1477,10 @@ extends AbstractMultiSlider implements EnvelopeListener
 		private static final int		SHP_SQUARED		= 6;
 		private static final int		SHP_CUBED		= 7;
 		
-		public float					x				= 0f;
-		public float					y				= 0f;
-		public int					shape			= SHP_LINEAR;
-		public float					curve			= 0f;
+		protected float					x				= 0f;
+		protected float					y				= 0f;
+		protected int					shape			= SHP_LINEAR;
+		protected float					curve			= 0f;
 		protected Color					fillColor 		= Color.black;
 		protected float					thumbWidth 		= 5f; // 12f;
 		protected float					thumbHeight		= 5f; // 12f;
@@ -1549,5 +1516,4 @@ extends AbstractMultiSlider implements EnvelopeListener
 			this.idx			= idx;
 		}
 	}
-
 }

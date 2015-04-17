@@ -13,12 +13,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.alexgraham.thesis.ui.components.FlashButton;
+import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.helpers.ComponentMover;
 import net.alexgraham.thesis.ui.helpers.ComponentResizer;
 
@@ -158,4 +161,31 @@ public class GridBagLayoutDemo {
             }
         });
     }
+    
+    public void test(JPanel pane) {
+		JPanel togetherPanel = new JPanel();
+		JPanel leftConnectable = new JPanel();
+		JPanel insidePanel = new JPanel();
+		
+		JPanel rightConnectable = new JPanel();
+
+
+    	pane.setLayout(new GridBagLayout());
+    	GridBagConstraints c = new GridBagConstraints();
+
+    	c.fill = GridBagConstraints.HORIZONTAL;
+    	c.fill = GridBagConstraints.BOTH;
+
+    	pane.add(leftConnectable, c);
+    	
+    	c.weightx = 1;
+    	c.gridx = 1;
+    	pane.add(insidePanel);
+    	
+    	c.weightx = 0;
+    	c.gridx = 2;
+    	pane.add(rightConnectable, c);
+
+   }
+    
 }

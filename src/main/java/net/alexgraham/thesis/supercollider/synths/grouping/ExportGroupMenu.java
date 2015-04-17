@@ -17,7 +17,7 @@ import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.components.ColorIcon;
 
 public class ExportGroupMenu extends JMenu {
-		
+
     JMenuItem anItem;
     public ExportGroupMenu(ParamModel paramModel){
 

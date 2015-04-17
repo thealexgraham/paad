@@ -26,7 +26,7 @@ This example shows how to create a simple gain DSP effect.
 ///=============================
 ///%%%CONST_DEFINES%%%
 
-#define TOP_ROUTE "/testbanger"
+#define TOP_ROUTE "/changeconnections"
 static const int PORT = 57125;
 
 ///=============================
@@ -53,13 +53,7 @@ enum
 	///=============================
 	///%%%PARAM_ENUMS%%%
 	
-	FMOD_OTHER_PARAM_STEADYACTION4_TIMEBETWEEN,
-
-	
-	FMOD_OTHER_PARAM_SINEWAVE3_FREQ,
-
-	
-	FMOD_OTHER_PARAM_SINEWAVE3_GAIN,
+	FMOD_OTHER_PARAM_MASTER_AMP,
 
 	///=============================
     FMOD_OTHER_NUM_PARAMETERS
@@ -81,13 +75,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, in
 /// ==========================
 ///%%%STATIC_PARAM_DESC%%%
 	
-static FMOD_DSP_PARAMETER_DESC p_SteadyAction4_timeBetween; // p_SteadyAction4_timeBetween
-
-	
-static FMOD_DSP_PARAMETER_DESC p_sineWave3_freq; // p_sineWave3_freq
-
-	
-static FMOD_DSP_PARAMETER_DESC p_sineWave3_gain; // p_sineWave3_gain
+static FMOD_DSP_PARAMETER_DESC p_Master_amp; // p_Master_amp
 
 /// ===========================
 
@@ -96,13 +84,7 @@ FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
 	/// =====================================
 	///%%%PARAM_DESC_POINTERS%%%
 	
-	&p_SteadyAction4_timeBetween, 
-
-	
-	&p_sineWave3_freq, 
-
-	
-	&p_sineWave3_gain, 
+	&p_Master_amp, 
 
 	/// =====================================
 };
@@ -113,7 +95,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
 	/// =====================================
 	///%%%DESC_NAME%%%
 	
-    "SuperCollider testbanger",
+    "SuperCollider changeconnections",
 
 	/// =====================================
     0x00010000,     // plug-in version
@@ -147,13 +129,7 @@ F_DECLSPEC F_DLLEXPORT FMOD_DSP_DESCRIPTION* F_STDCALL FMODGetDSPDescription()
 	/// ====================================
 	///%%%PARAM_DESCRIPTIONS%%%
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SteadyAction4_timeBetween, "timeBetween", "f", "Adjusts timeBetween", 0, 10, 1);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_sineWave3_freq, "freq", "f", "Adjusts freq", 0, 1000, 440);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_sineWave3_gain, "gain", "f", "Adjusts gain", 0, 1, 0.2);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_amp, "amp", "f", "Adjusts amp", 0, 1, 0.5);
 
 	/// ====================================
 
@@ -173,16 +149,8 @@ public:
 	/// ================================
 	///%%%PARAM_CLASS_DECS%%%
 	
-	void setSteadyAction4_timeBetween(float); 
-	float SteadyAction4_timeBetween() const { return m_SteadyAction4_timeBetween; }  
-
-	
-	void setSineWave3_freq(float); 
-	float sineWave3_freq() const { return m_sineWave3_freq; }  
-
-	
-	void setSineWave3_gain(float); 
-	float sineWave3_gain() const { return m_sineWave3_gain; }  
+	void setMaster_amp(float); 
+	float Master_amp() const { return m_Master_amp; }  
 
 	/// ================================
 
@@ -198,13 +166,7 @@ private:
 	/// =============================
 	///%%%PARAM_PRIVATE_DECS%%%
 	
-	float m_SteadyAction4_timeBetween; 
-
-	
-	float m_sineWave3_freq; 
-
-	
-	float m_sineWave3_gain; 
+	float m_Master_amp; 
 
 	/// ===============================
 
@@ -239,18 +201,8 @@ void FMODOtherState::reset()
 /// =======================================
 ///%%%PARAM_CLASS_FUNCTIONS%%%
 
-void FMODOtherState::setSteadyAction4_timeBetween(float value) { 
-	m_SteadyAction4_timeBetween = value;
-}
-
-
-void FMODOtherState::setSineWave3_freq(float value) { 
-	m_sineWave3_freq = value;
-}
-
-
-void FMODOtherState::setSineWave3_gain(float value) { 
-	m_sineWave3_gain = value;
+void FMODOtherState::setMaster_amp(float value) { 
+	m_Master_amp = value;
 }
 
 /// =======================================
@@ -310,7 +262,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
         /// =====================================
 		///%%%PROC_ARGS%%%
 	
-    " -d supercollider -l fmod/testbanger/sclang_conf.yaml -u 57125",
+    " -d supercollider -l fmod/changeconnections/sclang_conf.yaml -u 57125",
 
 		/// =====================================
         NULL,           // Process handle not inheritable
@@ -362,21 +314,9 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspsetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	/// ==============================================
 	///%%%SET_PARAM_FLOAT%%%
 	
-	case FMOD_OTHER_PARAM_STEADYACTION4_TIMEBETWEEN:
-		state->setSteadyAction4_timeBetween(value);
-		state->sendParam("/taskRunner/paramc", "timeBetween", "4", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SINEWAVE3_FREQ:
-		state->setSineWave3_freq(value);
-		state->sendParam("/synth/paramc", "freq", "3", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SINEWAVE3_GAIN:
-		state->setSineWave3_gain(value);
-		state->sendParam("/synth/paramc", "gain", "3", value);
+	case FMOD_OTHER_PARAM_MASTER_AMP:
+		state->setMaster_amp(value);
+		state->sendParam("/effect/paramc", "amp", "1", value);
 		return FMOD_OK;
 
 	/// =============================================
@@ -393,21 +333,9 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	/// ===============================================
 	///%%%GET_PARAM_FLOAT%%%
 	
-	case FMOD_OTHER_PARAM_STEADYACTION4_TIMEBETWEEN:
-		*value = state->SteadyAction4_timeBetween();
-		if (valuestr) sprintf(valuestr, "% fl", state->SteadyAction4_timeBetween());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SINEWAVE3_FREQ:
-		*value = state->sineWave3_freq();
-		if (valuestr) sprintf(valuestr, "% fl", state->sineWave3_freq());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SINEWAVE3_GAIN:
-		*value = state->sineWave3_gain();
-		if (valuestr) sprintf(valuestr, "% fl", state->sineWave3_gain());
+	case FMOD_OTHER_PARAM_MASTER_AMP:
+		*value = state->Master_amp();
+		if (valuestr) sprintf(valuestr, "% fl", state->Master_amp());
 		return FMOD_OK;
 
 	/// ==============================================

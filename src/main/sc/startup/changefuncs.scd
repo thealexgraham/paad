@@ -4,7 +4,6 @@
 		| value, min, max, walkAmount |
 
 		var changeTop, change;
-		"performing change func".postln;
 		changeTop = (max - min) * (walkAmount / 100);
 		change = changeTop.rand * [1, -1].choose;
 		value + change;
@@ -27,8 +26,7 @@
 	{
 		| object, timeBetween |
 		loop { // Go forever
-			"Performing action message".postln;
-			object.sendActionMessage; // Could concievably split up into multiple actions
+			object.sendActionMessage;
 			timeBetween.value.wait;
 		}
 	},
@@ -39,8 +37,7 @@
 	\taskRunner,
 	{
 		| object |
-		"I am a task and I did it".postln;
-		object.sendActionMessage; // Could concievably split up into multiple actions
+		object.sendActionMessage;
 
 	}
 );

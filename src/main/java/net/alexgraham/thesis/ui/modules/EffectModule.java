@@ -75,7 +75,7 @@ public class EffectModule extends ModulePanel {
 		topPanel.addConnector(Location.TOP, effect.getConnector(ConnectorType.AUDIO_INPUT));
 		this.addConnectablePanel(topPanel);
 		
-		JLabel topLabel = new JLabel(effect.getName());
+		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

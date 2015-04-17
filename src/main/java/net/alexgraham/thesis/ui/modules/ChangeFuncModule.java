@@ -105,7 +105,7 @@ public class ChangeFuncModule extends ModulePanel {
 		topPanel.addConnector(Location.TOP, changeFunc.getConnector(ConnectorType.PARAM_CHANGE_OUT));
 		this.addConnectablePanel(topPanel);
 		
-		JLabel topLabel = new JLabel(changeFunc.getSynthName());
+		JLabel topLabel = getTitleLabel(); //new JLabel(changeFunc.getSynthName());
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

@@ -73,7 +73,7 @@ public class InstrumentModule extends ModulePanel {
 		
 		topPanel = new ConnectablePanel(new FlowLayout());
 		
-		JLabel topLabel = new JLabel(synth.getName());
+		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

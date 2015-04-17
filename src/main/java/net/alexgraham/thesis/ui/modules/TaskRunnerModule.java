@@ -5,9 +5,11 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -26,7 +28,7 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class TaskRunnerModule extends ModulePanel implements TaskListener {
 	
-	ConnectablePanel topPanel;
+	JPanel topPanel;
 	ConnectablePanel bottomPanel;
 	JPanel middlePanel;
 	JScrollPane scrollPane;
@@ -65,26 +67,39 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 
 		//Top Panel//
 		
-		topPanel = new ConnectablePanel();
-		topPanel.setLayout(new FlowLayout());
-		topLabel = new JLabel("Routine Player");
+		JPanel topContent = new JPanel();
+		
+		topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
-		topPanel.add(topLabel);
+		topContent.add(topLabel);
 		
-		topPanel.addConnector(Location.RIGHT, runner.getConnector(ConnectorType.ACTION_OUT));
-		this.addConnectablePanel(topPanel);
+		topPanel = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_OUT), topContent);
 		
-		ConnectablePanel topWrapper = new ConnectablePanel();
-		topWrapper.setLayout(new BoxLayout(topWrapper, BoxLayout.Y_AXIS));
-		topWrapper.add(topPanel);
+//		topPanel.addConnector(Location.RIGHT, runner.getConnector(ConnectorType.ACTION_OUT));
+//		this.addConnectablePanel(topPanel);
+		
+//		ConnectablePanel topWrapper = new ConnectablePanel();
+//		topWrapper.setLayout(new BoxLayout(topWrapper, BoxLayout.Y_AXIS));
+//		topWrapper.add(topPanel);
+		
+		
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-		middlePanel.setLayout(new GridLayout(0, 2));
-		createButtons();
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		
-		addParameters();
+		middlePanel.add(Box.createVerticalStrut(5));
+		
+		createButtons(middlePanel);
+		
+		JPanel parametersPanel = new JPanel();
+		parametersPanel.setLayout(new GridLayout(0, 1, 5, 5));
+		addParameters(parametersPanel);
+		
+		middlePanel.add(parametersPanel);
+		
+		middlePanel.add(Box.createVerticalStrut(5));
 
 		//scrollPane = new JScrollPane(middlePanel);
 		
@@ -99,23 +114,23 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		
 		// Create connectors //
 
-		pane.add(topWrapper, BorderLayout.NORTH);
+		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);
 		pane.add(bottomPanel, BorderLayout.SOUTH);	
 		
-
+		pane.revalidate();
 	}
 	
-	public void addParameters() {
+	public void addParameters(JPanel panel) {
 		for (ParamModel paramModel : getInstance().getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
 				//addDoubleParam((DoubleParamModel) paramModel, middlePanel); 
-				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
 			}
 		}
 	}
 	
-	public void createButtons() {
+	public void createButtons(JPanel panel) {
 		playButton = new JButton("Play");
 		playButton.addActionListener(new ActionListener() {
 			@Override
@@ -124,31 +139,34 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 			}
 		});
 		
-		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+//		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 		
-		middlePanel.add(createButtonPanel(playButton, "cycle"));
+		panel.add(createButtonPanel(playButton, "cycle"));
 	
 	}
 	
 	public JPanel createButtonPanel(JButton button, String action) {
-		JPanel togetherPanel = new JPanel();
-		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
-		
-		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0 ,0));
-		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		
-		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
-		this.addConnectablePanel(leftConnectable);
-
-		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
-		this.addConnectablePanel(rightConnectable);
-
-		panel.add(leftConnectable);
-		panel.add(button);
-		panel.add(rightConnectable);
-		
+//		JPanel togetherPanel = new JPanel();
+//		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
+//		
+//		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0 ,0));
+//		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+//		
+//		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
+//		this.addConnectablePanel(leftConnectable);
+//
+//		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
+//		this.addConnectablePanel(rightConnectable);
+//		
+//		panel.add(leftConnectable);
+//		panel.add(button);
+//		panel.add(rightConnectable);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(button);
+		JPanel panel = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()), buttonPanel);
 			
 //		togetherPanel.add(panel);
+
 		return panel;
 		
 	}
