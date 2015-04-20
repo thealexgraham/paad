@@ -9,10 +9,10 @@
 	/* newSynth
 	* Tells java all about the synth definition
 	*/
-	newSynth { |synthName, params|
-
+	newSynth { |name, function, params|
+		this.putDef(\synth, name, (function: function, params: params));
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
-		synthName.tildaPut(Dictionary.new);
+		name.tildaPut(Dictionary.new);
 	}
 
 	/* createSynthListeners
@@ -79,7 +79,7 @@
 			effectDict = this.idGet(effectName, effectId);
 
 			// Set the outBus's control bus to effect inBus index
-			synthDict.at(\synth).set(\outBus, effectDict.at(\inBus).index);
+			synthDict.synth.set(\outBus, effectDict.at(\inBus).index);
 
 			("Connected synthrument to effect").postln;
 		});
@@ -92,7 +92,7 @@
 			effectDict = this.idGet(effectName, effectId);
 
 			// Change synthrument's output bus back to default (0)
-			synthDict.at(\synth).set(\outBus, this.getMasterIn.index);
+			synthDict.synth.set(\outBus, this.getMasterIn.index);
 			("Disconnected synthrument from effect").postln;
 		});
 

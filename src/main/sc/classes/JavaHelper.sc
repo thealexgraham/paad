@@ -96,6 +96,7 @@ JavaHelper {
 		this.createChooserListeners;
 		this.createPatternGenListeners;
 		this.createTaskRunnerListeners;
+		this.createModuleListeners;
 
 	}
 
@@ -222,14 +223,14 @@ JavaHelper {
 		switch(type,
 			\synth, {
 				params = this.addDefaultParams(params);
-				this.newSynth(name, params);
+				this.newSynth(name, function, params);
 			},
 			\instrument, {
 				params = this.addDefaultParams(params);
 				this.newInstrument(name, params);
 			},
 			\effect, {
-				this.newEffect(name, params);
+				this.newEffect(name, function, params);
 			},
 			\changeFunc, {
 				this.newChangeFunc(name, function, params);

@@ -38,7 +38,7 @@
 	*/
 	createChangeFuncListeners {
 		var defaultParams;
-		
+
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
 		this.addOSCResponder('/changefunc/add', { arg msg;
 			var changeFuncName = msg[1];
@@ -81,7 +81,6 @@
 		this.addOSCResponder('/changefunc/paramc', { arg msg;
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
-			"PARAM CHANIGNG".postln;
 			// Set the value directly
 			name.idGet(id).setParam(param, val); // Change the value at the bus
 		});
@@ -121,7 +120,14 @@
 			var changeFunc, owner, parameter;
 
 			changeFunc = cfName.idGet(cfId);
-			parameter = ownerName.idGet(ownerId).at(paramName);
+
+			if (owner.class == Dictionary,
+				{
+					parameter = ownerName.idGet(ownerId).at(paramName);
+				}, {
+					parameter = owner.paramAt(paramName);
+				}
+			);
 
 			// Tell the change func to listen for this parameter
 			changeFunc.removeListener(parameter);

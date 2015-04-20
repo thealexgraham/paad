@@ -18,9 +18,9 @@ public class ChangeFunc extends Synth implements Connectable {
 	}
 
 	public void init() {
-		startCommand = "/changefunc/add";
-		paramChangeCommand = "/changefunc/paramc";
-		closeCommand = "/changefunc/remove";
+		startCommand = "/module/add";
+		paramChangeCommand = "/module/paramc";
+		closeCommand = "/module/remove";
 		
 		addConnector(ConnectorType.PARAM_CHANGE_OUT);
 		addConnector(ConnectorType.ACTION_IN);

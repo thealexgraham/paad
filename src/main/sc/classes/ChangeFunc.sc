@@ -65,6 +65,12 @@ ChangeFunc {
 		// Set the parameter to the new value
 		parameter.set(newValue);
 	}
+
+	removeSelf {
+		argsDict.keysValuesArrayDo( {|key, value|
+			value.bus.free
+		});
+	}
 }
 
 

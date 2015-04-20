@@ -1,4 +1,4 @@
-EffectObject {
+EffectModule {
 	var <>argsDict;
 	var <>synth;
 	var instanceId;
@@ -9,6 +9,10 @@ EffectObject {
 
 	*new { | id, function, arguments |
 		^super.new.init(id, function, arguments);
+	}
+
+	*newMaster { |id, function, arguments |
+		^super.new.initMaster(id, function, arguments);
 	}
 
 	init { | id, function, arguments |
@@ -28,14 +32,21 @@ EffectObject {
 
 		inBus = Bus.audio(Server.default, 2);
 		outBus = ~java.getMasterIn;
-		
-		synth = SynthDef.play(~effectsGroup [\inBus, inBus, ~java.getMasterIn.index]));
-		
+
+		synth = SynthDef.play(~effectsGroup [\inBus, inBus, \outBus, ~java.getMasterIn.index]);
+
 		argsDict.keysValuesDo({ |key value|
 			synth.map(key, value.bus);
 		});
-		
+
 		synth.set(\outBus, outBus);
+	}
+
+	initMaster { | id, function, arguments |
+		init(id, function, arguments);
+		~masterFader = synth;
+		synth.set(\inBus, ~java.getMasterIn);
+		synth.set(\outBus, 0);
 	}
 
 	paramAt { |paramName|
@@ -45,15 +56,10 @@ EffectObject {
 	setParam { |paramName, value|
 		argsDict.at(paramName).setSilent(value);
 	}
-	
+
 	removeSelf {
 		inBus.free;
 		synth.free;
-	}
-
-		
-
-
 	}
 
 }

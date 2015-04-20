@@ -28,9 +28,9 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	}
 	
 	public void init() {
-		startCommand = "/synth/add";
-		paramChangeCommand = "/synth/paramc";
-		closeCommand = "/synth/remove";
+		startCommand = "/module/add";
+		paramChangeCommand = "/module/paramc";
+		closeCommand = "/module/remove";
 		addConnector(ConnectorType.AUDIO_OUTPUT);
 	}
 		
@@ -49,6 +49,7 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	public Object[] getStartArguments() {
 		// Create the arguments list for this Synth
     	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(def.getType());
     	arguments.add(def.getDefName());
     	arguments.add(id.toString());
     	    	

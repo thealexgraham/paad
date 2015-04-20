@@ -2,10 +2,10 @@
 	/* newEffect
 	* Tells java all about the effect definition
 	*/
-	newEffect { |name, params|
+	newEffect { |name, function, params|
 
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
-		this.putDef(\effect, name, (params: params));
+		this.putDef(\effect, name, (function: function, params: params));
 		//effectName.tildaPut(Dictionary.new);
 		this.setupTypeStorage(name);
 	}
@@ -101,16 +101,16 @@
 			var effectName = msg[1], effectId = msg[2], toEffectName = msg[3], toEffectId = msg[4];
 			var toEffectDict, effectDict, toEffectInBus, effectSynth, toEffectSynth;
 
-			toEffectSynth = toEffectName.idGet(toEffectId).at(\synth);
+			toEffectSynth = toEffectName.idGet(toEffectId).synth;
 
 			// Get the destination effect's in bus
-			toEffectInBus = toEffectName.idGet(toEffectId).at(\inBus);
+			toEffectInBus = toEffectName.idGet(toEffectId).synth;
 
 			// Get this effect's dictionary
 			effectDict = effectName.idGet(effectId);
 
 			// Get the effect's synth and set its outBus
-			effectSynth = effectDict.at(\synth);
+			effectSynth = effectDict.synth;
 			effectSynth.moveBefore(toEffectSynth);
 			effectSynth.set(\outBus, toEffectInBus.index);
 
@@ -123,7 +123,7 @@
 
 			// Get dictionary and synth
 			effectDict = effectName.idGet(effectId);
-			effectSynth = effectDict.at(\synth);
+			effectSynth = effectDict.synth;
 
 			// Set outBus back to 0 since it isn't connected to anything
 			effectSynth.set(\outBus, this.getMasterIn);
@@ -137,12 +137,13 @@
 
 			// Get dictionary and synth
 			effectDict = effectName.idGet(effectId);
-			effectSynth = effectDict.at(\synth);
+			effectSynth = effectDict.synth;
 
 			// Set outBus back to 0 since it isn't connected to anything
 			effectSynth.set(\outBus, this.getMasterIn);
 			("Connected effects").postln;
 		});
+		
 
 
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
