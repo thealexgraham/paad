@@ -88,7 +88,7 @@ RoutinePlayer {
 
 
 
-	connectInstrument { |instName, instDict|
+	connectInstrument { |instName, inst|
 		var templateList, busses;
 		var keys = List.new;
 		var args = List.new;
@@ -103,9 +103,9 @@ RoutinePlayer {
 		});
 
 		// Add the busses to the template
-		instDict.keysValuesDo({ |key, value|
-			keys.add(key);
-			args.add(value.asMap);
+		inst.getParams.keysValuesDo({ |name, param|
+			keys.add(name);
+			args.add(param.bus.asMap);
 		});
 		// Bind the template
 		template = Pbind(keys.asArray, args.asArray);

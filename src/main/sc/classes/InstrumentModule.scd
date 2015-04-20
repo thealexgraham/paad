@@ -1,4 +1,4 @@
-SynthModule {
+InstrumentModule {
 	var <>argsDict;
 	var <>synth;
 	var instanceId;
@@ -30,14 +30,7 @@ SynthModule {
 		defName = name;
 
 		// Actual synth stuff
-		outBus = ~java.getMasterIn;
-
-		synth = Synth.head(~synthsGroup, name, [\outBus, ~java.getMasterIn.index]);
-
-		argsDict.keysValuesDo({ |key, value|
-			("mapping " ++ value ++ " which is " ++ key).postln;
-			synth.map(key, value.bus);
-		});
+		argsDict.put(\outBus, (bus: Bus.control.set(~java.getMasterIn.index));
 
 		synth.postln;
 	}
