@@ -42,13 +42,30 @@ public class PatternGen extends Instance implements Serializable, Connectable {
 	}
 	
 	public void init() {
-		startCommand = "/patterngen/add";
-		paramChangeCommand = "/patterngen/paramc";
-		closeCommand = "/patterngen/remove";
+		startCommand = "/module/add";
+		paramChangeCommand = "/module/paramc";
+		closeCommand = "/module/remove";
 		
 		addConnector(ConnectorType.PATTERN_OUT);
 		addConnector(ConnectorType.ACTION_IN);
 	}
+	
+	@Override
+	public Object[] getStartArguments() {
+		// Create the arguments list for this Synth
+    	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(def.getType());
+    	arguments.add(def.getDefName());
+    	arguments.add(id.toString());
+    	    	
+    	for (ParamModel model : parameterModels.values()) {
+    		arguments.add(model.getName());
+    		arguments.add(model.getObjectValue());
+    	}
+    	
+    	return arguments.toArray();
+	}
+	
 		
 	public void addSynthListener(SynthListener listener) {
 		synthListeners.add(listener);

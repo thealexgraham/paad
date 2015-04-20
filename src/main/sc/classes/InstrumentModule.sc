@@ -24,16 +24,27 @@ InstrumentModule {
 			var paramBus = ParameterBus.new(name, value, min, max);
 			paramBus.ownerId = instanceId;
 			argsDict.put(name, paramBus);
-
 		});
 
 		defName = name;
 
-		// Actual synth stuff
-		argsDict.put(\outBus, (bus: Bus.control.set(~java.getMasterIn.index));
+		// OutBus needs to be an actual bus
+		outBus = Bus.control.set(~java.getMasterIn.index);
 
-		synth.postln;
+		// Make it look like ParameterBus so it can be used the same way
+		argsDict.put(\outBus, (bus: Bus.control.set(~java.getMasterIn.index)));
 	}
+
+	getParams {
+		^argsDict;
+	}
+
+/*	getBusses {
+		var busDict = Dictionary.new;
+
+		argsDict.keysValuesArrayDo { | name, paramBus |
+			busDict.put(name, paramBus.bus);
+	}*/
 
 	// Shared
 	paramAt { |paramName|

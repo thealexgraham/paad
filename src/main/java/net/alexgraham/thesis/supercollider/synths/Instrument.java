@@ -23,9 +23,9 @@ public class Instrument extends Synth implements Connectable {
 	}
 	
 	public void init() {
-		startCommand = "/inst/add";
-		paramChangeCommand = "/inst/paramc";
-		closeCommand = "/inst/remove";
+		startCommand = "/module/add";
+		paramChangeCommand = "/module/paramc";
+		closeCommand = "/module/remove";
 		
 		addConnector(ConnectorType.INST_PLAY_IN);
 		addConnector(ConnectorType.AUDIO_OUTPUT);

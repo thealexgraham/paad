@@ -38,8 +38,6 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		synthListeners.add(listener);
 	}
 		
-
-	
 	@Override
 	public void start() {
     	App.sc.sendMessage(getStartCommand(), getStartArguments());

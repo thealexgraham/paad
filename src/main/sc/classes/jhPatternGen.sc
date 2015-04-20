@@ -1,30 +1,12 @@
 + JavaHelper { // patternGen Methods
 
-	patternGenDefs {
-		if (~patternGenDefs == nil,
-			{
-				~patternGenDefs = IdentityDictionary.new;
-				^~patternGenDefs;
-			},
-			{ ^~patternGenDefs }
-		);
-	}
-
-	getPatternGenDef { |name|
-		^this.patternGenDefs.at(name.asSymbol);
-	}
-
-	putPatternGenDef { |name, def|
-		^this.patternGenDefs.put(name.asSymbol, def);
-	}
-
 	/* newpatternGen
 	* Tells java all about the patternGen definition
 	*/
 	newPatternGen { |name, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		// Store the definition
-		this.putPatternGenDef(name, (function: function, params: params));
+		this.putDef(\patternGen, name, (function: function, params: params));
 
 		// Create the storage
 		this.setupTypeStorage(name);

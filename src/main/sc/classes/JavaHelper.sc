@@ -227,7 +227,7 @@ JavaHelper {
 			},
 			\instrument, {
 				params = this.addDefaultParams(params);
-				this.newInstrument(name, params);
+				this.newInstrument(name, function, params);
 			},
 			\effect, {
 				this.newEffect(name, function, params);

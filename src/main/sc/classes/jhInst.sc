@@ -1,8 +1,7 @@
 + JavaHelper {
 
-	newInstrument { |instName, params|
-		// Create a dictionary to store the running instruments
-		instName.tildaPut(Dictionary.new);
+	newInstrument { |name, function, params|
+		this.putDef(\instrument, name, (function: function, params: params));
 	}
 
 	createInstListeners {
@@ -65,27 +64,27 @@
 
 		this.addOSCResponder('/inst/connect/effect', { arg msg;
 			var instName = msg[1], instId = msg[2], effectName = msg[3], effectId = msg[4];
-			var instDict, effectDict;
+			var inst, effectDict;
 
 			// Get the dictionaries
-			instDict = this.idGet(instName, instId);
+			inst = this.idGet(instName, instId);
 			effectDict = this.idGet(effectName, effectId);
 
 			// Set the outBus's control bus to effect inBus index
-			instDict.at(\outBus).set(effectDict.at(\inBus).index);
+			inst.paramAt(\outBus).bus.set(effectDict.at(\inBus).index);
 
 			("Connected instrument to effect").postln;
 		});
 
 		this.addOSCResponder('/inst/disconnect/effect', { arg msg;
 			var instName = msg[1], instId = msg[2], effectName = msg[3], effectId = msg[4];
-			var instDict, effectDict;
+			var inst, effectDict;
 
-			instDict = this.idGet(instName, instId);
+			inst = this.idGet(instName, instId);
 			effectDict = this.idGet(effectName, effectId);
 
 			// Change instrument's output bus back to default (0)
-			instDict.at(\outBus).set(this.getMasterIn.index);
+			inst.paramAt(\outBus).bus.set(this.getMasterIn.index);
 			("Disconnected instrument from effect").postln;
 		});
 	}

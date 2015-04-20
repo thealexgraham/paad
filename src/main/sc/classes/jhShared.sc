@@ -10,6 +10,8 @@
 			\effect, { ^EffectModule.new(id, function, params) },
 			\synth, { ^SynthModule.new(id, name, function, params) },
 			\changeFunc, { ^ChangeFunc.new(function, params) },
+			\instrument, { ^InstrumentModule.new(id, name, function, params) },
+			\patternGen, { ^PatternGenerator.new(id, function, params) },
 			{^nil}
 		);
 	}

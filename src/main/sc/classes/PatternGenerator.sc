@@ -3,15 +3,16 @@ PatternGenerator {
 	var currentPattern;
 	var <>argsDict;
 	var <>action;
+
 	*new { | id, function, arguments |
 		^super.new.init(id, function, arguments);
 	}
 
 	init { |id, function, arguments|
 
-		action = function;
+
 		argsDict = Dictionary.new;
-		arguments.postln;
+
 		arguments.do({ |item, i|
 			var name = item[0];
 			var type = item[1];
@@ -45,15 +46,8 @@ PatternGenerator {
 
 		});
 
+		action = function;
 		this.doGenerate;
-	}
-
-	paramAt { |paramName|
-		^argsDict.at(paramName);
-	}
-
-	setParam { |paramName, value|
-		argsDict.at(paramName).setSilent(value);
 	}
 
 	doAction {
@@ -75,5 +69,21 @@ PatternGenerator {
 
 	getCurrentPattern {
 		^currentPattern;
+	}
+
+
+	// Shared
+	paramAt { |paramName|
+		^argsDict.at(paramName);
+	}
+
+	setParam { |paramName, value|
+		argsDict.at(paramName).setSilent(value);
+	}
+
+	removeSelf {
+		argsDict.keysValuesArrayDo( {|key, value|
+			value.bus.free
+		});
 	}
 }
