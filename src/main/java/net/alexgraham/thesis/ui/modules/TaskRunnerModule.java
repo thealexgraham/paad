@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,19 +75,11 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		topContent.add(topLabel);
 		
 		topPanel = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_OUT), topContent);
-		
-//		topPanel.addConnector(Location.RIGHT, runner.getConnector(ConnectorType.ACTION_OUT));
-//		this.addConnectablePanel(topPanel);
-		
-//		ConnectablePanel topWrapper = new ConnectablePanel();
-//		topWrapper.setLayout(new BoxLayout(topWrapper, BoxLayout.Y_AXIS));
-//		topWrapper.add(topPanel);
-		
-		
+
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		
 		middlePanel.add(Box.createVerticalStrut(5));
@@ -94,10 +87,10 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		createButtons(middlePanel);
 		
 		JPanel parametersPanel = new JPanel();
-		parametersPanel.setLayout(new GridLayout(0, 1, 5, 5));
-		addParameters(parametersPanel);
+//		parametersPanel.setLayout(new GridLayout(0, 1, 5, 5));
+		addParameters(middlePanel);
 		
-		middlePanel.add(parametersPanel);
+//		middlePanel.add(parametersPanel);
 		
 		middlePanel.add(Box.createVerticalStrut(5));
 
@@ -146,25 +139,10 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 	}
 	
 	public JPanel createButtonPanel(JButton button, String action) {
-//		JPanel togetherPanel = new JPanel();
-//		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
-//		
-//		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0 ,0));
-//		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-//		
-//		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
-//		this.addConnectablePanel(leftConnectable);
-//
-//		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()));
-//		this.addConnectablePanel(rightConnectable);
-//		
-//		panel.add(leftConnectable);
-//		panel.add(button);
-//		panel.add(rightConnectable);
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.add(button);
-		JPanel panel = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()), buttonPanel);
-			
+		Insets currentInsets = button.getInsets();
+		button.setMargin(new Insets(1, currentInsets.left, 1, currentInsets.right));
+		JPanel panel = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()), button);
+		
 //		togetherPanel.add(panel);
 
 		return panel;

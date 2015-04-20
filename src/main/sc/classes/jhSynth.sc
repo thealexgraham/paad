@@ -26,7 +26,7 @@
 
 		// Add synth
 		this.addOSCResponder('/synth/add', { |msg|
-			var synthName = msg[1];
+			var name = msg[1];
 			var id = msg[2];
 			var synthDict;
 
@@ -38,11 +38,11 @@
 			this.getMasterIn.postln;
 			msg = msg.addAll(["outBus", this.getMasterIn.index]);
 
-			synthName.idPut(id, Dictionary.new);
-			synthDict = synthName.idGet(id);
+			name.idPut(id, Dictionary.new);
+			synthDict = name.idGet(id);
 
 			// Store the synth and the inBus
-			synthDict.put(\synth, Synth.head(~synthsGroup, synthName, msg));
+			synthDict.put(\synth, Synth.head(~synthsGroup, name, msg));
 			("Synth added" + id).postln;
 		});
 

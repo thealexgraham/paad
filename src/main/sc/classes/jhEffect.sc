@@ -2,11 +2,12 @@
 	/* newEffect
 	* Tells java all about the effect definition
 	*/
-	newEffect { |effectName, params|
+	newEffect { |name, params|
 
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
+		this.putDef(\effect, name, (params: params));
 		//effectName.tildaPut(Dictionary.new);
-		this.setupTypeStorage(effectName);
+		this.setupTypeStorage(name);
 	}
 
 	/* createEffectListeners
@@ -36,10 +37,12 @@
 			//msg = msg.addAll(["inBus", inBus, "outBus", 0]);
 
 			// Create a new dictionary for this ID
-			msg.postln;
+
 			effectName.idPut(id, Dictionary.new);
 			effectDict = effectName.idGet(id);
+
 			this.getMasterIn.postln;
+
 			// Store the synth and the inBus
 			effectDict.put(\synth, Synth.head(~effectsGroup, effectName,
 				[\inBus, inBus, \outBus, this.getMasterIn.index]));
@@ -91,9 +94,8 @@
 			var effectName = msg[1], param = msg[2], id = msg[3], val = msg[4];
 
 			// Set the value directly
-			//effectName.idGet(id).at(\synth).set(param, val);
 			effectName.idGet(id).at(param).setSilent(val); // Change the value at the bus
-		});
+		}, false);
 
 		this.addOSCResponder('/effect/connect/effect', { arg msg;
 			var effectName = msg[1], effectId = msg[2], toEffectName = msg[3], toEffectId = msg[4];

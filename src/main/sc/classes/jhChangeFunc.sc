@@ -25,7 +25,7 @@
 	newChangeFunc { |name, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		// Store the definition
-		this.putChangeFuncDef(name, (function: function, params: params));
+		this.putDef(\changeFunc, name, (function: function, params: params));
 
 		// Create the storage
 		this.setupTypeStorage(name);
@@ -38,7 +38,7 @@
 	*/
 	createChangeFuncListeners {
 		var defaultParams;
-
+		
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
 		this.addOSCResponder('/changefunc/add', { arg msg;
 			var changeFuncName = msg[1];
@@ -51,7 +51,7 @@
 
 			"Adding changeFunc".postln;
 			// The rest are the defaults
-			changeFuncDef = this.getChangeFuncDef(changeFuncName);
+			changeFuncDef = this.getDef(\changeFunc, changeFuncName);
 
 			// Create the actual function
 			changeFunc = ChangeFunc.new(changeFuncDef.at(\function), changeFuncDef.at(\params));

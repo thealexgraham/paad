@@ -295,15 +295,15 @@ public class Dial extends JComponent {
 		
 		// FIXME : Null point exception for some reason
 
-//			// Transparent 16 x 16 pixel cursor image.
-//			BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-//
-//			// Create a new blank cursor.
-//			Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-//			    cursorImg, new Point(0, 0), "blank cursor");
-//
-//			// Set the blank cursor to the JFrame.
-//			getRootPane().setCursor(blankCursor);
+			// Transparent 16 x 16 pixel cursor image.
+			BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+
+			// Create a new blank cursor.
+			Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+			    cursorImg, new Point(0, 0), "blank cursor");
+
+			// Set the blank cursor to the JFrame.
+			getRootPane().setCursor(blankCursor);
 
 		
 		setBorder(BorderFactory.createLineBorder(Color.black));		
@@ -559,7 +559,7 @@ public class Dial extends JComponent {
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Dial v1.0");
 		final JLabel statusLabel = new JLabel("Welcome to Dial v1.0");
-		final Dial dial = new DialD(2, -1, 1, 0);
+		final Dial dial = new Dial(0, 10, 4);
 		dial.setName("Amp");
 		dial.setBehavior(Dial.Behavior.CENTER);
 		dial.fakeSize = new Dimension(50,50);
@@ -571,7 +571,8 @@ public class Dial extends JComponent {
 //		dial.setMinimumSize(new Dimension(200,200));
 //		dial.setSize(new Dimension(200, 200));
 //		
-		Dial dial2 = new DialD(dial.getModel());
+		Dial dial2 = new Dial();
+		dial2.setModel(dial.getModel());
 
 		frame.getContentPane().add(dial2);
 		frame.getContentPane().add(statusLabel);

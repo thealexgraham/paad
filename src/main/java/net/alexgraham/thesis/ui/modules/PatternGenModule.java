@@ -165,6 +165,7 @@ public class PatternGenModule extends ModulePanel {
 //				ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
 //				rightPanel.add(connectablePanel);
 //				this.addConnectablePanel(connectablePanel);
+				
 				rightPanel.addConnector(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
 				this.addConnectablePanel(rightPanel);
 				

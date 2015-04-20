@@ -6,7 +6,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -114,12 +117,16 @@ public class ChangeFuncModule extends ModulePanel {
 
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
-		middlePanel.setLayout(new GridLayout(0, 1));
+//		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
+//		middlePanel.setLayout(new GridBagLayout());
+//		middlePanel.setLayout(new GridBagLayout());
+//		GridBagConstraints c = new GridBagConstraints();
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		
-		ConnectablePanel buttonPanel = new ConnectablePanel();
-		buttonPanel.addConnector(Location.LEFT, changeFunc.getConnector(ConnectorType.ACTION_IN));
-		this.addConnectablePanel(buttonPanel);
-		
+//		ConnectablePanel buttonPanel = new ConnectablePanel();
+//		buttonPanel.addConnector(Location.LEFT, changeFunc.getConnector(ConnectorType.ACTION_IN));
+//		this.addConnectablePanel(buttonPanel);
+//		
 		JButton actionButton = new JButton("Perform Action");
 		actionButton.addActionListener(new ActionListener() {
 			
@@ -128,11 +135,15 @@ public class ChangeFuncModule extends ModulePanel {
 				changeFunc.doAction();
 			}
 		});
-		buttonPanel.add(actionButton);
+//		buttonPanel.add(actionButton);
+		actionButton.setMargin(new Insets(1, 4, 1, 4));
+		
+		JPanel buttonPanel = ModuleFactory.createSideConnectPanel(this, changeFunc.getConnector(ConnectorType.ACTION_IN), actionButton);
 		
 		middlePanel.add(buttonPanel);
 		addParameters();
 		//scrollPane = new JScrollPane(middlePanel);
+		middlePanel.add(Box.createVerticalStrut(5));
 		
 		
 		//Bottom Panel//

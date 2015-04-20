@@ -1,4 +1,58 @@
 + JavaHelper {
+	
+	createModuleListeners {
+		var defaultParams;
+		
+		this.addOSCResponder('/module/add', { arg msg;
+			var type = msg[1].asSymbol;
+			var name = msg[2];
+			var id = msg[3];
+			var def, module;
+
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // Type
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+			def = this.getDef(type, name);
+
+			// Create the actual function
+			module = this.newModule(type, def.at(\function), def.at(\params));
+			name.idPut(id, module);
+
+			// The rest of the parameters are quads, reshape so we can use them
+			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
+				var paramName = item[0];
+				var value = item[1];
+				module.setParam(paramName, value);
+			});
+
+			("Module added at" + id).postln;
+		});
+		
+		// Whenever the plugin is removed (or killed internally) this will free the synth
+		this.addOSCResponder('/module/remove', { arg msg;
+			// Free synth defs at this id
+			var name = msg[1];
+			var id = msg[2];
+			var module = name.idGet(id);
+
+			module.removeSelf;
+			("changeFunc disconnected, freeing changeFunc at" + id).postln;
+		});
+
+		// [/synth/newparam, synthName, paramName, id, value]
+		this.addOSCResponder('/changefunc/paramc', { arg msg;
+			// Set float1
+			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
+			name.idGet(id).setParam(param, val); // Change the value at the bus
+		});
+	}
+	
+	
+	
+	
 	newDefSeperate { |defName, type, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 

@@ -11,6 +11,27 @@ JavaHelper {
 	var masterIn;
 	var didReady;
 
+	var defs;
+
+	getDefs { |type|
+		if (defs.at(\type) == nil,
+			{
+				defs.put(\type, IdentityDictionary.new);
+				^defs.at(\type);
+			},
+			{ ^defs.at(\type) }
+		);
+	}
+
+	getDef { |type, name|
+
+		^this.getDefs(\type).at(name.asSymbol);
+	}
+
+	putDef { |type, name, def|
+		^this.getDefs(\type).put(name.asSymbol, def);
+	}
+
 	*new { |sendPort|
 		^super.new.init(sendPort);
 	}
@@ -54,6 +75,7 @@ JavaHelper {
 
 		definitions = Dictionary.new;
 		pendingDefs = IdentitySet.new;
+			defs = Dictionary.new;
 
 		ready = false;
 		loaded = false;
@@ -114,10 +136,13 @@ JavaHelper {
 		^this.instances.removeAt(id);
 	}
 
-	addOSCResponder { | path, func |
+	addOSCResponder { | path, func, verify = true |
 		// Can add whatever the hell function wrapping I want here
 		// If has /verify as first argument, send the verification etc
-		OSCdef(path.asSymbol, func, path.asSymbol).verify(this.sendPort); // Don't verify if no java
+		if (verify == true,
+			{ OSCdef(path.asSymbol, func, path.asSymbol).verify(this.sendPort); },
+			{ OSCdef(path.asSymbol, func, path.asSymbol) }
+		)// Don't verify if no java
 	}
 
 	setupTypeStorage { |type|

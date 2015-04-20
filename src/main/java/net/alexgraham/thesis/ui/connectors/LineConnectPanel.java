@@ -154,6 +154,17 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		});
 	}
 	
+	public void deselectAll() {
+		// Deselect all children
+		for (Component component : getComponents()) {
+			if (component instanceof ModulePanel) {
+				((ModulePanel) component).deselect();
+			}
+		}
+		
+		fireSynthDeselectedEvent();
+		
+	}
 	
 	/**
 	 * Creates mouse listenres for dragging,
@@ -165,15 +176,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 				// Change current focus
 				LineConnectPanel.this.requestFocusInWindow();
 				
-				// Deselect all children
-				for (Component component : getComponents()) {
-					if (component instanceof ModulePanel) {
-						((ModulePanel) component).deselect();
-					}
-				}
-				
-				// Notify of synth deselecting
-				fireSynthDeselectedEvent();
+				// Deselect all synths
+				deselectAll();
 				
 				// Start dragging 
 				if (pointHovering && !dragging) {

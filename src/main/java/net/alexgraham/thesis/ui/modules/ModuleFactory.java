@@ -7,6 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.LookupOp;
@@ -17,14 +18,18 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.sun.webkit.InspectorClient;
 
 import net.alexgraham.thesis.supercollider.synths.grouping.ExportIcon;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
@@ -62,11 +67,30 @@ public class ModuleFactory {
     	pane.add(insidePanel);
     	
     	c.gridx = 2;
-    	pane.add(rightConnectable, c);		
+    	pane.add(rightConnectable, c);
 		return pane;
 	}
 	
+	public static JPanel createSideConnectPanel(ModulePanel module, Connector connector, JComponent component) {
+		JPanel insidePanel = new JPanel();
+		insidePanel.add(component);
+		return ModuleFactory.createSideConnectPanel(module, connector, insidePanel);
+	}
+	
 	public static JPanel createDoubleParamPanel(ModulePanel module, DoubleParamModel model) {
+		
+		JPanel togetherPanel = new JPanel();
+		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
+		
+		
+		
+		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0 ,0));
+		
+		//paramPanel.add(paramValueLabel);
+		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
+		module.addConnectablePanel(leftConnectable);
+		leftConnectable.setPreferredSize(new Dimension(5, 5));
+		
 		JLabel paramNameLabel = new JLabel(model.getName());
 		JLabel paramValueLabel = new JLabel(String.format("%.2f", model.getDoubleValue()));
 		model.addChangeListener(new ChangeListener() {
@@ -75,42 +99,39 @@ public class ModuleFactory {
 				paramValueLabel.setText(String.format("%.2f", model.getDoubleValue()));
 			}
 		});
-		
-//			JPanel togetherPanel = new JPanel(new GridLayout(1, 0, 0, 0));
-		JPanel togetherPanel = new JPanel();
-		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
-		
-		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
 
+		paramPanel.add(leftConnectable);
 		paramPanel.add(paramNameLabel);
 		paramPanel.add(new JLabel(new ExportIcon(model)));
+		paramPanel.add(Box.createHorizontalStrut(7));
 		
-		//paramPanel.add(paramValueLabel);
-		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-		module.addConnectablePanel(leftConnectable);
+
 		
-		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
+		paramPanel.add(rightConnectable);
+		module.addConnectablePanel(rightConnectable);
+		rightConnectable.setPreferredSize(new Dimension(5, 5));
+		
+		
+		JPanel dialPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		DialD dial = new DialD(model);
 		dial.setForcedSize(new Dimension(15, 15));
 		dial.setDrawText(false);
-		dialPanel.add(leftConnectable);
-
-		dialPanel.add(dial);
+		
 		dialPanel.add(paramValueLabel);
+		dialPanel.add(Box.createHorizontalStrut(3));
+		dialPanel.add(dial);
+		dialPanel.add(rightConnectable);
+
 		//dialPanel.add(paramNameLabel);
-		
-		ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-		paramPanel.add(connectablePanel);
-		module.addConnectablePanel(connectablePanel);
-		
-		dialPanel.add(Box.createHorizontalStrut(15));
 		
 		dial.addMouseListener(new ParamMenuAdapter((ParamModel) model));
 		togetherPanel.addMouseListener(new ParamMenuAdapter((ParamModel)model));
-		togetherPanel.add(dialPanel);
-		togetherPanel.add(Box.createHorizontalGlue());
 		togetherPanel.add(paramPanel);
-		
+		togetherPanel.add(Box.createHorizontalGlue());
+		togetherPanel.add(dialPanel);
+//    	togetherPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
 		return togetherPanel;
 	}
 	public static ImageIcon getScaledIcon(URL url, int width, int height) {

@@ -188,6 +188,7 @@ public abstract class ModulePanel extends JPanel {
 
 	public void select() {
 		if (getOwner() != null) {
+			getOwner().deselectAll();
 			getOwner().moduleSelected(this);
 		}
 
@@ -362,14 +363,17 @@ public abstract class ModulePanel extends JPanel {
 		}
 
 		public void redispatch(MouseEvent e) {
-			Component parent = e.getComponent();
-			while ((parent = parent.getParent()).getClass() != LineConnectPanel.class) {
+//			Component parent = e.getComponent();
+//			while ((parent = parent.getParent()).getClass() != LineConnectPanel.class) {
+//				System.out.println("Found line connect");
 				// System.out.println(parent.getClass());
 				// if (parent.getClass() == LineConnectPanel.class) {
-				MouseEvent converted = SwingUtilities.convertMouseEvent(e
+				
+			LineConnectPanel parent = ModulePanel.this.getOwner();
+			MouseEvent converted = SwingUtilities.convertMouseEvent(e
 						.getComponent(), e, parent);
 				parent.dispatchEvent(converted);
-			}
+			//}
 		}
 
 		public LineConnectPanel getLineConnectPanel(MouseEvent e) {
