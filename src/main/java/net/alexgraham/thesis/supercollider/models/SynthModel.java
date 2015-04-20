@@ -246,6 +246,9 @@ public class SynthModel implements Serializable {
 			case "taskrunner":
 				instance = new TaskRunner(def);
 				break;
+			case "routineplayer":
+				instance = new RoutinePlayer(def);
+				break;
 			default:
 				System.err.println("Could not find any instance type for " + type);
 				return;

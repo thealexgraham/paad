@@ -6,10 +6,12 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.border.EmptyBorder;
 
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
@@ -106,18 +109,23 @@ public class PatternGenModule extends ModulePanel {
 		
 		//Middle Panel//
 		middlePanel = new ConnectablePanel();
-		middlePanel.addConnector(Location.LEFT, patternGen.getConnector(ConnectorType.ACTION_IN));
-		this.addConnectablePanel(middlePanel);
-		
+//		middlePanel.addConnector(Location.LEFT, patternGen.getConnector(ConnectorType.ACTION_IN));
+//		this.addConnectablePanel(middlePanel);
+//		
 		
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
-		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
 //		middlePanel.add(new JLabel("testing "));
 //		middlePanel.add(new JLabel("testing"));
 		addParameters();
 		//scrollPane = new JScrollPane(middlePanel);
 		
+		JPanel actionInPanel = new JPanel();
+		actionInPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		JLabel actionLabel = new JLabel("Generate New");
+		actionInPanel.add(actionLabel);
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, patternGen.getConnector(ConnectorType.ACTION_IN), actionInPanel));
 		
 		//Bottom Panel//
 

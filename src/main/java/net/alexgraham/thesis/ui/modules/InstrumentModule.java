@@ -43,7 +43,7 @@ public class InstrumentModule extends ModulePanel {
     
 
 	public InstrumentModule(int width, int height, Instrument synth) {
-		super(width, height);
+		super(width, height, synth);
 		
 		this.synth = synth;
 

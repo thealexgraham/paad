@@ -218,6 +218,9 @@ JavaHelper {
 			\taskRunner, {
 				this.newTaskRunner(name, function, params);
 			},
+			\routinePlayer, {
+				this.newRoutPlayer(name, function, params);
+			},
 			{
 				postln("No type for "++type.asString);
 			}

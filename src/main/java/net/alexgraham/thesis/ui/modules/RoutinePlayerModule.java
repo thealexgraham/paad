@@ -38,7 +38,7 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	
-	ConnectablePanel topPanel;
+	JPanel topPanel;
 	ConnectablePanel bottomPanel;
 	JPanel middlePanel;
 	JScrollPane scrollPane;
@@ -100,16 +100,14 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 
 		//Top Panel//
 		
-		topPanel = new ConnectablePanel();
-		topPanel.setLayout(new FlowLayout());
+		JPanel topContentPanel = new JPanel();
+		
+		topPanel = ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_OUT), topContentPanel);
 		
 		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
-		topPanel.add(topLabel);
+		topContentPanel.add(topLabel);
 		
-		topPanel.addConnector(Location.TOP, player.getConnector(ConnectorType.PATTERN_IN));
-		topPanel.addConnector(Location.RIGHT, player.getConnector(ConnectorType.ACTION_OUT));
-		this.addConnectablePanel(topPanel);
 		
 		ConnectablePanel topWrapper = new ConnectablePanel();
 		topWrapper.setLayout(new BoxLayout(topWrapper, BoxLayout.Y_AXIS));

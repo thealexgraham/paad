@@ -4,35 +4,49 @@ RoutinePlayer {
 	var <>playedAction;
 	var <>instName;
 	var <>instDict;
+	var <>argsDict;
+	var action;
 	var instanceId;
 	var listeners;
 
 	var rout;
 
-	*new { |id|
-		^super.new.init(id);
+	*new { |id, function, arguments|
+		^super.new.init(id, function, arguments);
 	}
 
-	init { |id|
+	init { |id, function, arguments|
 
 		instanceId = id;
 		pattern = nil;
 		template = nil;
 		listeners = IdentitySet.new;
+		argsDict = Dictionary.new;
+		function.postln;
 
-		rout = Prout({| ev |
-			var pat;
-			block { |break|
-				loop {
-					pat = Pbindf(*[
-						this.template,
-						#[\midinote, \dur], Pseq(pattern.value)
-					]);
-					this.doPlayedAction; // Run the action to do when played (probably OSC message)
-					ev = pat.embedInStream(ev); // Embed the pattern and wait for it to be played
-				}
-			}
+		arguments.do({ |item, i|
+			var name = item[0];
+			var min = item[1];
+			var max = item[2];
+			var default = item[3];
+			argsDict.put(name, ParameterBus.new(name, default, min, max));
 		});
+
+		action = function;
+
+		this.createRout;
+	}
+
+	createRout {
+		var args = [\player, this];
+
+		// Add our current arguments into the [\arg, value] array
+		argsDict.pairsDo({ |key, val|
+			args = args.addAll([key, val]);
+		});
+
+		rout = action.performKeyValuePairs(\value, args); // Should return a PRout
+		rout.postln;
 	}
 
 	play {

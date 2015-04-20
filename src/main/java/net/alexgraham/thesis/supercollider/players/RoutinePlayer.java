@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 
+
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
@@ -13,6 +14,7 @@ import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
+import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
@@ -20,7 +22,7 @@ import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class RoutinePlayer extends Instance implements Connectable, Serializable {
+public class RoutinePlayer extends Synth implements Connectable, Serializable {
 	
 	public interface PlayerListener {
 		public void instrumentConnected(Instrument inst);
@@ -42,20 +44,14 @@ public class RoutinePlayer extends Instance implements Connectable, Serializable
 	private Instrument instrument = null;
 	
 	private PlayState state = PlayState.DISABLED;
-	
-	public RoutinePlayer() {
-		super();
-//		this.id = UUID.randomUUID();
-//		App.sc.sendMessage("/routplayer/add", id.toString());
-		init();
-	}
+
 	
 	public RoutinePlayer(Def def) {
 		super(def);
 		init();
 	}
 	public void start() {
-		App.sc.sendMessage("/routplayer/add", getID());
+		App.sc.sendMessage("/routplayer/add", getDefName(), getID());
 	}
 	
 	public void init() {
