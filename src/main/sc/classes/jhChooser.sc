@@ -21,29 +21,42 @@
 	/* newchooser
 	* Tells java all about the chooser definition
 	*/
-	newChooser { |chooserName, choices|
+	newChooser { |chooserName, choices, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 
-		this.newChooserDef(chooserName, choices);
+		this.newChooserDef(chooserName, choices, params);
 
 		// Store the definition
-		this.putChooserDef(chooserName, (choices: choices));
+		this.putChooserDef(chooserName, (choices: choices, params: params));
 
 		// Create the storage
 		this.setupTypeStorage(chooserName);
 		net.sendMsg("/def/ready/"++chooserName, 1);
 	}
 
-	newChooserDef { |defName, function|
+	newChooserDef { |defName, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 		var message = ["/def/add/chooser", defName, \chooser];
 		var choices = function.value; // Array of choices is what the function returns
 		message = message.add(function.def.sourceCode); // Function source code for editing later
-
+		params.postln;
+		params.do({ |item|
+			var param = item[0].asString;
+			var paramType = item[1];
+			switch(paramType,
+				\return, {
+					var returnType = item[2];
+					message = message.add(returnType.asString);
+				},
+				{
+					("No other params for choice").postln;
+				}
+			);
+		});
 		// Go through the choices and add them to the message
 		choices.do({ |item, i|
 			var choiceName = item[0].asString; // First is the name of the choice
-			message.add(choiceName);
+			message = message.add(choiceName);
 			// Possibly add the actual value, but we won't do that for now
 		});
 
@@ -62,6 +75,7 @@
 		this.addOSCResponder('/chooser/add', { arg msg;
 			var chooserName = msg[1];
 			var id = msg[2];
+			var choiceIndex = msg[3];
 			var chooserDef, chooser;
 
 			"Adding chooser".postln;
@@ -69,6 +83,9 @@
 
 			// Create the actual object
 			chooser = Chooser.new(chooserDef.at(\choices).value); // choices is a funciton
+
+			// Set the current choice
+			chooser.choose(choiceIndex);
 
 			// Store the object
 			chooserName.idPut(id, chooser);
@@ -110,22 +127,26 @@
 
 			// Get the actual parameter object
 			parameter = ownerName.idGet(ownerId).paramAt(paramName);
+			parameter.postln;
+			chooser.postln;
 
 			// Tell the change func to listen for this parameter
 			chooser.addListener(parameter);
+			parameter.setChoiceObj(chooser);
 
 			("Connected choosers").postln;
 		});
 
 		this.addOSCResponder('/chooser/disconnect/param', { arg msg;
-			var cName, cId, ownerName, ownerId, paramName;
+			var cName = msg[1], cId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
 			var chooser, parameter;
 
 			chooser = cName.idGet(cId);
-			parameter = ownerName.idGet(ownerId).at(paramName);
+			parameter = ownerName.idGet(ownerId).paramAt(paramName);
 
 			// Tell the change func to listen for this parameter
 			chooser.removeListener(parameter);
+			parameter.removeChoiceObj(chooser);
 
 			("Connected choosers").postln;
 		});

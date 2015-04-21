@@ -209,17 +209,10 @@ public class DefModel implements Messenger {
         	    			break;
         				case "choice":
         					final String choiceName = (String) arguments.removeFirst();
-        					final int choiceListSize = (int) arguments.removeFirst();
-        					
-        					final Object[] choiceArray = new Object[choiceListSize];
-        					
-        					// The rest of the arguments should be the array
-        					// Can probaably check how long this is instead, to see if it is just one number
-        					for (int i = 0; i < choiceListSize; i++) {
-        						choiceArray[i] = (Object) arguments.removeFirst();
-        					}
-        					// Assume its a pattern gen because this is the only thing that accepts it right now!
-        					def.addParameter(paramName, choiceName, choiceArray); //TODO: FIX THIS
+        					final Object choiceValue = arguments.removeFirst();
+        					final String choiceType = (String) arguments.removeFirst();
+        					System.out.println("Choice type is " + choiceType);
+        					def.addParameter(paramName, choiceName, choiceValue, choiceType); 
         					break;
         				case "float":
         	    			final float floatMin = AGHelper.convertToFloat(arguments.removeFirst());
@@ -227,6 +220,10 @@ public class DefModel implements Messenger {
         	    			final float floatValue = AGHelper.convertToFloat(arguments.removeFirst());
         	    			def.addParameter(paramName, floatMin, floatMax, floatValue);
         					break;
+        				case "return":
+        					System.out.println("Got a return argument....");
+        					final String returnType = (String) arguments.removeFirst();
+        					def.setReturnType(returnType);
         				default:
         					break;
         			}
@@ -253,9 +250,14 @@ public class DefModel implements Messenger {
     			final String functionString = (String) arguments.removeFirst();
     			def.setFunctionString(functionString);
     			
+    			// Next should be the return type
+				final String returnType = (String) arguments.removeFirst();
+				def.setReturnType(returnType);
+    			
     			// Choosers don't have parameters, they have choices
     			while (!arguments.isEmpty()) {
     				final String choiceName = (String) arguments.removeFirst();
+    				System.out.println("Adding choice " + choiceName);
     				def.addChoice(choiceName);
     			}
     			

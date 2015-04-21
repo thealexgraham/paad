@@ -1,5 +1,39 @@
 (
 
+~java.addDefinition(\bufPlayer, \synth,
+	{
+		| outBus, buff, pan, gain |
+		var sig = BufRd.ar(1, buff, Phasor.ar(0, BufRateScale.kr(buff), 0, BufFrames.kr(buff)));
+		Out.ar(outBus, Pan2.ar(sig, pan) * gain);
+	},
+	~java.createParamsList(
+		~java.addChoice(\buff, "None", -1, \buffnum)
+	)
+);
+
+
+~java.addDefinition("SoundsLoad", \chooser,
+	{
+		var choices = [];
+		var files = [ "C:/Program Files (x86)/SuperCollider-3.6.6/sounds/rhodes.aif",
+			"C:/Program Files (x86)/SuperCollider-3.6.6/sounds/synth.wav",
+			"C:/Program Files (x86)/SuperCollider-3.6.6/sounds/tom.wav",
+			"C:/Program Files (x86)/SuperCollider-3.6.6/sounds/warm.wav" ];
+
+		files.do({|item, i|
+			var buffer = Buffer.read(s, item);
+			var fileName = PathName.new(item).fileName;
+			choices = choices.add([fileName, buffer.bufnum]);
+		});
+
+		choices;
+	},
+	~java.createParamsList(
+		~java.setReturnType(\buffnum)
+	)
+);
+
+
 ~java.addDefinition("PanFM3OP", \synth,
 	{ | outBus = 0, car_freq, ratio1, ratio2,index1,index2, pan = 0, gain = 0.3 |
 		var fm = SinOsc.ar(car_freq +
@@ -23,13 +57,6 @@
 	[[\freq, 0, 1000, 440]]);
 
 ~java.addDefinition(\sawWave, \synth,
-	{ | outBus = 0, freq = 440, pan = 0, gain = 0.5 |
-		Out.ar(outBus, Pan2.ar(Saw.ar(freq) * gain, pan));
-	},
-	[[\freq, 0, 1000, 440]]
-);
-
-~java.addDefinition(\sawWave, \synth,
 	{ | outBus, freq, pan, gain |
 		var sig = Saw.ar(freq) * gain;
 		Out.ar(outBus, Pan2.ar(sig, pan));
@@ -41,7 +68,7 @@
 	]
 );
 
-~java.addDefinition(\sawWave, \synth,
+~java.addDefinition(\sawWaveMod, \synth,
 	{ | outBus = 0, freq = 440, speed = 0.5, pan = 0, gain = 0.5 |
 		var sig = Saw.ar(freq);
 		sig = sig * SinOsc.ar(speed, 0, 0.5, 1);

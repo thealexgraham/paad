@@ -135,9 +135,10 @@ RoutinePlayer {
 	connectPatternObject { |patternObject|
 		postln("Trying to set pattern pboject");
 		patternObject.postln;
+
+		// Pattern is a function returning the current pattern
 		pattern = {
 			patternObject.getCurrentPattern;
-			//patternObject.choosePattern;
 		};
 	}
 

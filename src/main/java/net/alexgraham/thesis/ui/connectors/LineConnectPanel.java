@@ -55,6 +55,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	public interface SynthSelectListener {
 		public void selectSynth(Synth synth);
 		public void deselectSynth();
+		
+		public void selectInstance(Instance instance);
+		public void deselectInstance();
 	}
 	
 	boolean pointHovering = false;
@@ -424,17 +427,30 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 		}
 	}
 	
+	public void fireInstanceSelectedEvent(Instance instance) {
+		for (SynthSelectListener synthSelectListener : synthSelectListeners) {
+			synthSelectListener.selectInstance(instance);
+		}
+	}
+	
+	public void fireInstanceDeselectedEvent() {
+		for (SynthSelectListener synthSelectListener : synthSelectListeners) {
+			synthSelectListener.deselectInstance();
+		}
+	}
+	
 	//TODO: refactor
 	public void moduleSelected(ModulePanel module) {
-		if (module instanceof InstrumentModule) {
-			fireSynthSelectedEvent(((InstrumentModule) module).getInstrument());
-		} else if (module instanceof EffectModule) {
-			fireSynthSelectedEvent(((EffectModule) module).getEffect());
-		} else if (module instanceof ChangeFuncModule) {
-			fireSynthSelectedEvent(((ChangeFuncModule) module).getChangeFunc());
-		} else if (module instanceof SynthModule) {
-			fireSynthSelectedEvent(((SynthModule)module).getSynth());
-		}
+		fireInstanceSelectedEvent(module.getInstance());
+//		if (module instanceof InstrumentModule) {
+//			fireSynthSelectedEvent(((InstrumentModule) module).getInstrument());
+//		} else if (module instanceof EffectModule) {
+//			fireSynthSelectedEvent(((EffectModule) module).getEffect());
+//		} else if (module instanceof ChangeFuncModule) {
+//			fireSynthSelectedEvent(((ChangeFuncModule) module).getChangeFunc());
+//		} else if (module instanceof SynthModule) {
+//			fireSynthSelectedEvent(((SynthModule)module).getSynth());
+//		}
 	}
 	
 	public void addModuleForInstance(Instance instance) {

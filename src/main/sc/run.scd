@@ -10,6 +10,7 @@ Server.default = s;
 
 s.waitForBoot({
 	"server ready".postln;
+		Buffer.alloc(s, 0); // Empty buffer
 
 	// Send java the port sclang is listening on
 	NetAddr.langPort.postln;

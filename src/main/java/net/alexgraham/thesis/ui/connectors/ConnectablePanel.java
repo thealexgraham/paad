@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.ui.connectors;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.LayoutManager;
 import java.awt.Point;
@@ -29,6 +30,7 @@ public class ConnectablePanel extends JPanel {
 	public ConnectablePanel(Location location, Connector connector) {
 		connectorUI = new ConnectorUI(this, connector, location);
 		connector.addConnectorUI(connectorUI); //TODO: Make sure we delete
+		setPreferredSize(new Dimension(0, 0));
 	}
 
 	

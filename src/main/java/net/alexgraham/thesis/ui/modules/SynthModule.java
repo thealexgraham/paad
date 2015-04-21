@@ -30,6 +30,7 @@ import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
 import net.alexgraham.thesis.supercollider.synths.parameters.Parameter;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.components.Dial;
@@ -148,6 +149,9 @@ public class SynthModule extends ModulePanel {
 		for (ParamModel paramModel : synth.getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
 				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+			}
+			if (paramModel.getClass() == ChoiceParamModel.class) {
+				middlePanel.add(ModuleFactory.createChoiceParamPanel(this, (ChoiceParamModel)paramModel));
 			}
 		}
 	}

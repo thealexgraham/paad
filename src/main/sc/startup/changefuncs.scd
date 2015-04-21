@@ -58,28 +58,6 @@
 );
 
 
-~java.addDefinition("RoutinePlayer",
-	\routinePlayer,
-	{
-		| player |
-		Prout({| ev |
-			var pat;
-			block { |break|
-				loop {
-					pat = Pbindf(*[
-						player.template, // Connected instrument data
-						#[\midinote, \dur], Pseq(player.pattern.value) // the current pattern's value
-					]);
-					"Doing a pattern".postln;
-					player.doPlayedAction; // Run the action to do when played (probably OSC message)
-					ev = pat.embedInStream(ev); // Embed the pattern and wait for it to be played
-				}
-			}
-		});
-	}
-);
-
-
 
 
 

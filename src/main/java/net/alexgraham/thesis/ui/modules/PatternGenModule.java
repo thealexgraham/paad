@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
 
@@ -40,8 +41,6 @@ public class PatternGenModule extends ModulePanel {
 	private JLabel synthdefLabel;
 	private JLabel idLabel;
 
-	
-	
 	ConnectablePanel topPanel;
 	ConnectablePanel bottomPanel;
 	ConnectablePanel middlePanel;
@@ -113,9 +112,9 @@ public class PatternGenModule extends ModulePanel {
 //		this.addConnectablePanel(middlePanel);
 //		
 		
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
-		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
+//		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
 //		middlePanel.add(new JLabel("testing "));
 //		middlePanel.add(new JLabel("testing"));
 		addParameters();
@@ -148,51 +147,19 @@ public class PatternGenModule extends ModulePanel {
 	public void addParameters() {
 		ArrayList<ParamModel> models = patternGen.getParamModels(); //((PatternGenDef)patternGen.getDef()).getParams());
 		for (ParamModel baseModel : models) {
-			
-			JPanel togetherPanel = new JPanel();
-			togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
-			ConnectablePanel rightPanel = new ConnectablePanel(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
-			JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
 			if (baseModel.getClass() == IntParamModel.class) {
 				IntParamModel model = (IntParamModel) baseModel;
-				
-				JLabel paramNameLabel = new JLabel(model.getName());
-				JSpinner paramSpinner = new JSpinner(model);
-				leftPanel.add(paramNameLabel);
-				rightPanel.add(paramSpinner);
-				
-//				ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-//				rightPanel.add(connectablePanel);
-//				this.addConnectablePanel(connectablePanel);
-				
-				rightPanel.addConnector(Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN));
-				this.addConnectablePanel(rightPanel);
-				
+				middlePanel.add(ModuleFactory.createIntParamPanel(this, model));
 			} else if (baseModel.getClass() == ChoiceParamModel.class) {
 				ChoiceParamModel model = (ChoiceParamModel) baseModel;
-				JLabel paramNameLabel = new JLabel(model.getName());
-				JLabel paramValueLabel = new JLabel(model.getChoiceName());
-				
-				model.addChoiceChangeListener(new ChoiceChangeListener() {
-					@Override
-					public void choiceChanged(String newChoice) {
-						paramValueLabel.setText(newChoice);
-					}
-				});
-				
-				leftPanel.add(paramNameLabel);
-				rightPanel.add(paramValueLabel);
-				
-				ConnectablePanel connectablePanel = new ConnectablePanel(Location.RIGHT, model.getConnector(ConnectorType.CHOICE_CHANGE_IN));
-				rightPanel.add(connectablePanel);
-				this.addConnectablePanel(connectablePanel);
+				middlePanel.add(ModuleFactory.createChoiceParamPanel(this, model));
 			}
+			
+			middlePanel.add(new JSeparator());
 
-			togetherPanel.add(leftPanel);
-			togetherPanel.add(Box.createHorizontalGlue());
-			togetherPanel.add(rightPanel);
-			middlePanel.add(togetherPanel);
+		
+			
 		}
 	}
    

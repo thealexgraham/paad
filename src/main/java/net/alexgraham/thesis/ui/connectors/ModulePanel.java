@@ -101,6 +101,12 @@ public abstract class ModulePanel extends JPanel {
 		setup();
 	}
 	
+	public void refreshSize() {
+		// Refresh size
+		setSize(getPreferredSize());
+		validate();
+	}
+	
 	protected JLabel getTitleLabel() {
 		
 		JLabel label = new JLabel(instance.getName());
@@ -196,9 +202,7 @@ public abstract class ModulePanel extends JPanel {
 		selected = true;
 //		setBorder(BorderFactory.createDashedBorder(Color.DARK_GRAY.brighter().brighter()));
 		setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-		// Refresh size
-		setSize(getPreferredSize());
-		validate();
+		refreshSize();
 
 	}
 
@@ -210,8 +214,7 @@ public abstract class ModulePanel extends JPanel {
 		
 		
 		// Refresh size
-		setSize(getPreferredSize());
-		validate();
+		refreshSize();
 	}
 	
 	public Border createDefaultBorder() {

@@ -15,7 +15,7 @@ public class ParamModelFactory {
 							
 		} else if (baseParam.getClass() == ChoiceParam.class) {
 			ChoiceParam param = (ChoiceParam) baseParam;
-			model = new ChoiceParamModel(param.getChoiceName(), param.getChoiceArray());
+			model = new ChoiceParamModel(param.getChoiceName(), param.getChoiceValue(), param.getChoiceType());
 			
 		} else if (baseParam.getClass() == DoubleParam.class) {
 			DoubleParam param = (DoubleParam)baseParam;

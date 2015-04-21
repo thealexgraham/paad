@@ -68,6 +68,20 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
 		c1.show(selectedSynthPanel, "No Synth Selected");
 	}
+	
+	@Override
+	public void selectInstance(Instance instance) {
+		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
+		c1.show(selectedSynthPanel, instance.getID());
+	}
+
+	@Override
+	public void deselectInstance() {
+		CardLayout c1 = (CardLayout)(selectedSynthPanel.getLayout());
+		c1.show(selectedSynthPanel, "No Module Selected");
+	}
+
+
 
 	
 	// SynthListener
@@ -128,6 +142,13 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 		SynthPanel panel = new SynthPanel(synth);
 		selectedSynthPanel.add(panel, synth.getID());
 	}
+	
+	private void addPanelForInstance(Instance instance) {
+		
+		// Create the SynthPanel and add it to the list of cards
+		InstancePanel panel = new InstancePanel(instance);
+		selectedSynthPanel.add(panel, instance.getID());
+	}
 
 	@Override
 	public void patternGenAdded(PatternGen patternGen) {
@@ -138,9 +159,10 @@ public class SynthCardsPanel extends JPanel implements SynthSelectListener, Synt
 	@Override
 	public void instanceAdded(Instance instance) {
 		// TODO Auto-generated method stub
-		if (instance instanceof Synth) {
-			addPanelForSynth((Synth) instance);
-		}
+//		if (instance instanceof Synth) {
+//			addPanelForSynth((Synth) instance);
+//		}
+		addPanelForInstance(instance);
 	}
 
 

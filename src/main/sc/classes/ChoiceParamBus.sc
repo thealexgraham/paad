@@ -1,8 +1,9 @@
-ChoiceParam {
+ChoiceParamBus {
 	var <>name;
 	var <>choiceName;
-	var value;
+	var <>value;
 	var <>ownerId;
+	var <>bus;
 
 	var defaultName;
 	var defaultValue;
@@ -18,6 +19,8 @@ ChoiceParam {
 		value = newValue;
 		choiceName = newChoiceName;
 
+		bus = Bus.control.set(value);
+
 		defaultName = newChoiceName;
 		defaultValue = newValue;
 	}
@@ -28,6 +31,8 @@ ChoiceParam {
 			ownerId.postln;
 			net = NetAddr("127.0.0.1", ~java.sendPort);
 			value = newValue;
+			bus.set(value);
+			("Setting to new value " ++ value).postln;
 			net.sendMsg("/"++ownerId++"/"++name++"/change", newChoiceName);
 			choiceName = newChoiceName;
 		});
@@ -46,20 +51,13 @@ ChoiceParam {
 		^value;
 	}
 
-	value {
-		if (choiceObj == nil,
-			{ ^defaultValue; },
-			{ ^choiceObj.getCurrentValue; }
-		);
-	}
-
 	setChoiceObj { |obj|
 		choiceObj = obj;
 	}
 
 	removeChoiceObj { |obj|
 		choiceObj = nil;
-		this.setChoiceName(defaultName);
+		// this.setChoiceName(defaultName);
+		this.set(defaultName, defaultValue);
 	}
-
 }

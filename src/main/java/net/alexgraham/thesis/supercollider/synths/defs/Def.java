@@ -25,6 +25,15 @@ public class Def implements java.io.Serializable {
 	private ArrayList<Param> parameters;	
 	private String functionString = "";
 	private String type = "";
+	
+	private String returnType = "";
+	
+	public void setReturnType(String returnType) {
+		this.returnType = returnType;
+	}
+	public String getReturnType() {
+		return returnType;
+	}
 
 	public Def(String defName, SCLang sc) {
 		this.defName = defName;
@@ -41,6 +50,7 @@ public class Def implements java.io.Serializable {
 		this.parameters = new ArrayList<Param>(copyDef.getParams());
 		this.functionString = copyDef.functionString;
 		this.type = copyDef.type;
+		this.returnType = copyDef.returnType;
 	}
 	
 	
@@ -61,6 +71,13 @@ public class Def implements java.io.Serializable {
 	
 	public void addParameter(String name, String choiceName, Object[] choiceArray) {
 		parameters.add(new ChoiceParam(name, choiceName, choiceArray));
+	}
+	
+	public void addParameter(String name,
+			String choiceName,
+			Object choiceValue, 
+			String choiceType) {
+		parameters.add(new ChoiceParam(name, choiceName, choiceValue, choiceType));
 	}
 	
 	public ArrayList<Param> getParams() {
@@ -101,6 +118,43 @@ public class Def implements java.io.Serializable {
 			
 			bw.write("\t" + functionString + ",");
 			bw.newLine();
+			bw.write("\t~java.createParamsList(\n");
+			for (Param parameter : parameters) {
+				bw.write("\t\t");
+				if (parameter.getClass() == DoubleParam.class) {
+					DoubleParam param = (DoubleParam) parameter;
+					bw.write(String.format("~java.addFloat(\\%s, %.2f, %.2f, %.2f),", param.name, param.min, param.max, param.value));
+				} else if (parameter.getClass() == IntParam.class) {
+					IntParam param = (IntParam) parameter;
+					bw.write(String.format("~java.addInt(\\%s, %d, %d, %d),", param.name, param.min, param.max, param.value));
+				} else if (parameter.getClass() == ChoiceParam.class) {
+					ChoiceParam param = (ChoiceParam) parameter;
+					//bw.write(String.format("\t\t[\\%s, \\choice, [\"%s\", %s]],", param.name, param.choiceName, choiceArrayToString(param.choiceArray)));
+					bw.write(String.format("~java.addChoice(\\%s, \"%s\", %s, %s),", param.name, param.choiceName, param.getChoiceValue().toString(), param.getChoiceType()));
+				}
+				bw.newLine();
+			}
+			System.out.println(this.getReturnType());
+			// If there is a return type
+			if (!this.getReturnType().equals("")) {
+				bw.write("\t\t");
+				bw.write(String.format("~java.setReturnType(%s)", this.getReturnType()));
+				bw.newLine();
+			}
+			bw.write("\t)\n);");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void writeDefintionOldFormat(BufferedWriter bw) {
+		try {
+			bw.write("~java.addDefinition(");
+			bw.write("\\" + this.defName + ", \\" + type + ",");
+			bw.newLine();
+			
+			bw.write("\t" + functionString + ",");
+			bw.newLine();
 			bw.write("\t[\n");
 			for (Param parameter : parameters) {
 				if (parameter.getClass() == DoubleParam.class) {
@@ -111,7 +165,9 @@ public class Def implements java.io.Serializable {
 					bw.write(String.format("\t\t[\\%s, \\int, %d, %d, %d],", param.name, param.min, param.max, param.value));
 				} else if (parameter.getClass() == ChoiceParam.class) {
 					ChoiceParam param = (ChoiceParam) parameter;
-					bw.write(String.format("\t\t[\\%s, \\choice, [\"%s\", %s]],", param.name, param.choiceName, choiceArrayToString(param.choiceArray)));
+					//bw.write(String.format("\t\t[\\%s, \\choice, [\"%s\", %s]],", param.name, param.choiceName, choiceArrayToString(param.choiceArray)));
+					bw.write(String.format("\t\t[\\%s, \\choice, [\"%s\", %s]],", param.name, param.choiceName, param.getChoiceValue().toString()));
+
 				}
 				bw.newLine();
 			}
@@ -120,7 +176,6 @@ public class Def implements java.io.Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	public String choiceArrayToString(Object[] choiceArray) {

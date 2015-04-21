@@ -44,8 +44,8 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	String synthName;
 	
 	JButton playButton;
-	JLabel instLabel;
-	JLabel patternLabel;
+	JLabel instLabel = new JLabel();
+	JLabel patternLabel = new JLabel();
 	
 	int lastInt = 0;
 	
@@ -249,14 +249,14 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 
 	@Override
 	public void patternConnected(PatternGen pattern) {
-		this.patternLabel.setText("Pattern"); //+ pattern.getName());
+//		this.patternLabel.setText("Pattern"); //+ pattern.getName());
 	}
 
 
 	@Override
 	public void patternDisconnected(PatternGen pattern) {
 		// TODO Auto-generated method stub
-		this.patternLabel.setText("Pattern: None");
+//		this.patternLabel.setText("Pattern: None");
 	}
 	
 //	instLabel = new JLabel("Inst: None");

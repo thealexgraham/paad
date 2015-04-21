@@ -60,6 +60,7 @@ PatternGenerator {
 		// Add our current arguments into the [\arg, value] array
 		argsDict.pairsDo({ |key, val|
 			args = args.addAll([key, val.value]);
+			("param "++key++" Value: "++val.value).postln;
 		});
 		// Perform the action and get the new value
 		newPattern = action.performKeyValuePairs(\value, args);

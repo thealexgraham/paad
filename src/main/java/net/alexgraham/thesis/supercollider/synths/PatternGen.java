@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -42,8 +43,10 @@ public class PatternGen extends Instance implements Serializable, Connectable {
     	arguments.add(id.toString());
     	    	
     	for (ParamModel model : parameterModels.values()) {
-    		arguments.add(model.getName());
-    		arguments.add(model.getObjectValue());
+    		if (model.getClass() != ChoiceParamModel.class) {
+        		arguments.add(model.getName());
+        		arguments.add(model.getObjectValue());
+    		}
     	}
     	
     	return arguments.toArray();

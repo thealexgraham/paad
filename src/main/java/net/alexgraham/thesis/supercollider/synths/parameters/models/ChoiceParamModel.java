@@ -34,21 +34,41 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	
 	public String choiceName;
 	public Object[] choiceArray;
+	public Object choiceValue;
+	
+	public String choiceType = "";
 	
 	private ParamGroup exportGroup = null;
 	
 	private CopyOnWriteArrayList<ChoiceChangeListener> listeners = new CopyOnWriteArrayList<ChoiceParamModel.ChoiceChangeListener>();
 
+	public ChoiceParamModel(String choiceName, Object choiceValue) {
+		this.choiceName = choiceName;
+		this.choiceValue = choiceValue;
+		addConnector(ConnectorType.CHOICE_CHANGE_IN);
+	}
+	
+	public ChoiceParamModel(String choiceName, Object choiceValue, String choiceType) {
+		this.choiceName = choiceName;
+		this.choiceValue = choiceValue;
+		this.choiceType = choiceType;
+		addConnector(ConnectorType.CHOICE_CHANGE_IN);
+	}
+	
 	public ChoiceParamModel(String choiceName, Object[] choiceArray) {
 		this.choiceName = choiceName;
 		this.choiceArray = Arrays.copyOf(choiceArray, choiceArray.length);
 		addConnector(ConnectorType.CHOICE_CHANGE_IN);
 	}
 	
+	public String getChoiceType() { return choiceType; }
+	public void setChoiceType(String choiceType) { this.choiceType = choiceType; }
+	
 
 	@Override
 	public Object getObjectValue() {
-		return choiceArray[0];
+		return choiceValue;
+		//return choiceArray[0];
 	}
 	
 
@@ -100,6 +120,7 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	public Instance getOwner() {
 		return this.owner;
 	}
+	
 	public void setOwner(Instance owner) {
 		this.owner = owner;
 		

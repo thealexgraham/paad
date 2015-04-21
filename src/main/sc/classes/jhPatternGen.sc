@@ -35,7 +35,7 @@
 			patternGen = cfName.idGet(cfId);
 
 			// Get the actual parameter object
-			parameter = ownerName.idGet(ownerId).at(paramName);
+			parameter = ownerName.idGet(ownerId).paramAt(paramName);
 
 			// Tell the change func to listen for this parameter
 			patternGen.addListener(parameter); // IS THIS THE OBJECT???
@@ -48,7 +48,7 @@
 			var patternGen, parameter;
 
 			patternGen = cfName.idGet(cfId);
-			parameter = ownerName.idGet(ownerId).at(paramName);
+			parameter = ownerName.idGet(ownerId).paramAt(paramName);
 
 			// Tell the change func to listen for this parameter
 			patternGen.removeListener(parameter);

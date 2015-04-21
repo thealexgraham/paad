@@ -13,6 +13,7 @@ Chooser {
 
 		listeners = IdentitySet.new;
 	}
+	// Should have one int ParamBus that holds the choices
 
 	addListener { |obj|
 		"Adding listener".postln;
@@ -32,19 +33,27 @@ Chooser {
 
 	getCurrentChoice {
 		choices.postln;
+		choiceIndex.postln;
 		^choices[choiceIndex];
+	}
+
+	getCurrentValue {
+		^this.getCurrentChoice[1];
 	}
 
 	updateListeners {
 		listeners.do({ |item, i|
-			"Updating listener".postln;
 			this.updateParamChoice(item);
 		});
 	}
 
 	updateParamChoice { | item |
 		var currentChoice = this.getCurrentChoice;
-		item.set(currentChoice[0], currentChoice[1]); // name, value
+		if (item.class == ChoiceParamBus,
+			{ item.set(currentChoice[0], currentChoice[1]); }, // name, value
+			{ item.setChoiceName(currentChoice[0]); } // just set the name
+		);
+		//item.set(currentChoice[0], currentChoice[1]); // name, value
 	}
 
 }

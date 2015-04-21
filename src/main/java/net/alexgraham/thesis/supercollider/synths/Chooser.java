@@ -2,7 +2,11 @@ package net.alexgraham.thesis.supercollider.synths;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
@@ -21,7 +25,7 @@ public class Chooser extends Instance implements Serializable, Connectable {
 	
 	private CopyOnWriteArrayList<SynthListener> synthListeners =
 			new CopyOnWriteArrayList<Synth.SynthListener>();
-		
+	
 	public Chooser(Def def) {
 		super(def);
 
@@ -39,6 +43,17 @@ public class Chooser extends Instance implements Serializable, Connectable {
 		closeCommand = "/chooser/remove";
 		
 		addConnector(ConnectorType.CHOICE_CHANGE_OUT);
+	}
+	
+	@Override
+	public Object[] getStartArguments() {
+		// Create the arguments list for this Synth
+    	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(def.getDefName());
+    	arguments.add(id.toString());
+    	arguments.add(currentIndex);
+
+    	return arguments.toArray();
 	}
 	
 	public ArrayList<String> getChoices() {
@@ -79,9 +94,17 @@ public class Chooser extends Instance implements Serializable, Connectable {
 		App.sc.sendMessage("/chooser/choose", this.getName(), this.getID(), index);
 	}
 	
-	public void connectToParameter(ChoiceParamModel param) {
+	public boolean connectToParameter(ChoiceParamModel param) {
+		String returnType = this.getDef().getReturnType();
+		String choiceType = param.getChoiceType();
+		if (!returnType.equals(choiceType) || choiceType.equals("any")) {
+			JOptionPane.showMessageDialog(null, "Could not connect Chooser with" + returnType + " to Param with" + choiceType);
+			return false;
+		}
+		System.out.println("Trying connect " + returnType + " to " + choiceType);
 		Instance owner = param.getOwner();
 		App.sc.sendMessage("/chooser/connect/param", this.getName(), this.getID(), owner.getName(), owner.getID(), param.getName());
+		return true;
 	}
 	
 	public void disconnectFromParameter(ChoiceParamModel param) {
@@ -96,8 +119,7 @@ public class Chooser extends Instance implements Serializable, Connectable {
 		// Instrument output into Effect input, valid, check if connectors are correct
 		if (connection.isConnectionType(this, ConnectorType.CHOICE_CHANGE_OUT, ConnectorType.CHOICE_CHANGE_IN)) {
 			if (target.getClass() == ChoiceParamModel.class) {
-				connectToParameter((ChoiceParamModel) target);
-				return true;
+				return connectToParameter((ChoiceParamModel) target);
 			}	
 		}
 		

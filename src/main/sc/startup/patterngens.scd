@@ -33,13 +33,31 @@
 		finalPattern = finalPattern.add([\rest, 2]);
 		finalPattern;
 	},
-	[[\lengthMin, \int, 0, 10, 4],
-		[\lengthMax, \int, 0, 16, 8],
-		[\scale, \choice, ["pentatonic", [0, 3, 5, 7, 10]]], //??
-		[\root, \int, 0, 127, 62],
-		[\octaveMin, \int, -5, 5, 0],
-		[\octaveMax, \int, -5, 5, 1]]
+
+	~java.createParamsList(
+		~java.addChoice(\scale, "pentatonic", [0,3,5,6,10], [\degrees]),
+		~java.addInt(\root, 0, 127, 62),
+		~java.addInt(\octaveMin, -5, 5, 0),
+		~java.addInt(\octaveMax, -5, 5, 1),
+		~java.addRange(\length, \int, 0, 20, 5, 9),
+		~java.setReturnType( [[\midi],[\dur]] );
+	),
+
 );
+
+~java.addDefinition("Tester", \patternGen,
+	{
+		|scale, root|
+
+		scale.postln;
+
+		[[],[]];
+	},
+	[
+		~java.addChoice(\scale, "pentatonic", [0,3,5,6,10], [\degrees]),
+	]
+);
+
 
 ~java.addDefinition("RandomlyRandom", \patternGen,
 	{
@@ -61,24 +79,59 @@
 		finalPattern = finalPattern.add([\rest, 2]);
 		finalPattern;
 	},
-	[[\lengthMin, \int, 0, 24, 2],
-		[\lengthMax, \int, 0, 24, 10],
-		[\noteMin, \int, 25, 125, 45],
-		[\noteMax, \int, 25, 125, 110]]
+
+	~java.createParamsList(
+		~java.addRange(\note, \int, 35, 120, 45, 92),
+		~java.addRange(\length, \int, 0, 20, 5, 9),
+
+		~java.setReturnType( [[\midi],[\dur]] );
+	),
 );
 
-~java.addDefinition("IntScales", \chooser,
+~java.addDefinition("ScalesInt", \chooser,
 	{
 		[
 			["pentatonic", [0, 3, 5, 7, 10]],
-			["Major", [0, 2, 4, 5, 7, 9, 11]],
+			["Major!!!", [0, 2, 4, 5, 7, 9, 11]],
 			["Minor", [0, 2, 3, 5, 10, 11]],
 			["Chromatic", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]],
-			["Ones", [0, 1]]
+			["Ones", [0, 1]],
+			["Twos", [0, 1, 2, 3]]
 		]
 	},
-	[]
+	~java.createParamsList(
+		~java.setReturnType( [\degrees] );
+	)
 );
+
+
+~java.addDefinition("RoutinePlayer",
+	\routinePlayer,
+	{
+		| player |
+		Prout({| ev |
+			var pat;
+			block { |break|
+				loop {
+					pat = Pbindf(*[
+						player.template, // Connected instrument data
+						#[\midinote, \dur], Pseq(player.pattern.value) // the current pattern's value
+					]);
+					"Doing a pattern".postln;
+					player.doPlayedAction; // Run the action to do when played (probably OSC message)
+					ev = pat.embedInStream(ev); // Embed the pattern and wait for it to be played
+					player.pattern.value.postln;
+				}
+			}
+		});
+	},
+	[
+		~java.addChoice(\pattern, "default", [[60,1], [60,0.5], [61,0.5], [60,1]], [[\midi],[\dur]]);
+		//[\pattern, \choice, ["pentatonic", [[60,1], [60,0.5], [61,0.5], [60,1]]]]
+	]
+);
+
+
 
 // ~java.newChooser(\scale,
 // 	[["pentatonic", [0, 3, 5, 7, 10]],

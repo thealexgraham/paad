@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -12,9 +13,8 @@ import java.awt.RenderingHints;
 
 import javax.swing.SwingUtilities;
 
-import com.sun.swing.internal.plaf.metal.resources.metal;
-
 import net.alexgraham.thesis.AGHelper;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
 import net.alexgraham.thesis.ui.components.TriangleShape;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
@@ -49,6 +49,10 @@ public class ConnectorUI implements java.io.Serializable {
 		this.drawLocation = location;
 		
 		if (AGHelper.allEquals(type, ConnectorType.PARAM_CHANGE_IN, ConnectorType.ACTION_IN)) {
+			height = 6; width = 6;
+		}
+		
+		if (type.ordinal() % 2 == 0) {
 			height = 6; width = 6;
 		}
 		
@@ -232,10 +236,54 @@ public class ConnectorUI implements java.io.Serializable {
 		if (hovered) {
 			g2.setColor(getColor().brighter());
 			triangle.draw(g2);
-		}
+			
+			g2 = (Graphics2D) g2.create();
+			
+			String str = "";
+			Connectable connectable = getConnector().getConnectable();
+			if (connectable.getClass() == ChoiceParamModel.class) {
+				str = ((ChoiceParamModel) connectable).getChoiceType();
+			}
+			
 
-		
+			FontMetrics metrics = g2.getFontMetrics();
+			int strWidth = metrics.stringWidth(str);
+			Point move = textMove(strWidth);
+			
+			g2.translate(move.x, move.y);
+
+			g2.drawString(str, currentPosition.x, currentPosition.y);
+			
+
+		}
+				
 //		g2.drawOval(currentPosition.x, currentPosition.y, 10, 10);	
+	}
+	
+	private Point textMove(int strWidth) {
+		
+		Point move = new Point(0, 0);
+		switch (drawLocation) {
+			case RIGHT:
+				move.x = width + 8; //(width * 6 / 7);// * 2;
+				move.y = 5;
+				break;
+			case LEFT:
+				move.x = -strWidth - (width * 6 / 4);
+				move.y = 5; //height/2;
+				break;
+			case BOTTOM:
+				move.x = width;
+				move.y = height * 2;
+				break;
+			case TOP:
+				move.x = width;
+				move.y = -height;
+				break;
+			default:
+				break;
+		}
+		return move;
 	}
 
 	boolean checkHover(Point position) {

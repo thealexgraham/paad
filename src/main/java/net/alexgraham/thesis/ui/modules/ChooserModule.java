@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
@@ -61,10 +62,10 @@ public class ChooserModule extends ModulePanel {
 		
 		//Middle Panel//
 		middlePanel = new ConnectablePanel();
-		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
-		
-		middlePanel.addConnector(Location.LEFT, new Connector(chooser, ConnectorType.CHOICE_CHANGE_OUT));
-		this.addConnectablePanel(middlePanel);
+//		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+//		middlePanel.addConnector(Location.LEFT, new Connector(chooser, ConnectorType.CHOICE_CHANGE_OUT));
+//		this.addConnectablePanel(middlePanel);
 		
 		//Create the combo box, select item at index 4.
 		//Indices start at 0, so 4 specifies the pig.
@@ -73,6 +74,7 @@ public class ChooserModule extends ModulePanel {
 		
 		JComboBox<String> choiceCombo = new JComboBox<String>(choices);
 		choiceCombo.setSelectedIndex(chooser.getCurrentIndex());
+		choiceCombo.setToolTipText("This is the tooltip");
 		
 		choiceCombo.addActionListener(new ActionListener() {
 			
@@ -87,9 +89,14 @@ public class ChooserModule extends ModulePanel {
 		
 		middlePanel.add(choiceCombo);
 
+		JLabel returnLabel = new JLabel(chooser.getDef().getReturnType());
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, chooser.getConnector(ConnectorType.CHOICE_CHANGE_OUT), returnLabel));
+		
 		//Bottom Panel//
 
 		bottomPanel = new ConnectablePanel(new FlowLayout());
+
+//		bottomPanel.add(returnLabel);
 
 		// Set up panels //
 		topPanel.setBackground(Color.DARK_GRAY);
@@ -98,6 +105,7 @@ public class ChooserModule extends ModulePanel {
 
 		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);
+		
 		pane.add(bottomPanel, BorderLayout.SOUTH);
 		
 		// Resize based on innards

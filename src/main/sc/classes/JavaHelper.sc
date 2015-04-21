@@ -227,6 +227,16 @@ JavaHelper {
 
 	/* Send a single definition to Java */
 	sendDefinition { |name, type, function, params|
+		params = params.collect({|item|
+			if (item[1].isNumber == true, //Item is missing a type
+				{ 	var name = item[0];
+					var min = item[1];
+					var max = item[2];
+					var default = item[3];
+					item = [name, \float, min, max, default];
+			});
+			item; // put the item back in the params
+		});
 
 		// Create all the storage
 		switch(type,
@@ -248,7 +258,7 @@ JavaHelper {
 				this.newPatternGen(name, function, params);
 			},
 			\chooser, {
-				this.newChooser(name, function); // Sends the definition itself
+				this.newChooser(name, function, params); // Sends the definition itself
 			},
 			\taskRunner, {
 				this.newTaskRunner(name, function, params);
@@ -279,7 +289,7 @@ JavaHelper {
 	 * only if they do not previously exist
 	 */
 	addDefaultParams {
-		arg params, defaults = [[\gain, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
+		arg params, defaults = [[\gain, \float, 0.0, 1.0, 0.0], [\pan, \float, -1.0, 1.0, 0.0]];
 
 		var newParams = List(params.size);
 		newParams.addAll(params);
