@@ -21,6 +21,7 @@ import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
+import net.alexgraham.thesis.supercollider.synths.SpecialAction;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
@@ -248,6 +249,9 @@ public class SynthModel implements Serializable {
 				break;
 			case "routineplayer":
 				instance = new RoutinePlayer(def);
+				break;
+			case "specialaction":
+				instance = new SpecialAction(def);
 				break;
 			default:
 				System.err.println("Could not find any instance type for " + type);

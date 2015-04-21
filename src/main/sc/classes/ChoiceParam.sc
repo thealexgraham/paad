@@ -4,6 +4,9 @@ ChoiceParam {
 	var <>value;
 	var <>ownerId;
 
+	var defaultName;
+	var defaultValue;
+
 	*new { arg name, choiceName, value;
 		^super.new.init(name, choiceName, value);
 	}
@@ -12,6 +15,9 @@ ChoiceParam {
 		name = newName;
 		value = newValue;
 		choiceName = newChoiceName;
+
+		defaultName = newName;
+		defaultValue = newValue;
 	}
 
 	set { |newChoiceName, newValue|

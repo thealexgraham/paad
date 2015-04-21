@@ -89,12 +89,12 @@ JavaHelper {
 
 	createSpecialActions {
 		// These special actions are done when the patch starts up (for example)
-		~startAction = SpecialAction.new("start");
-		~playAction = SpecialAction.new("play");
-		~stopAction = SpecialAction.new("stop");
-		idPut(\special, "start", ~startAction);
-		idPut(\special, "play", ~playAction);
-		idPut(\special, "stop", ~stopAction);
+		~loadAction = SpecialAction.new("LoadAction");
+		~playAction = SpecialAction.new("PlayAction");
+		~stopAction = SpecialAction.new("StopAction");
+		idPut(\special, \LoadAction, ~loadAction);
+		idPut(\special, \PlayAction, ~playAction);
+		idPut(\special, \StopAction, ~stopAction);
 	}
 
 	createListeners {
@@ -108,7 +108,7 @@ JavaHelper {
 		this.createPatternGenListeners;
 		this.createTaskRunnerListeners;
 		this.createModuleListeners;
-
+		this.createSpecialListeners;
 	}
 
 	sendMsg { arg ... args;
@@ -209,8 +209,6 @@ JavaHelper {
 					this.removePendingDef(name);
 			});
 
-
-
 			if(ready != true,
 				{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
 				{ this.sendDefinition(name, type, function, params); }
@@ -257,6 +255,10 @@ JavaHelper {
 			},
 			\routinePlayer, {
 				this.newRoutPlayer(name, function, params);
+			},
+			\specialAction, {
+				function = {};
+				this.newSpecialAction(name, function, params);
 			},
 			{
 				postln("No type for "++type.asString);

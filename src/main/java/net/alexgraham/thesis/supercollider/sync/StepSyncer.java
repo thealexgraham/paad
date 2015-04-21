@@ -36,6 +36,12 @@ public class StepSyncer extends Syncer {
 			this.action = action;
 			this.verification = verification;
 		}
+		
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return "OSC Step: " + verification;
+		}
 	}
 	
 	private class SyncerStep extends SyncStep {

@@ -26,7 +26,7 @@ This example shows how to create a simple gain DSP effect.
 ///=============================
 ///%%%CONST_DEFINES%%%
 
-#define TOP_ROUTE "/changeconnections"
+#define TOP_ROUTE "/testfmod"
 static const int PORT = 57125;
 
 ///=============================
@@ -55,6 +55,12 @@ enum
 	
 	FMOD_OTHER_PARAM_MASTER_AMP,
 
+	
+	FMOD_OTHER_PARAM_SCALE2_GAIN,
+
+	
+	FMOD_OTHER_PARAM_SCALE2_SPEED,
+
 	///=============================
     FMOD_OTHER_NUM_PARAMETERS
 };
@@ -77,6 +83,12 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, in
 	
 static FMOD_DSP_PARAMETER_DESC p_Master_amp; // p_Master_amp
 
+	
+static FMOD_DSP_PARAMETER_DESC p_scale2_gain; // p_scale2_gain
+
+	
+static FMOD_DSP_PARAMETER_DESC p_scale2_speed; // p_scale2_speed
+
 /// ===========================
 
 FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
@@ -85,6 +97,12 @@ FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
 	///%%%PARAM_DESC_POINTERS%%%
 	
 	&p_Master_amp, 
+
+	
+	&p_scale2_gain, 
+
+	
+	&p_scale2_speed, 
 
 	/// =====================================
 };
@@ -95,7 +113,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
 	/// =====================================
 	///%%%DESC_NAME%%%
 	
-    "SuperCollider changeconnections",
+    "SuperCollider testfmod",
 
 	/// =====================================
     0x00010000,     // plug-in version
@@ -131,6 +149,12 @@ F_DECLSPEC F_DLLEXPORT FMOD_DSP_DESCRIPTION* F_STDCALL FMODGetDSPDescription()
 	
 	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_amp, "amp", "f", "Adjusts amp", 0, 1, 0.5);
 
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_scale2_gain, "gain", "f", "Adjusts gain", 0, 1, 0.1);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_scale2_speed, "speed", "f", "Adjusts speed", 0, 5, 4.92);
+
 	/// ====================================
 
     return &FMOD_Other_Desc;
@@ -152,6 +176,14 @@ public:
 	void setMaster_amp(float); 
 	float Master_amp() const { return m_Master_amp; }  
 
+	
+	void setScale2_gain(float); 
+	float scale2_gain() const { return m_scale2_gain; }  
+
+	
+	void setScale2_speed(float); 
+	float scale2_speed() const { return m_scale2_speed; }  
+
 	/// ================================
 
 	void sendParam(const char *, const char *, const char *, float);
@@ -167,6 +199,12 @@ private:
 	///%%%PARAM_PRIVATE_DECS%%%
 	
 	float m_Master_amp; 
+
+	
+	float m_scale2_gain; 
+
+	
+	float m_scale2_speed; 
 
 	/// ===============================
 
@@ -203,6 +241,16 @@ void FMODOtherState::reset()
 
 void FMODOtherState::setMaster_amp(float value) { 
 	m_Master_amp = value;
+}
+
+
+void FMODOtherState::setScale2_gain(float value) { 
+	m_scale2_gain = value;
+}
+
+
+void FMODOtherState::setScale2_speed(float value) { 
+	m_scale2_speed = value;
 }
 
 /// =======================================
@@ -262,7 +310,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
         /// =====================================
 		///%%%PROC_ARGS%%%
 	
-    " -d supercollider -l fmod/changeconnections/sclang_conf.yaml -u 57125",
+    " -d supercollider -l fmod/testfmod/sclang_conf.yaml -u 57125",
 
 		/// =====================================
         NULL,           // Process handle not inheritable
@@ -316,7 +364,19 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspsetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	
 	case FMOD_OTHER_PARAM_MASTER_AMP:
 		state->setMaster_amp(value);
-		state->sendParam("/effect/paramc", "amp", "1", value);
+		state->sendParam("/module/paramc", "amp", "1", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SCALE2_GAIN:
+		state->setScale2_gain(value);
+		state->sendParam("/module/paramc", "gain", "2", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SCALE2_SPEED:
+		state->setScale2_speed(value);
+		state->sendParam("/module/paramc", "speed", "2", value);
 		return FMOD_OK;
 
 	/// =============================================
@@ -336,6 +396,18 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	case FMOD_OTHER_PARAM_MASTER_AMP:
 		*value = state->Master_amp();
 		if (valuestr) sprintf(valuestr, "% fl", state->Master_amp());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SCALE2_GAIN:
+		*value = state->scale2_gain();
+		if (valuestr) sprintf(valuestr, "% fl", state->scale2_gain());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SCALE2_SPEED:
+		*value = state->scale2_speed();
+		if (valuestr) sprintf(valuestr, "% fl", state->scale2_speed());
 		return FMOD_OK;
 
 	/// ==============================================

@@ -1,4 +1,137 @@
-		// Routine player
+
+//effect
+		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
+
+	// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
+		this.addOSCResponder('/effect/add/master', { arg msg;
+			var effectName = msg[1];
+			var id = msg[2];
+			var effectDict;
+			var inBus;
+			"Adding Effect".postln;
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+
+			// Create a new dictionary for this ID
+
+			effectName.idPut(id, Dictionary.new);
+			effectDict = effectName.idGet(id);
+
+			// Store the synth and the inBus
+			effectDict.put(\synth, Synth.tail(~effectsGroup, effectName,
+				[\inBus, this.getMasterIn, \outBus, 0]));
+
+			~masterFader = effectDict.at(\synth);
+
+			// The rest of the parameters are quads, reshape so we can use them
+			msg.reshape((msg.size / 4).asInt, 4).do({ |item, i|
+				var paramName = item[0];
+				var value = item[1];
+				var min = item[2];
+				var max = item[3];
+				var param = ParameterBus.new(paramName, value, min, max);
+				param.ownerId = id;
+				//var bus = Bus.control.set(value);
+
+				// Save the param bus
+				effectDict.put(paramName, param);
+				// Map the effect to it
+				effectDict.at(\synth).map(paramName, param.bus);
+			});
+			// Save the inBus
+			effectDict.put(\inBus, this.getMasterIn);
+
+			("Effect added, adding effect at" + id).postln;
+		});
+
+		^("OSC Responders ready");
+
+		this.addOSCResponder('/effect/add', { arg msg;
+			var effectName = msg[1];
+			var id = msg[2];
+			var effectDict;
+			var inBus;
+			"Adding Effect".postln;
+			msg.removeAt(0); // Address
+			msg.removeAt(0); // SynthName
+			msg.removeAt(0); // ID
+
+			// The rest are the defaults
+
+			inBus = Bus.audio(Server.default, 2);
+
+			// Add inBus and outBus to the default arguments
+			//msg = msg.addAll(["inBus", inBus, "outBus", 0]);
+
+			// Create a new dictionary for this ID
+
+			effectName.idPut(id, Dictionary.new);
+			effectDict = effectName.idGet(id);
+
+			this.getMasterIn.postln;
+
+			// Store the synth and the inBus
+			effectDict.put(\synth, Synth.head(~effectsGroup, effectName,
+				[\inBus, inBus, \outBus, this.getMasterIn.index]));
+
+			// The rest of the parameters are quads, reshape so we can use them
+			msg.reshape((msg.size / 4).asInt, 4).do({ |item, i|
+				var paramName = item[0];
+				var value = item[1];
+				var min = item[2];
+				var max = item[3];
+				var param = ParameterBus.new(paramName, value, min, max);
+				param.ownerId = id;
+				//var bus = Bus.control.set(value);
+
+				// Save the param bus
+				effectDict.put(paramName, param);
+				// Map the effect to it
+				effectDict.at(\synth).map(paramName, param.bus);
+			});
+
+			// Save the inBus
+			effectDict.put(\inBus, inBus);
+
+			effectDict.at(\synth).set(\outBus, this.getMasterIn);
+
+			("Effect added, adding effect at" + id).postln;
+		});
+
+		// Whenever the plugin is removed (or killed internally) this will free the synth
+		this.addOSCResponder('/effect/remove', { arg msg;
+			// Free synth defs at this id
+			var effectName = msg[1];
+			var id = msg[2];
+			var effectDict = effectName.idGet(id);
+
+			// Free the bus
+			effectDict.at(\inBus).free;
+			effectDict.at(\synth).free;
+
+			// Remove the dictionary
+			effectName.idRemove(id);
+
+			("Effect disconnected, freeing effect at" + id).postln;
+		});
+
+		// [/synth/newparam, synthName, paramName, id, value]
+		this.addOSCResponder('/effect/paramc', { arg msg;
+			// Set float1
+			var effectName = msg[1], param = msg[2], id = msg[3], val = msg[4];
+
+			// Set the value directly
+			effectName.idGet(id).at(param).setSilent(val); // Change the value at the bus
+		}, false);
+
+
+
+
+
+// Routine player
 				// Whenever an instrument is added, this will create busses for this instance of the synth
 		this.addOSCResponder('/routplayer/add', { arg msg;
 			var defName = msg[1];
@@ -43,10 +176,10 @@
 			// Set the value directly
 			dictName.idGet(id).setParam(param, val); // Change the value at the bus
 		});
-		
+
 		// CHange Functions
-		
-		
+
+
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
 		this.addOSCResponder('/changefunc/add', { arg msg;
 			var changeFuncName = msg[1];
@@ -92,9 +225,9 @@
 			// Set the value directly
 			name.idGet(id).setParam(param, val); // Change the value at the bus
 		});
-		
+
 		// INSTRUMENTS
-		
+
 				// Whenever an instrument is added, this will create busses for this instance of the synth
 		this.addOSCResponder('/inst/add', { arg msg;
 			var instName = msg[1];
@@ -149,8 +282,8 @@
 
 			postSilent("Changing" + instName + id + param + val);
 		});
-		
-		
+
+
 		// PATTERN GENS
 				// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
 		this.addOSCResponder('/patterngen/add', { arg msg;
@@ -187,10 +320,10 @@
 			// Set the value on the pattern object
 			name.idGet(id).setParam(param, val);
 		});
-		
-		
+
+
 		// SYNTH
-		
+
 				// Add synth
 		this.addOSCResponder('/synth/add', { |msg|
 			var name = msg[1];
@@ -236,8 +369,8 @@
 
 			postSilent("Changing" + synthName + id + param + val);
 		});
-		
-		
+
+
 				// Whenever an instrument is added, this will create busses for this instance of the synth
 		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
 		this.addOSCResponder('/taskrunner/add', { arg msg;

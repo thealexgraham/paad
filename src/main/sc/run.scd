@@ -40,6 +40,9 @@ s.waitForBoot({
 		}, [[\amp, 0, 1, 0.5]]
 	);
 
+	~java.addDefinition("LoadAction", \specialAction);
+	~java.addDefinition("PlayAction", \specialAction);
+	~java.addDefinition("StopAction", \specialAction);
 
 	// Load all files in "startup" dir
 	(thisProcess.nowExecutingPath.dirname ++ "/startup/*").pathMatch.do({
@@ -55,6 +58,8 @@ s.waitForBoot({
 		if (~reboot != true, {
 			~java.sendDefinitions; // problem os jere
 		});
+
+		~loadAction.sendActionMessage;
 
 	}, '/start/ready', recvPort:NetAddr.langPort);
 	//s.record;

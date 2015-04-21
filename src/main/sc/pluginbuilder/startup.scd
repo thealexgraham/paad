@@ -17,6 +17,7 @@ s.waitForBoot({
 	(thisProcess.nowExecutingPath.dirname ++ "/alldefinitions.scd").load;
 	~java.readyAction_({
 		(thisProcess.nowExecutingPath.dirname ++ "/start.scd").load;
+		~loadAction.sendActionMessage;
 	});
 
 	~playing = false;
@@ -24,6 +25,9 @@ s.waitForBoot({
 		0.05.wait;
 		~playing = false;
 		~masterFader.set(\mute, 0);
+
+		// Send the special stop action message
+		~stopAction.sendActionMessage;
 		"needed to stop".postln;
 	};
 	~playRoutine.start;
@@ -31,8 +35,14 @@ s.waitForBoot({
 			// Wait until Java is ready to receive the rest
 	OSCdef(\process, { |msg, time, addr|
 		// "got message".postln;
-		~playing = true;
-		~masterFader.set(\mute, 1);
+		if(~playing == false, {
+			~playing = true;
+			~masterFader.set(\mute, 1);
+
+			// Send the special play action message
+			~playAction.sendActionMessage;
+		});
+
 
 		// Restart the play routine
 		~playRoutine.stop;

@@ -9,24 +9,24 @@
 
 		this.addOSCResponder('/inst/connect/effect', { arg msg;
 			var instName = msg[1], instId = msg[2], effectName = msg[3], effectId = msg[4];
-			var inst, effectDict;
+			var inst, effectObj;
 
 			// Get the dictionaries
 			inst = this.idGet(instName, instId);
-			effectDict = this.idGet(effectName, effectId);
+			effectObj = this.idGet(effectName, effectId);
 
 			// Set the outBus's control bus to effect inBus index
-			inst.paramAt(\outBus).bus.set(effectDict.at(\inBus).index);
+			inst.paramAt(\outBus).bus.set(effectObj.inBus.index);
 
 			("Connected instrument to effect").postln;
 		});
 
 		this.addOSCResponder('/inst/disconnect/effect', { arg msg;
 			var instName = msg[1], instId = msg[2], effectName = msg[3], effectId = msg[4];
-			var inst, effectDict;
+			var inst, effectObj;
 
 			inst = this.idGet(instName, instId);
-			effectDict = this.idGet(effectName, effectId);
+			effectObj = this.idGet(effectName, effectId);
 
 			// Change instrument's output bus back to default (0)
 			inst.paramAt(\outBus).bus.set(this.getMasterIn.index);

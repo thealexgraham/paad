@@ -126,6 +126,7 @@ public class DataModel {
 				System.out.println("Connecting modules");
 				// Reconnect connections in SCLang
 				for (Connection connection : dataStore.getConnections()){
+					connection.refreshConnectors();
 					connection.connectModules();
 				}
 			}
@@ -318,9 +319,9 @@ public class DataModel {
 			for (ParamModel model : group.getParamModels()) {
 				
 				Instance instance = model.getOwner();
-				
+				//instance.getDef().getType().toLowerCase()
 				bw.write(String.format("\t\t[\\%s, \\%s, \\%s, \\%s, ", 
-						instance.getName(), instance.getDef().getType().toLowerCase(), instance.getID(), model.getName()));
+						instance.getName(), "module", instance.getID(), model.getName()));
 				
 				if (model.getClass() == DoubleParamModel.class) {
 					DoubleParamModel param = (DoubleParamModel) model;

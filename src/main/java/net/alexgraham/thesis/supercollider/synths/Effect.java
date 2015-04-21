@@ -24,9 +24,9 @@ public class Effect extends Synth implements Connectable {
 	}
 	
 	public void init() {
-		startCommand = "/effect/add";
-		paramChangeCommand = "/effect/paramc";
-		closeCommand = "/effect/remove";
+		startCommand = "/module/add";
+		paramChangeCommand = "/module/paramc";
+		closeCommand = "/module/remove";
 		
 		addConnector(ConnectorType.AUDIO_INPUT);
 		addConnector(ConnectorType.AUDIO_OUTPUT);
@@ -39,6 +39,7 @@ public class Effect extends Synth implements Connectable {
 		
 		// Create the arguments list for this Synth
     	List<Object> arguments = new ArrayList<Object>();
+    	arguments.add(def.getType());
     	arguments.add(def.getDefName());
     	arguments.add(id.toString());
     	
@@ -51,8 +52,8 @@ public class Effect extends Synth implements Connectable {
     		
 			arguments.add(paramName);
 			arguments.add(model.getDoubleValue());
-			arguments.add(model.getDoubleMinimum());
-			arguments.add(model.getDoubleMaximum());
+//			arguments.add(model.getDoubleMinimum());
+//			arguments.add(model.getDoubleMaximum());
     	}
     	
     	App.sc.sendMessage(startCommand, arguments.toArray());

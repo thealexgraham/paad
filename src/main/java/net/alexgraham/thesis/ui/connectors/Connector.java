@@ -35,7 +35,7 @@ public class Connector implements java.io.Serializable {
 	
 	private boolean flashing = false;
 	private Timer flashTimer;
-	private int flashTime = 75;
+	private int flashTime = 200;
 	
 	// Optional
 	private String actionType = "default";
@@ -84,7 +84,6 @@ public class Connector implements java.io.Serializable {
 		flash();
 	}
 	public void flash() {
-		createFlashTimer(flashTime);
 		flashTimer.stop();
 		flashing = true;
 		refreshUIs();
@@ -126,7 +125,7 @@ public class Connector implements java.io.Serializable {
 	}
 	
 	public void init() {
-		createFlashTimer(75);
+		createFlashTimer(125);
 	}
 
 	public Connectable getConnectable() {

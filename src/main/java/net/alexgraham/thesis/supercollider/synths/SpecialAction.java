@@ -2,7 +2,6 @@ package net.alexgraham.thesis.supercollider.synths;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
@@ -17,10 +16,17 @@ import com.illposed.osc.OSCMessage;
 public class SpecialAction extends Instance implements Connectable, Serializable{
 	
 	private String action = "";
-	 public SpecialAction(String action) {
+	 public SpecialAction(Def def) {
+		super(def);
+		action = def.getDefName();
+		name = action; //action.replace("Action", ""); //action.substring(0, 1).toUpperCase() + action.substring(1);
+//		name = "On " + name;
 		init();
 	}
 	
+	public String getAction() {
+		return action;
+	}
 	
 	public void init() {	
 		addConnector(ConnectorType.ACTION_OUT);
@@ -36,6 +42,10 @@ public class SpecialAction extends Instance implements Connectable, Serializable
 				actionOutConnector.flashConnection();
 			}
 		});
+	}
+	
+	public void doAction() {
+		App.sc.sendMessage("/special/action", "special", this.action);
 	}
 
 	@Override

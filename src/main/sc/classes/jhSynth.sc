@@ -26,27 +26,26 @@
 		
 		this.addOSCResponder('/synth/connect/effect', { arg msg;
 			var synthName = msg[1], synthId = msg[2], effectName = msg[3], effectId = msg[4];
-			var synthDict, effectDict;
+			var synthObj, effectObj;
 
 			// Get the dictionaries
-			synthDict = this.idGet(synthName, synthId);
-			effectDict = this.idGet(effectName, effectId);
+			synthObj = this.idGet(synthName, synthId);
+			effectObj = this.idGet(effectName, effectId);
 
 			// Set the outBus's control bus to effect inBus index
-			synthDict.synth.set(\outBus, effectDict.at(\inBus).index);
+			synthObj.synth.set(\outBus, effectObj.inBus.index);
 
 			("Connected synthrument to effect").postln;
 		});
 
 		this.addOSCResponder('/synth/disconnect/effect', { arg msg;
 			var synthName = msg[1], synthId = msg[2], effectName = msg[3], effectId = msg[4];
-			var synthDict, effectDict;
+			var synthObj, effectObj;
 
-			synthDict = this.idGet(synthName, synthId);
-			effectDict = this.idGet(effectName, effectId);
-
+			synthObj = this.idGet(synthName, synthId);
+			
 			// Change synthrument's output bus back to default (0)
-			synthDict.synth.set(\outBus, this.getMasterIn.index);
+			synthObj.synth.set(\outBus, this.getMasterIn.index);
 			("Disconnected synthrument from effect").postln;
 		});
 

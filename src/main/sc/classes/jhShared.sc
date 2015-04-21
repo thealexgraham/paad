@@ -7,7 +7,7 @@
 		var params = def.at(\params);
 
 		switch(type,
-			\effect, { ^EffectModule.new(id, function, params) },
+			\effect, { ^EffectModule.new(id, name, function, params) },
 			\synth, { ^SynthModule.new(id, name, function, params) },
 			\changeFunc, { ^ChangeFunc.new(id, function, params) },
 			\instrument, { ^InstrumentModule.new(id, name, function, params) },

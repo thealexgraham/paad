@@ -30,7 +30,7 @@ public class ParallelSyncer extends Syncer{
 		addOSCListener(address, null);
 	}
 	public void addOSCListener(String address, SyncAction finishAction) {
-		System.out.println("Adding a sync step with address " + address);
+		//System.out.println("Adding a sync step with address " + address);
 		// Add this listener to the queue
 		addListener();
 		
@@ -45,6 +45,8 @@ public class ParallelSyncer extends Syncer{
 				
 				// Remove the OSC Listener
 				OSC.removeListener(this);
+				
+				//System.out.println("Finished sync step with address " + address);
 			}
 		};
 		

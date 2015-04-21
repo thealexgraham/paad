@@ -35,10 +35,8 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public abstract class Instance implements Connectable, Serializable {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	// FIXME
+	protected static final long serialVersionUID = 1L;
 	
 	protected Def def;
 	protected String name;

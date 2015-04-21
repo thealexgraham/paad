@@ -36,6 +36,7 @@ import net.alexgraham.thesis.supercollider.synths.Effect;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
+import net.alexgraham.thesis.supercollider.synths.SpecialAction;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.tests.demos.simplemvc.Model;
@@ -45,6 +46,7 @@ import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.PatternGenModule;
 import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
+import net.alexgraham.thesis.ui.modules.SpecialActionModule;
 import net.alexgraham.thesis.ui.modules.SynthModule;
 import net.alexgraham.thesis.ui.modules.TaskRunnerModule;
 
@@ -460,6 +462,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			module = new ChooserModule(100, 300, (Chooser)instance); 
 		} else if (instance.getClass() == TaskRunner.class) {
 			module = new TaskRunnerModule((TaskRunner)instance);
+		} else if (instance.getClass() == SpecialAction.class) {
+			module = new SpecialActionModule((SpecialAction) instance);
 		} else {
 			System.err.println("No module for class");
 			return;

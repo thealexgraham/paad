@@ -103,8 +103,9 @@ public class ModuleFactory {
 		});
 
 		paramPanel.add(leftConnectable);
-		paramPanel.add(paramNameLabel);
 		paramPanel.add(new JLabel(new ExportIcon(model)));
+		paramPanel.add(paramNameLabel);
+
 		paramPanel.add(Box.createHorizontalStrut(7));
 		
 

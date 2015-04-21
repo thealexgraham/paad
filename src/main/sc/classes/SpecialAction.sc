@@ -1,5 +1,7 @@
 SpecialAction {
 	var instanceId;
+	var listeners;
+	var instanceId;
 
 	*new { |name|
 		^super.new.init(name);

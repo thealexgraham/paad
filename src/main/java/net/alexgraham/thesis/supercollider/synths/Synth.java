@@ -13,6 +13,8 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class Synth extends Instance implements Connectable, java.io.Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	public interface SynthListener {
 		public void parameterChanged(String paramName, double value);
 		public void synthClosed(Synth synth);
@@ -20,7 +22,7 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	
 	private CopyOnWriteArrayList<SynthListener> synthListeners = 
 			new CopyOnWriteArrayList<Synth.SynthListener>();
-	
+		
 	public Synth(Def def) {
 		super(def);
 		// Create default values
@@ -33,6 +35,7 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		closeCommand = "/module/remove";
 		addConnector(ConnectorType.AUDIO_OUTPUT);
 		addConnector(ConnectorType.ACTION_IN, "restart");
+		addConnector(ConnectorType.ACTION_IN, "stop");
 	}
 		
 	public void addSynthListener(SynthListener listener) {
