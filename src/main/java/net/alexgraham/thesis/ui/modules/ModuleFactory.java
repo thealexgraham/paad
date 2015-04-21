@@ -50,10 +50,12 @@ public class ModuleFactory {
 		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, connector);
 		module.addConnectablePanel(leftConnectable);
 		leftConnectable.setOpaque(false);
+		leftConnectable.setPreferredSize(new Dimension(5, 5));
 		
 		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, connector);
 		module.addConnectablePanel(rightConnectable);
 		rightConnectable.setOpaque(false);
+		rightConnectable.setPreferredSize(new Dimension(5, 5));
 	
 		JPanel pane = new JPanel();
     	pane.setLayout(new GridBagLayout());
@@ -72,7 +74,7 @@ public class ModuleFactory {
 	}
 	
 	public static JPanel createSideConnectPanel(ModulePanel module, Connector connector, JComponent component) {
-		JPanel insidePanel = new JPanel();
+		JPanel insidePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 2));
 		insidePanel.add(component);
 		return ModuleFactory.createSideConnectPanel(module, connector, insidePanel);
 	}

@@ -1,4 +1,4 @@
-SynthModule : ModuleType {
+SynthModuleInherit : ModuleType {
 	var <>synth;
 	var outBus;
 
@@ -14,22 +14,6 @@ SynthModule : ModuleType {
 		outBus = ~java.getMasterIn;
 
 		synth = Synth.head(~synthsGroup, name, [\outBus, ~java.getMasterIn.index]);
-
-		this.getParams.keysValuesDo({ |key, value|
-			synth.map(key, value.bus);
-		});
-	}
-
-	doAction { |action|
-		switch ( action,
-			\restart, { this.restart; },
-			{}
-		);
-	}
-
-	restart {
-		synth.free;
-		synth = Synth.head(~synthsGroup, this.defName, [\outBus, outBus.index]);
 
 		this.getParams.keysValuesDo({ |key, value|
 			synth.map(key, value.bus);

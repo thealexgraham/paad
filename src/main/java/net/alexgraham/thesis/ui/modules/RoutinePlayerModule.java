@@ -3,13 +3,9 @@ package net.alexgraham.thesis.ui.modules;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -20,18 +16,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayState;
 import net.alexgraham.thesis.supercollider.players.RoutinePlayer.PlayerListener;
 import net.alexgraham.thesis.supercollider.synths.Instrument;
-import net.alexgraham.thesis.supercollider.synths.grouping.ExportIcon;
-import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
-import net.alexgraham.thesis.ui.components.DialD;
+import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
-import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
@@ -51,6 +45,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 	
 	JButton playButton;
 	JLabel instLabel;
+	JLabel patternLabel;
 	
 	int lastInt = 0;
 	
@@ -102,7 +97,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		
 		JPanel topContentPanel = new JPanel();
 		
-		topPanel = ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_OUT), topContentPanel);
+		topPanel = topContentPanel; //ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_OUT), topContentPanel);
 		
 		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
@@ -117,10 +112,30 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-		middlePanel.setLayout(new GridLayout(0, 2));
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_OUT), new JLabel("Played Action")));
+		
+		middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+		
+		createButtons();
+		JLabel playLabel = new JLabel("play");
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "play"), new JLabel("play")));
 		
 		
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "stop"), new JLabel("stop")));
+		
+		
+		
+//		patternLabel = new JLabel("Pattern: None");
+//		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.PATTERN_IN), patternLabel));
+//		
+////		middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+//
+//		
+//		instLabel = new JLabel("Inst: None");
+//		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.INST_PLAY_OUT), instLabel));
+
 
 		//scrollPane = new JScrollPane(middlePanel);
 		
@@ -142,7 +157,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		pane.add(middlePanel, BorderLayout.CENTER);
 		pane.add(bottomPanel, BorderLayout.SOUTH);	
 		
-		createButtons();
+
 	}
 	
 	public void createButtons() {
@@ -156,42 +171,9 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 			}
 		});
 		
-		JButton closeButton = new JButton("Close");
-		closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-//				player.close();
-//				LineConnectPanel connectPanel = (LineConnectPanel) RoutinePlayerModule.this.getParent();
-//				connectPanel.removeModule(RoutinePlayerModule.this);
-				removeSelf();
-			}
-			
-		});
-		
-		instLabel = new JLabel("Inst: None");
-		instLabel.addMouseListener(new MouseAdapter() {
-		    public void mousePressed(MouseEvent e){
-		        if (e.isPopupTrigger())
-		            doPop(e);
-		    }
-
-		    public void mouseReleased(MouseEvent e){
-		        if (e.isPopupTrigger())
-		            doPop(e);
-		    }
-
-		    private void doPop(MouseEvent e){
-		        InstDefPopup menu = new InstDefPopup();
-		        menu.show(e.getComponent(), e.getX(), e.getY());
-		    }
-
-		});
-		
-		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
-		
-		middlePanel.add(createButtonPanel(playButton, "play"));
-		middlePanel.add(createButtonPanel(closeButton, "stop"));
-		middlePanel.add(instLabel);
+		//middlePanel.add(createButtonPanel(playButton, "playbutton"));
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "playbutton"), playButton));
+//		middlePanel.add(instLabel);
 	
 	}
 	
@@ -224,12 +206,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		player.close();
 	}
 
-	@Override
-	public void instrumentConnected(Instrument inst) {
-		
-		this.instLabel.setText("Inst: " + inst.getSynthName());
-		this.revalidate();
-	}
+
 
 	@Override
 	public void playStateChanged(PlayState state) {
@@ -256,7 +233,11 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		}
 	}
 
-
+	@Override
+	public void instrumentConnected(Instrument inst) {
+		this.instLabel.setText("Inst: " + inst.getSynthName());
+		this.revalidate();
+	}
 
 	@Override
 	public void instrumentDisconnected(Instrument inst) {
@@ -264,5 +245,39 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		this.instLabel.setText("Inst: None");
 		this.revalidate();
 	}
+
+
+	@Override
+	public void patternConnected(PatternGen pattern) {
+		this.patternLabel.setText("Pattern"); //+ pattern.getName());
+	}
+
+
+	@Override
+	public void patternDisconnected(PatternGen pattern) {
+		// TODO Auto-generated method stub
+		this.patternLabel.setText("Pattern: None");
+	}
+	
+//	instLabel = new JLabel("Inst: None");
+//	instLabel.addMouseListener(new MouseAdapter() {
+//	    public void mousePressed(MouseEvent e){
+//	        if (e.isPopupTrigger())
+//	            doPop(e);
+//	    }
+//
+//	    public void mouseReleased(MouseEvent e){
+//	        if (e.isPopupTrigger())
+//	            doPop(e);
+//	    }
+//
+//	    private void doPop(MouseEvent e){
+//	        InstDefPopup menu = new InstDefPopup();
+//	        menu.show(e.getComponent(), e.getX(), e.getY());
+//	    }
+//
+//	});
+	
+//	middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 
 }

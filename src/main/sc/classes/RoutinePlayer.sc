@@ -8,6 +8,7 @@ RoutinePlayer {
 	var action;
 	var instanceId;
 	var listeners;
+	var playing;
 
 	var rout;
 
@@ -33,7 +34,7 @@ RoutinePlayer {
 		});
 
 		action = function;
-
+		playing = false;
 		this.createRout;
 	}
 
@@ -53,12 +54,21 @@ RoutinePlayer {
 		if ((pattern != nil) && (template != nil), {
 			"Playing routine";
 			rout = rout.play;
+			playing = true;
 		});
 	}
 
 	stop {
 		"Stopping routine".postln;
 		rout.stop;
+		playing = false;
+	}
+
+	playbutton {
+		if (playing == true,
+			{this.stop},
+			{this.play}
+		);
 	}
 
 	addListener { |obj|
@@ -141,8 +151,25 @@ RoutinePlayer {
 		switch ( action,
 			\play, { this.play; },
 			\stop, { this.stop; },
+			\playbutton, { this.playbutton; },
 			{}
 		);
+	}
+
+
+	// Will be inherited
+	paramAt {|paramName|
+		^argsDict.at(paramName);
+	}
+
+	setParam { |paramName, value|
+		argsDict.at(paramName).setSilent(value);
+	}
+
+	removeSelf {
+		argsDict.keysValuesArrayDo( {|key, value|
+			value.bus.free
+		});
 	}
 
 }

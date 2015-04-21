@@ -5,13 +5,15 @@
 
 		var function = def.at(\function);
 		var params = def.at(\params);
-		params.postln;
+
 		switch(type,
 			\effect, { ^EffectModule.new(id, function, params) },
 			\synth, { ^SynthModule.new(id, name, function, params) },
-			\changeFunc, { ^ChangeFunc.new(function, params) },
+			\changeFunc, { ^ChangeFunc.new(id, function, params) },
 			\instrument, { ^InstrumentModule.new(id, name, function, params) },
 			\patternGen, { ^PatternGenerator.new(id, function, params) },
+			\taskRunner, { ^TaskRunner.new(id, function, params) },
+			\routinePlayer, { ^RoutinePlayer.new(id, function, params) },
 			{^nil}
 		);
 	}
@@ -63,6 +65,13 @@
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
 			name.idGet(id).setParam(param, val); // Change the value at the bus
+		}, false);
+
+		// [/synth/newparam, synthName, paramName, id, value]
+		this.addOSCResponder('/module/action', { arg msg;
+			// Set float1
+			var name = msg[1], id = msg[2], action = msg[3];
+			name.idGet(id).doAction(action.asSymbol);
 		}, false);
 	}
 

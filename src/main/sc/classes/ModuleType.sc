@@ -1,7 +1,11 @@
-Module {
+ModuleType {
 	var <>argsDict;
-	var defName;
+	var <>defName;
 	var instanceId;
+
+	*new {
+		^super.new;
+	}
 
 	init { | id, name, function, arguments |
 		instanceId = id;
@@ -18,6 +22,11 @@ Module {
 		});
 
 		defName = name;
+
+	}
+
+	getParams {
+		^argsDict;
 	}
 
 	paramAt { |paramName|
@@ -26,6 +35,12 @@ Module {
 
 	setParam { |paramName, value|
 		argsDict.at(paramName).setSilent(value);
+	}
+
+	removeSelf {
+		argsDict.keysValuesArrayDo( {|key, value|
+			value.bus.free
+		});
 	}
 
 }

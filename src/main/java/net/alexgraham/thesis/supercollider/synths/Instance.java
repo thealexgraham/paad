@@ -83,6 +83,11 @@ public abstract class Instance implements Connectable, Serializable {
 	}
 	
 	
+	public void sendAction(String action) {
+		App.sc.sendMessage("/module/action", this.getName(), this.id.toString(), action);
+	}
+	
+	
 	// Parameter Models
 	// ----------------------- 
 	

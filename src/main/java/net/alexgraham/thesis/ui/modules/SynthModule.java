@@ -11,6 +11,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -19,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -106,9 +110,19 @@ public class SynthModule extends ModulePanel {
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
-		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+//		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+		JLabel restartLabel = new JLabel("restart");
+		restartLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				instance.sendAction("restart");
+			}
+		});
+		
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, synth.getConnector(ConnectorType.ACTION_IN, "restart"), restartLabel));
+		middlePanel.add(new JSeparator());
 		addParameters();
 		//scrollPane = new JScrollPane(middlePanel);
 		

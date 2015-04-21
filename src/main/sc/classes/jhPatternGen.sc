@@ -21,42 +21,6 @@
 	createPatternGenListeners {
 		var defaultParams;
 
-		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		this.addOSCResponder('/patterngen/add', { arg msg;
-			var patternGenName = msg[1];
-			var id = msg[2];
-			var patternGenDef, patternGen;
-
-			"Adding patternGen".postln;
-			patternGenDef = this.getPatternGenDef(patternGenName);
-
-			// Create the actual object
-			patternGen = PatternGenerator.new(id, patternGenDef.at(\function), patternGenDef.at(\params));
-
-			// Store the object
-			patternGenName.idPut(id, patternGen);
-
-			("patternGen added, adding patternGen at" + id).postln;
-		});
-
-		// Whenever the plugin is removed (or killed internally) this will free the synth
-		this.addOSCResponder('/patterngen/remove', { arg msg;
-			// Free synth defs at this id
-			var patternGenName = msg[1];
-			var id = msg[2];
-			var patternGen = patternGenName.idGet(id);
-
-			("patternGen disconnected, freeing patternGen at" + id).postln;
-		});
-
-		// [/synth/newparam, synthName, paramName, id, value]
-		this.addOSCResponder('/patterngen/paramc', { arg msg;
-			// Set float1
-			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
-			// Set the value on the pattern object
-			name.idGet(id).setParam(param, val);
-		});
-
 				// [/synth/newparam, synthName, paramName, id, value]
 		this.addOSCResponder('/patterngen/doaction', { arg msg;
 			// Set float1

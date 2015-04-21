@@ -32,6 +32,7 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		paramChangeCommand = "/module/paramc";
 		closeCommand = "/module/remove";
 		addConnector(ConnectorType.AUDIO_OUTPUT);
+		addConnector(ConnectorType.ACTION_IN, "restart");
 	}
 		
 	public void addSynthListener(SynthListener listener) {
@@ -78,7 +79,6 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 	public String getSynthName() {
 		return def.getDefName();
 	}
-
 	
 	public void connectToEffect(Effect effect) {
 		//var instName = msg[1], instId = msg[2], effectName = msg[4], effectId = msg[5];

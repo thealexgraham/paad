@@ -1,7 +1,6 @@
 package net.alexgraham.thesis.supercollider.synths;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;

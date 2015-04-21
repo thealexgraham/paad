@@ -59,8 +59,6 @@ InstrumentModule {
 		argsDict.keysValuesArrayDo( {|key, value|
 			value.bus.free
 		});
-
-		synth.free;
 	}
 
 }

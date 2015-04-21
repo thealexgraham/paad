@@ -83,7 +83,18 @@ JavaHelper {
 		didReady = false;
 
 		this.createListeners;
+		this.createSpecialActions;
 
+	}
+
+	createSpecialActions {
+		// These special actions are done when the patch starts up (for example)
+		~startAction = SpecialAction.new("start");
+		~playAction = SpecialAction.new("play");
+		~stopAction = SpecialAction.new("stop");
+		idPut(\special, "start", ~startAction);
+		idPut(\special, "play", ~playAction);
+		idPut(\special, "stop", ~stopAction);
 	}
 
 	createListeners {

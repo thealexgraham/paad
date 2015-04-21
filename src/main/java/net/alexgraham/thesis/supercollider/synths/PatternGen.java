@@ -2,31 +2,14 @@ package net.alexgraham.thesis.supercollider.synths;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.SCLang;
 import net.alexgraham.thesis.supercollider.synths.Synth.SynthListener;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
-import net.alexgraham.thesis.supercollider.synths.defs.PatternGenDef;
-import net.alexgraham.thesis.supercollider.synths.parameters.ChoiceParam;
-import net.alexgraham.thesis.supercollider.synths.parameters.DoubleParam;
-import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
-import net.alexgraham.thesis.supercollider.synths.parameters.Param;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.IntParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
-import net.alexgraham.thesis.ui.components.DoubleBoundedRangeModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
-import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 

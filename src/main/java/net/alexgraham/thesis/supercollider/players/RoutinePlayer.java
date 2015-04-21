@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 
+
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 
@@ -17,6 +18,7 @@ import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -24,9 +26,18 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class RoutinePlayer extends Synth implements Connectable, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public interface PlayerListener {
 		public void instrumentConnected(Instrument inst);
 		public void instrumentDisconnected(Instrument inst);
+		
+		public void patternConnected(PatternGen pattern);
+		public void patternDisconnected(PatternGen pattern);
+		
 		public void playStateChanged(PlayState state);
 	}
 	
@@ -50,21 +61,27 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		super(def);
 		init();
 	}
-	public void start() {
-		App.sc.sendMessage("/routplayer/add", getDefName(), getID());
-	}
+	
+//	public void start() {
+//		App.sc.sendMessage("/routplayer/add", getDefName(), getID());
+//	}
 	
 	public void init() {
-		startCommand = "/routplayer/add";
-		paramChangeCommand = "/routplayer/paramc";
-		closeCommand = "/routplayer/remove";
+		startCommand = "/module/add";
+		paramChangeCommand = "/module/paramc";
+		closeCommand = "/module/remove";
 		
 		addConnector(ConnectorType.ACTION_OUT);
 		addConnector(ConnectorType.INST_PLAY_OUT);
 		addConnector(ConnectorType.PATTERN_IN);
 		addConnector(ConnectorType.ACTION_IN, "play");
 		addConnector(ConnectorType.ACTION_IN, "stop");
+		addConnector(ConnectorType.ACTION_IN, "playbutton");
 		
+		addActionListeners();
+	}
+		
+	public void addActionListeners() {
 		// Create a listener so the connection knows to flash when an action is sent
 		App.sc.createListener("/" + this.getID() + "/action/sent", new OSCListener() {
 			@Override
@@ -73,9 +90,8 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 				actionOutConnector.flashConnection();
 			}
 		});
-		
 	}
-	
+		
 	/*
 	 * Reset for 
 	 */
@@ -85,7 +101,10 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		firePlayStateChange();
 	}
 	
+	@Override
 	public void refreshModels() {
+		super.refreshModels();
+		addActionListeners();
 		reset();
 	}
 	
@@ -124,12 +143,25 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		playStateChange();
 	}
 	
+	public void firePatternConnected(PatternGen pattern) {
+		for (PlayerListener playerListener : listeners) {
+			playerListener.patternConnected(pattern);
+		}
+	}
+	public void firePatternDisconnected(PatternGen pattern) {
+		for (PlayerListener playerListener : listeners) {
+			playerListener.patternDisconnected(pattern);
+		}
+	}
+	
 	public void connectPatternObject(PatternGen patternObj) {
 		App.sc.sendMessage("/routplayer/connect/pattern", this.getID(), patternObj.getDefName(), patternObj.getID(), 0);
+		firePatternConnected(patternObj);
 	}
 	
 	public void disconnectPatternObject(PatternGen patternObj) {
-		App.sc.sendMessage("/routplayer/disconnect/pattern", this.getID(), patternObj.getDefName(), patternObj.getID(), 0);	
+		App.sc.sendMessage("/routplayer/disconnect/pattern", this.getID(), patternObj.getDefName(), patternObj.getID(), 0);
+		firePatternDisconnected(patternObj);
 	}
 	
 	public void connectPlayAction(Instance target, String actionType) {

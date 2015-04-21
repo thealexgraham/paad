@@ -25,6 +25,11 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
 public class TaskRunner extends Synth implements Connectable, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public interface TaskListener {
 		public void playStateChanged(PlayState state);
 	}
@@ -50,14 +55,18 @@ public class TaskRunner extends Synth implements Connectable, Serializable {
 	}
 	
 	public void init() {
-		startCommand = "/taskrunner/add";
-		paramChangeCommand = "/taskrunner/paramc";
-		closeCommand = "/taskrunner/remove";
+		startCommand = "/module/add";
+		paramChangeCommand = "/module/paramc";
+		closeCommand = "/module/remove";
 		
 		addConnector(ConnectorType.ACTION_OUT);
 		addConnector(ConnectorType.ACTION_IN, "cycle");
 		addConnector(ConnectorType.ACTION_IN, "stop");
 		
+		createOSCListeners();
+	}
+	
+	public void createOSCListeners() {
 		// Create a listener so the connection knows to flash when an action is sent
 		App.sc.createListener("/" + this.getID() + "/action/sent", new OSCListener() {
 			@Override
@@ -87,7 +96,6 @@ public class TaskRunner extends Synth implements Connectable, Serializable {
     			}
 			}
 		});
-		
 	}
 	
 	/*
@@ -101,7 +109,9 @@ public class TaskRunner extends Synth implements Connectable, Serializable {
 	@Override
 	public void refreshModels() {
 		super.refreshModels();
+		createOSCListeners();
 		reset();
+		System.out.println("Refreshing");
 	}
 	
 	public void addListener(TaskListener l) {

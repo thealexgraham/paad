@@ -16,16 +16,16 @@ import net.alexgraham.thesis.App;
 
 public class Connector implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public interface Connectable {
 		
 		boolean connect(Connection connection);
 		boolean disconnect(Connection connection);
 		
-//		boolean disconnect(Connector thisConnector, Connector targetConnector);
-//		boolean connect(Connector thisConnector, Connector targetConnector);
-//		
-//		public boolean connectWith(Connectable otherConnectable);
-//		public boolean removeConnectionWith(Connectable otherConnectable);
 	}
 
 	private Connectable connectable;
@@ -35,6 +35,7 @@ public class Connector implements java.io.Serializable {
 	
 	private boolean flashing = false;
 	private Timer flashTimer;
+	private int flashTime = 75;
 	
 	// Optional
 	private String actionType = "default";
@@ -83,6 +84,7 @@ public class Connector implements java.io.Serializable {
 		flash();
 	}
 	public void flash() {
+		createFlashTimer(flashTime);
 		flashTimer.stop();
 		flashing = true;
 		refreshUIs();

@@ -2,27 +2,32 @@ ChangeFunc {
 
 	var <>action;
 	var <>argsDict;
+	var instanceId;
 	var listeners;
 
-	*new { | function, arguments |
-		^super.new.init(function, arguments);
+	*new { |id, function, arguments |
+		^super.new.init(id, function, arguments);
 	}
 
 
-	init { |function, arguments|
+	init { |id, function, arguments|
 
-		action = function;
+		instanceId = id;
 		argsDict = Dictionary.new;
-		listeners = IdentitySet.new;
 
 		arguments.do({ |item, i|
 			var name = item[0];
 			var min = item[1];
 			var max = item[2];
-			var default = item[3];
-			argsDict.put(name, ParameterBus.new(name, default, min, max));
-		});
+			var value = item[3];
+			var paramBus = ParameterBus.new(name, value, min, max);
+			paramBus.ownerId = instanceId;
+			argsDict.put(name, paramBus);
 
+		});
+		
+		listeners = IdentitySet.new;
+		action = function;
 	}
 
 	paramAt { |paramName|

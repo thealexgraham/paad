@@ -1,24 +1,5 @@
 + JavaHelper { // changeFunc Methods
 
-	changeFuncDefs {
-		if (~changeFuncDefs == nil,
-			{
-				"Adding Identity Dictionary".postln;
-				~changeFuncDefs = IdentityDictionary.new;
-				^~changeFuncDefs;
-			},
-			{ ^~changeFuncDefs }
-		);
-	}
-
-	getChangeFuncDef { |name|
-		^this.changeFuncDefs.at(name.asSymbol);
-	}
-
-	putChangeFuncDef { |name, def|
-		^this.changeFuncDefs.put(name.asSymbol, def);
-	}
-
 	/* newchangeFunc
 	* Tells java all about the changeFunc definition
 	*/
@@ -39,51 +20,6 @@
 	createChangeFuncListeners {
 		var defaultParams;
 
-		// Whenever plugin is created (or reset), this will create a Synth and add it to the dictionary
-		this.addOSCResponder('/changefunc/add', { arg msg;
-			var changeFuncName = msg[1];
-			var id = msg[2];
-			var changeFuncDef, changeFunc;
-
-			msg.removeAt(0); // Address
-			msg.removeAt(0); // SynthName
-			msg.removeAt(0); // ID
-
-			"Adding changeFunc".postln;
-			// The rest are the defaults
-			changeFuncDef = this.getDef(\changeFunc, changeFuncName);
-
-			// Create the actual function
-			changeFunc = ChangeFunc.new(changeFuncDef.at(\function), changeFuncDef.at(\params));
-			changeFuncName.idPut(id, changeFunc);
-
-			// The rest of the parameters are quads, reshape so we can use them
-			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
-				var paramName = item[0];
-				var value = item[1];
-				changeFunc.setParam(paramName, value);
-			});
-
-			("changeFunc added, adding changeFunc at" + id).postln;
-		});
-
-		// Whenever the plugin is removed (or killed internally) this will free the synth
-		this.addOSCResponder('/changefunc/remove', { arg msg;
-			// Free synth defs at this id
-			var changeFuncName = msg[1];
-			var id = msg[2];
-			var changeFunc = changeFuncName.idGet(id);
-
-			("changeFunc disconnected, freeing changeFunc at" + id).postln;
-		});
-
-		// [/synth/newparam, synthName, paramName, id, value]
-		this.addOSCResponder('/changefunc/paramc', { arg msg;
-			// Set float1
-			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
-			// Set the value directly
-			name.idGet(id).setParam(param, val); // Change the value at the bus
-		});
 
 				// [/synth/newparam, synthName, paramName, id, value]
 		this.addOSCResponder('/changefunc/doaction', { arg msg;

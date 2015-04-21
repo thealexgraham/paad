@@ -1,30 +1,12 @@
 + JavaHelper { // RoutPlayer
 
-	routPlayerDefs {
-		if (~routPlayerDefs == nil,
-			{
-				"Adding Identity Dictionary".postln;
-				~routPlayerDefs = IdentityDictionary.new;
-				^~routPlayerDefs;
-			},
-			{ ^~routPlayerDefs }
-		);
-	}
-
-	getRoutPlayerDef { |name|
-		^this.routPlayerDefs.at(name.asSymbol);
-	}
-
-	putRoutPlayerDef { |name, def|
-		^this.routPlayerDefs.put(name.asSymbol, def);
-	}
 
 	/* newRoutPlayer
 	*/
 	newRoutPlayer { |name, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		// Store the definition
-		this.putRoutPlayerDef(name, (function: function, params: params));
+		this.putDef(\routinePlayer, name, (function: function, params: params));
 
 		// Create the storage
 		this.setupTypeStorage(name);
@@ -41,51 +23,6 @@
 	createRoutListeners {
 		var dictName = "routplayer";
 		dictName.toLower.asSymbol.envirPut(Dictionary.new);
-
-		// Whenever an instrument is added, this will create busses for this instance of the synth
-		this.addOSCResponder('/routplayer/add', { arg msg;
-			var defName = msg[1];
-			var id = msg[2];
-			var def, player;
-
-			def = this.getRoutPlayerDef(defName);
-			def.postln;
-
-			player = RoutinePlayer.new(id, def.at(\function), def.at(\params));
-			dictName.idPut(id, player);
-
-			// Set the current params
-			msg.removeAt(0); // Address
-			msg.removeAt(0); // SynthName
-			msg.removeAt(0); // ID
-
-			// The rest of the parameters are quads, reshape so we can use them
-			msg.reshape((msg.size / 2).asInt, 2).do({ |item, i|
-				var paramName = item[0];
-				var value = item[1];
-				player.setParam(paramName, value);
-			});
-
-			// test pattern for now
-			player.pattern = [[1,1], [2, 0.5], [1, 0.5], [10, 1]];
-
-			("Routine player created at" + id).postln;
-		});
-
-		// Whenever the plugin is removed (or killed internally) this will free the synth
-		this.addOSCResponder('/routplayer/remove', { arg msg;
-			// Free synth defs at this id
-			var id = msg[1];
-			dictName.idRemove(id);
-			("Routine player removed at" + id).postln;
-		});
-
-		this.addOSCResponder('/routplayer/paramc', { arg msg;
-			// Set float1
-			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
-			// Set the value directly
-			dictName.idGet(id).setParam(param, val); // Change the value at the bus
-		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
 		this.addOSCResponder('/routplayer/play', { arg msg;

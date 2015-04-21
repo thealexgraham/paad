@@ -23,53 +23,7 @@
 		var defaultParams;
 
 		~synthsGroup = Group.head(Server.default);
-
-		// Add synth
-		this.addOSCResponder('/synth/add', { |msg|
-			var name = msg[1];
-			var id = msg[2];
-			var synthDict;
-
-			msg.removeAt(0); // Address
-			msg.removeAt(0); // SynthName
-			msg.removeAt(0); // ID
-
-			// The rest are the defaults
-			this.getMasterIn.postln;
-			msg = msg.addAll(["outBus", this.getMasterIn.index]);
-
-			name.idPut(id, Dictionary.new);
-			synthDict = name.idGet(id);
-
-			// Store the synth and the inBus
-			synthDict.put(\synth, Synth.head(~synthsGroup, name, msg));
-			("Synth added" + id).postln;
-		});
-
-		// Remove synth
-		this.addOSCResponder('/synth/remove', { |msg|
-			// Free synth defs at this id
-			var synthName = msg[1];
-			var id = msg[2];
-			var synthDict = synthName.idGet(id);
-
-			synthDict.at(\synth).free;
-			synthName.nameGet.removeAt(id);
-
-			("Inst disconnected, freeing busses at" + id).postln;
-		});
-
-		// [/synth/newparam, synthName, paramName, id, value]
-		this.addOSCResponder('/synth/paramc', { arg msg;
-				// Set float1
-			var synthName = msg[1], param = msg[2], id = msg[3], val = msg[4];
-
-			// Set the bus at param
-			synthName.idGet(id).at(\synth).set(param, val);
-
-			postSilent("Changing" + synthName + id + param + val);
-		});
-
+		
 		this.addOSCResponder('/synth/connect/effect', { arg msg;
 			var synthName = msg[1], synthId = msg[2], effectName = msg[3], effectId = msg[4];
 			var synthDict, effectDict;
