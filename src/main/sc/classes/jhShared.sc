@@ -84,7 +84,7 @@
 	newDef { |defName, type, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 		var message = ["/def/add/full", defName, type];
-		message.postln;
+		// message.postln;
 		message = message.add(function.def.sourceCode);
 		params.do({ |item, i|
 			var param = item[0].asString;
@@ -131,7 +131,7 @@
 				}
 			);
 		});
-		net.sendBundle(0, message);
+		// net.sendBundle(0, message);
 		this.sendDefVerify(message);
 		^("Definition Added");
 	}

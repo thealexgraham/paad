@@ -9,7 +9,7 @@
 		//effectName.tildaPut(Dictionary.new);
 		this.setupTypeStorage(name);
 
-		this.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
+		this.sendSilentMsg("/def/ready/"++name, 1); // Should this go somewhere else?
 
 	}
 

@@ -119,6 +119,11 @@ JavaHelper {
 		net.sendBundle(1, args);
 	}
 
+	sendSilentMsg { arg ... args;
+		var net = NetAddr.new("127.0.0.1", this.sendPort);
+		net.sendBundle(1, args);
+	}
+
 	sendDefVerify { |message|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		var address = message[0] ++ "/" ++ message[1].asString ++ "/verify";

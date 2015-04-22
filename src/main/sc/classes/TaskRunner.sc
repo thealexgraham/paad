@@ -1,34 +1,21 @@
-TaskRunner {
+TaskRunner : ModuleType {
 	var <>action;
-	var <>argsDict;
-	var instanceId;
 	var action;
 	var listeners;
 	var task;
 	var playing;
 
-	*new { |id, function, arguments|
-		^super.new.init(id, function, arguments);
+	*new { | id, name, function, arguments |
+		^super.new.init(id, name, function, arguments);
 	}
 
-	init { |id, function, arguments|
 
-		// Set the action
-		// Wrap the "Reset" to the end of the function
+	init { |id, name, function, arguments|
+		super.init(id, name, function, arguments);
+
 		action = function;
 
 		listeners = Set.new;
-		argsDict = Dictionary.new;
-		instanceId = id;
-
-		arguments.do({ |item, i|
-			var name = item[0];
-			var min = item[1];
-			var max = item[2];
-			var default = item[3];
-			argsDict.put(name, ParameterBus.new(name, default, min, max));
-		});
-
 		this.createTask;
 
 		playing = false;
@@ -47,15 +34,6 @@ TaskRunner {
 			this.restart;
 		});
 
-	}
-
-	// Encapsulate this?
-	paramAt { |paramName|
-		^argsDict.at(paramName);
-	}
-
-	setParam { |paramName, value|
-		argsDict.at(paramName).setSilent(value);
 	}
 
 	restart {
@@ -88,7 +66,6 @@ TaskRunner {
 		);
 	}
 
-
 	doAction { |action|
 		switch ( action,
 			\play, { this.play; },
@@ -113,6 +90,10 @@ TaskRunner {
 		});
 		// JAVA ONLY
 		net.sendMsg("/"++instanceId++"/action/sent", 1);
+	}
+
+	removeSelf {
+		super.removeSelf;
 	}
 
 }

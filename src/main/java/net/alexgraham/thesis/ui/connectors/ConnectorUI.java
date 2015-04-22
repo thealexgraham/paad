@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
 
 import javax.swing.SwingUtilities;
 
@@ -145,6 +146,11 @@ public class ConnectorUI implements java.io.Serializable {
 
 		
 		return location;
+	}
+	
+	public Point getPanelPoint(ConnectorUI connectorUI) {
+		Point point = new Point((int)owner.getBounds().getCenterX(), (int)owner.getBounds().getCenterY());
+		return point;
 	}
 	
 	public Point getCurrentOutside() {
@@ -310,4 +316,6 @@ public class ConnectorUI implements java.io.Serializable {
 
 		return hovered;
 	}
+
+
 }

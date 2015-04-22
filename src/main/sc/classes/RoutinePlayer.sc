@@ -1,12 +1,12 @@
-RoutinePlayer {
+RoutinePlayer : ModuleType {
 	var <>template;
 	var <>pattern;
 	var <>playedAction;
 	var <>instName;
 	var <>instDict;
-	var <>argsDict;
+
 	var action;
-	var instanceId;
+
 	var listeners;
 	var playing;
 
@@ -14,12 +14,12 @@ RoutinePlayer {
 
 	var rout;
 
-	*new { |id, function, arguments|
-		^super.new.init(id, function, arguments);
+	*new { | id, name, function, arguments |
+		^super.new.init(id, name, function, arguments);
 	}
 
-	init { |id, function, arguments|
-
+	init { |id, name, function, arguments|
+		super.init(id, name, function, arguments);
 
 		pattern = nil;
 		template = nil;
@@ -27,10 +27,6 @@ RoutinePlayer {
 		listeners = IdentitySet.new;
 
 		patterns = IdentitySet.new;
-
-		instanceId = id;
-		argsDict = ModuleType.setupParams(instanceId, arguments);
-
 
 		action = function;
 		playing = false;
@@ -97,8 +93,6 @@ RoutinePlayer {
 			{ ^false});
 	}
 
-
-
 	connectInstrument { |instName, inst|
 		var templateList, busses;
 		var keys = List.new;
@@ -160,20 +154,8 @@ RoutinePlayer {
 		);
 	}
 
-
-	// Will be inherited
-	paramAt {|paramName|
-		^argsDict.at(paramName);
-	}
-
-	setParam { |paramName, value|
-		argsDict.at(paramName).setSilent(value);
-	}
-
 	removeSelf {
-		argsDict.keysValuesArrayDo( {|key, value|
-			value.bus.free
-		});
+		super.removeSelf;
 	}
 
 }

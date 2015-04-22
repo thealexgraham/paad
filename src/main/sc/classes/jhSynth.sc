@@ -14,7 +14,7 @@
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
 		name.tildaPut(Dictionary.new);
 
-		this.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
+		this.sendSilentMsg("/def/ready/"++name, 1); // Should this go somewhere else?
 
 	}
 
