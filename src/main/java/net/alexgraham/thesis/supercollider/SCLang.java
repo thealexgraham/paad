@@ -388,7 +388,23 @@ public class SCLang extends ChangeSender {
 				e.printStackTrace();
 			}
 		}
-
+	}
+	
+	public void sendSilentMessage(String address, Object... args) {
+		if (exportWriter == null) {
+			// Send message as normal
+			OSC.sendSilentMessage(this.sendPort, address, args);			
+		} else {
+			// Write the messages to file
+			try {
+				exportWriter.write("net.sendMsg('" + address + "', ");
+				exportWriter.write(createArgumentsListString(args) + ");");
+				exportWriter.newLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public String createArgumentsListString(Object[] arguments) {

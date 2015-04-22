@@ -2,6 +2,9 @@
 
 	newInstrument { |name, function, params|
 		this.putDef(\instrument, name, (function: function, params: params));
+
+		this.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
+
 	}
 
 	createInstListeners {

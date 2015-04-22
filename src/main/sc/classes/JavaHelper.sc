@@ -7,7 +7,7 @@ JavaHelper {
 	var <>readyAction;
 	var <>java;
 	var loaded;
-	var pendingDefs;
+	var <>pendingDefs;
 	var masterIn;
 	var didReady;
 
@@ -74,8 +74,8 @@ JavaHelper {
 		synthDefaults = [[\gain, 0.0, 1.0, 0.0], [\pan, -1.0, 1.0, 0.0]];
 
 		definitions = Dictionary.new;
-		pendingDefs = IdentitySet.new;
-			defs = Dictionary.new;
+		pendingDefs = Set.new;
+		defs = Dictionary.new;
 
 		ready = false;
 		loaded = false;
@@ -125,17 +125,17 @@ JavaHelper {
 		var task;
 		net.sendBundle(0, message);
 
-		// this.addPendingDef(message[0]++message[1]);
+		//this.addPendingDef(address);
 
 		task = Task {
-			1.0.wait;
+			0.25.wait;
 			// Try again
 			this.sendDefVerify(message);
 		};
 		~defTasks.put(address, task);
 
 		OSCFunc({ |msg|
-			// this.removePendingDef(message[0]++message[1]);
+			this.removePendingDef(message[1].asSymbol);
 			~defTasks.at(address).stop;
 		}, address).oneShot;
 
@@ -194,9 +194,8 @@ JavaHelper {
 	}
 
 	removePendingDef { |name|
-		var net = NetAddr.new("127.0.0.1", this.sendPort);
-		pendingDefs.remove(name);
-		this.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
+		// var net = NetAddr.new("127.0.0.1", this.sendPort);
+		pendingDefs = pendingDefs.remove(name);
 		this.tryReadyMessage;
 	}
 
@@ -228,10 +227,10 @@ JavaHelper {
 
 			if ((type == \synth) || (type == \instrument) || (type == \effect),
 				{
-					this.addPendingDef(name);
+					this.addPendingDef(name.asSymbol);
 					SynthDef(name, function).add;
 					~server.sync(c);
-					this.removePendingDef(name);
+					// this.removePendingDef(name);
 			});
 
 			if(ready != true,
@@ -246,7 +245,6 @@ JavaHelper {
 	sendDefinitions {
 		definitions.keysValuesDo({
 			|key, value|
-			("Sending definition "++key++" from dictionary").postln;
 			this.sendDefinition(value.at(\name), value.at(\type), value.at(\function), value.at(\params));
 		});
 	}

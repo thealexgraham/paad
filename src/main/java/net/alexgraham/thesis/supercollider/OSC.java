@@ -105,6 +105,35 @@ public class OSC {
 		}
 	}
 	
+	// create test for sending and receiving messages so I always know it works...
+	public static void sendSilentMessage(int port, String address, Object... args) {
+		try {
+			
+			// Create OSC sending object for localhost (this might be better done for the class)
+			// OSCPortOut sender = new OSCPortOut(InetAddress.getLocalHost(), port);
+			
+			// Create the OSC Message from the arguments
+	    	List<Object> arguments = new ArrayList<Object>();
+	    	arguments.addAll(Arrays.asList(args));
+	    	OSCMessage msg = new OSCMessage(address, arguments);
+	    	
+	    	// Send the message
+	    	sender.send(msg);
+
+	    	App.sc.fireOutMessageUpdate();
+	    	
+		} catch (SocketException e) {
+			// 
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// 
+			e.printStackTrace();
+		} catch (IOException e) {
+			// 
+			e.printStackTrace();
+		}
+	}
+	
 	public static void createListener(String address, OSCListener listener) {
 		
 		OSCPatternAddressSelector addressSelector = new OSCPatternAddressSelector(address);

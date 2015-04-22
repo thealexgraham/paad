@@ -9,11 +9,11 @@
 		switch(type,
 			\effect, { ^EffectModule.new(id, name, function, params) },
 			\synth, { ^SynthModule.new(id, name, function, params) },
-			\changeFunc, { ^ChangeFunc.new(id, function, params) },
+			\changeFunc, { ^ChangeFunc.new(id, name, function, params) },
 			\instrument, { ^InstrumentModule.new(id, name, function, params) },
-			\patternGen, { ^PatternGenerator.new(id, function, params) },
-			\taskRunner, { ^TaskRunner.new(id, function, params) },
-			\routinePlayer, { ^RoutinePlayer.new(id, function, params) },
+			\patternGen, { ^PatternGenerator.new(id, name, function, params) },
+			\taskRunner, { ^TaskRunner.new(id, name, function, params) },
+			\routinePlayer, { ^RoutinePlayer.new(id, name, function, params) },
 			{^nil}
 		);
 	}
@@ -132,7 +132,7 @@
 			);
 		});
 		net.sendBundle(0, message);
-		// this.sendDefVerify(message);
+		this.sendDefVerify(message);
 		^("Definition Added");
 	}
 

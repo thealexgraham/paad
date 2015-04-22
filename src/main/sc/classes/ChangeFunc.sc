@@ -21,6 +21,7 @@ ChangeFunc {
 			var max = item[2];
 			var value = item[3];
 			var paramBus = ParameterBus.new(name, value, min, max);
+			item.postln;
 			paramBus.ownerId = instanceId;
 			argsDict.put(name, paramBus);
 
@@ -28,18 +29,6 @@ ChangeFunc {
 
 		listeners = IdentitySet.new;
 		action = function;
-	}
-
-	paramAt { |paramName|
-		^argsDict.at(paramName);
-	}
-
-	setParam { |paramName, value|
-		argsDict.at(paramName).setSilent(value);
-	}
-
-	setParamLive { |paramName, value|
-		argsDict.at(paramName).set(value);
 	}
 
 	addListener { |obj|
@@ -73,6 +62,18 @@ ChangeFunc {
 
 		// Set the parameter to the new value
 		parameter.set(newValue);
+	}
+
+	paramAt { |paramName|
+		^argsDict.at(paramName);
+	}
+
+	setParam { |paramName, value|
+		argsDict.at(paramName).setSilent(value);
+	}
+
+	setParamLive { |paramName, value|
+		argsDict.at(paramName).set(value);
 	}
 
 	removeSelf {

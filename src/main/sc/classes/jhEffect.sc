@@ -8,6 +8,9 @@
 		this.putDef(\effect, name, (function: function, params: params));
 		//effectName.tildaPut(Dictionary.new);
 		this.setupTypeStorage(name);
+
+		this.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
+
 	}
 
 	/* createEffectListeners

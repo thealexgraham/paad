@@ -169,7 +169,6 @@ public class DefModel implements Messenger {
 		def.setType(type);
 		defTable.put(defName, def);
 		App.launchTreeModel.addSynthDef(def);
-//		App.sc.log(def.getType() + " | " + def.getDefName());
 		return def;
 	}
 	
@@ -185,7 +184,7 @@ public class DefModel implements Messenger {
     			final String type = (String) arguments.removeFirst();
     			
     			// First verify we received it
-    			App.sc.sendMessage(message.getAddress() + "/" + defName + "/verify", 1);
+    			App.sc.sendSilentMessage(message.getAddress() + "/" + defName + "/verify", 1);
     			
     			Def def = addNewDef(defName, type);
     			

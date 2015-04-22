@@ -13,6 +13,9 @@
 		this.putDef(\synth, name, (function: function, params: params));
 		// Create a dictionary to store the running synths (for multiple copies of plugin)
 		name.tildaPut(Dictionary.new);
+
+		this.sendMsg("/def/ready/"++name, 1); // Should this go somewhere else?
+
 	}
 
 	/* createSynthListeners
@@ -23,7 +26,7 @@
 		var defaultParams;
 
 		~synthsGroup = Group.head(Server.default);
-		
+
 		this.addOSCResponder('/synth/connect/effect', { arg msg;
 			var synthName = msg[1], synthId = msg[2], effectName = msg[3], effectId = msg[4];
 			var synthObj, effectObj;
@@ -43,7 +46,7 @@
 			var synthObj, effectObj;
 
 			synthObj = this.idGet(synthName, synthId);
-			
+
 			// Change synthrument's output bus back to default (0)
 			synthObj.synth.set(\outBus, this.getMasterIn.index);
 			("Disconnected synthrument from effect").postln;
