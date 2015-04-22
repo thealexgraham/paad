@@ -1,7 +1,7 @@
 ChoiceParam {
 	var <>name;
 	var <>choiceName;
-	var value;
+	var <>value;
 	var <>ownerId;
 
 	var defaultName;
@@ -25,10 +25,9 @@ ChoiceParam {
 	set { |newChoiceName, newValue|
 		var net;
 		if (value != newValue, {
-			ownerId.postln;
 			net = NetAddr("127.0.0.1", ~java.sendPort);
 			value = newValue;
-			net.sendMsg("/"++ownerId++"/"++name++"/change", newChoiceName);
+			net.sendMsg("/"++ownerId++"/"++name++"/change", newChoiceName, newValue.asString);
 			choiceName = newChoiceName;
 		});
 
@@ -46,12 +45,10 @@ ChoiceParam {
 		^value;
 	}
 
-	value {
-		if (choiceObj == nil,
-			{ ^defaultValue; },
-			{ ^choiceObj.getCurrentValue; }
-		);
+	listValue {
+		^value.asString.interpret;
 	}
+
 
 	setChoiceObj { |obj|
 		choiceObj = obj;

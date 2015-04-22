@@ -131,8 +131,10 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 				// TODO Auto-generated method stub
 				System.out.println("Getting a message");
     			List<Object> arguments = message.getArguments();
-    			final String newValue = (String) arguments.get(0);
-   				setChoiceName(newValue);;
+    			final String newName = (String) arguments.get(0);
+    			final Object newValue = arguments.get(1); 
+   				setChoiceName(newName);
+   				choiceValue = newValue;
 			}
 		});
 		

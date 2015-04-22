@@ -82,6 +82,8 @@ JavaHelper {
 		java = true;
 		didReady = false;
 
+		~defTasks = Dictionary.new;
+
 		this.createListeners;
 		this.createSpecialActions;
 
@@ -115,6 +117,29 @@ JavaHelper {
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		args.postln;
 		net.sendBundle(1, args);
+	}
+
+	sendDefVerify { |message|
+		var net = NetAddr.new("127.0.0.1", this.sendPort);
+		var address = message[0] ++ "/" ++ message[1].asString ++ "/verify";
+		var task;
+		net.sendBundle(0, message);
+
+		// this.addPendingDef(message[0]++message[1]);
+
+		task = Task {
+			1.0.wait;
+			// Try again
+			this.sendDefVerify(message);
+		};
+		~defTasks.put(address, task);
+
+		OSCFunc({ |msg|
+			// this.removePendingDef(message[0]++message[1]);
+			~defTasks.at(address).stop;
+		}, address).oneShot;
+
+		task.start;
 	}
 
 	getMasterIn {
@@ -213,6 +238,7 @@ JavaHelper {
 				{ definitions.put(name, (name: name, type: type, function: function, params: params)); },
 				{ this.sendDefinition(name, type, function, params); }
 			);
+
 		}
 	}
 
@@ -220,6 +246,7 @@ JavaHelper {
 	sendDefinitions {
 		definitions.keysValuesDo({
 			|key, value|
+			("Sending definition "++key++" from dictionary").postln;
 			this.sendDefinition(value.at(\name), value.at(\type), value.at(\function), value.at(\params));
 		});
 	}

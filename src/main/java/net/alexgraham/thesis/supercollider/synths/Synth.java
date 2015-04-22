@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -56,8 +57,12 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
     	arguments.add(id.toString());
     	    	
     	for (ParamModel model : parameterModels.values()) {
-    		arguments.add(model.getName());
-    		arguments.add(model.getObjectValue());
+    		// SuperCollider generally has incorrect versions
+    		if (model.getClass() != ChoiceParamModel.class) {
+        		arguments.add(model.getName());
+        		arguments.add(model.getObjectValue());
+    		}
+
     	}
     	
     	return arguments.toArray();
@@ -73,10 +78,10 @@ public class Synth extends Instance implements Connectable, java.io.Serializable
 		// Stop the synth at ID
     	App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());
     	
-		// Update Synth Listeners
-		for (SynthListener synthListener : synthListeners) {
-			synthListener.synthClosed(this);
-		}
+//		// Update Synth Listeners
+//		for (SynthListener synthListener : synthListeners) {
+//			synthListener.synthClosed(this);
+//		}
 	}
 	
 	public String getSynthName() {

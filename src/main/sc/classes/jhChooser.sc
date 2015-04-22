@@ -39,14 +39,13 @@
 		var message = ["/def/add/chooser", defName, \chooser];
 		var choices = function.value; // Array of choices is what the function returns
 		message = message.add(function.def.sourceCode); // Function source code for editing later
-		params.postln;
 		params.do({ |item|
 			var param = item[0].asString;
 			var paramType = item[1];
 			switch(paramType,
 				\return, {
 					var returnType = item[2];
-					message = message.add(returnType.asString);
+					message = message.add(returnType.preserveKeywords.asString);
 				},
 				{
 					("No other params for choice").postln;
@@ -78,7 +77,6 @@
 			var choiceIndex = msg[3];
 			var chooserDef, chooser;
 
-			"Adding chooser".postln;
 			chooserDef = this.getChooserDef(chooserName);
 
 			// Create the actual object
@@ -108,7 +106,6 @@
 			// Set float1
 			var name = msg[1], id = msg[2], index = msg[3];
 			// Set the value on the pattern object
-			name.idGet(id).postln;
 			name.idGet(id).choose(index);
 		});
 
@@ -127,8 +124,6 @@
 
 			// Get the actual parameter object
 			parameter = ownerName.idGet(ownerId).paramAt(paramName);
-			parameter.postln;
-			chooser.postln;
 
 			// Tell the change func to listen for this parameter
 			chooser.addListener(parameter);
@@ -154,6 +149,5 @@
 
 		^("OSC Responders ready");
 	}
-
 
 }

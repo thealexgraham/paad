@@ -13,7 +13,7 @@
 		^[name, \float, min, max, default];
 	}
 	addChoice { |name, defaultName, defaultValue, choiceType|
-		^[name, \choice, [defaultName, defaultValue], choiceType.preserveKeywords];
+		^[name, \choice, defaultName, defaultValue, choiceType];
 	}
 	addInt { |name, min, max, default |
 		^[name, \int, min, max, default];
@@ -23,7 +23,7 @@
 	}
 
 	setReturnType { |type|
-		^[\return, \return, type.preserveKeywords];
+		^[\return, \return, type];
 	}
 }
 

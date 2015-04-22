@@ -123,7 +123,6 @@ public class TreeLauncherPanel extends JPanel {
 					Thread.currentThread().interrupt();
 				}
 				
-				System.out.println("Doing it");
 		        for (int i = 0; i < tree.getRowCount(); i++) {
 		            tree.expandRow(i);
 		        }

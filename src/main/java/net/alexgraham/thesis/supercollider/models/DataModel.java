@@ -135,6 +135,7 @@ public class DataModel {
 		refreshSyncer.run();
 	}
 	
+
 	
 	public boolean createExportRunFile(String patchName) {
 		
@@ -166,6 +167,7 @@ public class DataModel {
 			fos = new FileOutputStream(fout);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
+			// Write all definitions of running instances
 			for (Instance instance : synthModel.getInstances()) {
 				// Write definition
 				instance.getDef().writeDefintion(bw);
@@ -192,11 +194,12 @@ public class DataModel {
 			}
 			
 			// Write sync messages???
-			
+			// Connect Modules
 			for (Connection connection : dataStore.getConnections()){
 				connection.connectModules();
 			}
 			
+			// Start playing Routine Players and Task runners (Maybe don't?)
 			for (Instance instance : synthModel.getInstances()) {
 				if (instance.getClass() == RoutinePlayer.class) {
 					((RoutinePlayer) instance).sendPlay();
@@ -301,13 +304,80 @@ public class DataModel {
 		return true;
 		// Copy necessary files into a folder
 	}
-//	
-//	public void createPlugins() {
-//		String replaceFileString = "";
-//		replaceFileString.
-//	}
 	
+	
+	public boolean createLiveExportPlugin(String patchName) {
+		int langPort = App.sc.getSendPort(); // Port where SCLang will start on (Should give option to set)
+		
+		// Create a file with all defs for each instance written explicitly
+		String pluginName = "Live-" + patchName;
+		File fmodDirectory = new File("C:/Program Files (x86)/FMOD SoundSystem/FMOD Studio 1.04.04");
+		
+		// Directory where plugin will be exported
+		File exportDirectory = new File(fmodDirectory.getAbsolutePath() + "/supercollider/fmod/" + pluginName); 
+		
+		// Directory where plugin build tools are found
+		File pluginBuilderDirectory = new File(FileHelper.getSCCodeDir() + "/pluginbuilder");
+		
+		// Make the export directory if it isn't found
+		exportDirectory.mkdirs();
+				
+		File fout = null;
+		FileOutputStream fos = null;
+		BufferedWriter bw = null;
+		
+			
+		for (ParamGroup exportGroup : App.paramGroupModel.getExportGroups()) {
+
+			try {
+				
+				// Create temp plugin builder file
+				File buildSCCode = File.createTempFile("buildplugin", ".scd");
+				fos = new FileOutputStream(buildSCCode);
+				bw = new BufferedWriter(new OutputStreamWriter(fos));
+				
+				writePluginBuilderFile(bw, pluginBuilderDirectory, pluginName, langPort, exportGroup, "live_");
+				
+				bw.close();
+							
+				FileHelper.openIde(buildSCCode);
+				
+				// Read it into supercollider
+				App.sc.sendCommand("\"" + buildSCCode.getAbsolutePath().replace("\\", "/") + "\"" + ".load.postln");
+				// Wait to finish?
+				
+				Thread.sleep(1000);
+				
+				// Run the batch file, wait to finish
+				ProcessBuilder pb = new ProcessBuilder(pluginBuilderDirectory.getAbsolutePath() + "/build-plugin.bat");
+				pb.redirectErrorStream(true);
+				pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+				int batchFinished = pb.start().waitFor();
+				
+				if (batchFinished != 0) {
+					System.out.println("Problem, pluginbuilder failed");
+				}
+				
+				// Copy the plugin to the export folder TODO: Make it not platform specific
+				File pluginFile = new File(pluginBuilderDirectory.getAbsolutePath() + "/plugins/SC-" + pluginName + ".dll");
+				FileUtils.copyFile(pluginFile, new File(exportDirectory.getAbsolutePath() + "/plugins/" + pluginFile.getName()));
+				buildSCCode.delete();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
 	public void writePluginBuilderFile(BufferedWriter bw, File pluginBuilderDirectory, String pluginName, int langPort, ParamGroup group) {
+		writePluginBuilderFile(bw, pluginBuilderDirectory, pluginName, langPort, group, "");
+	}
+	
+	public void writePluginBuilderFile(BufferedWriter bw, File pluginBuilderDirectory, String pluginName, int langPort, ParamGroup group, String templatePrefix) {
 		try {
 			bw.write("JPluginBuilder.generateCode(");
 			bw.write("\"" + pluginName + "\","); // or group.getName()
@@ -337,13 +407,13 @@ public class DataModel {
 			}
 			bw.write("\t], "
 					+ "\"" + pluginBuilderDirectory.getCanonicalPath().replace("\\", "/") + "\""
+					+ ",\n" + "\"" + templatePrefix + "\""
 					+ "\n);");		
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public LaunchTreeModel getLaunchTreeModel() {

@@ -14,6 +14,8 @@ import java.awt.RenderingHints;
 import javax.swing.SwingUtilities;
 
 import net.alexgraham.thesis.AGHelper;
+import net.alexgraham.thesis.supercollider.synths.Chooser;
+import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
 import net.alexgraham.thesis.ui.components.TriangleShape;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
@@ -241,9 +243,16 @@ public class ConnectorUI implements java.io.Serializable {
 			
 			String str = "";
 			Connectable connectable = getConnector().getConnectable();
-			if (connectable.getClass() == ChoiceParamModel.class) {
-				str = ((ChoiceParamModel) connectable).getChoiceType();
+			if (AGHelper.allEquals(type, ConnectorType.CHOICE_CHANGE_IN, ConnectorType.CHOICE_CHANGE_OUT)) {
+				if (connectable.getClass() == ChoiceParamModel.class) {
+					str = ((ChoiceParamModel) connectable).getChoiceType();
+				} else if (connectable.getClass() == PatternGen.class) {
+					str = ((PatternGen) connectable).getDef().getReturnType();
+				} else if (connectable.getClass() == Chooser.class) {
+					str = ((Chooser) connectable).getDef().getReturnType();
+				}
 			}
+
 			
 
 			FontMetrics metrics = g2.getFontMetrics();

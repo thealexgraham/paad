@@ -2,7 +2,7 @@
 // A class that generates FMOD plugins to control SuperCollider synths
 
 JPluginBuilder {
-	*generateCode { |pluginName, langPort, params, builddir = false |
+	*generateCode { |pluginName, langPort, params, builddir = false, templatePrefix = "" |
 		var out, in, template, replace, blocks;
 		var batch;
 		var iterates, singles, chars;
@@ -15,7 +15,7 @@ JPluginBuilder {
 		blocks = List.new;
 
 		// Open replacement file
-		in = File(builddir ++ "/templates/replace.cpp", "r");
+		in = File(builddir ++ "/templates/"++templatePrefix++"replace.cpp", "r");
 		replace = in.readAllString;
 		in.close();
 
@@ -76,7 +76,7 @@ JPluginBuilder {
 		});
 
 		// Template is where all the code will be replaced into
-		in = File(builddir ++ "/templates/template.cpp", "r");
+		in = File(builddir ++ "/templates/"++templatePrefix++"template.cpp", "r");
 		template = in.readAllString;
 		in.close();
 
@@ -105,6 +105,7 @@ JPluginBuilder {
 		out.close();
 		^"Plugin creation sucessful, please run batch file!".postln;
 	}
+
 
 	*createListeners { |synthName, params|
 		var paramsSynthFormat;

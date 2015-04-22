@@ -10,6 +10,8 @@ RoutinePlayer {
 	var listeners;
 	var playing;
 
+	var patterns;
+
 	var rout;
 
 	*new { |id, function, arguments|
@@ -18,28 +20,28 @@ RoutinePlayer {
 
 	init { |id, function, arguments|
 
-		instanceId = id;
+
 		pattern = nil;
 		template = nil;
-		listeners = IdentitySet.new;
-		argsDict = Dictionary.new;
-		function.postln;
 
-		arguments.do({ |item, i|
-			var name = item[0];
-			var min = item[1];
-			var max = item[2];
-			var default = item[3];
-			argsDict.put(name, ParameterBus.new(name, default, min, max));
-		});
+		listeners = IdentitySet.new;
+
+		patterns = IdentitySet.new;
+
+		instanceId = id;
+		argsDict = ModuleType.setupParams(instanceId, arguments);
+
 
 		action = function;
 		playing = false;
 		this.createRout;
+
+
 	}
 
 	createRout {
 		var args = [\player, this];
+		var choice;
 
 		// Add our current arguments into the [\arg, value] array
 		argsDict.pairsDo({ |key, val|
@@ -47,11 +49,10 @@ RoutinePlayer {
 		});
 
 		rout = action.performKeyValuePairs(\value, args); // Should return a PRout
-		rout.postln;
 	}
 
 	play {
-		if ((pattern != nil) && (template != nil), {
+		if ((template != nil), {
 			"Playing routine";
 			rout = rout.play;
 			playing = true;
@@ -103,7 +104,6 @@ RoutinePlayer {
 		var keys = List.new;
 		var args = List.new;
 
-		"Creating template".postln;
 		rout.stop;
 
 		// Create the template (non busses)
@@ -132,9 +132,12 @@ RoutinePlayer {
 		pattern = newPattern;
 	}
 
+	connectPattern { |paramName, obj|
+		patterns.put(paramName, obj);
+	}
+
 	connectPatternObject { |patternObject|
 		postln("Trying to set pattern pboject");
-		patternObject.postln;
 
 		// Pattern is a function returning the current pattern
 		pattern = {

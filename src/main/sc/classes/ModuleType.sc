@@ -7,11 +7,10 @@ ModuleType {
 		^super.new;
 	}
 
-	init { | id, name, function, arguments |
-		instanceId = id;
-		argsDict = Dictionary.new;
+	*setupParams { | id, params |
+		var argsDict = Dictionary.new;
 
-		arguments.do({ |item, i|
+		params.do({ |item, i|
 			var name = item[0];
 			var type = item[1];
 
@@ -25,9 +24,9 @@ ModuleType {
 					paramBus.ownerId = id;
 				},
 				\choice, {
-					var choiceName = item[2][0];
-					var value = item[2][1];
-					var choiceType = item[3];
+					var choiceName = item[2];
+					var value = item[3];
+					var choiceType = item[4];
 					var choiceParam;
 					if (choiceType.isCollection != true, // If its a single number it can be a bus
 						{choiceParam = ChoiceParamBus.new(name, choiceName, value); },
@@ -49,6 +48,12 @@ ModuleType {
 				}
 			);
 		});
+		^argsDict;
+	}
+
+	init { | id, name, function, arguments |
+		instanceId = id;
+		argsDict = ModuleType.setupParams(id, arguments);
 
 		defName = name;
 
@@ -64,6 +69,10 @@ ModuleType {
 
 	setParam { |paramName, value|
 		argsDict.at(paramName).setSilent(value);
+	}
+
+	setParamLive { |paramName, value|
+		argsDict.at(paramName).set(value);
 	}
 
 	removeSelf {

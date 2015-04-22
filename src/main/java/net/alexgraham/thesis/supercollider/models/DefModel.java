@@ -169,7 +169,7 @@ public class DefModel implements Messenger {
 		def.setType(type);
 		defTable.put(defName, def);
 		App.launchTreeModel.addSynthDef(def);
-		
+//		App.sc.log(def.getType() + " | " + def.getDefName());
 		return def;
 	}
 	
@@ -183,6 +183,9 @@ public class DefModel implements Messenger {
     			
     			final String defName = (String) arguments.removeFirst();
     			final String type = (String) arguments.removeFirst();
+    			
+    			// First verify we received it
+    			App.sc.sendMessage(message.getAddress() + "/" + defName + "/verify", 1);
     			
     			Def def = addNewDef(defName, type);
     			
@@ -211,7 +214,6 @@ public class DefModel implements Messenger {
         					final String choiceName = (String) arguments.removeFirst();
         					final Object choiceValue = arguments.removeFirst();
         					final String choiceType = (String) arguments.removeFirst();
-        					System.out.println("Choice type is " + choiceType);
         					def.addParameter(paramName, choiceName, choiceValue, choiceType); 
         					break;
         				case "float":
@@ -221,7 +223,6 @@ public class DefModel implements Messenger {
         	    			def.addParameter(paramName, floatMin, floatMax, floatValue);
         					break;
         				case "return":
-        					System.out.println("Got a return argument....");
         					final String returnType = (String) arguments.removeFirst();
         					def.setReturnType(returnType);
         				default:
@@ -257,7 +258,6 @@ public class DefModel implements Messenger {
     			// Choosers don't have parameters, they have choices
     			while (!arguments.isEmpty()) {
     				final String choiceName = (String) arguments.removeFirst();
-    				System.out.println("Adding choice " + choiceName);
     				def.addChoice(choiceName);
     			}
     			

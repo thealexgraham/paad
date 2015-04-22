@@ -30,7 +30,7 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
-public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
+public class RoutinePlayerModule extends ModulePanel {
 	
 	JPanel topPanel;
 	ConnectablePanel bottomPanel;
@@ -79,7 +79,7 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		this.player = player;
 		setInstance(player);
 
-		player.addListener(this);
+		//player.addListener(this);
 		setupWindow(this.getInterior());
 		setSize(getPreferredSize());
 	
@@ -121,11 +121,9 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 		createButtons();
 		JLabel playLabel = new JLabel("play");
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "play"), new JLabel("play")));
-		
-		
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "stop"), new JLabel("stop")));
 		
-		
+		ModuleFactory.addModelParameters(player.getParamModels(), this, middlePanel);
 		
 //		patternLabel = new JLabel("Pattern: None");
 //		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.PATTERN_IN), patternLabel));
@@ -171,6 +169,36 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 			}
 		});
 		
+		player.addListener(new PlayerListener() {
+			
+			@Override
+			public void playStateChanged(PlayState state) {
+				System.out.println("Module got play state changed" + state);
+				playButton.setText("L");
+				playButton.paintImmediately(playButton.getVisibleRect());
+				switch (state) {
+					case READY:
+						System.out.println("Setting to play");
+						playButton.setEnabled(true);
+						playButton.setText("Play");
+						break;
+					case PLAYING:
+						System.out.println("Setting to stop");
+						playButton.setEnabled(true);
+						playButton.setText("Stop");
+						break;
+					case DISABLED:
+						playButton.setEnabled(false);
+						playButton.setText("Play");
+						break;
+					default:
+						break;
+				}
+			}
+		});
+		
+		player.playStateChange();
+		
 		//middlePanel.add(createButtonPanel(playButton, "playbutton"));
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "playbutton"), playButton));
 //		middlePanel.add(instLabel);
@@ -208,56 +236,56 @@ public class RoutinePlayerModule extends ModulePanel implements PlayerListener {
 
 
 
-	@Override
-	public void playStateChanged(PlayState state) {
-		System.out.println("Got play state changed");
-		playButton.setText("L");
-		playButton.paintImmediately(playButton.getVisibleRect());
-		switch (state) {
-			case READY:
-				System.out.println("Setting to play");
-				playButton.setEnabled(true);
-				playButton.setText("Play");
-				break;
-			case PLAYING:
-				System.out.println("Setting to stop");
-				playButton.setEnabled(true);
-				playButton.setText("Stop");
-				break;
-			case DISABLED:
-				playButton.setEnabled(false);
-				playButton.setText("Play");
-				break;
-			default:
-				break;
-		}
-	}
+//	@Override
+//	public void playStateChanged(PlayState state) {
+//		System.out.println("Got play state changed");
+//		playButton.setText("L");
+//		playButton.paintImmediately(playButton.getVisibleRect());
+//		switch (state) {
+//			case READY:
+//				System.out.println("Setting to play");
+//				playButton.setEnabled(true);
+//				playButton.setText("Play");
+//				break;
+//			case PLAYING:
+//				System.out.println("Setting to stop");
+//				playButton.setEnabled(true);
+//				playButton.setText("Stop");
+//				break;
+//			case DISABLED:
+//				playButton.setEnabled(false);
+//				playButton.setText("Play");
+//				break;
+//			default:
+//				break;
+//		}
+//	}
 
-	@Override
-	public void instrumentConnected(Instrument inst) {
-		this.instLabel.setText("Inst: " + inst.getSynthName());
-		this.revalidate();
-	}
-
-	@Override
-	public void instrumentDisconnected(Instrument inst) {
-		
-		this.instLabel.setText("Inst: None");
-		this.revalidate();
-	}
-
-
-	@Override
-	public void patternConnected(PatternGen pattern) {
-//		this.patternLabel.setText("Pattern"); //+ pattern.getName());
-	}
-
-
-	@Override
-	public void patternDisconnected(PatternGen pattern) {
-		// TODO Auto-generated method stub
-//		this.patternLabel.setText("Pattern: None");
-	}
+//	@Override
+//	public void instrumentConnected(Instrument inst) {
+//		this.instLabel.setText("Inst: " + inst.getSynthName());
+//		this.revalidate();
+//	}
+//
+//	@Override
+//	public void instrumentDisconnected(Instrument inst) {
+//		
+//		this.instLabel.setText("Inst: None");
+//		this.revalidate();
+//	}
+//
+//
+//	@Override
+//	public void patternConnected(PatternGen pattern) {
+////		this.patternLabel.setText("Pattern"); //+ pattern.getName());
+//	}
+//
+//
+//	@Override
+//	public void patternDisconnected(PatternGen pattern) {
+//		// TODO Auto-generated method stub
+////		this.patternLabel.setText("Pattern: None");
+//	}
 	
 //	instLabel = new JLabel("Inst: None");
 //	instLabel.addMouseListener(new MouseAdapter() {

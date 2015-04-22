@@ -63,6 +63,45 @@ s.waitForBoot({
 		~loadAction.sendActionMessage;
 
 	}, '/start/ready', recvPort:NetAddr.langPort);
+
+	OSCFunc({|msg|
+		~playing = false;
+		~playRoutine = Task {
+			0.05.wait;
+			~playing = false;
+			~masterFader.set(\mute, 0);
+
+			// Send the special stop action message
+			~stopAction.sendActionMessage;
+			"needed to stop".postln;
+		};
+		~playRoutine.start;
+
+		// Wait until Java is ready to receive the rest
+		OSCdef(\process, { |msg, time, addr|
+			// "got message".postln;
+			if(~playing == false, {
+				~playing = true;
+				~masterFader.set(\mute, 1);
+
+				// Send the special play action message
+				~playAction.sendActionMessage;
+			});
+
+
+			// Restart the play routine
+			~playRoutine.stop;
+			~playRoutine.reset;
+			~playRoutine.start;
+
+		}, '/process');
+	}, '/live/start');
+
+	OSCFunc({|msg|
+		~playRoutine.stop;
+		~masterFader.set(\mute, 1);
+	}, '/live/stop');
+
 	//s.record;
 }, 100);
 

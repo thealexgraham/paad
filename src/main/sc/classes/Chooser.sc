@@ -16,7 +16,6 @@ Chooser {
 	// Should have one int ParamBus that holds the choices
 
 	addListener { |obj|
-		"Adding listener".postln;
 		listeners.add(obj);
 		// Update the param choice now
 		this.updateParamChoice(obj);
@@ -32,8 +31,6 @@ Chooser {
 	}
 
 	getCurrentChoice {
-		choices.postln;
-		choiceIndex.postln;
 		^choices[choiceIndex];
 	}
 
@@ -49,11 +46,11 @@ Chooser {
 
 	updateParamChoice { | item |
 		var currentChoice = this.getCurrentChoice;
-		if (item.class == ChoiceParamBus,
+/*		if (item.class == ChoiceParamBus,
 			{ item.set(currentChoice[0], currentChoice[1]); }, // name, value
 			{ item.setChoiceName(currentChoice[0]); } // just set the name
-		);
-		//item.set(currentChoice[0], currentChoice[1]); // name, value
+		);*/
+		item.set(currentChoice[0], currentChoice[1]); // name, value
 	}
 
 }

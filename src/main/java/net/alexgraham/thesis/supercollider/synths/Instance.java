@@ -106,6 +106,7 @@ public abstract class Instance implements Connectable, Serializable {
 		for (ParamModel model : getParamModels()) {
 			// Re-add instance change listener
 			model.addInstanceListener(this);
+			model.setOwner(this);
 		}
 	}
 		
@@ -207,7 +208,7 @@ public abstract class Instance implements Connectable, Serializable {
 				
 				@Override
 				public void doAction() {
-					
+					System.out.println("Got def in java");
 	    			// Get a copy and create a blank Hashmap so any removed values don't exist anymore
 	    			LinkedHashMap<String, ParamModel> modelMapCopy = new LinkedHashMap<String, ParamModel>(parameterModels);
 
@@ -261,7 +262,8 @@ public abstract class Instance implements Connectable, Serializable {
 				@Override
 				public void doAction() {
 					// Stop the synth
-					stop();
+
+					close();
 				}
 			}, closeCommand + "/done");
 			
@@ -411,6 +413,7 @@ public abstract class Instance implements Connectable, Serializable {
 	
 	public void close() {
 		System.out.println("Bottom level close was called");
+		App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());
 	}
 	
 	

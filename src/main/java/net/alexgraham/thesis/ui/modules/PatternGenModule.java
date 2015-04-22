@@ -103,7 +103,7 @@ public class PatternGenModule extends ModulePanel {
 		topPanel.add(topLabel);
 		
 		// Add pattern out connector
-		topPanel.addConnector(Location.TOP, patternGen.getConnector(ConnectorType.PATTERN_OUT));
+		topPanel.addConnector(Location.TOP, patternGen.getConnector(ConnectorType.CHOICE_CHANGE_OUT));
 		this.addConnectablePanel(topPanel);
 		
 		//Middle Panel//
@@ -136,7 +136,7 @@ public class PatternGenModule extends ModulePanel {
 		bottomPanel.setBackground(Color.GRAY);
 		
 		// Create connectors //
-		bottomPanel.addConnector(Location.BOTTOM, patternGen.getConnector(ConnectorType.PATTERN_OUT));
+		bottomPanel.addConnector(Location.BOTTOM, patternGen.getConnector(ConnectorType.CHOICE_CHANGE_OUT));
 		this.addConnectablePanel(bottomPanel);
 
 		pane.add(topPanel, BorderLayout.NORTH);

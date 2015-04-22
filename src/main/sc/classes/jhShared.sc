@@ -67,6 +67,12 @@
 			name.idGet(id).setParam(param, val); // Change the value at the bus
 		}, false);
 
+		this.addOSCResponder('/module/live/paramc', { arg msg;
+			// Set float1
+			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
+			name.idGet(id).setParamLive(param, val); // Change the value at the bus
+		}, false);
+
 		// [/synth/newparam, synthName, paramName, id, value]
 		this.addOSCResponder('/module/action', { arg msg;
 			// Set float1
@@ -78,6 +84,7 @@
 	newDef { |defName, type, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr
 		var message = ["/def/add/full", defName, type];
+		message.postln;
 		message = message.add(function.def.sourceCode);
 		params.do({ |item, i|
 			var param = item[0].asString;
@@ -97,16 +104,16 @@
 						message = message.addAll([param, paramType, min, max, default]);
 					},
 					\choice, {
-						var choiceName = item[2][0];
-						var choiceValue = item[2][1]; // Assume array
-						var choiceType = item[3];
+						var choiceName = item[2];
+						var choiceValue = item[3]; // Assume array
+						var choiceType = item[4];
 						//var message = choiceValue.insertAll(0, "/patterngendef/param", param, type, choiceName);
-						message = message.addAll([param, paramType, choiceName, choiceValue.asString, choiceType.asString]); //choiceValue.size].addAll(choiceValue));
+						message = message.addAll([param, paramType,
+							choiceName, choiceValue.asString, choiceType.preserveKeywords.asString]); //choiceValue.size].addAll(choiceValue));
 					}, //default
 					\return, {
 						var returnType = item[2];
-						message = message.addAll([param, paramType, returnType.asString]);
-						("Adding " ++ returnType.asString).postln;
+						message = message.addAll([param, paramType, returnType.preserveKeywords.asString]);
 					},
 					{
 						// If the type doesn't match the choices, just send
@@ -125,6 +132,7 @@
 			);
 		});
 		net.sendBundle(0, message);
+		// this.sendDefVerify(message);
 		^("Definition Added");
 	}
 
@@ -157,8 +165,8 @@
 							net.sendMsg("/def/param", defName, param, paramType, min, max, default);
 						},
 						\choice, {
-							var choiceName = item[2][0];
-							var choiceValue = item[2][1]; // Assume array
+							var choiceName = item[2];
+							var choiceValue = item[3]; // Assume array
 							//var message = choiceValue.insertAll(0, "/patterngendef/param", param, type, choiceName);
 							var message = ["/def/param", defName, param, paramType, choiceName].addAll(choiceValue);
 							net.sendBundle(0, message);

@@ -32,8 +32,7 @@ ChoiceParamBus {
 			net = NetAddr("127.0.0.1", ~java.sendPort);
 			value = newValue;
 			bus.set(value);
-			("Setting to new value " ++ value).postln;
-			net.sendMsg("/"++ownerId++"/"++name++"/change", newChoiceName);
+			net.sendMsg("/"++ownerId++"/"++name++"/change", newChoiceName, newValue.asString);
 			choiceName = newChoiceName;
 		});
 

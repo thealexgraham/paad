@@ -95,6 +95,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		
 		this.setJMenuBar(createMenuBar());
 		//add(bottomPanel, BorderLayout.PAGE_END);
+		createConsoleDialog();
 	}
 	
 	public void setupBottomPanel() {
@@ -169,7 +170,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		}
 	}
 	
-	public void exportAction() {
+	public void exportAction(boolean live) {
 		
 		if (patchName == "Untitled") {
 			saveAction();
@@ -196,7 +197,13 @@ public class MainWindow extends JFrame implements SCMessageListener {
 	      
 		Thread export = new Thread(new Runnable() {
 		        public void run() {
-				boolean finished = App.data.createExportRunFile(patchName);
+		        	boolean finished= false;
+		        if (live) {
+		        	finished = App.data.createLiveExportPlugin(patchName);
+		        } else {
+		        	finished = App.data.createExportRunFile(patchName);
+		        }
+				
 				progressBar.setIndeterminate(false);
 				progressBar.setValue(100);
 				
@@ -211,8 +218,6 @@ public class MainWindow extends JFrame implements SCMessageListener {
 		        }
 		      });
 		     export.start();
-
-
 	}
 	
 	public void consoleAction() {
@@ -340,14 +345,27 @@ public class MainWindow extends JFrame implements SCMessageListener {
         file.addSeparator();
         
         // Export
-        menuItem = new JMenuItem("Export", KeyEvent.VK_X);
+        menuItem = new JMenuItem("Export FMOD Plugin", KeyEvent.VK_X);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_X, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
         
         menuItem.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				exportAction();
+				exportAction(false);
+			}
+		});
+        file.add(menuItem);
+        
+        // Export
+        menuItem = new JMenuItem("Export Live FMOD", KeyEvent.VK_X);
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_X, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+        
+        menuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exportAction(true);
 			}
 		});
         file.add(menuItem);

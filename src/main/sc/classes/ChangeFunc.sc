@@ -25,7 +25,7 @@ ChangeFunc {
 			argsDict.put(name, paramBus);
 
 		});
-		
+
 		listeners = IdentitySet.new;
 		action = function;
 	}
@@ -36,6 +36,10 @@ ChangeFunc {
 
 	setParam { |paramName, value|
 		argsDict.at(paramName).setSilent(value);
+	}
+
+	setParamLive { |paramName, value|
+		argsDict.at(paramName).set(value);
 	}
 
 	addListener { |obj|

@@ -26,8 +26,8 @@ This example shows how to create a simple gain DSP effect.
 ///=============================
 ///%%%CONST_DEFINES%%%
 
-#define TOP_ROUTE "/testfmod"
-static const int PORT = 57125;
+#define TOP_ROUTE "/Live-liveparmtest"
+static const int PORT = 53120;
 
 ///=============================
 
@@ -56,10 +56,13 @@ enum
 	FMOD_OTHER_PARAM_MASTER_AMP,
 
 	
-	FMOD_OTHER_PARAM_SCALE2_GAIN,
+	FMOD_OTHER_PARAM_PANFM3OP2_RATIO1,
 
 	
-	FMOD_OTHER_PARAM_SCALE2_SPEED,
+	FMOD_OTHER_PARAM_PANFM3OP2_INDEX2,
+
+	
+	FMOD_OTHER_PARAM_PANFM3OP2_CAR_FREQ,
 
 	///=============================
     FMOD_OTHER_NUM_PARAMETERS
@@ -84,10 +87,13 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, in
 static FMOD_DSP_PARAMETER_DESC p_Master_amp; // p_Master_amp
 
 	
-static FMOD_DSP_PARAMETER_DESC p_scale2_gain; // p_scale2_gain
+static FMOD_DSP_PARAMETER_DESC p_PanFM3OP2_ratio1; // p_PanFM3OP2_ratio1
 
 	
-static FMOD_DSP_PARAMETER_DESC p_scale2_speed; // p_scale2_speed
+static FMOD_DSP_PARAMETER_DESC p_PanFM3OP2_index2; // p_PanFM3OP2_index2
+
+	
+static FMOD_DSP_PARAMETER_DESC p_PanFM3OP2_car_freq; // p_PanFM3OP2_car_freq
 
 /// ===========================
 
@@ -99,10 +105,13 @@ FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
 	&p_Master_amp, 
 
 	
-	&p_scale2_gain, 
+	&p_PanFM3OP2_ratio1, 
 
 	
-	&p_scale2_speed, 
+	&p_PanFM3OP2_index2, 
+
+	
+	&p_PanFM3OP2_car_freq, 
 
 	/// =====================================
 };
@@ -113,7 +122,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
 	/// =====================================
 	///%%%DESC_NAME%%%
 	
-    "SuperCollider testfmod",
+    "SuperCollider Live-liveparmtest",
 
 	/// =====================================
     0x00010000,     // plug-in version
@@ -147,13 +156,16 @@ F_DECLSPEC F_DLLEXPORT FMOD_DSP_DESCRIPTION* F_STDCALL FMODGetDSPDescription()
 	/// ====================================
 	///%%%PARAM_DESCRIPTIONS%%%
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_amp, "amp", "f", "Adjusts amp", 0, 1, 0.5);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_amp, "amp", "f", "Adjusts amp", 0, 1, 0.32);
 
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_scale2_gain, "gain", "f", "Adjusts gain", 0, 1, 0.1);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_PanFM3OP2_ratio1, "ratio1", "f", "Adjusts ratio1", 0, 5, 2.84);
 
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_scale2_speed, "speed", "f", "Adjusts speed", 0, 5, 4.92);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_PanFM3OP2_index2, "index2", "f", "Adjusts index2", 0, 1000, 145);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_PanFM3OP2_car_freq, "car_freq", "f", "Adjusts car_freq", 100, 1000, 510);
 
 	/// ====================================
 
@@ -177,12 +189,16 @@ public:
 	float Master_amp() const { return m_Master_amp; }  
 
 	
-	void setScale2_gain(float); 
-	float scale2_gain() const { return m_scale2_gain; }  
+	void setPanFM3OP2_ratio1(float); 
+	float PanFM3OP2_ratio1() const { return m_PanFM3OP2_ratio1; }  
 
 	
-	void setScale2_speed(float); 
-	float scale2_speed() const { return m_scale2_speed; }  
+	void setPanFM3OP2_index2(float); 
+	float PanFM3OP2_index2() const { return m_PanFM3OP2_index2; }  
+
+	
+	void setPanFM3OP2_car_freq(float); 
+	float PanFM3OP2_car_freq() const { return m_PanFM3OP2_car_freq; }  
 
 	/// ================================
 
@@ -191,7 +207,6 @@ public:
 	void setOSCID(int);
 
 	int osc_id() const { return m_osc_id; }
-	PROCESS_INFORMATION pi;
 
 private:
 
@@ -201,10 +216,13 @@ private:
 	float m_Master_amp; 
 
 	
-	float m_scale2_gain; 
+	float m_PanFM3OP2_ratio1; 
 
 	
-	float m_scale2_speed; 
+	float m_PanFM3OP2_index2; 
+
+	
+	float m_PanFM3OP2_car_freq; 
 
 	/// ===============================
 
@@ -244,13 +262,18 @@ void FMODOtherState::setMaster_amp(float value) {
 }
 
 
-void FMODOtherState::setScale2_gain(float value) { 
-	m_scale2_gain = value;
+void FMODOtherState::setPanFM3OP2_ratio1(float value) { 
+	m_PanFM3OP2_ratio1 = value;
 }
 
 
-void FMODOtherState::setScale2_speed(float value) { 
-	m_scale2_speed = value;
+void FMODOtherState::setPanFM3OP2_index2(float value) { 
+	m_PanFM3OP2_index2 = value;
+}
+
+
+void FMODOtherState::setPanFM3OP2_car_freq(float value) { 
+	m_PanFM3OP2_car_freq = value;
 }
 
 /// =======================================
@@ -296,32 +319,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
     dsp_state->plugindata = (FMODOtherState *)FMOD_DSP_STATE_MEMALLOC(dsp_state, sizeof(FMODOtherState), FMOD_MEMORY_NORMAL, "FMODOtherState");
 
 	FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-
-	char * command = "supercollider/sclang.exe";
-
-	STARTUPINFO si;
-
-    ZeroMemory( &si, sizeof(si) );
-    si.cb = sizeof(si);
-    ZeroMemory( &state->pi, sizeof(state->pi) );
-
-    // Start the child process. 
-    if( !CreateProcess( command,   // No module name (use command line)
-        /// =====================================
-		///%%%PROC_ARGS%%%
-	
-    " -d supercollider -l fmod/testfmod/sclang_conf.yaml -u 57125",
-
-		/// =====================================
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        FALSE,          // Set handle inheritance to FALSE
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory 
-        &si,            // Pointer to STARTUPINFO structure
-        &state->pi )           // Pointer to PROCESS_INFORMATION structure
-    )
+	state->sendMsg("/live/start", 1);
 
     if (!dsp_state->plugindata)
     {
@@ -333,7 +331,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
 FMOD_RESULT F_CALLBACK FMOD_Other_dsprelease(FMOD_DSP_STATE *dsp_state)
 {
     FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-	TerminateProcess(state->pi.hProcess, 1);
+	state->sendMsg("/live/stop", 1);
 	//state->sendMsg("/dying", state->osc_id());
     FMOD_DSP_STATE_MEMFREE(dsp_state, state, FMOD_MEMORY_NORMAL, "FMODOtherState");
     return FMOD_OK;
@@ -364,19 +362,25 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspsetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	
 	case FMOD_OTHER_PARAM_MASTER_AMP:
 		state->setMaster_amp(value);
-		state->sendParam("/module/paramc", "amp", "1", value);
+		state->sendParam("/module/live/paramc", "amp", "1", value);
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SCALE2_GAIN:
-		state->setScale2_gain(value);
-		state->sendParam("/module/paramc", "gain", "2", value);
+	case FMOD_OTHER_PARAM_PANFM3OP2_RATIO1:
+		state->setPanFM3OP2_ratio1(value);
+		state->sendParam("/module/live/paramc", "ratio1", "2", value);
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SCALE2_SPEED:
-		state->setScale2_speed(value);
-		state->sendParam("/module/paramc", "speed", "2", value);
+	case FMOD_OTHER_PARAM_PANFM3OP2_INDEX2:
+		state->setPanFM3OP2_index2(value);
+		state->sendParam("/module/live/paramc", "index2", "2", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_PANFM3OP2_CAR_FREQ:
+		state->setPanFM3OP2_car_freq(value);
+		state->sendParam("/module/live/paramc", "car_freq", "2", value);
 		return FMOD_OK;
 
 	/// =============================================
@@ -399,15 +403,21 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SCALE2_GAIN:
-		*value = state->scale2_gain();
-		if (valuestr) sprintf(valuestr, "% fl", state->scale2_gain());
+	case FMOD_OTHER_PARAM_PANFM3OP2_RATIO1:
+		*value = state->PanFM3OP2_ratio1();
+		if (valuestr) sprintf(valuestr, "% fl", state->PanFM3OP2_ratio1());
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SCALE2_SPEED:
-		*value = state->scale2_speed();
-		if (valuestr) sprintf(valuestr, "% fl", state->scale2_speed());
+	case FMOD_OTHER_PARAM_PANFM3OP2_INDEX2:
+		*value = state->PanFM3OP2_index2();
+		if (valuestr) sprintf(valuestr, "% fl", state->PanFM3OP2_index2());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_PANFM3OP2_CAR_FREQ:
+		*value = state->PanFM3OP2_car_freq();
+		if (valuestr) sprintf(valuestr, "% fl", state->PanFM3OP2_car_freq());
 		return FMOD_OK;
 
 	/// ==============================================

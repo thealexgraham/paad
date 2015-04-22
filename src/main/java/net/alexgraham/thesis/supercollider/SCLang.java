@@ -87,6 +87,11 @@ public class SCLang extends ChangeSender {
 	
 	private BufferedWriter exportWriter = null;
 	
+	private String lastCommand = "";
+	
+	public int getSendPort() {
+		return sendPort;
+	}
 
 	/**
 	 * While an export writer is set, OSC will write net send messages
@@ -209,6 +214,7 @@ public class SCLang extends ChangeSender {
 	 */
 	public void sendCommand(String command) {
 		try {
+			lastCommand = command;
 			writer.write(command + "\n");
 			writer.flush();
 		} catch (IOException e) {
@@ -239,6 +245,10 @@ public class SCLang extends ChangeSender {
 						} else {
 							if (!s.startsWith("<-")) {
 								System.out.println("sc[ " + s);
+								if (s.equals(lastCommand)) {
+									s = ">> " + s;
+									lastCommand = null;
+								}
 								fireConsoleUpdate(s);
 								fireInMessageUpdate(false);
 							} else {

@@ -55,6 +55,10 @@ InstrumentModule {
 		argsDict.at(paramName).setSilent(value);
 	}
 
+	setParamLive { |paramName, value|
+		argsDict.at(paramName).set(value);
+	}
+
 	removeSelf {
 		argsDict.keysValuesArrayDo( {|key, value|
 			value.bus.free

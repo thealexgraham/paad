@@ -31,13 +31,11 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public interface PlayerListener {
-		public void instrumentConnected(Instrument inst);
-		public void instrumentDisconnected(Instrument inst);
-		
-		public void patternConnected(PatternGen pattern);
-		public void patternDisconnected(PatternGen pattern);
-		
+	public interface PlayerListener {	
+		public void playStateChanged(PlayState state);
+	}
+	
+	public interface PlayerConnectionListener {		
 		public void playStateChanged(PlayState state);
 	}
 	
@@ -105,7 +103,7 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 	public void refreshModels() {
 		super.refreshModels();
 		addActionListeners();
-		reset();
+//		reset();
 	}
 	
 	public void addListener(PlayerListener l) {
@@ -120,9 +118,7 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		App.sc.sendMessage("/routplayer/connect/inst", this.id.toString(), inst.getSynthName(), inst.getID(), 1);
 		this.instrument = inst;
 		
-		for (PlayerListener playerListener : listeners) {
-			playerListener.instrumentConnected(inst);
-		}
+		fireInstrumentConnected();
 		//TODO: Fix me
 		((DoubleParamModel)inst.getModelForParameterName("gain")).setDoubleValue(0.3);;
 		playStateChange();
@@ -137,21 +133,27 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		App.sc.sendMessage("/routplayer/remove/inst", this.id.toString(), 0);
 		instrument = null;
 	
-		for (PlayerListener playerListener : listeners) {
-			playerListener.instrumentDisconnected(inst);
-		}
+		fireInstrumentDisconnected();
 		playStateChange();
 	}
 	
+	public void fireInstrumentConnected() {
+		
+	}
+	
+	public void fireInstrumentDisconnected() {
+		
+	}
+	
 	public void firePatternConnected(PatternGen pattern) {
-		for (PlayerListener playerListener : listeners) {
-			playerListener.patternConnected(pattern);
-		}
+//		for (PlayerListener playerListener : listeners) {
+//			playerListener.patternConnected(pattern);
+//		}
 	}
 	public void firePatternDisconnected(PatternGen pattern) {
-		for (PlayerListener playerListener : listeners) {
-			playerListener.patternDisconnected(pattern);
-		}
+//		for (PlayerListener playerListener : listeners) {
+//			playerListener.patternDisconnected(pattern);
+//		}
 	}
 	
 	public void connectPatternObject(PatternGen patternObj) {
@@ -205,6 +207,7 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		if (playing) {
 			stop();
 		}
+		App.sc.sendMessage(closeCommand, def.getDefName(), id.toString());
 	}
 	
 	public boolean canPlay() {
@@ -221,7 +224,7 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		}
 	}
 	
-	private void playStateChange() {
+	public void playStateChange() {
 		if (playing) {
 			state = PlayState.PLAYING;
 		} else {
@@ -231,9 +234,11 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 		if (!canPlay()) {
 			state = PlayState.DISABLED;
 		}
-		
+		System.out.println(state);
 		firePlayStateChange();
 	}
+	
+	
 	
 	public String getIDString() {
 		return id.toString();

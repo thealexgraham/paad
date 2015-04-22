@@ -16,6 +16,7 @@ import java.awt.image.RescaleOp;
 import java.awt.image.ShortLookupTable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -26,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -190,20 +192,12 @@ public class ModuleFactory {
 					@Override
 					public void run() {
 						paramValueLabel.setText(newChoice);
+						togetherPanel.setToolTipText(model.getObjectValue().toString());
 						module.refreshSize();
 						App.mainWindow.repaint();
 					}
 				});
-
-//				togetherPanel.validate();
 				
-//				module.setSize(module.getPreferredSize());
-//				module.validate();
-				
-//				module.repaint();
-//				App.mainWindow.repaint();
-				
-				System.out.println("TRYING SO HARD");
 			}
 		});
 		
@@ -222,7 +216,8 @@ public class ModuleFactory {
 		togetherPanel.add(Box.createHorizontalGlue());
 		togetherPanel.add(rightPanel);
 		
-		togetherPanel.setToolTipText("Connects to: " + model.getChoiceType());
+		togetherPanel.setToolTipText(model.getObjectValue().toString());
+		//togetherPanel.setToolTipText("Connects to: " + model.getChoiceType());
 		
 		return togetherPanel;
 	}
@@ -292,6 +287,31 @@ public class ModuleFactory {
 
 		return togetherPanel;
 	}
+	
+//	public static JPanel createModelPanel(ModulePanel module, ParamModel baseModel) {
+//		JPanel panel = 
+//	}
+	
+	public static void addModelParameters(ArrayList<ParamModel> models, ModulePanel module, JPanel pane) {
+		for (ParamModel baseModel : models) {
+
+			if (baseModel.getClass() == IntParamModel.class) {
+				IntParamModel model = (IntParamModel) baseModel;
+				pane.add(ModuleFactory.createIntParamPanel(module, model));
+			} else if (baseModel.getClass() == ChoiceParamModel.class) {
+				ChoiceParamModel model = (ChoiceParamModel) baseModel;
+				pane.add(ModuleFactory.createChoiceParamPanel(module, model));
+			} else if (baseModel.getClass() == DoubleParamModel.class) {
+				DoubleParamModel model = (DoubleParamModel) baseModel;
+				pane.add(ModuleFactory.createDoubleParamPanel(module, model));
+			}
+			
+			pane.add(new JSeparator());
+			
+		}
+	}
+	
+	
 	public static ImageIcon getScaledIcon(URL url, int width, int height) {
 		try {
 			

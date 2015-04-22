@@ -28,7 +28,7 @@
 			name.idGet(id).doAction;
 		});
 
-		this.addOSCResponder('/patternGen/connect/param', { arg msg;
+		this.addOSCResponder('/patterngen/connect/param', { arg msg;
 			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
 			var patternGen, parameter;
 
@@ -38,13 +38,13 @@
 			parameter = ownerName.idGet(ownerId).paramAt(paramName);
 
 			// Tell the change func to listen for this parameter
-			patternGen.addListener(parameter); // IS THIS THE OBJECT???
+			patternGen.addListener(parameter);
 
 			("Connected patternGens").postln;
 		});
 
-		this.addOSCResponder('/patternGen/disconnect/param', { arg msg;
-			var cfName, cfId, ownerName, ownerId, paramName;
+		this.addOSCResponder('/patterngen/disconnect/param', { arg msg;
+			var cfName = msg[1], cfId = msg[2], ownerName = msg[3], ownerId = msg[4], paramName = msg[5];
 			var patternGen, parameter;
 
 			patternGen = cfName.idGet(cfId);

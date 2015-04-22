@@ -1,1 +1,5 @@
 /target/
+
+/src/main/sc/pluginbuilder/SCBuilder/SCBuild/
+/src/main/sc/pluginbuilder/plugins/
+/src/main/sc/pluginbuilder/SCBuilder/fmod-osc/SCBuild/

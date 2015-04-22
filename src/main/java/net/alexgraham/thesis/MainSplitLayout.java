@@ -90,6 +90,7 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 	@Override
 	public void serverReady() {
 		
+		
 		String mainExportName = "Main";
 		ParamGroup mainExportGroup = App.paramGroupModel.getExportGroupByName(mainExportName);
 		 if (mainExportGroup == null) {

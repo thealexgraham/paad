@@ -47,7 +47,6 @@
 			// Set float1
 			var id = msg[1], instName = msg[2], instId = msg[3];
 			var player, instDict;
-			"trying to connect instrument".postln;
 
 			player = dictName.idGet(id);
 			instDict = instName.idGet(instId);
@@ -69,7 +68,6 @@
 			// Set float1
 			var id = msg[1], patternName = msg[2], patternId = msg[3];
 			var player, patternObj;
-			"trying to connect pattern".postln;
 			player = dictName.idGet(id);
 			patternObj = patternName.idGet(patternId);
 			player.connectPatternObject(patternObj);
