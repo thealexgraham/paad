@@ -1,6 +1,6 @@
 SynthModule : ModuleType {
 	var <>synth;
-	var outBus;
+	var <>outBus;
 
 	*new { | id, name, function, arguments |
 		^super.new.init(id, name, function, arguments);

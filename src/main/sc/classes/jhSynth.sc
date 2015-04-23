@@ -35,6 +35,7 @@
 			synthObj = this.idGet(synthName, synthId);
 			effectObj = this.idGet(effectName, effectId);
 
+			synthObj.outBus = effectObj.inBus;
 			// Set the outBus's control bus to effect inBus index
 			synthObj.synth.set(\outBus, effectObj.inBus.index);
 
@@ -47,6 +48,7 @@
 
 			synthObj = this.idGet(synthName, synthId);
 
+			synthObj.outBus = this.getMasterIn;
 			// Change synthrument's output bus back to default (0)
 			synthObj.synth.set(\outBus, this.getMasterIn.index);
 			("Disconnected synthrument from effect").postln;

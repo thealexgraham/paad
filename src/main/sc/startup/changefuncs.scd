@@ -48,7 +48,6 @@
 		| object, minSeconds, maxSeconds |
 		loop { // Go forever
 			var secondsToWait = rrand(minSeconds.value, maxSeconds.value);
-			"Performing action message".postln;
 			object.sendActionMessage; // Could concievably split up into multiple actions
 			secondsToWait.wait;
 		}
