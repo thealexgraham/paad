@@ -286,8 +286,7 @@ public abstract class Instance implements Connectable, Serializable {
 		        	for (Connection connection : App.connectionModel.getConnectionsInvolving(Instance.this)) {
 						connection.connectModules();
 					}
-		        	
-		        	// Refresh Module
+
 		        	getCurrentModule().refreshInterior();
 				}
 			});

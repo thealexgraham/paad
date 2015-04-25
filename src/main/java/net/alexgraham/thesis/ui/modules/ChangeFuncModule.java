@@ -46,10 +46,6 @@ public class ChangeFuncModule extends ModulePanel {
 	private DialD ampDial;
 	private DialD panDial;
 	
-	
-	ConnectablePanel topPanel;
-	ConnectablePanel bottomPanel;
-	ConnectablePanel middlePanel;
 	JScrollPane scrollPane;
     
 	private JButton closeButton;
@@ -99,6 +95,11 @@ public class ChangeFuncModule extends ModulePanel {
 	}
 	
 	public void setupWindow(Container pane) {
+
+		ConnectablePanel topPanel;
+		ConnectablePanel bottomPanel;
+		ConnectablePanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 				
@@ -141,7 +142,7 @@ public class ChangeFuncModule extends ModulePanel {
 		JPanel buttonPanel = ModuleFactory.createSideConnectPanel(this, changeFunc.getConnector(ConnectorType.ACTION_IN), actionButton);
 		
 		middlePanel.add(buttonPanel);
-		addParameters();
+		addParameters(middlePanel);
 		//scrollPane = new JScrollPane(middlePanel);
 		middlePanel.add(Box.createVerticalStrut(5));
 		
@@ -167,11 +168,11 @@ public class ChangeFuncModule extends ModulePanel {
 
 	}
 	
-	public void addParameters() {
+	public void addParameters(JPanel panel) {
 		for (ParamModel paramModel : getInstance().getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
 				//addDoubleParam((DoubleParamModel) paramModel); 
-				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
 			}
 		}
 	}

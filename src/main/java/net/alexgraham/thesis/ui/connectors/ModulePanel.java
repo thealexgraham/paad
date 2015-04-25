@@ -29,6 +29,7 @@ import com.sun.java.swing.plaf.motif.MotifBorders.BevelBorder;
 import com.sun.swing.internal.plaf.metal.resources.metal;
 import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion.Setting;
 
+import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.AGHelper.TestEnum;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.ui.modules.ModuleFactory;
@@ -166,17 +167,21 @@ public abstract class ModulePanel extends JPanel {
 		
 		remove(interior);
 		
-		interior = new JPanel();
-		add(interior);
+		JPanel newInterior = new JPanel();
 		
-		setupWindow(interior);
-		
+		setupWindow(newInterior);
+
+		add(newInterior);
+
 		// Refresh size
 		setSize(getPreferredSize());
 		validate();
 		
 		getOwner().addConnectablePanels(connectables);
 		
+		interior = newInterior;
+    	App.mainWindow.repaint();
+
 	}
 	
 	// Responsible for setting up internal

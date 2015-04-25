@@ -10,6 +10,8 @@ import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -76,9 +78,6 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		topLabel.setForeground(Color.WHITE);
 		topContent.add(topLabel);
 
-
-		
-
 		topContent = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_OUT), topContent);
 		topContent.setOpaque(false);
 		
@@ -93,10 +92,18 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		this.addConnectablePanel(connectableTop);
 		
 		//Middle Panel//
-		middlePanel = new JPanel();
-		
+		middlePanel = new JPanel();	
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		
+		JLabel restartLabel = new JLabel("Action");
+		restartLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				instance.sendAction("restart");
+			}
+		});
+		
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, instance.getConnector(ConnectorType.ACTION_OUT), restartLabel));
 		
 		createButtons(middlePanel);
 		

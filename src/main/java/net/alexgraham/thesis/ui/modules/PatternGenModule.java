@@ -41,9 +41,7 @@ public class PatternGenModule extends ModulePanel {
 	private JLabel synthdefLabel;
 	private JLabel idLabel;
 
-	ConnectablePanel topPanel;
-	ConnectablePanel bottomPanel;
-	ConnectablePanel middlePanel;
+
 	JScrollPane scrollPane;
     
 	private JButton closeButton;
@@ -87,6 +85,11 @@ public class PatternGenModule extends ModulePanel {
 	}
 	
 	public void setupWindow(Container pane) {
+		
+		ConnectablePanel topPanel;
+		ConnectablePanel bottomPanel;
+		ConnectablePanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 				
@@ -117,7 +120,7 @@ public class PatternGenModule extends ModulePanel {
 //		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
 //		middlePanel.add(new JLabel("testing "));
 //		middlePanel.add(new JLabel("testing"));
-		addParameters();
+		addParameters(middlePanel);
 		//scrollPane = new JScrollPane(middlePanel);
 		
 		JPanel actionInPanel = new JPanel();
@@ -144,19 +147,19 @@ public class PatternGenModule extends ModulePanel {
 		pane.add(bottomPanel, BorderLayout.SOUTH);
 	
 	}
-	public void addParameters() {
+	public void addParameters(JPanel panel) {
 		ArrayList<ParamModel> models = patternGen.getParamModels(); //((PatternGenDef)patternGen.getDef()).getParams());
 		for (ParamModel baseModel : models) {
 
 			if (baseModel.getClass() == IntParamModel.class) {
 				IntParamModel model = (IntParamModel) baseModel;
-				middlePanel.add(ModuleFactory.createIntParamPanel(this, model));
+				panel.add(ModuleFactory.createIntParamPanel(this, model));
 			} else if (baseModel.getClass() == ChoiceParamModel.class) {
 				ChoiceParamModel model = (ChoiceParamModel) baseModel;
-				middlePanel.add(ModuleFactory.createChoiceParamPanel(this, model));
+				panel.add(ModuleFactory.createChoiceParamPanel(this, model));
 			}
 			
-			middlePanel.add(new JSeparator());
+			panel.add(new JSeparator());
 
 		
 			
