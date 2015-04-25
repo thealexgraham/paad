@@ -5,25 +5,16 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Panel;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.LookupOp;
-import java.awt.image.LookupTable;
-import java.awt.image.RescaleOp;
-import java.awt.image.ShortLookupTable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,20 +24,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import sun.net.www.content.audio.x_aiff;
-
-import com.sun.javafx.geom.AreaOp.AddOp;
-import com.sun.webkit.InspectorClient;
-
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.synths.grouping.ExportIcon;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamMenuAdapter;
-import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel.ChoiceChangeListener;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.IntParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel.ChoiceChangeListener;
 import net.alexgraham.thesis.ui.components.DialD;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector;
@@ -57,14 +42,19 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 public class ModuleFactory {
 	public static JPanel createSideConnectPanel(ModulePanel module, Connector connector, JPanel insidePanel) {
 		
+		return createSideConnectPanel(module, connector, connector, insidePanel);
+	}
+	
+	public static JPanel createSideConnectPanel(ModulePanel module, Connector leftConnector, Connector rightConnector, JPanel insidePanel) {
+		
 		insidePanel.setOpaque(false);
 
-		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, connector);
+		ConnectablePanel leftConnectable = new ConnectablePanel(Location.LEFT, leftConnector);
 		module.addConnectablePanel(leftConnectable);
 		leftConnectable.setOpaque(false);
 		leftConnectable.setPreferredSize(new Dimension(5, 5));
 		
-		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, connector);
+		ConnectablePanel rightConnectable = new ConnectablePanel(Location.RIGHT, rightConnector);
 		module.addConnectablePanel(rightConnectable);
 		rightConnectable.setOpaque(false);
 		rightConnectable.setPreferredSize(new Dimension(5, 5));
@@ -293,6 +283,8 @@ public class ModuleFactory {
 //	}
 	
 	public static void addModelParameters(ArrayList<ParamModel> models, ModulePanel module, JPanel pane) {
+		int numModels = models.size();
+		int i = 1;
 		for (ParamModel baseModel : models) {
 
 			if (baseModel.getClass() == IntParamModel.class) {
@@ -306,8 +298,10 @@ public class ModuleFactory {
 				pane.add(ModuleFactory.createDoubleParamPanel(module, model));
 			}
 			
-			pane.add(new JSeparator());
+			if (i < numModels)
+				pane.add(new JSeparator());
 			
+			i++;
 		}
 	}
 	

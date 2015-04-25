@@ -31,6 +31,7 @@ public class Connection implements java.io.Serializable {
 			// Currently missing connectors, return a blank line
 			return new Line2D.Float();
 		}
+		
 		Line2D.Float line = new Line2D.Float(closest[0].getCurrentOutside(), closest[1].getCurrentOutside());
 		
 //		line = new Line2D.Float(closest[0].getPanelPoint(closest[1]), closest[1].getPanelPoint(closest[0]));

@@ -154,6 +154,11 @@ public class Connector implements java.io.Serializable {
 			// If either is missing connector UIs, return null
 			return null;
 		}
+		
+//		for (ConnectorUI connectorUI : connectorUIs) {
+//			setclo
+//		}
+		
 		// Start with the first of each
 		ConnectorUI closestOrigin = connectorUIs.get(0);
 		ConnectorUI closestDestination = destination.getConnectorUIs().get(0); // Start with the first
@@ -162,6 +167,10 @@ public class Connector implements java.io.Serializable {
 		// Go through each combination
 		for (ConnectorUI originConnectorUI : connectorUIs) {
 			for (ConnectorUI destinationConnectorUI : destination.getConnectorUIs()) {
+				
+				originConnectorUI.setClosest(false);
+				destinationConnectorUI.setClosest(false);
+				
 				double currentDistance = originConnectorUI.getCurrentCenter().distance(destinationConnectorUI.getCurrentCenter());
 				
 				// If the new distance is closer, save these two connectors

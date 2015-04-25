@@ -122,7 +122,7 @@ public abstract class ModulePanel extends JPanel {
 //		        label.setHorizontalTextPosition(SwingConstants.LEADING);
 //		        label.setAlignmentX(SwingConstants.RIGHT);
 //		        label.setIcon(icon);
-//			}
+//			}	
 //	    } else {
 //	    	System.err.println("No image icon");
 //	    }

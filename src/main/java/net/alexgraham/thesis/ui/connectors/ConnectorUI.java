@@ -42,6 +42,10 @@ public class ConnectorUI implements java.io.Serializable {
 	}
 	private boolean hovered = false;
 
+	boolean closest = false;
+	public void setClosest(boolean closest) {
+		this.closest = closest;
+	}
 	
 	public ConnectorUI(ConnectablePanel owner, Connector connector, Location location) {
 		
@@ -60,7 +64,7 @@ public class ConnectorUI implements java.io.Serializable {
 		}
 		
 		if (AGHelper.allEquals(type, ConnectorType.ACTION_OUT)) {
-			height = 12; width = 12;
+			height = 10; width = 10;
 		}
 		
 	}
@@ -237,6 +241,8 @@ public class ConnectorUI implements java.io.Serializable {
 
 		g2.setColor(Color.BLUE);		
 		g2.setColor(getColor());
+		
+		
 		
 		TriangleShape triangle = new TriangleShape(currentPosition, getTriangleOrigin(), getRotationFromLocation(), width, height);
 		triangle.fill(g2);

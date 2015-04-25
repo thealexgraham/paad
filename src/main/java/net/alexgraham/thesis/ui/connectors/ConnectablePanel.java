@@ -38,6 +38,11 @@ public class ConnectablePanel extends JPanel {
 		connectorUI = new ConnectorUI(this, connector, location);
 		connector.addConnectorUI(connectorUI);
 	}
+	
+	public void addConnector(Location location, Connector connector, ModulePanel module) {
+		addConnector(location, connector);
+		module.addConnectablePanel(this);
+	}
 
 	public boolean checkPointHover(MouseEvent e) {
 		pointHover = connectorUI.checkHover(e.getPoint());
