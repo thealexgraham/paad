@@ -31,9 +31,7 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class SpecialActionModule extends ModulePanel {
 	
-	JPanel topPanel;
-	ConnectablePanel bottomPanel;
-	JPanel middlePanel;
+
 	JScrollPane scrollPane;
 	
 	JLabel topLabel;
@@ -63,6 +61,10 @@ public class SpecialActionModule extends ModulePanel {
 	
 	
 	public void setupWindow(Container pane) {
+		JPanel topPanel;
+		ConnectablePanel bottomPanel;
+		JPanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 

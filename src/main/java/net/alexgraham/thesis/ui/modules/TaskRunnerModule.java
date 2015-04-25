@@ -33,9 +33,7 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class TaskRunnerModule extends ModulePanel implements TaskListener {
 	
-	JPanel topPanel;
-	ConnectablePanel bottomPanel;
-	JPanel middlePanel;
+
 	JScrollPane scrollPane;
 	
 	JLabel topLabel;
@@ -66,6 +64,11 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 	
 	
 	public void setupWindow(Container pane) {
+		
+		JPanel topPanel;
+		ConnectablePanel bottomPanel;
+		JPanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 		
@@ -131,7 +134,6 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		//middlePanel.setBackground(Color.GRAY);
 		bottomPanel.setBackground(Color.GRAY);
 		
-		// Create connectors //
 
 		pane.add(topPanel, BorderLayout.NORTH);
 		pane.add(middlePanel, BorderLayout.CENTER);

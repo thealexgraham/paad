@@ -25,9 +25,7 @@ import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 public class ChooserModule extends ModulePanel {
 	
 	private Chooser chooser;
-	ConnectablePanel topPanel;
-	ConnectablePanel bottomPanel;
-	ConnectablePanel middlePanel;
+
 
 	public ChooserModule(int width, int height, Chooser chooser) {
 		super(width, height);
@@ -49,6 +47,11 @@ public class ChooserModule extends ModulePanel {
 
 	@Override
 	public void setupWindow(Container pane) {
+		
+		ConnectablePanel topPanel;
+		ConnectablePanel bottomPanel;
+		ConnectablePanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 				

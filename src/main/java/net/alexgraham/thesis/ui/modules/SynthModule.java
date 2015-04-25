@@ -53,9 +53,7 @@ public class SynthModule extends ModulePanel {
     
 	private JButton closeButton;
 	
-	ConnectablePanel topPanel;
-	ConnectablePanel bottomPanel;
-	JPanel middlePanel;
+
 	JScrollPane scrollPane;
     
 
@@ -98,6 +96,11 @@ public class SynthModule extends ModulePanel {
 	}
 	
 	public void setupWindow(Container pane) {
+		
+		ConnectablePanel topPanel;
+		ConnectablePanel bottomPanel;
+		JPanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 				
@@ -124,7 +127,7 @@ public class SynthModule extends ModulePanel {
 		
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, synth.getConnector(ConnectorType.ACTION_IN, "restart"), restartLabel));
 		middlePanel.add(new JSeparator());
-		addParameters();
+		addParameters(middlePanel);
 		//scrollPane = new JScrollPane(middlePanel);
 		
 		
@@ -145,13 +148,13 @@ public class SynthModule extends ModulePanel {
 		pane.add(bottomPanel, BorderLayout.SOUTH);	
 
 	}
-	public void addParameters() {
+	public void addParameters(JPanel panel) {
 		for (ParamModel paramModel : synth.getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
-				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
 			}
 			if (paramModel.getClass() == ChoiceParamModel.class) {
-				middlePanel.add(ModuleFactory.createChoiceParamPanel(this, (ChoiceParamModel)paramModel));
+				panel.add(ModuleFactory.createChoiceParamPanel(this, (ChoiceParamModel)paramModel));
 			}
 		}
 	}

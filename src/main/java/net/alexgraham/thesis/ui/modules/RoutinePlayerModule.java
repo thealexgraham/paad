@@ -32,9 +32,6 @@ import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class RoutinePlayerModule extends ModulePanel {
 	
-	JPanel topPanel;
-	ConnectablePanel bottomPanel;
-	JPanel middlePanel;
 	JScrollPane scrollPane;
 	
 	JLabel topLabel;
@@ -89,6 +86,11 @@ public class RoutinePlayerModule extends ModulePanel {
 	
 	
 	public void setupWindow(Container pane) {
+		
+		JPanel topPanel;
+		ConnectablePanel bottomPanel;
+		JPanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 		
@@ -118,7 +120,7 @@ public class RoutinePlayerModule extends ModulePanel {
 		
 		middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		createButtons();
+		createButtons(middlePanel);
 		JLabel playLabel = new JLabel("play");
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "play"), new JLabel("play")));
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "stop"), new JLabel("stop")));
@@ -158,7 +160,7 @@ public class RoutinePlayerModule extends ModulePanel {
 
 	}
 	
-	public void createButtons() {
+	public void createButtons(JPanel panel) {
 		playButton = new JButton("Play");
 		playButton.setEnabled(false);
 		playButton.addActionListener(new ActionListener() {
@@ -199,10 +201,7 @@ public class RoutinePlayerModule extends ModulePanel {
 		
 		player.playStateChange();
 		
-		//middlePanel.add(createButtonPanel(playButton, "playbutton"));
-		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "playbutton"), playButton));
-//		middlePanel.add(instLabel);
-	
+		panel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "playbutton"), playButton));	
 	}
 	
 	public JPanel createButtonPanel(JButton button, String action) {

@@ -36,9 +36,7 @@ public class InstrumentModule extends ModulePanel {
     
 	private JButton closeButton;
 	
-	ConnectablePanel topPanel;
-	ConnectablePanel bottomPanel;
-	JPanel middlePanel;
+
 	JScrollPane scrollPane;
     
 
@@ -66,6 +64,11 @@ public class InstrumentModule extends ModulePanel {
 	}
 	
 	public void setupWindow(Container pane) {
+		
+		ConnectablePanel topPanel;
+		ConnectablePanel bottomPanel;
+		JPanel middlePanel;
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 				
@@ -85,7 +88,7 @@ public class InstrumentModule extends ModulePanel {
 		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
 		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
-		addParameters();
+		addParameters(middlePanel);
 		//scrollPane = new JScrollPane(middlePanel);
 		
 		
@@ -109,10 +112,10 @@ public class InstrumentModule extends ModulePanel {
 		validate();
 		
 	}
-	public void addParameters() {
+	public void addParameters(JPanel panel) {
 		for (ParamModel paramModel : synth.getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
-				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
 			}
 		}
 	}

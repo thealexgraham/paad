@@ -32,9 +32,7 @@ public class EffectModule extends ModulePanel {
 	private JLabel nameLabel;
 
 	
-	ConnectablePanel topPanel;
-	ConnectablePanel bottomPanel;
-	JPanel middlePanel;
+
 	JScrollPane scrollPane;
     
 	private JButton closeButton;
@@ -69,6 +67,12 @@ public class EffectModule extends ModulePanel {
 	}
 	
 	public void setupWindow(Container pane) {
+		
+		ConnectablePanel topPanel;
+		JPanel middlePanel;
+		ConnectablePanel bottomPanel;
+
+		
 		//pane.setSize(300, 150);
 		pane.setLayout(new BorderLayout());
 				
@@ -86,7 +90,7 @@ public class EffectModule extends ModulePanel {
 		middlePanel = new JPanel();
 		//middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-		addParameters();
+		addParameters(middlePanel);
 		
 		//Bottom Panel//
 
@@ -109,12 +113,12 @@ public class EffectModule extends ModulePanel {
 
 	}
 	
-	public void addParameters() {
+	public void addParameters(JPanel panel) {
 		for (ParamModel paramModel : getInstance().getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
 				//addDoubleParam((DoubleParamModel) paramModel, middlePanel); 
-				middlePanel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
-				middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+				panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 			}
 		}
 	}
