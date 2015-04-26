@@ -292,7 +292,10 @@ JavaHelper {
 				this.newChooser(name, function, params); // Sends the definition itself
 			},
 			\taskRunner, {
-				this.newTaskRunner(name, function, params);
+				this.storeDef(name, type, function, params);
+			},
+			\taskPlayer, {
+				this.storeDef(name, type, function, params);
 			},
 			\patternPlayer, {
 				this.newPatternPlayer(name, function, params);
@@ -313,6 +316,10 @@ JavaHelper {
 
 	}
 
+	storeDef { |name, type, funtion, params|
+		this.putDef(type, name, (function: function, params: params));
+		this.sendSilentMsg("/def/ready/"++name, 1);
+	}
 
 
 	/*

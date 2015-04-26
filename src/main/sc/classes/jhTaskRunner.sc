@@ -13,8 +13,6 @@
 		net.sendMsg("/def/ready/"++name, 1);
 	}
 
-
-
 	/* createRoutListeners
 	*
 	* Create listeners for routine players

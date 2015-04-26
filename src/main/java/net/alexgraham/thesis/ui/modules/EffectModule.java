@@ -88,77 +88,7 @@ public class EffectModule extends ModulePanel {
 	}
 		
 	public void addParameters(JPanel panel) {
-		for (ParamModel paramModel : getInstance().getParamModels()) {
-			if (paramModel.getClass() == DoubleParamModel.class) {
-				//addDoubleParam((DoubleParamModel) paramModel, middlePanel); 
-				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
-				panel.add(new JSeparator(SwingConstants.HORIZONTAL));
-			}
-		}
+		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
 	}
 
-
-
-//    public void setup(Container pane) {
-//
-//		pane.setLayout(new GridBagLayout());
-//		GridBagConstraints c = new GridBagConstraints();
-//
-//		c.fill = GridBagConstraints.BOTH;
-//		
-//		ConnectablePanel topConnectable = new ConnectablePanel(Location.TOP, effect, ConnectorType.AUDIO_INPUT);
-//		
-//		// Top connectable constraints
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.weighty = 1;
-//		c.gridwidth = 3;
-//		c.gridy = 0;
-//		c.gridx = 1;
-//		
-//		topConnectable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-//		pane.add(topConnectable, c);
-//		addConnectablePanel(topConnectable);
-//		
-//		
-//		// Prepare Title //
-//		JPanel titlePanel = new JPanel();
-//		//testPanel.setLayout(new GridLayout(1, 1));
-//		JLabel titleLabel = new JLabel(this.effect.getSynthName());
-//		titlePanel.add(titleLabel);
-//		titlePanel.setBackground(Color.LIGHT_GRAY);
-//		titlePanel.setOpaque(true);
-//		
-//		// Title constraints
-//		c.fill = GridBagConstraints.BOTH;
-//		c.gridwidth = 3;
-//		c.weighty = 0.5;
-//		c.weightx = 1;
-//		c.gridx = 0;
-//		c.gridy = 1;
-//		pane.add(titlePanel, c);
-//		
-//		// Add amp dials
-//		c.gridwidth = 1;
-//		c.gridy = 2;
-//		c.gridx = 1;
-//		c.weightx = 0.5;
-//		pane.add(ampDial, c);
-//		
-//		// Bottom Connectable Constraings
-//		ConnectablePanel bottomConnectable = new ConnectablePanel(Location.BOTTOM, effect, ConnectorType.AUDIO_OUTPUT);
-//		c.gridwidth = 3;
-//		c.gridy = 3;
-//		c.gridx = 1;
-//		pane.add(bottomConnectable, c);
-//		addConnectablePanel(bottomConnectable);
-//		
-//		
-////		c.gridy = 2;
-////		c.gridx = 2;
-////		c.weightx = 0.5;
-////		pane.add(panDial, c);
-//
-//		
-//    }
-//   
 }

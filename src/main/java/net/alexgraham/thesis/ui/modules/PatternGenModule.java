@@ -122,22 +122,22 @@ public class PatternGenModule extends ModulePanel {
 	
 
 	public void addParameters(JPanel panel) {
-//		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
-		ArrayList<ParamModel> models = patternGen.getParamModels(); //((PatternGenDef)patternGen.getDef()).getParams());
-		for (ParamModel baseModel : models) {
-
-			if (baseModel.getClass() == IntParamModel.class) {
-				IntParamModel model = (IntParamModel) baseModel;
-				panel.add(ModuleFactory.createIntParamPanel(this, model));
-			} 
-			else if (baseModel.getClass() == ChoiceParamModel.class) {
-				ChoiceParamModel model = (ChoiceParamModel) baseModel;
-				panel.add(ModuleFactory.createChoiceParamPanel(this, model));
-			}
-			
-			panel.add(new JSeparator());
-
-		}
+		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
+//		ArrayList<ParamModel> models = patternGen.getParamModels(); //((PatternGenDef)patternGen.getDef()).getParams());
+//		for (ParamModel baseModel : models) {
+//
+//			if (baseModel.getClass() == IntParamModel.class) {
+//				IntParamModel model = (IntParamModel) baseModel;
+//				panel.add(ModuleFactory.createIntParamPanel(this, model));
+//			} 
+//			else if (baseModel.getClass() == ChoiceParamModel.class) {
+//				ChoiceParamModel model = (ChoiceParamModel) baseModel;
+//				panel.add(ModuleFactory.createChoiceParamPanel(this, model));
+//			}
+//			
+//			panel.add(new JSeparator());
+//
+//		}
 	}
    
 }
