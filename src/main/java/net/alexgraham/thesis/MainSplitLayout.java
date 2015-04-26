@@ -101,16 +101,17 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 		// Create faders
 		Def faderDef = App.defModel.getDefByName("fader");
 		ArrayList<Effect> faders = new ArrayList<Effect>();
+		Def masterFaderDef = App.defModel.getDefByName("masterFader");
 		
 
 		// Need to wait for done messages
-		if (faderDef != null) {
+		if (masterFaderDef != null) {
 			
 			StepSyncer stepSyncer = new StepSyncer();
 			
 			ParallelSyncer faderAddSyncer = new ParallelSyncer();
 			
-			Effect masterFader = new Effect(faderDef);
+			Effect masterFader = new Effect(masterFaderDef);
 			masterFader.setName("Master");
 			masterFader.setStartCommand("/effect/add/master"); // Master fader needs special command
 			masterFader.setCloseCommand("/do/nothing");
@@ -118,7 +119,7 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 			App.synthModel.addCustomInstance(masterFader);
 			
 			// Set master amp to the main export group
-			ParamModel masterAmp = masterFader.getModelForParameterName("amp");
+			ParamModel masterAmp = masterFader.getModelForParameterName("masterGain");
 			masterAmp.setExportGroup(mainExportGroup);
 			mainExportGroup.addParamModel(masterAmp);
 			
@@ -173,10 +174,6 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 			stepSyncer.run();
 
 		}
-		
-
-		
-		
 		
 	}
 

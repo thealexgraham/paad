@@ -174,7 +174,7 @@ public abstract class Instance implements Connectable, Serializable {
 		Object[] options = {"Refresh", "Discard"};
         int n = JOptionPane.showOptionDialog(null,
                         "Definition Edited",
-                        "Refresh from changse, or discard?",
+                        "Refresh instance, or discard changes?",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
                         null,

@@ -56,7 +56,7 @@ public class FaderPanel extends JPanel {
 		
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel(fader.getName()));
-		DialD ampDial = new DialD((BoundedRangeModel) fader.getModelForParameterName("amp"));
+		DialD ampDial = new DialD((BoundedRangeModel) fader.getModelForParameterName("masterGain"));
 		panel.add(ampDial);
 		
 		return panel;

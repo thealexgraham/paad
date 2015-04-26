@@ -21,7 +21,7 @@ public class ExportGroupMenu extends JMenu {
     JMenuItem anItem;
     public ExportGroupMenu(ParamModel paramModel){
 
-    	setText("Select Export Group");
+    	setText("Select Export");
     	
     	JMenuItem menuItem;
         menuItem = new JMenuItem("Create Group...");
@@ -49,11 +49,10 @@ public class ExportGroupMenu extends JMenu {
 //				}
                 
 			}
-                
 		});
-        add(menuItem);
+        //add(menuItem);
 
-        addSeparator();
+        //addSeparator();
         
         ParamGroup currentGroup = paramModel.getExportGroup();
         List<ParamGroup> paramGroupList = App.paramGroupModel.getExportGroups();
@@ -61,7 +60,7 @@ public class ExportGroupMenu extends JMenu {
         ButtonGroup groupSelections = new ButtonGroup();
         
         boolean selected = currentGroup == null;
-        menuItem = new JRadioButtonMenuItem("No Group", selected);
+        menuItem = new JRadioButtonMenuItem("None", selected);
         groupSelections.add(menuItem);
         add(menuItem);
         

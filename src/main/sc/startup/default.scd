@@ -59,3 +59,15 @@
 		[\pan, -1, 1, 0],
 		[\gain, 0.0, 1.0, 0]]
 );
+
+~java.addDefinition(\sawWave, \synth,
+	{ | outBus, freq, pan, gain |
+		var sig = Saw.ar(freq) * gain;
+		Out.ar(outBus, Pan2.ar(sig, pan));
+	},
+	[
+		[\freq, 0, 1000, 440],
+		[\pan, \float, -1.00, 1.00, 0.00],
+		[\gain, \float, 0.00, 1.00, 0.00]
+	]
+);

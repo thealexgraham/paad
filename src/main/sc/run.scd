@@ -42,6 +42,12 @@ s.waitForBoot({
 		}, [[\amp, 0, 1, 0.5]]
 	);
 
+	~java.addDefinition(\masterFader, \effect, { | outBus=0 inBus mute=1 masterGain=1 |
+			Out.ar(outBus, In.ar(inBus, 2) * mute * masterGain)
+		},
+		[[\masterGain, 0, 1, 0.5]]
+	);
+
 	~java.addDefinition("LoadAction", \specialAction);
 	~java.addDefinition("PlayAction", \specialAction);
 	~java.addDefinition("StopAction", \specialAction);

@@ -63,6 +63,10 @@ public class ConnectorUI implements java.io.Serializable {
 			height = 6; width = 6;
 		}
 		
+		if (AGHelper.allEquals(type, ConnectorType.AUDIO_INPUT, ConnectorType.AUDIO_OUTPUT)) {
+			height = 8; width = 8;
+		}
+		
 		if (AGHelper.allEquals(type, ConnectorType.ACTION_OUT)) {
 			height = 10; width = 10;
 		}

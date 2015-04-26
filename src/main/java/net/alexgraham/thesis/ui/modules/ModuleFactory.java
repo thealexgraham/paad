@@ -479,12 +479,12 @@ public class ModuleFactory implements Serializable {
 			}
 			
 			if (i < numModels) {
-		    	c.insets = new Insets(0, 0, 0, 0);
-				c.gridx = 0;
-				c.gridwidth = 3;
-				c.fill = GridBagConstraints.BOTH;
-				paramPanel.add(new JSeparator(), c);
-				c.gridwidth = 1;
+//		    	c.insets = new Insets(0, 0, 0, 0);
+//				c.gridx = 0;
+//				c.gridwidth = 3;
+//				c.fill = GridBagConstraints.BOTH;
+//				paramPanel.add(new JSeparator(), c);
+//				c.gridwidth = 1;
 			}
 			i++;
 //			c.gridy = y++;

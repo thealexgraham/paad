@@ -26,8 +26,8 @@ This example shows how to create a simple gain DSP effect.
 ///=============================
 ///%%%CONST_DEFINES%%%
 
-#define TOP_ROUTE "/Live-exportpattern"
-static const int PORT = 53120;
+#define TOP_ROUTE "/FmodExample"
+static const int PORT = 57125;
 
 ///=============================
 
@@ -53,16 +53,16 @@ enum
 	///=============================
 	///%%%PARAM_ENUMS%%%
 	
-	FMOD_OTHER_PARAM_MASTER_AMP,
+	FMOD_OTHER_PARAM_MASTER_MASTERGAIN,
 
 	
-	FMOD_OTHER_PARAM_SIMPLESCALE2_ROOT,
+	FMOD_OTHER_PARAM_FM2OP2_RATIO,
 
 	
-	FMOD_OTHER_PARAM_SIMPLESCALE2_LENGTHMAX,
+	FMOD_OTHER_PARAM_FM2OP2_GAIN,
 
 	
-	FMOD_OTHER_PARAM_SIMPLESCALE2_OCTAVEMAX,
+	FMOD_OTHER_PARAM_FM2OP2_FREQ,
 
 	///=============================
     FMOD_OTHER_NUM_PARAMETERS
@@ -84,16 +84,16 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, in
 /// ==========================
 ///%%%STATIC_PARAM_DESC%%%
 	
-static FMOD_DSP_PARAMETER_DESC p_Master_amp; // p_Master_amp
+static FMOD_DSP_PARAMETER_DESC p_Master_masterGain; // p_Master_masterGain
 
 	
-static FMOD_DSP_PARAMETER_DESC p_SimpleScale2_root; // p_SimpleScale2_root
+static FMOD_DSP_PARAMETER_DESC p_FM2OP2_ratio; // p_FM2OP2_ratio
 
 	
-static FMOD_DSP_PARAMETER_DESC p_SimpleScale2_lengthMax; // p_SimpleScale2_lengthMax
+static FMOD_DSP_PARAMETER_DESC p_FM2OP2_gain; // p_FM2OP2_gain
 
 	
-static FMOD_DSP_PARAMETER_DESC p_SimpleScale2_octaveMax; // p_SimpleScale2_octaveMax
+static FMOD_DSP_PARAMETER_DESC p_FM2OP2_freq; // p_FM2OP2_freq
 
 /// ===========================
 
@@ -102,16 +102,16 @@ FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
 	/// =====================================
 	///%%%PARAM_DESC_POINTERS%%%
 	
-	&p_Master_amp, 
+	&p_Master_masterGain, 
 
 	
-	&p_SimpleScale2_root, 
+	&p_FM2OP2_ratio, 
 
 	
-	&p_SimpleScale2_lengthMax, 
+	&p_FM2OP2_gain, 
 
 	
-	&p_SimpleScale2_octaveMax, 
+	&p_FM2OP2_freq, 
 
 	/// =====================================
 };
@@ -122,7 +122,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
 	/// =====================================
 	///%%%DESC_NAME%%%
 	
-    "PAAD Live-exportpattern",
+    "PAAD FmodExample",
 
 	/// =====================================
     0x00010000,     // plug-in version
@@ -156,16 +156,16 @@ F_DECLSPEC F_DLLEXPORT FMOD_DSP_DESCRIPTION* F_STDCALL FMODGetDSPDescription()
 	/// ====================================
 	///%%%PARAM_DESCRIPTIONS%%%
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_amp, "amp", "f", "Adjusts amp", 0, 1, 0.5);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_masterGain, "masterGain", "f", "Adjusts masterGain", 0, 1, 0.53);
 
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale2_root, "root", "f", "Adjusts root", 0, 127, 62);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_FM2OP2_ratio, "ratio", "f", "Adjusts ratio", 0, 5, 3.2);
 
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale2_lengthMax, "lengthMax", "f", "Adjusts lengthMax", 0, 20, 9);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_FM2OP2_gain, "gain", "f", "Adjusts gain", 0, 1, 0.7);
 
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale2_octaveMax, "octaveMax", "f", "Adjusts octaveMax", -5, 5, -1);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_FM2OP2_freq, "freq", "f", "Adjusts freq", 100, 1000, 785);
 
 	/// ====================================
 
@@ -185,20 +185,20 @@ public:
 	/// ================================
 	///%%%PARAM_CLASS_DECS%%%
 	
-	void setMaster_amp(float); 
-	float Master_amp() const { return m_Master_amp; }  
+	void setMaster_masterGain(float); 
+	float Master_masterGain() const { return m_Master_masterGain; }  
 
 	
-	void setSimpleScale2_root(float); 
-	float SimpleScale2_root() const { return m_SimpleScale2_root; }  
+	void setFM2OP2_ratio(float); 
+	float FM2OP2_ratio() const { return m_FM2OP2_ratio; }  
 
 	
-	void setSimpleScale2_lengthMax(float); 
-	float SimpleScale2_lengthMax() const { return m_SimpleScale2_lengthMax; }  
+	void setFM2OP2_gain(float); 
+	float FM2OP2_gain() const { return m_FM2OP2_gain; }  
 
 	
-	void setSimpleScale2_octaveMax(float); 
-	float SimpleScale2_octaveMax() const { return m_SimpleScale2_octaveMax; }  
+	void setFM2OP2_freq(float); 
+	float FM2OP2_freq() const { return m_FM2OP2_freq; }  
 
 	/// ================================
 
@@ -207,22 +207,23 @@ public:
 	void setOSCID(int);
 
 	int osc_id() const { return m_osc_id; }
+	PROCESS_INFORMATION pi;
 
 private:
 
 	/// =============================
 	///%%%PARAM_PRIVATE_DECS%%%
 	
-	float m_Master_amp; 
+	float m_Master_masterGain; 
 
 	
-	float m_SimpleScale2_root; 
+	float m_FM2OP2_ratio; 
 
 	
-	float m_SimpleScale2_lengthMax; 
+	float m_FM2OP2_gain; 
 
 	
-	float m_SimpleScale2_octaveMax; 
+	float m_FM2OP2_freq; 
 
 	/// ===============================
 
@@ -257,23 +258,23 @@ void FMODOtherState::reset()
 /// =======================================
 ///%%%PARAM_CLASS_FUNCTIONS%%%
 
-void FMODOtherState::setMaster_amp(float value) { 
-	m_Master_amp = value;
+void FMODOtherState::setMaster_masterGain(float value) { 
+	m_Master_masterGain = value;
 }
 
 
-void FMODOtherState::setSimpleScale2_root(float value) { 
-	m_SimpleScale2_root = value;
+void FMODOtherState::setFM2OP2_ratio(float value) { 
+	m_FM2OP2_ratio = value;
 }
 
 
-void FMODOtherState::setSimpleScale2_lengthMax(float value) { 
-	m_SimpleScale2_lengthMax = value;
+void FMODOtherState::setFM2OP2_gain(float value) { 
+	m_FM2OP2_gain = value;
 }
 
 
-void FMODOtherState::setSimpleScale2_octaveMax(float value) { 
-	m_SimpleScale2_octaveMax = value;
+void FMODOtherState::setFM2OP2_freq(float value) { 
+	m_FM2OP2_freq = value;
 }
 
 /// =======================================
@@ -319,7 +320,32 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
     dsp_state->plugindata = (FMODOtherState *)FMOD_DSP_STATE_MEMALLOC(dsp_state, sizeof(FMODOtherState), FMOD_MEMORY_NORMAL, "FMODOtherState");
 
 	FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-	state->sendMsg("/live/start", 1);
+
+	char * command = "supercollider/sclang.exe";
+
+	STARTUPINFO si;
+
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &state->pi, sizeof(state->pi) );
+
+    // Start the child process. 
+    if( !CreateProcess( command,   // No module name (use command line)
+        /// =====================================
+		///%%%PROC_ARGS%%%
+	
+    " -d supercollider -l fmod/FmodExample/sclang_conf.yaml -u 57125",
+
+		/// =====================================
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to FALSE
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory 
+        &si,            // Pointer to STARTUPINFO structure
+        &state->pi )           // Pointer to PROCESS_INFORMATION structure
+    )
 
     if (!dsp_state->plugindata)
     {
@@ -331,7 +357,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
 FMOD_RESULT F_CALLBACK FMOD_Other_dsprelease(FMOD_DSP_STATE *dsp_state)
 {
     FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-	state->sendMsg("/live/stop", 1);
+	TerminateProcess(state->pi.hProcess, 1);
 	//state->sendMsg("/dying", state->osc_id());
     FMOD_DSP_STATE_MEMFREE(dsp_state, state, FMOD_MEMORY_NORMAL, "FMODOtherState");
     return FMOD_OK;
@@ -360,27 +386,27 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspsetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	/// ==============================================
 	///%%%SET_PARAM_FLOAT%%%
 	
-	case FMOD_OTHER_PARAM_MASTER_AMP:
-		state->setMaster_amp(value);
-		state->sendParam("/module/live/paramc", "amp", "1", value);
+	case FMOD_OTHER_PARAM_MASTER_MASTERGAIN:
+		state->setMaster_masterGain(value);
+		state->sendParam("/module/paramc", "masterGain", "1", value);
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SIMPLESCALE2_ROOT:
-		state->setSimpleScale2_root(value);
-		state->sendParam("/module/live/paramc", "root", "2", value);
+	case FMOD_OTHER_PARAM_FM2OP2_RATIO:
+		state->setFM2OP2_ratio(value);
+		state->sendParam("/module/paramc", "ratio", "2", value);
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SIMPLESCALE2_LENGTHMAX:
-		state->setSimpleScale2_lengthMax(value);
-		state->sendParam("/module/live/paramc", "lengthMax", "2", value);
+	case FMOD_OTHER_PARAM_FM2OP2_GAIN:
+		state->setFM2OP2_gain(value);
+		state->sendParam("/module/paramc", "gain", "2", value);
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SIMPLESCALE2_OCTAVEMAX:
-		state->setSimpleScale2_octaveMax(value);
-		state->sendParam("/module/live/paramc", "octaveMax", "2", value);
+	case FMOD_OTHER_PARAM_FM2OP2_FREQ:
+		state->setFM2OP2_freq(value);
+		state->sendParam("/module/paramc", "freq", "2", value);
 		return FMOD_OK;
 
 	/// =============================================
@@ -397,27 +423,27 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	/// ===============================================
 	///%%%GET_PARAM_FLOAT%%%
 	
-	case FMOD_OTHER_PARAM_MASTER_AMP:
-		*value = state->Master_amp();
-		if (valuestr) sprintf(valuestr, "% fl", state->Master_amp());
+	case FMOD_OTHER_PARAM_MASTER_MASTERGAIN:
+		*value = state->Master_masterGain();
+		if (valuestr) sprintf(valuestr, "% fl", state->Master_masterGain());
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SIMPLESCALE2_ROOT:
-		*value = state->SimpleScale2_root();
-		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale2_root());
+	case FMOD_OTHER_PARAM_FM2OP2_RATIO:
+		*value = state->FM2OP2_ratio();
+		if (valuestr) sprintf(valuestr, "% fl", state->FM2OP2_ratio());
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SIMPLESCALE2_LENGTHMAX:
-		*value = state->SimpleScale2_lengthMax();
-		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale2_lengthMax());
+	case FMOD_OTHER_PARAM_FM2OP2_GAIN:
+		*value = state->FM2OP2_gain();
+		if (valuestr) sprintf(valuestr, "% fl", state->FM2OP2_gain());
 		return FMOD_OK;
 
 	
-	case FMOD_OTHER_PARAM_SIMPLESCALE2_OCTAVEMAX:
-		*value = state->SimpleScale2_octaveMax();
-		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale2_octaveMax());
+	case FMOD_OTHER_PARAM_FM2OP2_FREQ:
+		*value = state->FM2OP2_freq();
+		if (valuestr) sprintf(valuestr, "% fl", state->FM2OP2_freq());
 		return FMOD_OK;
 
 	/// ==============================================

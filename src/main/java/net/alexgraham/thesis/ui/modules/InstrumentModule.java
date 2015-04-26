@@ -87,11 +87,12 @@ public class InstrumentModule extends ModulePanel {
 	}
 
 	public void addParameters(JPanel panel) {
-		for (ParamModel paramModel : synth.getParamModels()) {
-			if (paramModel.getClass() == DoubleParamModel.class) {
-				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
-			}
-		}
+		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
+//		for (ParamModel paramModel : synth.getParamModels()) {
+//			if (paramModel.getClass() == DoubleParamModel.class) {
+//				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+//			}
+//		}
 	}
 
 
