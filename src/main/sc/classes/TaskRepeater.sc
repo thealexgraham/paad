@@ -1,4 +1,4 @@
-TaskRunner : ModuleType {
+TaskRepeater : ModuleType {
 	var <>action;
 	var action;
 	var listeners;
@@ -8,7 +8,6 @@ TaskRunner : ModuleType {
 	*new { | id, name, function, arguments |
 		^super.new.init(id, name, function, arguments);
 	}
-
 
 	init { |id, name, function, arguments|
 		super.init(id, name, function, arguments);
@@ -21,7 +20,7 @@ TaskRunner : ModuleType {
 		playing = false;
 	}
 
-	runTask {
+	createTask {
 		var args = [\object, this];
 
 		// Add our current arguments into the [\arg, value] array
@@ -29,21 +28,48 @@ TaskRunner : ModuleType {
 			args = args.addAll([key, val]);
 		});
 
-		Task( {
+		task = Task( {
 			action.performKeyValuePairs(\value, args);
-			this.finished;
-		}).start;
+			this.restart;
+		});
 
 	}
 
-	start {
+	restart {
 		var net = NetAddr("127.0.0.1", ~java.sendPort);
-		this.runTask;
+		// task.reset;
+		net.sendMsg("/"++instanceId++"/state", "reset");
+		// Send stop message to client
+	}
+
+	play {
+		var net = NetAddr("127.0.0.1", ~java.sendPort);
+		// Check if it is running?
+		task.start;
+		playing = true;
+		net.sendMsg("/"++instanceId++"/state", "playing");
+	}
+
+	stop {
+		var net = NetAddr("127.0.0.1", ~java.sendPort);
+		task.stop;
+		task.reset;
+		playing = false;
+		net.sendMsg("/"++instanceId++"/state", "reset");
+	}
+
+	cycle {
+		if (playing == true,
+			{this.stop},
+			{this.play}
+		);
 	}
 
 	doAction { |action|
 		switch ( action,
-			\start, { this.start; },
+			\play, { this.play; },
+			\stop, { this.stop; },
+			\cycle, { this.cycle; },
 			{}
 		);
 	}

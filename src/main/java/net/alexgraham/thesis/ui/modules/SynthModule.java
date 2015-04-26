@@ -84,39 +84,18 @@ public class SynthModule extends ModulePanel {
 		validate();
 	}
 	
-	public Synth getSynth() {
-		return synth;
-	}
-	
 	@Override
-	public void removeSelf() {
-		
-		super.removeSelf();
-		synth.close();
-	}
-	
-	public void setupWindow(Container pane) {
-		
-		ConnectablePanel topPanel;
-		ConnectablePanel bottomPanel;
-		JPanel middlePanel;
-		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-				
-		//Top Panel//
-		
-		topPanel = new ConnectablePanel(new FlowLayout());
+	public void setupPanels(ConnectablePanel topPanel,
+			ConnectablePanel middlePanel,
+			ConnectablePanel bottomPanel) {
 		
 		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
 		//Middle Panel//
-		middlePanel = new JPanel();
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
-//		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 		JLabel restartLabel = new JLabel("restart");
 		restartLabel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -128,35 +107,34 @@ public class SynthModule extends ModulePanel {
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, synth.getConnector(ConnectorType.ACTION_IN, "restart"), restartLabel));
 		middlePanel.add(new JSeparator());
 		addParameters(middlePanel);
-		//scrollPane = new JScrollPane(middlePanel);
 		
+		// Bottom Panel //
 		
-		//Bottom Panel//
-
-		bottomPanel = new ConnectablePanel(new FlowLayout());
-
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-
-		bottomPanel.setBackground(Color.GRAY);
-		
-		bottomPanel.addConnector(Location.BOTTOM, synth.getConnector(ConnectorType.AUDIO_OUTPUT));
-		this.addConnectablePanel(bottomPanel);
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);	
-
+		bottomPanel.addConnector(Location.BOTTOM, synth.getConnector(ConnectorType.AUDIO_OUTPUT), this);		
 	}
+	
+	public Synth getSynth() {
+		return synth;
+	}
+	
+	@Override
+	public void removeSelf() {
+		
+		super.removeSelf();
+		synth.close();
+	}
+	
+
 	public void addParameters(JPanel panel) {
-		for (ParamModel paramModel : synth.getParamModels()) {
-			if (paramModel.getClass() == DoubleParamModel.class) {
-				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
-			}
-			if (paramModel.getClass() == ChoiceParamModel.class) {
-				panel.add(ModuleFactory.createChoiceParamPanel(this, (ChoiceParamModel)paramModel));
-			}
-		}
+		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
+//		for (ParamModel paramModel : synth.getParamModels()) {
+//			if (paramModel.getClass() == DoubleParamModel.class) {
+//				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+//			}
+//			if (paramModel.getClass() == ChoiceParamModel.class) {
+//				panel.add(ModuleFactory.createChoiceParamPanel(this, (ChoiceParamModel)paramModel));
+//			}
+//		}
 	}
    
 }

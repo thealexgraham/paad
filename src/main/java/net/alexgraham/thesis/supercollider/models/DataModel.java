@@ -15,7 +15,7 @@ import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.TaskRunner;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.players.PatternPlayer;
 import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.IntParam;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
@@ -201,8 +201,8 @@ public class DataModel {
 			
 			// Start playing Routine Players and Task runners (Maybe don't?)
 			for (Instance instance : synthModel.getInstances()) {
-				if (instance.getClass() == RoutinePlayer.class) {
-					((RoutinePlayer) instance).sendPlay();
+				if (instance.getClass() == PatternPlayer.class) {
+					((PatternPlayer) instance).sendPlay();
 				}
 				
 				if (instance.getClass() == TaskRunner.class) {

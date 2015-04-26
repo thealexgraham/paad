@@ -1,3 +1,5 @@
+(
+
 ~java.addDefinition(\sinPing, \synth,
 	{ | outBus, freq, pan, gain |
 		var env = EnvGen.ar(Env.perc);
@@ -80,6 +82,8 @@
 		object.sendActionMessage;
 	},
 	~java.createParamsList(
-		~java.addRange(\percent, \float, 0, 100, 50);
+		~java.addRange(\wait, \float, 0, 5, 1, 5);
 	)
 );
+
+)

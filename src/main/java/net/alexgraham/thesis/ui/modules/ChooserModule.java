@@ -44,31 +44,23 @@ public class ChooserModule extends ModulePanel {
 		super.removeSelf();
 		chooser.close();
 	}
-
+	
 	@Override
-	public void setupWindow(Container pane) {
+	public void setupPanels(final ConnectablePanel topPanel,
+			final ConnectablePanel middlePanel,
+			final ConnectablePanel bottomPanel) {
 		
-		ConnectablePanel topPanel;
-		ConnectablePanel bottomPanel;
-		ConnectablePanel middlePanel;
-		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-				
+		// TODO Auto-generated method stub
 		//Top Panel//
-		
-		topPanel = new ConnectablePanel(new FlowLayout());
+
 		
 		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
 		//Middle Panel//
-		middlePanel = new ConnectablePanel();
-//		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-//		middlePanel.addConnector(Location.LEFT, new Connector(chooser, ConnectorType.CHOICE_CHANGE_OUT));
-//		this.addConnectablePanel(middlePanel);
 		
 		//Create the combo box, select item at index 4.
 		//Indices start at 0, so 4 specifies the pig.
@@ -95,26 +87,13 @@ public class ChooserModule extends ModulePanel {
 		JLabel returnLabel = new JLabel(chooser.getDef().getReturnType());
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, chooser.getConnector(ConnectorType.CHOICE_CHANGE_OUT), returnLabel));
 		
-		//Bottom Panel//
-
-		bottomPanel = new ConnectablePanel(new FlowLayout());
-
-//		bottomPanel.add(returnLabel);
-
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-		bottomPanel.setBackground(Color.GRAY);
-
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-		
-		pane.add(bottomPanel, BorderLayout.SOUTH);
-		
+		//Bottom Panel//	
 		// Resize based on innards
 		setSize(getPreferredSize());
 		validate();
-		
 	}
+
+
+
 	
 }

@@ -59,28 +59,16 @@ public class SpecialActionModule extends ModulePanel {
 		//revalidate();
 	}
 	
-	
-	public void setupWindow(Container pane) {
-		JPanel topPanel;
-		ConnectablePanel bottomPanel;
-		JPanel middlePanel;
-		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-
-		//Top Panel//
-		
-		JPanel topContent = new JPanel();
+	@Override
+	public void setupPanels(ConnectablePanel topPanel,
+			ConnectablePanel middlePanel,
+			ConnectablePanel bottomPanel) {
 		
 		topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
-		topContent.add(topLabel);
-		
-		topPanel = topContent; //ModuleFactory.createSideConnectPanel(this, specialAction.getConnector(ConnectorType.ACTION_OUT), topContent);
-
+		topPanel.add(topLabel);
 		
 		//Middle Panel//
-		middlePanel = new JPanel();
 		
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		
@@ -89,24 +77,9 @@ public class SpecialActionModule extends ModulePanel {
 		createButtons(middlePanel);
 
 		middlePanel.add(Box.createVerticalStrut(1));
-
-		//Bottom Panel//
-		bottomPanel = new ConnectablePanel(new FlowLayout());
-
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-		//middlePanel.setBackground(Color.GRAY);
-		bottomPanel.setBackground(Color.GRAY);
 		
-		// Create connectors //
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-//		pane.add(bottomPanel, BorderLayout.SOUTH);	
-		
-		pane.revalidate();
 	}
-
+	
 	public void createButtons(JPanel panel) {
 		
 		playButton = new JButton(specialAction.getAction().replace("Action", ""));
@@ -140,5 +113,8 @@ public class SpecialActionModule extends ModulePanel {
 		super.removeSelf();
 		specialAction.close();
 	}
+
+
+
 
 }

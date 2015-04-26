@@ -138,23 +138,19 @@
 );
 
 
-
-
 ~java.addDefinition("RoutinePlayer",
-	\routinePlayer,
+	\patternPlayer,
 	{
 		| player, pattern |
+
 		Prout({| ev |
 			var pat;
 			block { |break|
 				loop {
-					pattern.value.class.postln;
-					"Playing something".postln;
 					pat = Pbindf(*[
 						player.template, // Connected instrument data
 						#[\midinote, \dur], Pseq(pattern.value) // the current pattern's value
 					]);
-					"Doing a pattern".postln;
 					player.doPlayedAction; // Run the action to do when played (probably OSC message)
 					ev = pat.embedInStream(ev); // Embed the pattern and wait for it to be played
 				}
@@ -168,7 +164,7 @@
 );
 
 ~java.addDefinition("SeparatePlayer",
-	\routinePlayer,
+	\patternPlayer,
 	{
 		| player, pitches, durations |
 		Prout({| ev |
@@ -190,6 +186,22 @@
 	[
 		~java.addChoice(\pitches, "default", [], [\midi]),
 		~java.addChoice(\durations, "default", [], [\dur])
+		//[\pattern, \choice, ["pentatonic", [[60,1], [60,0.5], [61,0.5], [60,1]]]]
+	]
+);
+
+~java.addDefinition("PlayOnce",
+	\patternPlayer,
+	{
+		| player, pattern |
+		Pbindf(*[
+			player.template, // Connected instrument data
+			#[\midinote, \dur], Pseq(pattern.value) // the current pattern's value
+
+		]);
+	},
+	[
+		~java.addChoice(\pattern, "default", [[60,1], [60,0.5], [61,0.5], [60,1]], [[\midi],[\dur]]);
 		//[\pattern, \choice, ["pentatonic", [[60,1], [60,0.5], [61,0.5], [60,1]]]]
 	]
 );

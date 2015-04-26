@@ -55,6 +55,27 @@ public class EffectModule extends ModulePanel {
 		setupWindow(this.getInterior());
 	}
 	
+	@Override
+	public void setupPanels(ConnectablePanel topPanel,
+			ConnectablePanel middlePanel,
+			ConnectablePanel bottomPanel) {
+		
+		topPanel.addConnector(Location.TOP, effect.getConnector(ConnectorType.AUDIO_INPUT), this);
+		
+		JLabel topLabel = getTitleLabel();
+		topLabel.setForeground(Color.WHITE);
+		topPanel.add(topLabel);
+		
+		//Middle Panel//
+		//middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		addParameters(middlePanel);
+		
+		//Bottom Panel//
+
+		bottomPanel.addConnector(Location.BOTTOM, effect.getConnector(ConnectorType.AUDIO_OUTPUT), this);	
+	}
+	
 	public Effect getEffect() {
 		return effect;
 	}
@@ -65,54 +86,7 @@ public class EffectModule extends ModulePanel {
 		super.removeSelf();
 		effect.close();
 	}
-	
-	public void setupWindow(Container pane) {
 		
-		ConnectablePanel topPanel;
-		JPanel middlePanel;
-		ConnectablePanel bottomPanel;
-
-		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-				
-		//Top Panel//
-		
-		topPanel = new ConnectablePanel(new FlowLayout());
-		topPanel.addConnector(Location.TOP, effect.getConnector(ConnectorType.AUDIO_INPUT));
-		this.addConnectablePanel(topPanel);
-		
-		JLabel topLabel = getTitleLabel();
-		topLabel.setForeground(Color.WHITE);
-		topPanel.add(topLabel);
-		
-		//Middle Panel//
-		middlePanel = new JPanel();
-		//middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
-		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-		addParameters(middlePanel);
-		
-		//Bottom Panel//
-
-		bottomPanel = new ConnectablePanel(new FlowLayout());
-		bottomPanel.addConnector(Location.BOTTOM, effect.getConnector(ConnectorType.AUDIO_OUTPUT));
-		this.addConnectablePanel(bottomPanel);
-		
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-		bottomPanel.setBackground(Color.GRAY);
-
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);
-		
-		// Resize based on innards
-		setSize(getPreferredSize());
-		validate();
-
-	}
-	
 	public void addParameters(JPanel panel) {
 		for (ParamModel paramModel : getInstance().getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
@@ -122,6 +96,8 @@ public class EffectModule extends ModulePanel {
 			}
 		}
 	}
+
+
 
 //    public void setup(Container pane) {
 //

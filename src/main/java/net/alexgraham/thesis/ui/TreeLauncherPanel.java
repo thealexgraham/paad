@@ -34,7 +34,7 @@ import javax.swing.tree.TreeSelectionModel;
 import net.alexgraham.thesis.AGHelper;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.SCLang.SCServerListener;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.players.PatternPlayer;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
@@ -73,7 +73,7 @@ public class TreeLauncherPanel extends JPanel {
 		setLayout(new BorderLayout());
 		setupLayout();		
 		
-		middlePanel.add(new JLabel("Available instruments"));	
+//		middlePanel.add(new JLabel("Available instruments"));	
 		
 		// SynthList Setup
 		// -------------------
@@ -134,16 +134,7 @@ public class TreeLauncherPanel extends JPanel {
 		JScrollPane listScrollPane = new JScrollPane(tree);
 		middlePanel.add(listScrollPane);
 		
-		// Launch Button
-		launchButton = new JButton("Launch Synth");
-		launchButton.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				Def currentSelection = synthList.getSelectedValue();
-				launchSynth(currentSelection);
-			}
-		});
-		
+
 		JButton resendButton = new JButton("Resend");
 		resendButton.addActionListener(new ActionListener() {
 			
@@ -156,22 +147,8 @@ public class TreeLauncherPanel extends JPanel {
 		        }
 			}
 		});
-		
-		JButton playerButton = new JButton("Routine Player");
-		playerButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				RoutinePlayer player = new RoutinePlayer();
-				player.setName("ThisPlayer");
-//				App.playerModel.addPlayer(player);
-				App.synthModel.addInstance(player);
-			}
-		});
-		
-		middlePanel.add(launchButton);
+
 		middlePanel.add(resendButton);
-		middlePanel.add(playerButton);
 	}
 	
 	public void launchSynth(Def def) {
@@ -185,7 +162,7 @@ public class TreeLauncherPanel extends JPanel {
 		//Top Panel//
 		
 		topPanel = new JPanel(new FlowLayout());
-		topLabel = new JLabel("Instruments");
+		topLabel = new JLabel("Modules");
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		

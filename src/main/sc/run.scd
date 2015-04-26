@@ -1,12 +1,13 @@
 (
 var java;
+
 o = ServerOptions.new;
 //o.device = "S/PDIF (6- M-Audio FastTrack Pr";
-
+o.memSize_(4096*8);
 s = Server(\javaSCServer, NetAddr("127.0.0.1", 57320), o);
 Server.default = s;
 ~server = s;
-"my file is running".postln;
+s.quit; // Quit any previously running server at this address
 
 s.waitForBoot({
 	"server ready".postln;
@@ -46,11 +47,16 @@ s.waitForBoot({
 	~java.addDefinition("StopAction", \specialAction);
 
 	// Load all files in "startup" dir
+	// (thisProcess.nowExecutingPath.dirname ++ "/startup/*").loadPaths;
+
 	(thisProcess.nowExecutingPath.dirname ++ "/startup/*").pathMatch.do({
 		|item, i|
 		postln("Loading " ++ item);
 		item.load;
+		// ~java.defFolder = "default";
+		// (item ++ "*").loadPaths;
 	});
+
 
 	// This function will run when the Java app is ready and listening
 	OSCFunc({|msg|

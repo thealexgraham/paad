@@ -5,9 +5,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -39,9 +41,8 @@ import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
-public class ModuleFactory {
+public class ModuleFactory implements Serializable {
 	public static JPanel createSideConnectPanel(ModulePanel module, Connector connector, JPanel insidePanel) {
-		
 		return createSideConnectPanel(module, connector, connector, insidePanel);
 	}
 	
@@ -79,10 +80,11 @@ public class ModuleFactory {
 
 		// Set up the panels
 		JPanel togetherPanel = new JPanel();
-		togetherPanel.setLayout(new GridBagLayout());
-    	GridBagConstraints c = new GridBagConstraints();
-    	c.fill = GridBagConstraints.BOTH;
-    	c.weightx = 0.5f;
+		togetherPanel.setLayout(new GridLayout(0, 2, 0, 0));
+//		togetherPanel.setLayout(new GridBagLayout());
+//    	GridBagConstraints c = new GridBagConstraints();
+//    	c.fill = GridBagConstraints.BOTH;
+//    	c.weightx = 0.5f;
 	
 		JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -117,19 +119,20 @@ public class ModuleFactory {
 		
 		// Put it together
 		// -----------------------
-		
-		c.anchor = GridBagConstraints.WEST;
-		c.gridx = 0;
-		c.weightx = 1f;
-		togetherPanel.add(leftPanel, c);
-		c.gridx = 1;
-		c.weightx = 1f;
-		togetherPanel.add(Box.createHorizontalStrut(15), c);
-		
-		c.anchor = GridBagConstraints.EAST;
-		c.gridx = 2;
-		c.weightx = 0.1f;
-		togetherPanel.add(rightPanel, c);
+		togetherPanel.add(leftPanel);
+		togetherPanel.add(rightPanel);
+//		c.anchor = GridBagConstraints.WEST;
+//		c.gridx = 0;
+//		c.weightx = 1f;
+//		togetherPanel.add(leftPanel, c);
+//		c.gridx = 1;
+//		c.weightx = 1f;
+//		togetherPanel.add(Box.createHorizontalStrut(15), c);
+//		
+//		c.anchor = GridBagConstraints.EAST;
+//		c.gridx = 2;
+//		c.weightx = 0.1f;
+//		togetherPanel.add(rightPanel, c);
 		return togetherPanel; 
 			
 	}
@@ -212,12 +215,67 @@ public class ModuleFactory {
 		return togetherPanel;
 	}
 	
+	public static void addDoubleParamPanel(ModulePanel module, DoubleParamModel model, JPanel panel) {
+		
+
+		JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0 ,0));
+		JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		
+
+		// Create connectables
+		// -----------------------
+		ConnectablePanel leftConnectable = 
+				ModuleFactory.getConnectablePanel(module, Location.LEFT, model.getConnector(ConnectorType.PARAM_CHANGE_IN), 5, 5);
+
+		ConnectablePanel rightConnectable = 
+				ModuleFactory.getConnectablePanel(module, Location.RIGHT, model.getConnector(ConnectorType.PARAM_CHANGE_IN), 5, 5);
+		
+		// Create Components
+		// ----------------------
+		JLabel paramNameLabel = new JLabel(model.getName());
+		JLabel paramValueLabel = new JLabel(String.format("%.2f", model.getDoubleValue()));
+		model.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				paramValueLabel.setText(String.format("%.2f", model.getDoubleValue()));
+			}
+		});
+		
+		// Dial Components
+		DialD dial = new DialD(model);
+		dial.setForcedSize(new Dimension(15, 15));
+		dial.setDrawText(false);
+
+		//Add to panels
+		// -----------------------
+		
+		
+		// Left Panel
+		leftPanel.add(leftConnectable);
+		leftPanel.add(new JLabel(new ExportIcon(model)));
+		leftPanel.add(Box.createHorizontalStrut(2));
+		leftPanel.add(paramNameLabel);
+		leftPanel.add(Box.createHorizontalStrut(7));
+
+		// Right Panel
+		rightPanel.add(paramValueLabel);
+		rightPanel.add(Box.createHorizontalStrut(3));
+		rightPanel.add(dial);
+		rightPanel.add(rightConnectable);
+		rightPanel.add(Box.createHorizontalStrut(1));
+		
+		// Put it together
+		// -----------------------
+		
+		panel.add(leftPanel);
+		panel.add(rightPanel);
+	}
 	public static JPanel createDoubleParamPanel(ModulePanel module, DoubleParamModel model) {
 		
-		// Create Panels
-		// ------------------------
+//		 Create Panels
+//		// ------------------------
 		JPanel togetherPanel = new JPanel();
-		togetherPanel.setLayout(new BoxLayout(togetherPanel, BoxLayout.LINE_AXIS));
+		togetherPanel.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0 ,0));
 		JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
@@ -250,6 +308,7 @@ public class ModuleFactory {
 		//Add to panels
 		// -----------------------
 		
+		
 		// Left Panel
 		leftPanel.add(leftConnectable);
 		leftPanel.add(new JLabel(new ExportIcon(model)));
@@ -263,17 +322,16 @@ public class ModuleFactory {
 		rightPanel.add(dial);
 		rightPanel.add(rightConnectable);
 		
-		
 		// Put it together
 		// -----------------------
 		togetherPanel.add(leftPanel);
-		togetherPanel.add(Box.createHorizontalGlue());
 		togetherPanel.add(rightPanel);
 		
 		dial.addMouseListener(new ParamMenuAdapter((ParamModel) model));
 		togetherPanel.addMouseListener(new ParamMenuAdapter((ParamModel)model));
-		
-//    	togetherPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		togetherPanel.setBackground(Color.red);
+		togetherPanel.setOpaque(true);
+		//    	togetherPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 		return togetherPanel;
 	}
@@ -283,26 +341,30 @@ public class ModuleFactory {
 //	}
 	
 	public static void addModelParameters(ArrayList<ParamModel> models, ModulePanel module, JPanel pane) {
+		JPanel paramPanel = new JPanel();
+		paramPanel.setLayout(new BoxLayout(paramPanel, BoxLayout.Y_AXIS));
 		int numModels = models.size();
 		int i = 1;
 		for (ParamModel baseModel : models) {
 
 			if (baseModel.getClass() == IntParamModel.class) {
 				IntParamModel model = (IntParamModel) baseModel;
-				pane.add(ModuleFactory.createIntParamPanel(module, model));
+				paramPanel.add(ModuleFactory.createIntParamPanel(module, model));
 			} else if (baseModel.getClass() == ChoiceParamModel.class) {
 				ChoiceParamModel model = (ChoiceParamModel) baseModel;
-				pane.add(ModuleFactory.createChoiceParamPanel(module, model));
+				paramPanel.add(ModuleFactory.createChoiceParamPanel(module, model));
 			} else if (baseModel.getClass() == DoubleParamModel.class) {
 				DoubleParamModel model = (DoubleParamModel) baseModel;
-				pane.add(ModuleFactory.createDoubleParamPanel(module, model));
+				paramPanel.add(ModuleFactory.createDoubleParamPanel(module, model));
 			}
 			
 			if (i < numModels)
-				pane.add(new JSeparator());
+				paramPanel.add(new JSeparator());
 			
 			i++;
 		}
+		
+		pane.add(paramPanel);
 	}
 	
 	

@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.DefaultListModel;
 
 import net.alexgraham.thesis.App;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.players.PatternPlayer;
 import net.alexgraham.thesis.supercollider.sync.ParallelSyncer;
 import net.alexgraham.thesis.supercollider.sync.StepSyncer;
 import net.alexgraham.thesis.supercollider.sync.SyncAction;
@@ -96,13 +96,13 @@ public class SynthModel implements Serializable {
 		return insts;
 	}
 	
-	public ArrayList<RoutinePlayer> getPlayers() {
-		ArrayList<RoutinePlayer> players = new ArrayList<RoutinePlayer>();
+	public ArrayList<PatternPlayer> getPlayers() {
+		ArrayList<PatternPlayer> players = new ArrayList<PatternPlayer>();
 		
 		for (Enumeration<Instance> e = synthListModel.elements(); e.hasMoreElements();)  {
 			Instance synth = e.nextElement();
-			if (synth.getClass() == RoutinePlayer.class) {
-				players.add((RoutinePlayer) synth);
+			if (synth.getClass() == PatternPlayer.class) {
+				players.add((PatternPlayer) synth);
 			}
 		}
 		
@@ -143,7 +143,7 @@ public class SynthModel implements Serializable {
 				for (Instance instance : getInstances()) {
 					
 					// Don't need to do this for routine player, since there's no definition
-					if (instance.getClass() == RoutinePlayer.class)
+					if (instance.getClass() == PatternPlayer.class)
 						continue;
 					
 					definitionsSyncer.addStartAction(new SyncAction() {
@@ -247,8 +247,8 @@ public class SynthModel implements Serializable {
 			case "taskrunner":
 				instance = new TaskRunner(def);
 				break;
-			case "routineplayer":
-				instance = new RoutinePlayer(def);
+			case "patternplayer":
+				instance = new PatternPlayer(def);
 				break;
 			case "specialaction":
 				instance = new SpecialAction(def);

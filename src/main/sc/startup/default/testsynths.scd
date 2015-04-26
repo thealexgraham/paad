@@ -97,22 +97,6 @@
 	]
 );
 
-
-~java.addDefinition("scale", \synth,
-	{ | outBus=0, speed = 2, gain = 0.5, pan = 0 |
-		var trig, div, freq, oct, reps, env, osc, flt;
-		oct = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3];
-		trig = Impulse.kr(speed);
-		env = EnvGen.kr(Env.perc(0.01, 0.1), trig, 0.5);
-		freq = (Stepper.kr(trig, 0, 42, 56, 2, 42)).midicps;
-		osc = Saw.ar(freq * [1, 1.01], env);
-		//flt = RLPF.ar(osc, freq * 2, 0.7);
-		Out.ar(outBus, Pan2.ar(osc * gain, pan));
-
-	},
-	[[\speed, 0, 5, 2]]
-);
-
 ~java.addDefinition("sawsinInst", \instrument,
 	{ | outBus = 0, freq = 0, gate = 1, amp = 1, saw = 1, pan = 0, gain = 1 |
 		var sig, env;

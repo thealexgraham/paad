@@ -1,5 +1,6 @@
 package net.alexgraham.thesis.supercollider.synths.parameters.models;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.acl.Owner;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import net.alexgraham.thesis.supercollider.synths.grouping.ParamGroup;
 import net.alexgraham.thesis.supercollider.synths.parameters.Param;
 import net.alexgraham.thesis.ui.connectors.Connection;
 import net.alexgraham.thesis.ui.connectors.Connector;
+import net.alexgraham.thesis.ui.connectors.ConnectorUI;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
@@ -40,7 +42,13 @@ public class ChoiceParamModel implements Serializable, ParamModel, Connectable {
 	
 	private ParamGroup exportGroup = null;
 	
-	private CopyOnWriteArrayList<ChoiceChangeListener> listeners = new CopyOnWriteArrayList<ChoiceParamModel.ChoiceChangeListener>();
+	transient CopyOnWriteArrayList<ChoiceChangeListener> listeners = new CopyOnWriteArrayList<ChoiceParamModel.ChoiceChangeListener>();
+	
+	private void readObject(java.io.ObjectInputStream in)
+		    throws IOException, ClassNotFoundException {
+		    in.defaultReadObject();
+		    listeners = new CopyOnWriteArrayList<ChoiceParamModel.ChoiceChangeListener>();
+	}
 
 	public ChoiceParamModel(String choiceName, Object choiceValue) {
 		this.choiceName = choiceName;

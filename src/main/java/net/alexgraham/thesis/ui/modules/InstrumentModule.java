@@ -63,19 +63,13 @@ public class InstrumentModule extends ModulePanel {
 		synth.close();
 	}
 	
-	public void setupWindow(Container pane) {
-		
-		ConnectablePanel topPanel;
-		ConnectablePanel bottomPanel;
-		JPanel middlePanel;
-		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-				
+	@Override
+	public void setupPanels(ConnectablePanel topPanel,
+			ConnectablePanel middlePanel,
+			ConnectablePanel bottomPanel) {
+
 		//Top Panel//
-		
-		topPanel = new ConnectablePanel(new FlowLayout());
-		
+				
 		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
@@ -84,34 +78,14 @@ public class InstrumentModule extends ModulePanel {
 		this.addConnectablePanel(topPanel);
 		
 		//Middle Panel//
-		middlePanel = new JPanel();
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 
 		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
 		addParameters(middlePanel);
-		//scrollPane = new JScrollPane(middlePanel);
-		
-		
+	
 		//Bottom Panel//
-
-		bottomPanel = new ConnectablePanel(new FlowLayout());
-
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-
-		bottomPanel.setBackground(Color.GRAY);
-		
-		bottomPanel.addConnector(Location.BOTTOM, synth.getConnector(ConnectorType.AUDIO_OUTPUT));
-		this.addConnectablePanel(bottomPanel);
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);	
-
-		setSize(getPreferredSize());
-		validate();
-		
+		bottomPanel.addConnector(Location.BOTTOM, synth.getConnector(ConnectorType.AUDIO_OUTPUT), this);
 	}
+
 	public void addParameters(JPanel panel) {
 		for (ParamModel paramModel : synth.getParamModels()) {
 			if (paramModel.getClass() == DoubleParamModel.class) {
@@ -119,6 +93,8 @@ public class InstrumentModule extends ModulePanel {
 			}
 		}
 	}
+
+
    
 }
 

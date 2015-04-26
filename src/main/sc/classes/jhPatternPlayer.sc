@@ -3,10 +3,10 @@
 
 	/* newRoutPlayer
 	*/
-	newRoutPlayer { |name, function, params|
+	newPatternPlayer { |name, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);
 		// Store the definition
-		this.putDef(\routinePlayer, name, (function: function, params: params));
+		this.putDef(\patternPlayer, name, (function: function, params: params));
 
 		// Create the storage
 		this.setupTypeStorage(name);
@@ -20,7 +20,7 @@
 	*
 	* Please fix this dictName nonsense
 	*/
-	createRoutListeners {
+	createPatternPlayerListeners {
 		var dictName = "routplayer";
 		dictName.toLower.asSymbol.envirPut(Dictionary.new);
 

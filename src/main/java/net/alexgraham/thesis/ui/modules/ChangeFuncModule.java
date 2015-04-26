@@ -94,40 +94,21 @@ public class ChangeFuncModule extends ModulePanel {
 		changeFunc.close();
 	}
 	
-	public void setupWindow(Container pane) {
 
-		ConnectablePanel topPanel;
-		ConnectablePanel bottomPanel;
-		ConnectablePanel middlePanel;
+	@Override
+	public void setupPanels(final ConnectablePanel topPanel,
+			final ConnectablePanel middlePanel,
+			final ConnectablePanel bottomPanel) {
 		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-				
-		//Top Panel//
+		topPanel.addConnector(Location.TOP, changeFunc.getConnector(ConnectorType.PARAM_CHANGE_OUT), this);
 		
-		topPanel = new ConnectablePanel(new FlowLayout());
-		topPanel.addConnector(Location.TOP, changeFunc.getConnector(ConnectorType.PARAM_CHANGE_OUT));
-		this.addConnectablePanel(topPanel);
-		
-		JLabel topLabel = getTitleLabel(); //new JLabel(changeFunc.getSynthName());
+		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
 		//Middle Panel//
-		middlePanel = new ConnectablePanel();
-
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-
-//		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
-//		middlePanel.setLayout(new GridBagLayout());
-//		middlePanel.setLayout(new GridBagLayout());
-//		GridBagConstraints c = new GridBagConstraints();
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-		
-//		ConnectablePanel buttonPanel = new ConnectablePanel();
-//		buttonPanel.addConnector(Location.LEFT, changeFunc.getConnector(ConnectorType.ACTION_IN));
-//		this.addConnectablePanel(buttonPanel);
-//		
+	
 		JButton actionButton = new JButton("Perform Action");
 		actionButton.addActionListener(new ActionListener() {
 			
@@ -136,35 +117,18 @@ public class ChangeFuncModule extends ModulePanel {
 				changeFunc.doAction();
 			}
 		});
-//		buttonPanel.add(actionButton);
+
 		actionButton.setMargin(new Insets(1, 4, 1, 4));
 		
 		JPanel buttonPanel = ModuleFactory.createSideConnectPanel(this, changeFunc.getConnector(ConnectorType.ACTION_IN), actionButton);
 		
 		middlePanel.add(buttonPanel);
 		addParameters(middlePanel);
-		//scrollPane = new JScrollPane(middlePanel);
 		middlePanel.add(Box.createVerticalStrut(5));
 		
 		
 		//Bottom Panel//
-
-		bottomPanel = new ConnectablePanel(new FlowLayout());
-		bottomPanel.addConnector(Location.BOTTOM, changeFunc.getConnector(ConnectorType.PARAM_CHANGE_OUT));
-		this.addConnectablePanel(bottomPanel);
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-		//middlePanel.setBackground(Color.GRAY);
-		bottomPanel.setBackground(Color.GRAY);
-		
-		// Create connectors //
-//		connectablePanel = new ConnectablePanel(Location.BOTTOM, changeFunc, ConnectorType.PARAM_CHANGE_OUT);
-//		bottomPanel.add(connectablePanel);
-//		this.addConnectablePanel(connectablePanel);
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);	
+		bottomPanel.addConnector(Location.BOTTOM, changeFunc.getConnector(ConnectorType.PARAM_CHANGE_OUT), this);
 
 	}
 	
@@ -176,23 +140,6 @@ public class ChangeFuncModule extends ModulePanel {
 			}
 		}
 	}
-	
-//	public void addDoubleParam(DoubleParamModel model) {
-//		JLabel paramNameLabel = new JLabel(model.getName());
-//		JLabel paramValueLabel = new JLabel(String.valueOf(model.getDoubleValue()));
-//		model.addChangeListener(new ChangeListener() {
-//			@Override
-//			public void stateChanged(ChangeEvent e) {
-//				paramValueLabel.setText(String.valueOf(model.getDoubleValue()));
-//			}
-//		});
-//		
-//		JPanel paramPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-//		paramPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-//		
-//		paramPanel.add(paramNameLabel);
-//		paramPanel.add(paramValueLabel);
-//		
-//		middlePanel.add(paramPanel);
-//	}
+
+
 }

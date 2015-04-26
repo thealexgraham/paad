@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import net.alexgraham.thesis.supercollider.SCLang;
 
-public class RoutinePlayerDef extends Def {
+public class PatternPlayerDef extends Def {
 	
-	public RoutinePlayerDef(String synthName, SCLang sc) {
+	public PatternPlayerDef(String synthName, SCLang sc) {
 		super(synthName, sc);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public RoutinePlayerDef(String defName) {
+	public PatternPlayerDef(String defName) {
 		super(defName);
 		// TODO Auto-generated constructor stub
 	}

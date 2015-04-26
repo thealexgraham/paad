@@ -18,7 +18,7 @@ import net.alexgraham.thesis.supercollider.synths.defs.Def;
 import net.alexgraham.thesis.supercollider.synths.defs.EffectDef;
 import net.alexgraham.thesis.supercollider.synths.defs.InstDef;
 import net.alexgraham.thesis.supercollider.synths.defs.PatternGenDef;
-import net.alexgraham.thesis.supercollider.synths.defs.RoutinePlayerDef;
+import net.alexgraham.thesis.supercollider.synths.defs.PatternPlayerDef;
 import net.alexgraham.thesis.supercollider.synths.defs.SpecialActionDef;
 import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
 import net.alexgraham.thesis.supercollider.synths.defs.TaskRunnerDef;
@@ -156,8 +156,8 @@ public class DefModel implements Messenger {
 			case "taskrunner":
 				def = new TaskRunnerDef(defName);
 				break;
-			case "routineplayer":
-				def = new RoutinePlayerDef(defName);
+			case "patternplayer":
+				def = new PatternPlayerDef(defName);
 				break;
 			case "specialaction":
 				def = new SpecialActionDef(defName);

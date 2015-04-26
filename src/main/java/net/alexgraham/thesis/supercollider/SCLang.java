@@ -23,7 +23,7 @@ import org.omg.CORBA.PUBLIC_MEMBER;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.ChangeSender;
 import net.alexgraham.thesis.supercollider.models.DefModel;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.players.PatternPlayer;
 import net.alexgraham.thesis.supercollider.synths.Instance;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.components.ConsoleDialog;
@@ -334,8 +334,8 @@ public class SCLang extends ChangeSender {
 			@Override
 			public void serverReady() {
 				
-		    	ArrayList<RoutinePlayer> players = App.synthModel.getPlayers();
-		    	for (RoutinePlayer player : players) {
+		    	ArrayList<PatternPlayer> players = App.synthModel.getPlayers();
+		    	for (PatternPlayer player : players) {
 		    		player.reset();
 		    	}
 				

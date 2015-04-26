@@ -62,51 +62,23 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		//revalidate();
 	}
 	
-	
-	public void setupWindow(Container pane) {
-		
-		JPanel topPanel;
-		ConnectablePanel bottomPanel;
-		JPanel middlePanel;
-		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-		
-
+	@Override
+	public void setupPanels(ConnectablePanel topPanel,
+			ConnectablePanel middlePanel,
+			ConnectablePanel bottomPanel) {
 		//Top Panel//
-		
-		JPanel topContent = new JPanel(new FlowLayout());
-		
+
 		topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
-		topContent.add(topLabel);
+		topPanel.add(topLabel);
 
-		topContent = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_OUT), topContent);
-		topContent.setOpaque(false);
-		
-		topPanel = new ConnectablePanel();
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-		topPanel.add(topContent);
-		
-		ConnectablePanel connectableTop = (ConnectablePanel) topPanel;
-//		connectableTop.addConnector(Location.TOP, runner.getConnector(ConnectorType.ACTION_IN, "cycle"));
-		connectableTop.addConnector(Location.TOP, runner.getConnector(ConnectorType.ACTION_OUT));
-		
-		this.addConnectablePanel(connectableTop);
+		topPanel.addConnector(Location.TOP, runner.getConnector(ConnectorType.ACTION_OUT), this);
+
 		
 		//Middle Panel//
-		middlePanel = new JPanel();	
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		
-		JLabel restartLabel = new JLabel("Action");
-		restartLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				instance.sendAction("restart");
-			}
-		});
-		
-		middlePanel.add(ModuleFactory.createSideConnectPanel(this, instance.getConnector(ConnectorType.ACTION_OUT), restartLabel));
+//		middlePanel.add(ModuleFactory.createSideConnectPanel(this, instance.getConnector(ConnectorType.ACTION_OUT), restartLabel));
 		
 		createButtons(middlePanel);
 		
@@ -116,40 +88,14 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 //		parametersPanel.setLayout(new GridLayout(0, 1, 5, 5));
 		addParameters(middlePanel);
 		
-//		middlePanel.add(parametersPanel);
-		
-		//middlePanel.add(Box.createVerticalStrut(5));
-
-		//scrollPane = new JScrollPane(middlePanel);
-		
-		
 		//Bottom Panel//
-		bottomPanel = new ConnectablePanel(new FlowLayout());;
 		bottomPanel.setPreferredSize(new Dimension(bottomPanel.getPreferredSize().width, 5));
-		
 		bottomPanel.addConnector(Location.BOTTOM, runner.getConnector(ConnectorType.ACTION_OUT), this);
-		
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-		//middlePanel.setBackground(Color.GRAY);
-		bottomPanel.setBackground(Color.GRAY);
-		
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);	
-		
-		pane.revalidate();
 	}
+	
 	
 	public void addParameters(JPanel panel) {
 		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
-//		for (ParamModel paramModel : getInstance().getParamModels()) {
-//			if (paramModel.getClass() == DoubleParamModel.class) {
-//				//addDoubleParam((DoubleParamModel) paramModel, middlePanel); 
-//				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
-//			}
-//		}
 	}
 	
 	public void createButtons(JPanel panel) {
@@ -162,22 +108,13 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 		});
 		
 		Insets currentInsets = playButton.getInsets();
-		playButton.setMargin(new Insets(0, currentInsets.left, 0, currentInsets.right));
-		
-//		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
-		
+		playButton.setMargin(new Insets(0, currentInsets.left, 0, currentInsets.right));		
 		panel.add(createButtonPanel(playButton, "cycle"));
 
 	}
 	
 	public JPanel createButtonPanel(JButton button, String action) {
-
-//		button.setBorder(null);
-
 		JPanel panel = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_IN, action.toLowerCase()), button);
-		
-//		togetherPanel.add(panel);
-
 		return panel;
 		
 	}
@@ -209,6 +146,54 @@ public class TaskRunnerModule extends ModulePanel implements TaskListener {
 			default:
 				break;
 		}
+	}
+	
+	public void setupPanelsOld(ConnectablePanel topPanel,
+			ConnectablePanel middlePanel,
+			ConnectablePanel bottomPanel) {
+		//Top Panel//
+		
+		JPanel topContent = new JPanel(new FlowLayout());
+		
+		topLabel = getTitleLabel();
+		topLabel.setForeground(Color.WHITE);
+		topContent.add(topLabel);
+
+		topContent = ModuleFactory.createSideConnectPanel(this, runner.getConnector(ConnectorType.ACTION_OUT), topContent);
+		topContent.setOpaque(false);
+		
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+		topPanel.add(topContent);
+		
+		topPanel.addConnector(Location.TOP, runner.getConnector(ConnectorType.ACTION_OUT), this);
+
+		
+		//Middle Panel//
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+		
+		JLabel restartLabel = new JLabel("Action");
+		restartLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				instance.sendAction("restart");
+			}
+		});
+		
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, instance.getConnector(ConnectorType.ACTION_OUT), restartLabel));
+		
+		createButtons(middlePanel);
+		
+		middlePanel.add(new JSeparator());
+
+		JPanel parametersPanel = new JPanel();
+//		parametersPanel.setLayout(new GridLayout(0, 1, 5, 5));
+		addParameters(middlePanel);
+		
+		//Bottom Panel//
+		bottomPanel = new ConnectablePanel(new FlowLayout());
+		bottomPanel.setPreferredSize(new Dimension(bottomPanel.getPreferredSize().width, 5));
+		
+		bottomPanel.addConnector(Location.BOTTOM, runner.getConnector(ConnectorType.ACTION_OUT), this);
 	}
 
 

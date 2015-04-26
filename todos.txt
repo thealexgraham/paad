@@ -1,3 +1,6 @@
+Server can kill last version of server
+
+
 Vim+Supercollider, Eclim
 
 Add/remove dials from module (from the synth card panel)

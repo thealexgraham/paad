@@ -216,7 +216,6 @@ public abstract class Instance implements Connectable, Serializable {
 					// Def was created, so we can update the parameters
 			    	for (Param baseParam : def.getParams()) {
 
-		    			
 		    			ParamModel model = modelMapCopy.get(baseParam.getName());
 						// Check if the model exists already
 		    			if (model != null) {
@@ -262,7 +261,6 @@ public abstract class Instance implements Connectable, Serializable {
 				@Override
 				public void doAction() {
 					// Stop the synth
-
 					close();
 				}
 			}, closeCommand + "/done");
@@ -273,7 +271,6 @@ public abstract class Instance implements Connectable, Serializable {
 				public void doAction() {
 					// Start up the Instance in Java and supercollider
 					start();
-					System.out.println("Starting");
 				}
 			}, startCommand + "/done");
 			

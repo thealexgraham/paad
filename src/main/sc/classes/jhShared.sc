@@ -13,7 +13,7 @@
 			\instrument, { ^InstrumentModule.new(id, name, function, params) },
 			\patternGen, { ^PatternGenerator.new(id, name, function, params) },
 			\taskRunner, { ^TaskRunner.new(id, name, function, params) },
-			\routinePlayer, { ^RoutinePlayer.new(id, name, function, params) },
+			\patternPlayer, { ^PatternPlayer.new(id, name, function, params) },
 			{^nil}
 		);
 	}

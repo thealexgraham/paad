@@ -3,7 +3,6 @@ package net.alexgraham.thesis.ui.connectors;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -29,7 +28,7 @@ import javax.swing.JPanel;
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.supercollider.models.PlayerModel.PlayerModelListener;
 import net.alexgraham.thesis.supercollider.models.SynthModel.SynthModelListener;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.players.PatternPlayer;
 import net.alexgraham.thesis.supercollider.synths.ChangeFunc;
 import net.alexgraham.thesis.supercollider.synths.Chooser;
 import net.alexgraham.thesis.supercollider.synths.Effect;
@@ -39,13 +38,12 @@ import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.SpecialAction;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.TaskRunner;
-import net.alexgraham.thesis.tests.demos.simplemvc.Model;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.ChooserModule;
 import net.alexgraham.thesis.ui.modules.EffectModule;
 import net.alexgraham.thesis.ui.modules.InstrumentModule;
 import net.alexgraham.thesis.ui.modules.PatternGenModule;
-import net.alexgraham.thesis.ui.modules.RoutinePlayerModule;
+import net.alexgraham.thesis.ui.modules.PatternPlayerModule;
 import net.alexgraham.thesis.ui.modules.SpecialActionModule;
 import net.alexgraham.thesis.ui.modules.SynthModule;
 import net.alexgraham.thesis.ui.modules.TaskRunnerModule;
@@ -472,8 +470,8 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			module = new ChangeFuncModule(100, 300, (ChangeFunc) instance);
 		} else if (instance.getClass() == PatternGen.class) {
 			module = new PatternGenModule(100, 300, (PatternGen) instance);
-		} else if (instance.getClass() == RoutinePlayer.class){
-			module = new RoutinePlayerModule((RoutinePlayer) instance);
+		} else if (instance.getClass() == PatternPlayer.class){
+			module = new PatternPlayerModule((PatternPlayer) instance);
 		} else if (instance.getClass() == Chooser.class){
 			module = new ChooserModule(100, 300, (Chooser)instance); 
 		} else if (instance.getClass() == TaskRunner.class) {
@@ -546,9 +544,9 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	// PlayerModelListener
 	// -------------------------
 	@Override
-	public void playerAdded(RoutinePlayer player) {
+	public void playerAdded(PatternPlayer player) {
 		// Create the routine player's panel
-		RoutinePlayerModule playerPanel = new RoutinePlayerModule(player);
+		PatternPlayerModule playerPanel = new PatternPlayerModule(player);
 		playerPanel.setInstance(player);
 		playerPanel.setLocation(10, 10);
 		
@@ -561,7 +559,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	}
 
 	@Override
-	public void playerRemoved(RoutinePlayer player) {
+	public void playerRemoved(PatternPlayer player) {
 		
 		
 	}

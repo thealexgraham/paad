@@ -1,4 +1,4 @@
-RoutinePlayer : ModuleType {
+PatternPlayer : ModuleType {
 	var <>template;
 	var <>pattern;
 	var <>playedAction;

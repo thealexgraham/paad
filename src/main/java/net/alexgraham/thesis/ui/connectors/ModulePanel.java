@@ -1,9 +1,11 @@
 package net.alexgraham.thesis.ui.connectors;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -185,7 +187,37 @@ public abstract class ModulePanel extends JPanel {
 	}
 	
 	// Responsible for setting up internal
-	public abstract void setupWindow(Container pane);
+	//public abstract void setupWindow(Container pane);
+	public abstract void setupPanels(ConnectablePanel topPanel, ConnectablePanel middlePanel, ConnectablePanel bottomPanel);
+	
+	public void setupWindow(Container pane) {
+		
+		ConnectablePanel topPanel;
+		ConnectablePanel bottomPanel;
+		ConnectablePanel middlePanel;
+		
+		//pane.setSize(300, 150);
+		pane.setLayout(new BorderLayout());
+		
+		topPanel = new ConnectablePanel(new FlowLayout());
+		middlePanel = new ConnectablePanel();
+		bottomPanel = new ConnectablePanel(new FlowLayout());
+		
+		// Set up panels //
+		topPanel.setBackground(Color.DARK_GRAY);
+		//middlePanel.setBackground(Color.GRAY);
+		bottomPanel.setBackground(Color.GRAY);
+		
+		setupPanels(topPanel, middlePanel, bottomPanel);
+	
+		pane.add(topPanel, BorderLayout.NORTH);
+		pane.add(middlePanel, BorderLayout.CENTER);
+		pane.add(bottomPanel, BorderLayout.SOUTH);
+		
+		// Refresh size
+		setSize(getPreferredSize());
+		validate();
+	}
 	
 	public void refresh() {
 		setFocusable(true);

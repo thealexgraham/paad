@@ -24,7 +24,7 @@ import net.alexgraham.thesis.ui.connectors.Connector;
 import net.alexgraham.thesis.ui.connectors.Connector.Connectable;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
 
-public class RoutinePlayer extends Synth implements Connectable, Serializable {
+public class PatternPlayer extends Synth implements Connectable, Serializable {
 	
 	/**
 	 * 
@@ -44,7 +44,7 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 	}
 	
 	private CopyOnWriteArrayList<PlayerListener> listeners = 
-			new CopyOnWriteArrayList<RoutinePlayer.PlayerListener>();
+			new CopyOnWriteArrayList<PatternPlayer.PlayerListener>();
 	
 	protected String name;
 //	private UUID id;
@@ -55,7 +55,7 @@ public class RoutinePlayer extends Synth implements Connectable, Serializable {
 	private PlayState state = PlayState.DISABLED;
 
 	
-	public RoutinePlayer(Def def) {
+	public PatternPlayer(Def def) {
 		super(def);
 		init();
 	}

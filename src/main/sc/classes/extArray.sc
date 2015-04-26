@@ -7,4 +7,8 @@
 		});
 		^newArray;
 	}
+
+	last {
+		^this.at(this.size - 1);
+	}
 }

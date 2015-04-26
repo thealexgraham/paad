@@ -84,85 +84,59 @@ public class PatternGenModule extends ModulePanel {
 		patternGen.close();
 	}
 	
-	public void setupWindow(Container pane) {
+	public void setupPanels(ConnectablePanel topPanel, 
+			ConnectablePanel middlePanel, 
+			ConnectablePanel bottomPanel) {
 		
-		ConnectablePanel topPanel;
-		ConnectablePanel bottomPanel;
-		ConnectablePanel middlePanel;
-		
-		//pane.setSize(300, 150);
-		pane.setLayout(new BorderLayout());
-				
 		//Top Panel//
+		topPanel.setLayout(new FlowLayout());
 		
-		topPanel = new ConnectablePanel(new FlowLayout());
-		
-//		ConnectablePanel connectablePanel = new ConnectablePanel(Location.TOP, patternGen, ConnectorType.ACTION_IN);
-//		topPanel.add(connectablePanel);
-//		this.addConnectablePanel(connectablePanel);
-//		
 		JLabel topLabel = getTitleLabel();
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
 		// Add pattern out connector
-		topPanel.addConnector(Location.TOP, patternGen.getConnector(ConnectorType.CHOICE_CHANGE_OUT));
-		this.addConnectablePanel(topPanel);
+		topPanel.addConnector(Location.TOP, patternGen.getConnector(ConnectorType.CHOICE_CHANGE_OUT), this);		
+		
 		
 		//Middle Panel//
-		middlePanel = new ConnectablePanel();
-//		middlePanel.addConnector(Location.LEFT, patternGen.getConnector(ConnectorType.ACTION_IN));
-//		this.addConnectablePanel(middlePanel);
-//		
-		
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-
-//		middlePanel.setLayout(new GridLayout(0, 1, 0, 0));
-//		middlePanel.add(new JLabel("testing "));
-//		middlePanel.add(new JLabel("testing"));
+		
 		addParameters(middlePanel);
+		
 		//scrollPane = new JScrollPane(middlePanel);
 		
 		JPanel actionInPanel = new JPanel();
 		actionInPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		JLabel actionLabel = new JLabel("Generate New");
 		actionInPanel.add(actionLabel);
-		middlePanel.add(ModuleFactory.createSideConnectPanel(this, patternGen.getConnector(ConnectorType.ACTION_IN), actionInPanel));
+		JPanel actionPanel = ModuleFactory.createSideConnectPanel(this, patternGen.getConnector(ConnectorType.ACTION_IN), actionInPanel);
+		middlePanel.add(actionPanel);
 		
 		//Bottom Panel//
-
-		bottomPanel = new ConnectablePanel(new FlowLayout());
-
-		// Set up panels //
-		topPanel.setBackground(Color.DARK_GRAY);
-		//middlePanel.setBackground(Color.GRAY);
-		bottomPanel.setBackground(Color.GRAY);
 		
 		// Create connectors //
 		bottomPanel.addConnector(Location.BOTTOM, patternGen.getConnector(ConnectorType.CHOICE_CHANGE_OUT));
 		this.addConnectablePanel(bottomPanel);
-
-		pane.add(topPanel, BorderLayout.NORTH);
-		pane.add(middlePanel, BorderLayout.CENTER);
-		pane.add(bottomPanel, BorderLayout.SOUTH);
-	
 	}
+	
+
 	public void addParameters(JPanel panel) {
+//		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
 		ArrayList<ParamModel> models = patternGen.getParamModels(); //((PatternGenDef)patternGen.getDef()).getParams());
 		for (ParamModel baseModel : models) {
 
 			if (baseModel.getClass() == IntParamModel.class) {
 				IntParamModel model = (IntParamModel) baseModel;
 				panel.add(ModuleFactory.createIntParamPanel(this, model));
-			} else if (baseModel.getClass() == ChoiceParamModel.class) {
+			} 
+			else if (baseModel.getClass() == ChoiceParamModel.class) {
 				ChoiceParamModel model = (ChoiceParamModel) baseModel;
 				panel.add(ModuleFactory.createChoiceParamPanel(this, model));
 			}
 			
 			panel.add(new JSeparator());
 
-		
-			
 		}
 	}
    

@@ -12,7 +12,7 @@ import net.alexgraham.thesis.supercollider.synths.defs.Def;
 public class LaunchTreeModel {
 	
 	TreeMap<String, DefaultMutableTreeNode> categories = new TreeMap<String, DefaultMutableTreeNode>();
-	DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+	DefaultMutableTreeNode root = new DefaultMutableTreeNode("All");
 	DefaultTreeModel treeModel;
 	
 	Def def = new Def("test", App.sc);

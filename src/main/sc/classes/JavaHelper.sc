@@ -8,6 +8,7 @@ JavaHelper {
 	var <>java;
 	var loaded;
 	var <>pendingDefs;
+	var <>defFolder;
 	var masterIn;
 	var didReady;
 
@@ -104,7 +105,7 @@ JavaHelper {
 		this.createSynthListeners;
 		this.createInstListeners;
 		this.createEffectListeners;
-		this.createRoutListeners;
+		this.createPatternPlayerListeners;
 		this.createChangeFuncListeners;
 		this.createChooserListeners;
 		this.createPatternGenListeners;
@@ -293,8 +294,8 @@ JavaHelper {
 			\taskRunner, {
 				this.newTaskRunner(name, function, params);
 			},
-			\routinePlayer, {
-				this.newRoutPlayer(name, function, params);
+			\patternPlayer, {
+				this.newPatternPlayer(name, function, params);
 			},
 			\specialAction, {
 				function = {};

@@ -17,7 +17,7 @@ import net.alexgraham.thesis.supercollider.models.LaunchTreeModel;
 import net.alexgraham.thesis.supercollider.models.ParamGroupModel;
 import net.alexgraham.thesis.supercollider.models.PlayerModel;
 import net.alexgraham.thesis.supercollider.models.SynthModel;
-import net.alexgraham.thesis.supercollider.players.RoutinePlayer;
+import net.alexgraham.thesis.supercollider.players.PatternPlayer;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.ui.connectors.Connection;
 
