@@ -96,11 +96,12 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 		 if (mainExportGroup == null) {
 			 mainExportGroup = App.paramGroupModel.newExportGroup(mainExportName);
 		 }
-	
+		 
 
 		// Create faders
 		Def faderDef = App.defModel.getDefByName("fader");
 		ArrayList<Effect> faders = new ArrayList<Effect>();
+		
 
 		// Need to wait for done messages
 		if (faderDef != null) {
@@ -155,6 +156,11 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 						Connection conn = new Connection(masterFader.getConnector(ConnectorType.AUDIO_INPUT), fader.getConnector(ConnectorType.AUDIO_OUTPUT));
 						conn.connectModules();
 						//App.connectionModel.addConnection(conn);
+					}
+					
+					if (App.sc.isRebooted()){
+						// Remove the previous master fader
+						faderPanel.removeAll();
 					}
 					
 					faderPanel.setup(faders, masterFader);

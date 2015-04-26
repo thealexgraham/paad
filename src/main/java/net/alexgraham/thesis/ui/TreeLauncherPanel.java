@@ -141,10 +141,11 @@ public class TreeLauncherPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//synthList.updateUI();
-				//App.sc.sendMessage("/start/ready", 1);
+				App.sc.sendMessage("/test/test", 1);
 		        for (int i = 0; i < tree.getRowCount(); i++) {
 		            tree.expandRow(i);
 		        }
+		        
 			}
 		});
 

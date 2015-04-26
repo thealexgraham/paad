@@ -39,7 +39,7 @@ ModuleType {
 					var min = item[2];
 					var max = item[3];
 					var default = item[4];
-					var paramBus = ParameterBus.new(name, default, min, max);
+					var paramBus = ParameterBus.new(name, default * 1.0, min * 1.0, max * 1.0);
 					argsDict.put(name, paramBus);
 					paramBus.ownerId = id;
 				},

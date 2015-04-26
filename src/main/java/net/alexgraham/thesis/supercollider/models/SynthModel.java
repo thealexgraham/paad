@@ -23,6 +23,7 @@ import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.SpecialAction;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.TaskPlayer;
 import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.supercollider.synths.defs.ChangeFuncDef;
 import net.alexgraham.thesis.supercollider.synths.defs.ChooserDef;
@@ -246,6 +247,9 @@ public class SynthModel implements Serializable {
 				break;
 			case "taskrunner":
 				instance = new TaskRunner(def);
+				break;
+			case "taskplayer":
+				instance = new TaskPlayer(def);
 				break;
 			case "patternplayer":
 				instance = new PatternPlayer(def);

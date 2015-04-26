@@ -37,6 +37,7 @@ import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.SpecialAction;
 import net.alexgraham.thesis.supercollider.synths.Synth;
+import net.alexgraham.thesis.supercollider.synths.TaskPlayer;
 import net.alexgraham.thesis.supercollider.synths.TaskRunner;
 import net.alexgraham.thesis.ui.modules.ChangeFuncModule;
 import net.alexgraham.thesis.ui.modules.ChooserModule;
@@ -46,6 +47,7 @@ import net.alexgraham.thesis.ui.modules.PatternGenModule;
 import net.alexgraham.thesis.ui.modules.PatternPlayerModule;
 import net.alexgraham.thesis.ui.modules.SpecialActionModule;
 import net.alexgraham.thesis.ui.modules.SynthModule;
+import net.alexgraham.thesis.ui.modules.TaskPlayerModule;
 import net.alexgraham.thesis.ui.modules.TaskRunnerModule;
 
 public class LineConnectPanel extends JPanel implements SynthModelListener, PlayerModelListener {
@@ -476,6 +478,10 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 			module = new ChooserModule(100, 300, (Chooser)instance); 
 		} else if (instance.getClass() == TaskRunner.class) {
 			module = new TaskRunnerModule((TaskRunner)instance);
+			
+		} else if (instance.getClass() == TaskPlayer.class) {
+				module = new TaskPlayerModule((TaskPlayer)instance);
+				
 		} else if (instance.getClass() == SpecialAction.class) {
 			module = new SpecialActionModule((SpecialAction) instance);
 		} else {

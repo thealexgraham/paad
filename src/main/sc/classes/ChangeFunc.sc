@@ -31,7 +31,7 @@ ChangeFunc : ModuleType {
 	}
 
 	doChange { |parameter|
-		var args = [\value, parameter.value, \min, parameter.min, \max, parameter.max];
+		var args = [\value, parameter.value, \min, parameter.min, \max, parameter.max, \default, parameter.default];
 		var newValue;
 
 		// Add our current arguments into the [\arg, value] array

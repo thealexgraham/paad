@@ -56,7 +56,7 @@ void FMODOtherState::set^^instance_name^_^param_name^(float value) {
 	%%%SET_PARAM_FLOAT%%%
 	case FMOD_OTHER_PARAM_^^instance_name^^_^^param_name^^:
 		state->set^^instance_name^_^param_name^(value);
-		state->sendParam("/^instance_type^/paramc", "^param_name^", "^instance_id^", value);
+		state->sendParam("/^instance_type^/live/paramc", "^param_name^", "^instance_id^", value);
 		return FMOD_OK;
 ### ITERATE_END ###
 

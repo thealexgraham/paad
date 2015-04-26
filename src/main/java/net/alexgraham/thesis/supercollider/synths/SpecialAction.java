@@ -65,11 +65,11 @@ public class SpecialAction extends Instance implements Connectable, Serializable
 	}
 	
 	public void connectAction(Instance target, String actionType) {
-		App.sc.sendMessage("/special/connect/action", "special", this.action, target.getDefName(), target.getID(), actionType);
+		App.sc.sendMessage("/module/connect/action", "special", this.action, target.getDefName(), target.getID(), actionType);
 	}
 	
 	public void disconnectAction(Instance target, String actionType) {
-		App.sc.sendMessage("/special/disconnect/action", "special", this.action, target.getDefName(), target.getID(), actionType);	
+		App.sc.sendMessage("/module/disconnect/action", "special", this.action, target.getDefName(), target.getID(), actionType);	
 	}
 	
 	

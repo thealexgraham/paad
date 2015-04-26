@@ -5,6 +5,7 @@ ParameterBus {
 	var <>max;
 	var <>bus;
 	var <>ownerId;
+	var <>default;
 
 	*new { arg name, value, min, max;
 		^super.new.init(name, value, min, max);
@@ -15,6 +16,7 @@ ParameterBus {
 		value = newValue;
 		min = newMin;
 		max = newMax;
+		default = newValue;
 		bus = Bus.control.set(value);
 	}
 

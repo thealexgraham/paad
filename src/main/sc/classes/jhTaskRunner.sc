@@ -24,45 +24,23 @@
 		dictName.toLower.asSymbol.envirPut(Dictionary.new);
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		this.addOSCResponder('/taskrunner/play', { arg msg;
+		this.addOSCResponder('/player/play', { arg msg;
 				// Set float1
 			var name = msg[1];
 			var id = msg[2];
 
-			var taskRunner = name.idGet(id);
-			taskRunner.play;
+			var player = name.idGet(id);
+			player.play;
 		});
 
 		// [/synth/newparam, synthName, paramName, id, value]
-		this.addOSCResponder('/taskrunner/stop', { arg msg;
+		this.addOSCResponder('/player/stop', { arg msg;
 				// Set float1
 			var name = msg[1];
 			var id = msg[2];
 
-			var taskRunner = name.idGet(id);
-			taskRunner.stop;
-		});
-
-		// New Functions
-		this.addOSCResponder('/taskrunner/connect/action', { arg msg;
-			// Set float1
-			var name = msg[1], id = msg[2], targetName = msg[3], targetId = msg[4], action = msg[5];
-			var player, targetObj;
-
-			player = name.idGet(id);
-			targetObj = targetName.idGet(targetId);
-			player.addListener(targetObj, action.asSymbol);
-
-		});
-
-		this.addOSCResponder('/taskrunner/disconnect/action', { arg msg;
-			// Set float1
-			var name = msg[1], id = msg[2], targetName = msg[3], targetId = msg[4], action = msg[5];
-			var player, targetObj;
-
-			player = name.idGet(id);
-			targetObj = targetName.idGet(targetId);
-			player.removeListener(targetObj, action.asSymbol);
+			var player = name.idGet(id);
+			player.stop;
 		});
 
 	}

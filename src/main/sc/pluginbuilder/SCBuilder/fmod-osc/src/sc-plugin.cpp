@@ -26,8 +26,8 @@ This example shows how to create a simple gain DSP effect.
 ///=============================
 ///%%%CONST_DEFINES%%%
 
-#define TOP_ROUTE "/Untitled"
-static const int PORT = 57125;
+#define TOP_ROUTE "/Live-exportpattern"
+static const int PORT = 53120;
 
 ///=============================
 
@@ -55,6 +55,15 @@ enum
 	
 	FMOD_OTHER_PARAM_MASTER_AMP,
 
+	
+	FMOD_OTHER_PARAM_SIMPLESCALE2_ROOT,
+
+	
+	FMOD_OTHER_PARAM_SIMPLESCALE2_LENGTHMAX,
+
+	
+	FMOD_OTHER_PARAM_SIMPLESCALE2_OCTAVEMAX,
+
 	///=============================
     FMOD_OTHER_NUM_PARAMETERS
 };
@@ -77,6 +86,15 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, in
 	
 static FMOD_DSP_PARAMETER_DESC p_Master_amp; // p_Master_amp
 
+	
+static FMOD_DSP_PARAMETER_DESC p_SimpleScale2_root; // p_SimpleScale2_root
+
+	
+static FMOD_DSP_PARAMETER_DESC p_SimpleScale2_lengthMax; // p_SimpleScale2_lengthMax
+
+	
+static FMOD_DSP_PARAMETER_DESC p_SimpleScale2_octaveMax; // p_SimpleScale2_octaveMax
+
 /// ===========================
 
 FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
@@ -85,6 +103,15 @@ FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
 	///%%%PARAM_DESC_POINTERS%%%
 	
 	&p_Master_amp, 
+
+	
+	&p_SimpleScale2_root, 
+
+	
+	&p_SimpleScale2_lengthMax, 
+
+	
+	&p_SimpleScale2_octaveMax, 
 
 	/// =====================================
 };
@@ -95,7 +122,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
 	/// =====================================
 	///%%%DESC_NAME%%%
 	
-    "SuperCollider Untitled",
+    "PAAD Live-exportpattern",
 
 	/// =====================================
     0x00010000,     // plug-in version
@@ -131,6 +158,15 @@ F_DECLSPEC F_DLLEXPORT FMOD_DSP_DESCRIPTION* F_STDCALL FMODGetDSPDescription()
 	
 	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_amp, "amp", "f", "Adjusts amp", 0, 1, 0.5);
 
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale2_root, "root", "f", "Adjusts root", 0, 127, 62);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale2_lengthMax, "lengthMax", "f", "Adjusts lengthMax", 0, 20, 9);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale2_octaveMax, "octaveMax", "f", "Adjusts octaveMax", -5, 5, -1);
+
 	/// ====================================
 
     return &FMOD_Other_Desc;
@@ -152,6 +188,18 @@ public:
 	void setMaster_amp(float); 
 	float Master_amp() const { return m_Master_amp; }  
 
+	
+	void setSimpleScale2_root(float); 
+	float SimpleScale2_root() const { return m_SimpleScale2_root; }  
+
+	
+	void setSimpleScale2_lengthMax(float); 
+	float SimpleScale2_lengthMax() const { return m_SimpleScale2_lengthMax; }  
+
+	
+	void setSimpleScale2_octaveMax(float); 
+	float SimpleScale2_octaveMax() const { return m_SimpleScale2_octaveMax; }  
+
 	/// ================================
 
 	void sendParam(const char *, const char *, const char *, float);
@@ -159,7 +207,6 @@ public:
 	void setOSCID(int);
 
 	int osc_id() const { return m_osc_id; }
-	PROCESS_INFORMATION pi;
 
 private:
 
@@ -167,6 +214,15 @@ private:
 	///%%%PARAM_PRIVATE_DECS%%%
 	
 	float m_Master_amp; 
+
+	
+	float m_SimpleScale2_root; 
+
+	
+	float m_SimpleScale2_lengthMax; 
+
+	
+	float m_SimpleScale2_octaveMax; 
 
 	/// ===============================
 
@@ -203,6 +259,21 @@ void FMODOtherState::reset()
 
 void FMODOtherState::setMaster_amp(float value) { 
 	m_Master_amp = value;
+}
+
+
+void FMODOtherState::setSimpleScale2_root(float value) { 
+	m_SimpleScale2_root = value;
+}
+
+
+void FMODOtherState::setSimpleScale2_lengthMax(float value) { 
+	m_SimpleScale2_lengthMax = value;
+}
+
+
+void FMODOtherState::setSimpleScale2_octaveMax(float value) { 
+	m_SimpleScale2_octaveMax = value;
 }
 
 /// =======================================
@@ -248,32 +319,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
     dsp_state->plugindata = (FMODOtherState *)FMOD_DSP_STATE_MEMALLOC(dsp_state, sizeof(FMODOtherState), FMOD_MEMORY_NORMAL, "FMODOtherState");
 
 	FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-
-	char * command = "supercollider/sclang.exe";
-
-	STARTUPINFO si;
-
-    ZeroMemory( &si, sizeof(si) );
-    si.cb = sizeof(si);
-    ZeroMemory( &state->pi, sizeof(state->pi) );
-
-    // Start the child process. 
-    if( !CreateProcess( command,   // No module name (use command line)
-        /// =====================================
-		///%%%PROC_ARGS%%%
-	
-    " -d supercollider -l fmod/Untitled/sclang_conf.yaml -u 57125",
-
-		/// =====================================
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        FALSE,          // Set handle inheritance to FALSE
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory 
-        &si,            // Pointer to STARTUPINFO structure
-        &state->pi )           // Pointer to PROCESS_INFORMATION structure
-    )
+	state->sendMsg("/live/start", 1);
 
     if (!dsp_state->plugindata)
     {
@@ -285,7 +331,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
 FMOD_RESULT F_CALLBACK FMOD_Other_dsprelease(FMOD_DSP_STATE *dsp_state)
 {
     FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-	TerminateProcess(state->pi.hProcess, 1);
+	state->sendMsg("/live/stop", 1);
 	//state->sendMsg("/dying", state->osc_id());
     FMOD_DSP_STATE_MEMFREE(dsp_state, state, FMOD_MEMORY_NORMAL, "FMODOtherState");
     return FMOD_OK;
@@ -316,7 +362,25 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspsetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	
 	case FMOD_OTHER_PARAM_MASTER_AMP:
 		state->setMaster_amp(value);
-		state->sendParam("/module/paramc", "amp", "1", value);
+		state->sendParam("/module/live/paramc", "amp", "1", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SIMPLESCALE2_ROOT:
+		state->setSimpleScale2_root(value);
+		state->sendParam("/module/live/paramc", "root", "2", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SIMPLESCALE2_LENGTHMAX:
+		state->setSimpleScale2_lengthMax(value);
+		state->sendParam("/module/live/paramc", "lengthMax", "2", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SIMPLESCALE2_OCTAVEMAX:
+		state->setSimpleScale2_octaveMax(value);
+		state->sendParam("/module/live/paramc", "octaveMax", "2", value);
 		return FMOD_OK;
 
 	/// =============================================
@@ -336,6 +400,24 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	case FMOD_OTHER_PARAM_MASTER_AMP:
 		*value = state->Master_amp();
 		if (valuestr) sprintf(valuestr, "% fl", state->Master_amp());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SIMPLESCALE2_ROOT:
+		*value = state->SimpleScale2_root();
+		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale2_root());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SIMPLESCALE2_LENGTHMAX:
+		*value = state->SimpleScale2_lengthMax();
+		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale2_lengthMax());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_SIMPLESCALE2_OCTAVEMAX:
+		*value = state->SimpleScale2_octaveMax();
+		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale2_octaveMax());
 		return FMOD_OK;
 
 	/// ==============================================

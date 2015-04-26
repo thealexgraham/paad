@@ -16,7 +16,7 @@ TaskRunner : ModuleType {
 		action = function;
 
 		listeners = Set.new;
-		this.createTask;
+/*		this.createTask;*/
 
 		playing = false;
 	}
@@ -37,15 +37,19 @@ TaskRunner : ModuleType {
 	}
 
 	start {
-		var net = NetAddr("127.0.0.1", ~java.sendPort);
+		"Starting".postln;
 		this.runTask;
 	}
 
 	doAction { |action|
+		"Action Done".postln;
 		switch ( action,
 			\start, { this.start; },
 			{}
 		);
+	}
+
+	finished {
 	}
 
 	addListener { |obj, action|

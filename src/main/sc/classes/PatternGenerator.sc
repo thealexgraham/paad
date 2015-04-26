@@ -35,6 +35,9 @@ PatternGenerator : ModuleType {
 		this.updateListeners;
 	}
 
+	// update the patterns in a dict
+	// Send out the patterns
+
 	getCurrentPattern {
 		^currentPattern;
 	}

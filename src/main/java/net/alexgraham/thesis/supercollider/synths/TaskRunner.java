@@ -30,25 +30,7 @@ public class TaskRunner extends Synth implements Connectable, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public interface TaskListener {
-		public void playStateChanged(PlayState state);
-	}
-	
-	public enum PlayState {
-		READY, PLAYING, DISABLED
-	}
-	
-	private CopyOnWriteArrayList<TaskListener> listeners = 
-			new CopyOnWriteArrayList<TaskRunner.TaskListener>();
-	
-	protected String name;
-//	private UUID id;
-	boolean playing = false;
-	
-	private Instrument instrument = null;
-	
-	private PlayState state = PlayState.DISABLED;
-	
+
 	public TaskRunner(Def def) {
 		super(def);
 		init();
@@ -60,7 +42,7 @@ public class TaskRunner extends Synth implements Connectable, Serializable {
 		closeCommand = "/module/remove";
 		
 		addConnector(ConnectorType.ACTION_OUT);
-		addConnector(ConnectorType.ACTION_IN, "cycle");
+		addConnector(ConnectorType.ACTION_IN, "start");
 		addConnector(ConnectorType.ACTION_IN, "stop");
 		
 		createOSCListeners();
@@ -75,114 +57,27 @@ public class TaskRunner extends Synth implements Connectable, Serializable {
 				actionOutConnector.flashConnection();
 			}
 		});
-		
-		App.sc.createListener("/" + this.getID() + "/state", new OSCListener() {
-			
-			@Override
-			public void acceptMessage(Date time, OSCMessage message) {
-				System.out.println("Got state message");
-    			List<Object> arguments = message.getArguments();
-    			final String state = (String)arguments.get(0);
-    			
-    			switch (state) {
-    				case "playing":
-    					playing = true;
-    					playStateChange();
-    					break;
-    				case "reset":
-    					playing = false;
-    					playStateChange();
-    					break;
-    			}
-			}
-		});
 	}
 	
-	/*
-	 * Reset for 
-	 */
-	public void reset() {
-		playing = false;
-		state = PlayState.DISABLED;
-		firePlayStateChange();
-	}
+
 	@Override
 	public void refreshModels() {
 		super.refreshModels();
 		createOSCListeners();
-		reset();
-		System.out.println("Refreshing");
-	}
-	
-	public void addListener(TaskListener l) {
-		listeners.add(l);
 	}
 
 	
 	public void connectAction(Instance target, String actionType) {
-		App.sc.sendMessage("/taskrunner/connect/action", this.getDefName(), this.getID(), target.getDefName(), target.getID(), actionType);
+		App.sc.sendMessage("/module/connect/action", this.getDefName(), this.getID(), target.getDefName(), target.getID(), actionType);
 	}
 	
 	public void disconnectAction(Instance target, String actionType) {
-		App.sc.sendMessage("/taskrunner/disconnect/action", this.getDefName(), this.getID(), target.getDefName(), target.getID(), actionType);	
-	}
-	
-	public void playOrPause() {
-		if (playing) {
-			stop();
-		} else {
-			play();
-		}
+		App.sc.sendMessage("/module/disconnect/action", this.getDefName(), this.getID(), target.getDefName(), target.getID(), actionType);	
 	}
 	
 	public void sendPlay() {
-		App.sc.sendMessage("/taskrunner/play", this.getDefName(), this.id.toString());
-	}
-	
-	public void play() {
-		if (canPlay() && !playing) {
-			sendPlay();
-			playing = true;
-			playStateChange();
-		}
-	}
-	
-	public void stop() {
-		
-		if (playing) {
-			App.sc.sendMessage("/taskrunner/stop", this.getDefName(), this.id.toString());
-			playing = false;
-			playStateChange();
-		}
-	}
-	
-	public void close() {
-		if (playing) {
-			stop();
-		}
-	}
-	
-	public boolean canPlay() {
-		return true;
-	}
-	
-	private void firePlayStateChange() {
-		for (TaskListener playerListener : listeners) {
-			playerListener.playStateChanged(state);
-		}
-	}
-	
-	private void playStateChange() {
-		if (playing) {
-			state = PlayState.PLAYING;
-		} else {
-			state = PlayState.READY;
-		}
-		if (!canPlay()) {
-			state = PlayState.DISABLED;
-		}
-		
-		firePlayStateChange();
+		App.sc.sendMessage("/module/action", this.getDefName(), this.getID(), "start");
+		//App.sc.sendMessage("/taskrunner/start", this.getDefName(), this.id.toString());
 	}
 	
 	public String getIDString() {

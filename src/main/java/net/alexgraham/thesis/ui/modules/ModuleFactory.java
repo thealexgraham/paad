@@ -340,6 +340,9 @@ public class ModuleFactory implements Serializable {
 		rightPanel.add(rightConnectable);
 		rightPanel.add(Box.createHorizontalStrut(1));
 		
+		rightPanel.addMouseListener(new ParamMenuAdapter((ParamModel) model));
+		leftPanel.addMouseListener(new ParamMenuAdapter((ParamModel) model));
+		
 		// Put it together
 		// -----------------------
 		fillPanel(leftPanel, rightPanel, panel, c);
@@ -372,12 +375,16 @@ public class ModuleFactory implements Serializable {
 		// Add to panels
 		// -----------------------
 		leftPanel.add(leftConnectable);
+		leftPanel.add(new JLabel(new ExportIcon(model)));
 		leftPanel.add(paramNameLabel);
 		leftPanel.add(Box.createHorizontalStrut(10));
 
 		rightPanel.add(paramSpinner);
 		rightPanel.add(rightConnectable);
 		
+		rightPanel.addMouseListener(new ParamMenuAdapter((ParamModel) model));
+		leftPanel.addMouseListener(new ParamMenuAdapter((ParamModel) model));
+
 		fillPanel(leftPanel, rightPanel, panel, c);
 			
 	}

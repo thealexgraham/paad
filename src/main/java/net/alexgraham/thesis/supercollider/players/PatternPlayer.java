@@ -183,7 +183,7 @@ public class PatternPlayer extends Synth implements Connectable, Serializable {
 	}
 	
 	public void sendPlay() {
-		App.sc.sendMessage("/routplayer/play", this.id.toString());
+		App.sc.sendMessage("/player/play", this.id.toString());
 	}
 	
 	public void play() {
@@ -197,7 +197,7 @@ public class PatternPlayer extends Synth implements Connectable, Serializable {
 	public void stop() {
 		
 		if (playing) {
-			App.sc.sendMessage("/routplayer/stop", this.id.toString());
+			App.sc.sendMessage("/player/stop", this.id.toString());
 			playing = false;
 			playStateChange();
 		}

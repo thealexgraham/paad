@@ -21,6 +21,7 @@ import net.alexgraham.thesis.supercollider.synths.defs.PatternGenDef;
 import net.alexgraham.thesis.supercollider.synths.defs.PatternPlayerDef;
 import net.alexgraham.thesis.supercollider.synths.defs.SpecialActionDef;
 import net.alexgraham.thesis.supercollider.synths.defs.SynthDef;
+import net.alexgraham.thesis.supercollider.synths.defs.TaskPlayerDef;
 import net.alexgraham.thesis.supercollider.synths.defs.TaskRunnerDef;
 
 import com.illposed.osc.OSCListener;
@@ -118,9 +119,10 @@ public class DefModel implements Messenger {
 	}
 	
 	public Def addNewDef(String defName, String type) {
-		
+		System.out.println("Trying " + defName);
 		// Keep existing defs in memory since a Synth might point to it
 		if (defTable.containsKey(defName)) {
+			System.out.println("Already exists");
 			// Clear def so it can be recreated
 			Def def = defTable.get(defName);
 			def.setType(type); // Necessary?
@@ -155,6 +157,9 @@ public class DefModel implements Messenger {
 				break;
 			case "taskrunner":
 				def = new TaskRunnerDef(defName);
+				break;
+			case "taskplayer":
+				def = new TaskPlayerDef(defName);
 				break;
 			case "patternplayer":
 				def = new PatternPlayerDef(defName);

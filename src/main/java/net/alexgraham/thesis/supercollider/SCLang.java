@@ -89,6 +89,13 @@ public class SCLang extends ChangeSender {
 	
 	private String lastCommand = "";
 	
+	private boolean rebooted = false;
+	
+	
+	public boolean isRebooted() {
+		return rebooted;
+	}
+
 	public int getSendPort() {
 		return sendPort;
 	}
@@ -322,8 +329,11 @@ public class SCLang extends ChangeSender {
     	
     	App.sc.stopSCLang();
     	
+    	rebooted = true;
+    	
     	// Do this since the server will send new versions
     	App.defModel.clearDefModel();
+    	App.launchTreeModel.clearLaunchTreeModel();
     	
     	App.sc.startSCLang();
     	

@@ -56,6 +56,7 @@
 			var changeFunc, owner, parameter;
 
 			changeFunc = cfName.idGet(cfId);
+			owner = ownerName.idGet(ownerId);
 
 			if (owner.class == Dictionary,
 				{

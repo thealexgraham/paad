@@ -11,6 +11,7 @@ import net.alexgraham.thesis.supercollider.synths.defs.Def;
 
 public class LaunchTreeModel {
 	
+	
 	TreeMap<String, DefaultMutableTreeNode> categories = new TreeMap<String, DefaultMutableTreeNode>();
 	DefaultMutableTreeNode root = new DefaultMutableTreeNode("All");
 	DefaultTreeModel treeModel;
@@ -27,9 +28,15 @@ public class LaunchTreeModel {
 	public DefaultMutableTreeNode getRoot() {
 		return root;
 	}
+	public void clearLaunchTreeModel() {
+		categories = new TreeMap<String, DefaultMutableTreeNode>();
+		root = new DefaultMutableTreeNode("All");
+		treeModel = new DefaultTreeModel(root);
+	}
 	
 	public void addSynthDef(Def def) {
 		String className = def.getClass().getSimpleName();
+
 		if (categories.containsKey(className)) {
 			DefaultMutableTreeNode category = categories.get(className);
 			DefaultMutableTreeNode newChild = new DefaultMutableTreeNode(def);

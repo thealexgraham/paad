@@ -46,7 +46,7 @@
 				var value = item[1];
 				module.setParam(paramName, value);
 			});
-
+			"BLAH BLAH".postln;
 			("Module added at" + id).postln;
 		});
 
@@ -65,12 +65,15 @@
 		this.addOSCResponder('/module/paramc', { arg msg;
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
+			"receiving paramc".postln;
 			name.idGet(id).setParam(param, val); // Change the value at the bus
 		}, false);
 
 		this.addOSCResponder('/module/live/paramc', { arg msg;
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
+			msg.postln;
+			"Got live message".postln;
 			name.idGet(id).setParamLive(param, val); // Change the value at the bus
 		}, false);
 
@@ -80,6 +83,29 @@
 			var name = msg[1], id = msg[2], action = msg[3];
 			name.idGet(id).doAction(action.asSymbol);
 		}, false);
+
+		// New Functions
+		this.addOSCResponder('/module/connect/action', { arg msg;
+			// Set float1
+			var name = msg[1], id = msg[2], targetName = msg[3], targetId = msg[4], action = msg[5];
+			var player, targetObj;
+
+			player = name.idGet(id);
+			targetObj = targetName.idGet(targetId);
+			player.addListener(targetObj, action.asSymbol);
+
+		});
+
+		this.addOSCResponder('/module/disconnect/action', { arg msg;
+			// Set float1
+			var name = msg[1], id = msg[2], targetName = msg[3], targetId = msg[4], action = msg[5];
+			var player, targetObj;
+
+			player = name.idGet(id);
+			targetObj = targetName.idGet(targetId);
+			player.removeListener(targetObj, action.asSymbol);
+		});
+
 	}
 
 	newDef { |defName, type, function, params|
@@ -132,13 +158,17 @@
 				}
 			);
 		});
-		// net.sendBundle(0, message);
+
+/*		if (java = false,
+			{ net.sendBundle(0, message); },
+			{ this.sendDefVerify(message); }
+		);*/
+
 		this.sendDefVerify(message);
+		//
+
 		^("Definition Added");
 	}
-
-
-
 
 	newDefSeperate { |defName, type, function, params|
 		var net = NetAddr.new("127.0.0.1", this.sendPort);    // create the NetAddr

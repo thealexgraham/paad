@@ -397,9 +397,9 @@ public class DataModel {
 					DoubleParamModel param = (DoubleParamModel) model;
 					bw.write(String.format("%.2f, %.2f, %.2f", 
 							param.getDoubleMinimum(), param.getDoubleMaximum(), param.getObjectValue()));
-				} else if (model.getClass() == IntParam.class) {
+				} else if (model.getClass() == IntParamModel.class) {
 					IntParamModel param = (IntParamModel) model;
-					bw.write(String.format("%d, %d, %d", 
+					bw.write(String.format("%d, %d, %d",
 							param.getMinimum(), param.getMaximum(), param.getValue()));
 				}
 				bw.write("], ");

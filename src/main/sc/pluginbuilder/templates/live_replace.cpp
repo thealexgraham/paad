@@ -16,7 +16,7 @@ static const int PORT = ^lang_port^;
 
 ### SINGLE_START ###
 	%%%DESC_NAME%%%
-    "SuperCollider ^synth_name^",
+    "PAAD ^synth_name^",
 ### SINGLE_END ###
 
 ### ITERATE_START ###

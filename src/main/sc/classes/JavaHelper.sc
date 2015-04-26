@@ -227,6 +227,7 @@ JavaHelper {
 	* Otherwise, add it to the pending list
 	*/
 	addDefinition { |name, type, function, params|
+
 		// Load the SynthDef if it's a SynthDef
 		Routine.run {
 			var c = Condition.new;
@@ -236,7 +237,11 @@ JavaHelper {
 					this.addPendingDef(name.asSymbol);
 					SynthDef(name, function).add;
 					~server.sync(c);
-					// this.removePendingDef(name);
+
+					// If we don't have to wait for the java interface to load, just remove the pending def right now
+					if (java == false,
+						{ this.removePendingDef(name); }
+					);
 			});
 
 			if(ready != true,
@@ -309,14 +314,14 @@ JavaHelper {
 			}
 		);
 
-		if ((type != \chooser), {
+		if ((type != \chooser && java != false), {
 			this.newDef(name, type, function, params); // Send the definition
 		});
 		// Don't need to do this if java
 
 	}
 
-	storeDef { |name, type, funtion, params|
+	storeDef { |name, type, function, params|
 		this.putDef(type, name, (function: function, params: params));
 		this.sendSilentMsg("/def/ready/"++name, 1);
 	}
