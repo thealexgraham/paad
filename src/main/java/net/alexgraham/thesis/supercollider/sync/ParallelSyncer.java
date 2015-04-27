@@ -33,7 +33,7 @@ public class ParallelSyncer extends Syncer{
 		//System.out.println("Adding a sync step with address " + address);
 		// Add this listener to the queue
 		addListener();
-		
+		System.out.println("Adding " + address + " #" + actionsLeft);
 		OSCListener listener = new OSCListener() {
 			@Override
 			public void acceptMessage(Date time, OSCMessage message) {
@@ -95,7 +95,7 @@ public class ParallelSyncer extends Syncer{
 	public void listenerFinished() {
 		// This action is finsihed, remove it
 		actionsLeft = actionsLeft - 1;
-		
+		System.out.println("Actions left " + actionsLeft);
 		if (actionsLeft < 1) {
 			//If theres no actions left we should be done, so do the final action
 			finish();

@@ -109,7 +109,7 @@ public class ChangeFuncModule extends ModulePanel {
 		//Middle Panel//
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 	
-		JButton actionButton = new JButton("Perform Action");
+		JButton actionButton = new JButton("Action");
 		actionButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -133,12 +133,13 @@ public class ChangeFuncModule extends ModulePanel {
 	}
 	
 	public void addParameters(JPanel panel) {
-		for (ParamModel paramModel : getInstance().getParamModels()) {
-			if (paramModel.getClass() == DoubleParamModel.class) {
-				//addDoubleParam((DoubleParamModel) paramModel); 
-				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
-			}
-		}
+		ModuleFactory.addModelParameters(getInstance().getParamModels(), this, panel);
+//		for (ParamModel paramModel : getInstance().getParamModels()) {
+//			if (paramModel.getClass() == DoubleParamModel.class) {
+//				//addDoubleParam((DoubleParamModel) paramModel); 
+//				panel.add(ModuleFactory.createDoubleParamPanel(this, (DoubleParamModel)paramModel));
+//			}
+//		}
 	}
 
 

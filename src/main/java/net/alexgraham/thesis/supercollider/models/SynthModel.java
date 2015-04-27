@@ -144,8 +144,6 @@ public class SynthModel implements Serializable {
 				for (Instance instance : getInstances()) {
 					
 					// Don't need to do this for routine player, since there's no definition
-					if (instance.getClass() == PatternPlayer.class)
-						continue;
 					
 					definitionsSyncer.addStartAction(new SyncAction() {
 						@Override
@@ -186,11 +184,11 @@ public class SynthModel implements Serializable {
 							
 							// Fire instance added for everyone
 							for (SynthModelListener synthModelListener : listeners) {
-
 									synthModelListener.instanceAdded(instance);
 							}
 						}
 					});
+					System.out.println("Adding listener for " + instance.getName());
 					startInstanceSyncer.addOSCListener(instance.getStartCommand() + "/done");
 				}
 				

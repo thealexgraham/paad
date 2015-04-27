@@ -1,8 +1,10 @@
 package net.alexgraham.thesis.supercollider.players;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 
 
 
@@ -17,6 +19,7 @@ import net.alexgraham.thesis.supercollider.synths.Instrument;
 import net.alexgraham.thesis.supercollider.synths.PatternGen;
 import net.alexgraham.thesis.supercollider.synths.Synth;
 import net.alexgraham.thesis.supercollider.synths.defs.Def;
+import net.alexgraham.thesis.supercollider.synths.parameters.models.ChoiceParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
 import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.Connection;
@@ -43,7 +46,7 @@ public class PatternPlayer extends Synth implements Connectable, Serializable {
 		READY, PLAYING, DISABLED
 	}
 	
-	private CopyOnWriteArrayList<PlayerListener> listeners = 
+	transient CopyOnWriteArrayList<PlayerListener> listeners = 
 			new CopyOnWriteArrayList<PatternPlayer.PlayerListener>();
 	
 	protected String name;
@@ -58,6 +61,12 @@ public class PatternPlayer extends Synth implements Connectable, Serializable {
 	public PatternPlayer(Def def) {
 		super(def);
 		init();
+	}
+	
+	private void readObject(java.io.ObjectInputStream in)
+		    throws IOException, ClassNotFoundException {
+		    in.defaultReadObject();
+		    listeners = new CopyOnWriteArrayList<PatternPlayer.PlayerListener>();
 	}
 	
 //	public void start() {
@@ -183,7 +192,7 @@ public class PatternPlayer extends Synth implements Connectable, Serializable {
 	}
 	
 	public void sendPlay() {
-		App.sc.sendMessage("/player/play", this.id.toString());
+		App.sc.sendMessage("/player/play", this.getName(), this.id.toString());
 	}
 	
 	public void play() {
@@ -197,7 +206,7 @@ public class PatternPlayer extends Synth implements Connectable, Serializable {
 	public void stop() {
 		
 		if (playing) {
-			App.sc.sendMessage("/player/stop", this.id.toString());
+			App.sc.sendMessage("/player/stop", this.getName(), this.id.toString());
 			playing = false;
 			playStateChange();
 		}

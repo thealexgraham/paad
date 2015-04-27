@@ -11,6 +11,7 @@ s.waitForBoot({
 	~java = JavaHelper.new(1280);
 
 	~java.ready = true;
+	~java.java = false;
 
 	// Load all files in "startup" dir
 

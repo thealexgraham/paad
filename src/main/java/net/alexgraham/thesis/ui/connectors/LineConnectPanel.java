@@ -72,7 +72,7 @@ public class LineConnectPanel extends JPanel implements SynthModelListener, Play
 	Connector originConnector;
 	
 
-	ArrayList<ConnectablePanel> boxes = new ArrayList<ConnectablePanel>();
+	List<ConnectablePanel> boxes = new CopyOnWriteArrayList<ConnectablePanel>();
 	//CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<Connection>();
 	CopyOnWriteArrayList<Connection> connections = App.connectionModel.getCopyConnections();
 	

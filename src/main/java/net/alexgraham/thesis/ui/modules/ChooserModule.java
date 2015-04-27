@@ -69,7 +69,6 @@ public class ChooserModule extends ModulePanel {
 		
 		JComboBox<String> choiceCombo = new JComboBox<String>(choices);
 		choiceCombo.setSelectedIndex(chooser.getCurrentIndex());
-		choiceCombo.setToolTipText("This is the tooltip");
 		
 		choiceCombo.addActionListener(new ActionListener() {
 			
@@ -82,10 +81,10 @@ public class ChooserModule extends ModulePanel {
 			}
 		});
 		
-		middlePanel.add(choiceCombo);
+//		middlePanel.add(choiceCombo);
 
-		JLabel returnLabel = new JLabel(chooser.getDef().getReturnType());
-		middlePanel.add(ModuleFactory.createSideConnectPanel(this, chooser.getConnector(ConnectorType.CHOICE_CHANGE_OUT), returnLabel));
+//		JLabel returnLabel = new JLabel(chooser.getDef().getReturnType());
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, chooser.getConnector(ConnectorType.CHOICE_CHANGE_OUT), choiceCombo));
 		
 		//Bottom Panel//	
 		// Resize based on innards

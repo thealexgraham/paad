@@ -1,13 +1,8 @@
 package net.alexgraham.thesis.ui.modules;
 
-import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,14 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.alexgraham.thesis.supercollider.synths.SpecialAction;
-import net.alexgraham.thesis.supercollider.synths.TaskRunner;
-import net.alexgraham.thesis.supercollider.synths.TaskRunner.PlayState;
-import net.alexgraham.thesis.supercollider.synths.TaskRunner.TaskListener;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.DoubleParamModel;
-import net.alexgraham.thesis.supercollider.synths.parameters.models.ParamModel;
 import net.alexgraham.thesis.ui.connectors.ConnectablePanel;
 import net.alexgraham.thesis.ui.connectors.Connector.ConnectorType;
-import net.alexgraham.thesis.ui.connectors.ConnectorUI.Location;
 import net.alexgraham.thesis.ui.connectors.ModulePanel;
 
 public class SpecialActionModule extends ModulePanel {

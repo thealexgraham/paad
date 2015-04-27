@@ -28,7 +28,8 @@ public class SpecialAction extends Instance implements Connectable, Serializable
 		return action;
 	}
 	
-	public void init() {	
+	public void init() {
+		startCommand = "/module/add";
 		addConnector(ConnectorType.ACTION_OUT);
 		createOSCListeners();
 	}

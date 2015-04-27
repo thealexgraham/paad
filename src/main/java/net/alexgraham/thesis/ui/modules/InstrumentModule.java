@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -79,7 +80,8 @@ public class InstrumentModule extends ModulePanel {
 		
 		//Middle Panel//
 
-		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+//		middlePanel.setLayout(new GridLayout(0, 1, 5, 5));
+		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		addParameters(middlePanel);
 	
 		//Bottom Panel//

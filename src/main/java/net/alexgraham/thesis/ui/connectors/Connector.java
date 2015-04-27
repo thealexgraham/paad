@@ -31,10 +31,10 @@ public class Connector implements java.io.Serializable {
 	private Connectable connectable;
 	private ConnectorType type = ConnectorType.DEFAULT;
 	
-	transient ArrayList<ConnectorUI> connectorUIs = new ArrayList<ConnectorUI>();
+	transient List<ConnectorUI> connectorUIs = new CopyOnWriteArrayList<ConnectorUI>();
 	
 	private boolean flashing = false;
-	private Timer flashTimer;
+	transient Timer flashTimer;
 	private int flashTime = 200;
 	
 	// Optional
@@ -44,6 +44,13 @@ public class Connector implements java.io.Serializable {
 	}
 	
 	private List<Connection> connections = new CopyOnWriteArrayList<Connection>();
+	
+	private void readObject(java.io.ObjectInputStream in)
+		    throws IOException, ClassNotFoundException {
+		    in.defaultReadObject();
+		    connectorUIs = new CopyOnWriteArrayList<ConnectorUI>();
+		    createFlashTimer(flashTime);
+	}
 	
 	public void addConnection(Connection connection) {
 		connections.add(connection);
@@ -105,7 +112,7 @@ public class Connector implements java.io.Serializable {
 	}
 	
 	public Connector() {
-		connectorUIs = new ArrayList<ConnectorUI>();
+		connectorUIs = new CopyOnWriteArrayList<ConnectorUI>();
 		init();
 	}
 
@@ -140,7 +147,7 @@ public class Connector implements java.io.Serializable {
 		connectorUIs.add(connectorUI);
 	}
 	
-	public ArrayList<ConnectorUI> getConnectorUIs() {
+	public List<ConnectorUI> getConnectorUIs() {
 		return connectorUIs;
 	}
 	
@@ -222,9 +229,4 @@ public class Connector implements java.io.Serializable {
 		return color;
 	}
 	
-	private void readObject(java.io.ObjectInputStream in)
-		    throws IOException, ClassNotFoundException {
-		    in.defaultReadObject();
-		    connectorUIs = new ArrayList<ConnectorUI>();
-		}
 }

@@ -148,6 +148,7 @@
 			var pat;
 			block { |break|
 				loop {
+					"Playing pattern".postln;
 					pat = Pbindf(*[
 						player.template, // Connected instrument data
 						#[\midinote, \dur], Pseq(pattern.value) // the current pattern's value

@@ -90,9 +90,9 @@ public class PatternPlayerModule extends ModulePanel {
 		//Middle Panel//
 		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		
-		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_OUT), new JLabel("Played Action")));
-		
-		middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+
+
+//		middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
 		createButtons(middlePanel);
 
@@ -100,16 +100,10 @@ public class PatternPlayerModule extends ModulePanel {
 		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_IN, "stop"), new JLabel("stop")));
 		
 		ModuleFactory.addModelParameters(player.getParamModels(), this, middlePanel);
-		
-//		patternLabel = new JLabel("Pattern: None");
-//		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.PATTERN_IN), patternLabel));
-//		
-////		middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
-//
-//		
-//		instLabel = new JLabel("Inst: None");
-//		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.INST_PLAY_OUT), instLabel));
-		
+		middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+
+		middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.ACTION_OUT), new JLabel("Played Action")));
+
 		bottomPanel.addConnector(Location.BOTTOM, player.getConnector(ConnectorType.INST_PLAY_OUT), this);
 
 		//scrollPane = new JScrollPane(middlePanel);
@@ -167,3 +161,13 @@ public class PatternPlayerModule extends ModulePanel {
 	}	
 
 }
+
+//patternLabel = new JLabel("Pattern: None");
+//middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.PATTERN_IN), patternLabel));
+//
+////middlePanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+//
+//
+//instLabel = new JLabel("Inst: None");
+//middlePanel.add(ModuleFactory.createSideConnectPanel(this, player.getConnector(ConnectorType.INST_PLAY_OUT), instLabel));
+

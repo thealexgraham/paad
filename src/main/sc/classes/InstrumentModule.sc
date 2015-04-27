@@ -1,32 +1,15 @@
-InstrumentModule {
-	var <>argsDict;
+InstrumentModule : ModuleType {
 	var <>synth;
-	var instanceId;
 	var outBus;
-	var defName;
 
 
 	*new { | id, name, function, arguments |
 		^super.new.init(id, name, function, arguments);
 	}
 
+
 	init { | id, name, function, arguments |
-
-		// Probably shared
-		instanceId = id;
-		argsDict = Dictionary.new;
-
-		arguments.do({ |item, i|
-			var name = item[0];
-			var min = item[1];
-			var max = item[2];
-			var value = item[3];
-			var paramBus = ParameterBus.new(name, value, min, max);
-			paramBus.ownerId = instanceId;
-			argsDict.put(name, paramBus);
-		});
-
-		defName = name;
+		super.init(id, name, function, arguments);
 
 		// OutBus needs to be an actual bus
 		outBus = Bus.control.set(~java.getMasterIn.index);

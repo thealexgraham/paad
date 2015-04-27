@@ -112,7 +112,7 @@ public abstract class ModulePanel extends JPanel {
 	
 	protected JLabel getTitleLabel() {
 		
-		JLabel label = new JLabel(instance.getName());
+		JLabel label = new JLabel(instance.getName().replaceAll("\\d",""));
 		
 //		String type = instance.getDef().getType().toLowerCase();
 //		

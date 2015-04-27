@@ -46,7 +46,6 @@
 				var value = item[1];
 				module.setParam(paramName, value);
 			});
-			"BLAH BLAH".postln;
 			("Module added at" + id).postln;
 		});
 
@@ -65,7 +64,6 @@
 		this.addOSCResponder('/module/paramc', { arg msg;
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
-			"receiving paramc".postln;
 			name.idGet(id).setParam(param, val); // Change the value at the bus
 		}, false);
 
@@ -73,7 +71,6 @@
 			// Set float1
 			var name = msg[1], param = msg[2], id = msg[3], val = msg[4];
 			msg.postln;
-			"Got live message".postln;
 			name.idGet(id).setParamLive(param, val); // Change the value at the bus
 		}, false);
 

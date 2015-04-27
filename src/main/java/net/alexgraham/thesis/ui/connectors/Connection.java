@@ -132,6 +132,7 @@ public class Connection implements java.io.Serializable {
 		
 		return false;
 	}
+	
 	public void refreshConnectors() {
 		origin.init();
 		destination.init();
