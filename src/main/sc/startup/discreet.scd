@@ -127,11 +127,11 @@
 	{ |inBus, outBus = 0, mix = 0.33, room = 0.5, damp = 0.5, mul = 1, add = 0, gain = 1|
 		var sig;
 		sig = In.ar(inBus, 2);
-		sig = FreeVerb.ar(sig, mix, room, damp, mul, add);
+		sig = FreeVerb.ar(sig, mix, room, damp, mul, add) + sig;
 		Out.ar(outBus, sig * gain);
 	},
 	~java.createParamsList(
-		~java.addFloat(\verbMix, 0.00, 1.00, 0.20),
+		~java.addFloat(\mix, 0.00, 1.00, 0.20),
 		~java.addFloat(\room, 0.00, 1.00, 1.00),
 		~java.addFloat(\damp, 0.00, 1.00, 1.00),
 	)

@@ -86,9 +86,10 @@ public class SynthPanel extends JPanel  {
 		for (ParamModel model : synth.getParamModels()) {
 			if (model.getClass() == DoubleParamModel.class) {
 				addDial( (DoubleParamModel)model );
-			} else if (model.getClass() == IntParamModel.class) {
-				addSpinner((IntParamModel) model);
 			}
+//			} else if (model.getClass() == IntParamModel.class) {
+//				addSpinner((IntParamModel) model);
+//			}
 
 		}
 		
@@ -171,7 +172,7 @@ public void addSpinner(IntParamModel model) {
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
-		//middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+//		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 		middlePanel.setLayout(new GridLayout(0, 2));
 		scrollPane = new JScrollPane(middlePanel);
 		

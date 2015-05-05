@@ -5,12 +5,37 @@
 		trig = Impulse.kr(speed);
 		env = EnvGen.kr(Env.perc(0.01, 0.1), trig, 0.5);
 		freq = (Stepper.kr(trig, 0, 42, 56, 2, 42)).midicps;
-		osc = SinOsc.ar(freq * [1, 1.01], env);
+		osc = Saw.ar(freq * [1, 1.01], env);
 		//flt = RLPF.ar(osc, freq * 2, 0.7);
 		Out.ar(outBus, Pan2.ar(osc * gain, pan));
 
 	},
 	[[\speed, 0, 5, 2]]
+);
+
+~java.addDefinition(\gverb, \effect,
+	{ |inBus, outBus = 0,roomsize = 150, revtime = 2,
+		damping = 0.5, inputbw = 0.34,
+		spread = 15, drylevel = 0.7, earlylevel = 0.7, taillevel = 0.5, gain = 1|
+		var sig;
+		sig = In.ar(inBus, 2);
+		sig = GVerb.ar(
+			        sig,
+			        roomsize,
+			        revtime,
+			        damping,
+			        inputbw,
+			        spread,
+			        drylevel,
+			        earlylevel,
+			        taillevel, 500);
+		Out.ar(outBus, sig * gain);
+	},
+	~java.createParamsList(
+		~java.addFloat(\revtime, 0.00, 5.0, 2.0),
+		~java.addFloat(\roomsize, 0.00, 500, 243),
+		~java.addFloat(\devtime, 0.00, 1.00, 0.34),
+	)
 );
 
 ~java.addDefinition("jumpEffect", \effect,
@@ -71,3 +96,40 @@
 		[\gain, \float, 0.00, 1.00, 0.00]
 	]
 );
+
+~java.addDefinition(\bufPlayer, \synth,
+	{
+		| outBus, buff, pan, gain |
+		var sig = BufRd.ar(1, buff,
+			Phasor.ar(0, BufRateScale.kr(buff), 0, BufFrames.kr(buff)));
+		Out.ar(outBus, Pan2.ar(sig, pan) * gain);
+	},
+	~java.createParamsList(
+		~java.addChoice(\buff, "None", -1, \buffnum)
+	)
+);
+
+
+~java.addDefinition("SoundsLoad", \chooser,
+	{
+		var choices = [], dir, path;
+		dir = "C:/supercollider/sounds/";
+		path = PathName.new(dir);
+
+		// Go through each file in the directory
+		path.filesDo({ |aFile|
+			// Load the file into a buffer
+			var buffer = Buffer.read(s, aFile);
+			//Store the filename and a reference to
+			// the buffer in the choices array
+			choices = choices.add([aFile.fileName, buffer.bufnum]);
+		});
+		// Return the choices array
+		choices;
+	},
+	~java.createParamsList(
+		~java.setReturnType(\buffnum)
+	)
+);
+
+

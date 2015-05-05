@@ -81,13 +81,14 @@ public class InstancePanel extends JPanel  {
 		dialsPanel.setLayout(new GridLayout(0, 2));
 		for (ParamModel model : instance.getParamModels()) {
 			if (model.getClass() == DoubleParamModel.class) {
-				addDial( dialsPanel, (DoubleParamModel)model );
-			} else if (model.getClass() == IntParamModel.class) {
-				addSpinner((IntParamModel) model);
-			}
+				addDial( middlePanel, (DoubleParamModel)model );
+			} 
+//			else if (model.getClass() == IntParamModel.class) {
+//				addSpinner((IntParamModel) model);
+//			}
 
 		}
-		middlePanel.add(dialsPanel);
+//		middlePanel.add(dialsPanel);
 		
 		JButton closeButton = new JButton("Close");
 		closeButton.addActionListener(new ActionListener() {
@@ -96,11 +97,11 @@ public class InstancePanel extends JPanel  {
 				instance.close();
 			}
 		});
-		JTextArea functionArea = new JTextArea();
-		functionArea.setText(instance.getDef().getFunctionString());
-		functionArea.setTabSize(1);
-		middlePanel.add(functionArea);
-		middlePanel.add(closeButton);
+//		JTextArea functionArea = new JTextArea();
+//		functionArea.setText(instance.getDef().getFunctionString());
+//		functionArea.setTabSize(1);
+//		middlePanel.add(functionArea);
+//		middlePanel.add(closeButton);
 		setPreferredSize(getPreferredSize());
 		revalidate();
 	}
@@ -112,15 +113,15 @@ public class InstancePanel extends JPanel  {
 		//Top Panel//
 		
 		topPanel = new JPanel(new FlowLayout());
-		topLabel = new JLabel("Instruments");
+		topLabel = new JLabel(instance.getName().replaceAll("\\d", "")); //new JLabel("Instruments");
 		topLabel.setForeground(Color.WHITE);
 		topPanel.add(topLabel);
 		
 		//Middle Panel//
 		middlePanel = new JPanel();
-		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
+//		middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
 //		middlePanel.setLayout(new FlowLayout());
-//		middlePanel.setLayout(new GridLayout(0, 2));
+		middlePanel.setLayout(new GridLayout(0, 2));
 		scrollPane = new JScrollPane(middlePanel);
 		
 				

@@ -60,7 +60,7 @@ public class MainWindow extends JFrame implements SCMessageListener {
 	final int FLASH_LENGTH = 150;
 	
 	public MainWindow() throws SocketException {
-		setSize(1280, 800);
+		setSize(1280, 720);
 		setLayout(new BorderLayout());
 		createConsoleDialog();
 		

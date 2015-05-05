@@ -11,10 +11,19 @@
 	)
 );
 
+	(thisProcess.nowExecutingPath.dirname ++ "/startup/*").pathMatch.do({
+		|item, i|
+		postln("Loading " ++ item);
+		item.load;
+		// ~java.defFolder = "default";
+		// (item ++ "*").loadPaths;
+	});
+
 
 ~java.addDefinition("SoundsLoad", \chooser,
 	{
 		var choices = [];
+		var directory = "C:/Program Files (x86)/SuperCollider-3.6.6/sounds/";
 		var files = [ "C:/Program Files (x86)/SuperCollider-3.6.6/sounds/rhodes.aif",
 			"C:/Program Files (x86)/SuperCollider-3.6.6/sounds/synth.wav",
 			"C:/Program Files (x86)/SuperCollider-3.6.6/sounds/tom.wav",

@@ -26,7 +26,7 @@ This example shows how to create a simple gain DSP effect.
 ///=============================
 ///%%%CONST_DEFINES%%%
 
-#define TOP_ROUTE "/DiscreteExample6"
+#define TOP_ROUTE "/example"
 static const int PORT = 57125;
 
 ///=============================
@@ -55,33 +55,6 @@ enum
 	
 	FMOD_OTHER_PARAM_MASTER_MASTERGAIN,
 
-	
-	FMOD_OTHER_PARAM_PERCENTSWITCH9_CHANGEPERCENT,
-
-	
-	FMOD_OTHER_PARAM_PERCENTWALK6_WALKPERCENT,
-
-	
-	FMOD_OTHER_PARAM_SIMPLESCALE3_LENGTHMAX,
-
-	
-	FMOD_OTHER_PARAM_SIMPLESCALE3_LENGTHMIN,
-
-	
-	FMOD_OTHER_PARAM_SIMPLESCALE3_OCTAVEMIN,
-
-	
-	FMOD_OTHER_PARAM_SIMPLESCALE3_OCTAVEMAX,
-
-	
-	FMOD_OTHER_PARAM_FEEDBACKDELAY11_FEEDBACK,
-
-	
-	FMOD_OTHER_PARAM_RANDOMPASS15_PASSPERCENT,
-
-	
-	FMOD_OTHER_PARAM_PERCENTSWITCH9_SWITCHPERCENT,
-
 	///=============================
     FMOD_OTHER_NUM_PARAMETERS
 };
@@ -104,33 +77,6 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, in
 	
 static FMOD_DSP_PARAMETER_DESC p_Master_masterGain; // p_Master_masterGain
 
-	
-static FMOD_DSP_PARAMETER_DESC p_PercentSwitch9_changePercent; // p_PercentSwitch9_changePercent
-
-	
-static FMOD_DSP_PARAMETER_DESC p_PercentWalk6_walkPercent; // p_PercentWalk6_walkPercent
-
-	
-static FMOD_DSP_PARAMETER_DESC p_SimpleScale3_lengthMax; // p_SimpleScale3_lengthMax
-
-	
-static FMOD_DSP_PARAMETER_DESC p_SimpleScale3_lengthMin; // p_SimpleScale3_lengthMin
-
-	
-static FMOD_DSP_PARAMETER_DESC p_SimpleScale3_octaveMin; // p_SimpleScale3_octaveMin
-
-	
-static FMOD_DSP_PARAMETER_DESC p_SimpleScale3_octaveMax; // p_SimpleScale3_octaveMax
-
-	
-static FMOD_DSP_PARAMETER_DESC p_feedbackdelay11_feedback; // p_feedbackdelay11_feedback
-
-	
-static FMOD_DSP_PARAMETER_DESC p_RandomPass15_passPercent; // p_RandomPass15_passPercent
-
-	
-static FMOD_DSP_PARAMETER_DESC p_PercentSwitch9_switchPercent; // p_PercentSwitch9_switchPercent
-
 /// ===========================
 
 FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
@@ -139,33 +85,6 @@ FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
 	///%%%PARAM_DESC_POINTERS%%%
 	
 	&p_Master_masterGain, 
-
-	
-	&p_PercentSwitch9_changePercent, 
-
-	
-	&p_PercentWalk6_walkPercent, 
-
-	
-	&p_SimpleScale3_lengthMax, 
-
-	
-	&p_SimpleScale3_lengthMin, 
-
-	
-	&p_SimpleScale3_octaveMin, 
-
-	
-	&p_SimpleScale3_octaveMax, 
-
-	
-	&p_feedbackdelay11_feedback, 
-
-	
-	&p_RandomPass15_passPercent, 
-
-	
-	&p_PercentSwitch9_switchPercent, 
 
 	/// =====================================
 };
@@ -176,7 +95,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
 	/// =====================================
 	///%%%DESC_NAME%%%
 	
-    "PAAD DiscreteExample6",
+    "PAAD example",
 
 	/// =====================================
     0x00010000,     // plug-in version
@@ -212,33 +131,6 @@ F_DECLSPEC F_DLLEXPORT FMOD_DSP_DESCRIPTION* F_STDCALL FMODGetDSPDescription()
 	
 	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_masterGain, "masterGain", "f", "Adjusts masterGain", 0, 1, 0.5);
 
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_PercentSwitch9_changePercent, "changePercent", "f", "Adjusts changePercent", 0, 100, 29.34);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_PercentWalk6_walkPercent, "walkPercent", "f", "Adjusts walkPercent", 0, 100, 25);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale3_lengthMax, "lengthMax", "f", "Adjusts lengthMax", 0, 10, 8);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale3_lengthMin, "lengthMin", "f", "Adjusts lengthMin", 0, 10, 4);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale3_octaveMin, "octaveMin", "f", "Adjusts octaveMin", -3, 3, 0);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SimpleScale3_octaveMax, "octaveMax", "f", "Adjusts octaveMax", -3, 3, 1);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_feedbackdelay11_feedback, "feedback", "f", "Adjusts feedback", 0, 1, 0.2);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_RandomPass15_passPercent, "passPercent", "f", "Adjusts passPercent", 0, 100, 86.66);
-
-	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_PercentSwitch9_switchPercent, "switchPercent", "f", "Adjusts switchPercent", 0, 100, 10);
-
 	/// ====================================
 
     return &FMOD_Other_Desc;
@@ -260,42 +152,6 @@ public:
 	void setMaster_masterGain(float); 
 	float Master_masterGain() const { return m_Master_masterGain; }  
 
-	
-	void setPercentSwitch9_changePercent(float); 
-	float PercentSwitch9_changePercent() const { return m_PercentSwitch9_changePercent; }  
-
-	
-	void setPercentWalk6_walkPercent(float); 
-	float PercentWalk6_walkPercent() const { return m_PercentWalk6_walkPercent; }  
-
-	
-	void setSimpleScale3_lengthMax(float); 
-	float SimpleScale3_lengthMax() const { return m_SimpleScale3_lengthMax; }  
-
-	
-	void setSimpleScale3_lengthMin(float); 
-	float SimpleScale3_lengthMin() const { return m_SimpleScale3_lengthMin; }  
-
-	
-	void setSimpleScale3_octaveMin(float); 
-	float SimpleScale3_octaveMin() const { return m_SimpleScale3_octaveMin; }  
-
-	
-	void setSimpleScale3_octaveMax(float); 
-	float SimpleScale3_octaveMax() const { return m_SimpleScale3_octaveMax; }  
-
-	
-	void setFeedbackdelay11_feedback(float); 
-	float feedbackdelay11_feedback() const { return m_feedbackdelay11_feedback; }  
-
-	
-	void setRandomPass15_passPercent(float); 
-	float RandomPass15_passPercent() const { return m_RandomPass15_passPercent; }  
-
-	
-	void setPercentSwitch9_switchPercent(float); 
-	float PercentSwitch9_switchPercent() const { return m_PercentSwitch9_switchPercent; }  
-
 	/// ================================
 
 	void sendParam(const char *, const char *, const char *, float);
@@ -311,33 +167,6 @@ private:
 	///%%%PARAM_PRIVATE_DECS%%%
 	
 	float m_Master_masterGain; 
-
-	
-	float m_PercentSwitch9_changePercent; 
-
-	
-	float m_PercentWalk6_walkPercent; 
-
-	
-	float m_SimpleScale3_lengthMax; 
-
-	
-	float m_SimpleScale3_lengthMin; 
-
-	
-	float m_SimpleScale3_octaveMin; 
-
-	
-	float m_SimpleScale3_octaveMax; 
-
-	
-	float m_feedbackdelay11_feedback; 
-
-	
-	float m_RandomPass15_passPercent; 
-
-	
-	float m_PercentSwitch9_switchPercent; 
 
 	/// ===============================
 
@@ -374,51 +203,6 @@ void FMODOtherState::reset()
 
 void FMODOtherState::setMaster_masterGain(float value) { 
 	m_Master_masterGain = value;
-}
-
-
-void FMODOtherState::setPercentSwitch9_changePercent(float value) { 
-	m_PercentSwitch9_changePercent = value;
-}
-
-
-void FMODOtherState::setPercentWalk6_walkPercent(float value) { 
-	m_PercentWalk6_walkPercent = value;
-}
-
-
-void FMODOtherState::setSimpleScale3_lengthMax(float value) { 
-	m_SimpleScale3_lengthMax = value;
-}
-
-
-void FMODOtherState::setSimpleScale3_lengthMin(float value) { 
-	m_SimpleScale3_lengthMin = value;
-}
-
-
-void FMODOtherState::setSimpleScale3_octaveMin(float value) { 
-	m_SimpleScale3_octaveMin = value;
-}
-
-
-void FMODOtherState::setSimpleScale3_octaveMax(float value) { 
-	m_SimpleScale3_octaveMax = value;
-}
-
-
-void FMODOtherState::setFeedbackdelay11_feedback(float value) { 
-	m_feedbackdelay11_feedback = value;
-}
-
-
-void FMODOtherState::setRandomPass15_passPercent(float value) { 
-	m_RandomPass15_passPercent = value;
-}
-
-
-void FMODOtherState::setPercentSwitch9_switchPercent(float value) { 
-	m_PercentSwitch9_switchPercent = value;
 }
 
 /// =======================================
@@ -478,7 +262,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
         /// =====================================
 		///%%%PROC_ARGS%%%
 	
-    " -d supercollider -l fmod/DiscreteExample6/sclang_conf.yaml -u 57125",
+    " -d supercollider -l fmod/example/sclang_conf.yaml -u 57125",
 
 		/// =====================================
         NULL,           // Process handle not inheritable
@@ -535,60 +319,6 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspsetparamfloat(FMOD_DSP_STATE *dsp_state, in
 		state->sendParam("/module/paramc", "masterGain", "1", value);
 		return FMOD_OK;
 
-	
-	case FMOD_OTHER_PARAM_PERCENTSWITCH9_CHANGEPERCENT:
-		state->setPercentSwitch9_changePercent(value);
-		state->sendParam("/module/paramc", "changePercent", "8", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_PERCENTWALK6_WALKPERCENT:
-		state->setPercentWalk6_walkPercent(value);
-		state->sendParam("/module/paramc", "walkPercent", "6", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_LENGTHMAX:
-		state->setSimpleScale3_lengthMax(value);
-		state->sendParam("/module/paramc", "lengthMax", "2", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_LENGTHMIN:
-		state->setSimpleScale3_lengthMin(value);
-		state->sendParam("/module/paramc", "lengthMin", "2", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_OCTAVEMIN:
-		state->setSimpleScale3_octaveMin(value);
-		state->sendParam("/module/paramc", "octaveMin", "2", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_OCTAVEMAX:
-		state->setSimpleScale3_octaveMax(value);
-		state->sendParam("/module/paramc", "octaveMax", "2", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_FEEDBACKDELAY11_FEEDBACK:
-		state->setFeedbackdelay11_feedback(value);
-		state->sendParam("/module/paramc", "feedback", "10", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_RANDOMPASS15_PASSPERCENT:
-		state->setRandomPass15_passPercent(value);
-		state->sendParam("/module/paramc", "passPercent", "15", value);
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_PERCENTSWITCH9_SWITCHPERCENT:
-		state->setPercentSwitch9_switchPercent(value);
-		state->sendParam("/module/paramc", "switchPercent", "8", value);
-		return FMOD_OK;
-
 	/// =============================================
 	}
     return FMOD_ERR_INVALID_PARAM;
@@ -606,60 +336,6 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	case FMOD_OTHER_PARAM_MASTER_MASTERGAIN:
 		*value = state->Master_masterGain();
 		if (valuestr) sprintf(valuestr, "% fl", state->Master_masterGain());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_PERCENTSWITCH9_CHANGEPERCENT:
-		*value = state->PercentSwitch9_changePercent();
-		if (valuestr) sprintf(valuestr, "% fl", state->PercentSwitch9_changePercent());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_PERCENTWALK6_WALKPERCENT:
-		*value = state->PercentWalk6_walkPercent();
-		if (valuestr) sprintf(valuestr, "% fl", state->PercentWalk6_walkPercent());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_LENGTHMAX:
-		*value = state->SimpleScale3_lengthMax();
-		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale3_lengthMax());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_LENGTHMIN:
-		*value = state->SimpleScale3_lengthMin();
-		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale3_lengthMin());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_OCTAVEMIN:
-		*value = state->SimpleScale3_octaveMin();
-		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale3_octaveMin());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_SIMPLESCALE3_OCTAVEMAX:
-		*value = state->SimpleScale3_octaveMax();
-		if (valuestr) sprintf(valuestr, "% fl", state->SimpleScale3_octaveMax());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_FEEDBACKDELAY11_FEEDBACK:
-		*value = state->feedbackdelay11_feedback();
-		if (valuestr) sprintf(valuestr, "% fl", state->feedbackdelay11_feedback());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_RANDOMPASS15_PASSPERCENT:
-		*value = state->RandomPass15_passPercent();
-		if (valuestr) sprintf(valuestr, "% fl", state->RandomPass15_passPercent());
-		return FMOD_OK;
-
-	
-	case FMOD_OTHER_PARAM_PERCENTSWITCH9_SWITCHPERCENT:
-		*value = state->PercentSwitch9_switchPercent();
-		if (valuestr) sprintf(valuestr, "% fl", state->PercentSwitch9_switchPercent());
 		return FMOD_OK;
 
 	/// ==============================================
