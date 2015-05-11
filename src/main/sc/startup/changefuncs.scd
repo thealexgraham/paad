@@ -33,7 +33,6 @@
 		default + change;
 	},
 	[[\changePercent, 0, 100, 10]]
-
 );
 
 // Chance to go up or down
@@ -53,64 +52,6 @@
 		default;
 	}
 );
-
-~java.addDefinition("SteadyAction",
-	\taskPlayer,
-	{
-		| object, timeBetween |
-		loop { // Go forever
-			object.sendActionMessage;
-			timeBetween.value.wait;
-		}
-	},
-	[[\timeBetween, 0, 10, 1]]
-);
-
-~java.addDefinition("SimpleAction",
-	\taskRunner,
-	{
-		| object |
-		object.sendActionMessage;
-	},
-);
-
-~java.addDefinition("SimpleAction",
-	\taskRunner,
-	{
-		| object |
-		object.sendActionMessage;
-	}
-);
-
-~java.addDefinition("RandomGate",
-	\taskRunner,
-	{
-		| object |
-		var choice = object.numberOfActionOuts.rand;
-		object.sendActionMessage(choice);
-	},
-/*	~java.createParamsList(
-		~java.addActionOut(\one),
-		~java.addActionOut(\two),
-		~java.addActionOut(\three),
-	)*/
-);
-
-
-~java.addDefinition("RandomAction",
-	\taskPlayer,
-	{
-		| object, minSeconds, maxSeconds |
-		loop { // Go forever
-			var secondsToWait = rrand(minSeconds.value, maxSeconds.value);
-			object.sendActionMessage; // Could concievably split up into multiple actions
-			secondsToWait.wait;
-		}
-	},
-	[[\minSeconds, 0, 10, 1],
-		[\maxSeconds, 0, 10, 2]]
-);
-
 
 
 

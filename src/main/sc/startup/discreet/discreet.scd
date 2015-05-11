@@ -13,7 +13,18 @@
 		wet = BLowShelf.ar(dry, lofreq, 1, band1);
 		wet = BPeakEQ.ar(wet, midfreq, 1, band2);
 		wet = BHiShelf.ar(wet, hifreq, 1, band3);
-		wet = Clip.ar(wet, -0.1, 0.1);
+		// wet = Clip.ar(wet, -0.1, 0.1);
+
+
+		wet = Compander.ar(wet, wet,
+			thresh:1,
+			slopeBelow: 1,
+			slopeAbove: 0.1,
+			clampTime: 0.01,
+			relaxTime: 0.01
+		);
+
+
 		Out.ar(outBus, XFade2.ar(dry * gain, wet * gain, mix));
 	},
 	[[\lofreq, 0, 600, 80],

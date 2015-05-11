@@ -26,8 +26,8 @@ This example shows how to create a simple gain DSP effect.
 ///=============================
 ///%%%CONST_DEFINES%%%
 
-#define TOP_ROUTE "/example"
-static const int PORT = 57125;
+#define TOP_ROUTE "/Live-pingdemolive"
+static const int PORT = 53120;
 
 ///=============================
 
@@ -55,6 +55,18 @@ enum
 	
 	FMOD_OTHER_PARAM_MASTER_MASTERGAIN,
 
+	
+	FMOD_OTHER_PARAM_RANDOMPASS10_PERCENT,
+
+	
+	FMOD_OTHER_PARAM_RANDOMPASS9_PERCENT,
+
+	
+	FMOD_OTHER_PARAM_RANDOMPASS6_PERCENT,
+
+	
+	FMOD_OTHER_PARAM_STEADYACTION12_TIME,
+
 	///=============================
     FMOD_OTHER_NUM_PARAMETERS
 };
@@ -77,6 +89,18 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamdata (FMOD_DSP_STATE *dsp_state, in
 	
 static FMOD_DSP_PARAMETER_DESC p_Master_masterGain; // p_Master_masterGain
 
+	
+static FMOD_DSP_PARAMETER_DESC p_RandomPass10_percent; // p_RandomPass10_percent
+
+	
+static FMOD_DSP_PARAMETER_DESC p_RandomPass9_percent; // p_RandomPass9_percent
+
+	
+static FMOD_DSP_PARAMETER_DESC p_RandomPass6_percent; // p_RandomPass6_percent
+
+	
+static FMOD_DSP_PARAMETER_DESC p_SteadyAction12_time; // p_SteadyAction12_time
+
 /// ===========================
 
 FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
@@ -85,6 +109,18 @@ FMOD_DSP_PARAMETER_DESC *FMOD_Other_dspparam[FMOD_OTHER_NUM_PARAMETERS] =
 	///%%%PARAM_DESC_POINTERS%%%
 	
 	&p_Master_masterGain, 
+
+	
+	&p_RandomPass10_percent, 
+
+	
+	&p_RandomPass9_percent, 
+
+	
+	&p_RandomPass6_percent, 
+
+	
+	&p_SteadyAction12_time, 
 
 	/// =====================================
 };
@@ -95,7 +131,7 @@ FMOD_DSP_DESCRIPTION FMOD_Other_Desc =
 	/// =====================================
 	///%%%DESC_NAME%%%
 	
-    "PAAD example",
+    "PAAD Live-pingdemolive",
 
 	/// =====================================
     0x00010000,     // plug-in version
@@ -129,7 +165,19 @@ F_DECLSPEC F_DLLEXPORT FMOD_DSP_DESCRIPTION* F_STDCALL FMODGetDSPDescription()
 	/// ====================================
 	///%%%PARAM_DESCRIPTIONS%%%
 	
-	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_masterGain, "masterGain", "f", "Adjusts masterGain", 0, 1, 0.5);
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_Master_masterGain, "masterGain", "f", "Adjusts masterGain", 0, 1, 0.88);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_RandomPass10_percent, "percent", "f", "Adjusts percent", 0, 100, 57);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_RandomPass9_percent, "percent", "f", "Adjusts percent", 0, 100, 56.66);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_RandomPass6_percent, "percent", "f", "Adjusts percent", 0, 100, 54.99);
+
+	
+	FMOD_DSP_INIT_PARAMDESC_FLOAT(p_SteadyAction12_time, "time", "f", "Adjusts time", 0, 5, 0.18);
 
 	/// ====================================
 
@@ -152,6 +200,22 @@ public:
 	void setMaster_masterGain(float); 
 	float Master_masterGain() const { return m_Master_masterGain; }  
 
+	
+	void setRandomPass10_percent(float); 
+	float RandomPass10_percent() const { return m_RandomPass10_percent; }  
+
+	
+	void setRandomPass9_percent(float); 
+	float RandomPass9_percent() const { return m_RandomPass9_percent; }  
+
+	
+	void setRandomPass6_percent(float); 
+	float RandomPass6_percent() const { return m_RandomPass6_percent; }  
+
+	
+	void setSteadyAction12_time(float); 
+	float SteadyAction12_time() const { return m_SteadyAction12_time; }  
+
 	/// ================================
 
 	void sendParam(const char *, const char *, const char *, float);
@@ -159,7 +223,6 @@ public:
 	void setOSCID(int);
 
 	int osc_id() const { return m_osc_id; }
-	PROCESS_INFORMATION pi;
 
 private:
 
@@ -167,6 +230,18 @@ private:
 	///%%%PARAM_PRIVATE_DECS%%%
 	
 	float m_Master_masterGain; 
+
+	
+	float m_RandomPass10_percent; 
+
+	
+	float m_RandomPass9_percent; 
+
+	
+	float m_RandomPass6_percent; 
+
+	
+	float m_SteadyAction12_time; 
 
 	/// ===============================
 
@@ -203,6 +278,26 @@ void FMODOtherState::reset()
 
 void FMODOtherState::setMaster_masterGain(float value) { 
 	m_Master_masterGain = value;
+}
+
+
+void FMODOtherState::setRandomPass10_percent(float value) { 
+	m_RandomPass10_percent = value;
+}
+
+
+void FMODOtherState::setRandomPass9_percent(float value) { 
+	m_RandomPass9_percent = value;
+}
+
+
+void FMODOtherState::setRandomPass6_percent(float value) { 
+	m_RandomPass6_percent = value;
+}
+
+
+void FMODOtherState::setSteadyAction12_time(float value) { 
+	m_SteadyAction12_time = value;
 }
 
 /// =======================================
@@ -248,32 +343,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
     dsp_state->plugindata = (FMODOtherState *)FMOD_DSP_STATE_MEMALLOC(dsp_state, sizeof(FMODOtherState), FMOD_MEMORY_NORMAL, "FMODOtherState");
 
 	FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-
-	char * command = "supercollider/sclang.exe";
-
-	STARTUPINFO si;
-
-    ZeroMemory( &si, sizeof(si) );
-    si.cb = sizeof(si);
-    ZeroMemory( &state->pi, sizeof(state->pi) );
-
-    // Start the child process. 
-    if( !CreateProcess( command,   // No module name (use command line)
-        /// =====================================
-		///%%%PROC_ARGS%%%
-	
-    " -d supercollider -l fmod/example/sclang_conf.yaml -u 57125",
-
-		/// =====================================
-        NULL,           // Process handle not inheritable
-        NULL,           // Thread handle not inheritable
-        FALSE,          // Set handle inheritance to FALSE
-        0,              // No creation flags
-        NULL,           // Use parent's environment block
-        NULL,           // Use parent's starting directory 
-        &si,            // Pointer to STARTUPINFO structure
-        &state->pi )           // Pointer to PROCESS_INFORMATION structure
-    )
+	state->sendMsg("/live/start", 1);
 
     if (!dsp_state->plugindata)
     {
@@ -285,7 +355,7 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspcreate(FMOD_DSP_STATE *dsp_state)
 FMOD_RESULT F_CALLBACK FMOD_Other_dsprelease(FMOD_DSP_STATE *dsp_state)
 {
     FMODOtherState *state = (FMODOtherState *)dsp_state->plugindata;
-	TerminateProcess(state->pi.hProcess, 1);
+	state->sendMsg("/live/stop", 1);
 	//state->sendMsg("/dying", state->osc_id());
     FMOD_DSP_STATE_MEMFREE(dsp_state, state, FMOD_MEMORY_NORMAL, "FMODOtherState");
     return FMOD_OK;
@@ -316,7 +386,31 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspsetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	
 	case FMOD_OTHER_PARAM_MASTER_MASTERGAIN:
 		state->setMaster_masterGain(value);
-		state->sendParam("/module/paramc", "masterGain", "1", value);
+		state->sendParam("/module/live/paramc", "masterGain", "1", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_RANDOMPASS10_PERCENT:
+		state->setRandomPass10_percent(value);
+		state->sendParam("/module/live/paramc", "percent", "8", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_RANDOMPASS9_PERCENT:
+		state->setRandomPass9_percent(value);
+		state->sendParam("/module/live/paramc", "percent", "7", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_RANDOMPASS6_PERCENT:
+		state->setRandomPass6_percent(value);
+		state->sendParam("/module/live/paramc", "percent", "4", value);
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_STEADYACTION12_TIME:
+		state->setSteadyAction12_time(value);
+		state->sendParam("/module/live/paramc", "time", "10", value);
 		return FMOD_OK;
 
 	/// =============================================
@@ -336,6 +430,30 @@ FMOD_RESULT F_CALLBACK FMOD_Other_dspgetparamfloat(FMOD_DSP_STATE *dsp_state, in
 	case FMOD_OTHER_PARAM_MASTER_MASTERGAIN:
 		*value = state->Master_masterGain();
 		if (valuestr) sprintf(valuestr, "% fl", state->Master_masterGain());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_RANDOMPASS10_PERCENT:
+		*value = state->RandomPass10_percent();
+		if (valuestr) sprintf(valuestr, "% fl", state->RandomPass10_percent());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_RANDOMPASS9_PERCENT:
+		*value = state->RandomPass9_percent();
+		if (valuestr) sprintf(valuestr, "% fl", state->RandomPass9_percent());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_RANDOMPASS6_PERCENT:
+		*value = state->RandomPass6_percent();
+		if (valuestr) sprintf(valuestr, "% fl", state->RandomPass6_percent());
+		return FMOD_OK;
+
+	
+	case FMOD_OTHER_PARAM_STEADYACTION12_TIME:
+		*value = state->SteadyAction12_time();
+		if (valuestr) sprintf(valuestr, "% fl", state->SteadyAction12_time());
 		return FMOD_OK;
 
 	/// ==============================================

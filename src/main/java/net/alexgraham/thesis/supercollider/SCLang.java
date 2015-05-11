@@ -11,29 +11,23 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.SocketException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.EventListenerList;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 import net.alexgraham.thesis.App;
 import net.alexgraham.thesis.ChangeSender;
-import net.alexgraham.thesis.supercollider.models.DefModel;
 import net.alexgraham.thesis.supercollider.players.PatternPlayer;
 import net.alexgraham.thesis.supercollider.synths.Instance;
-import net.alexgraham.thesis.supercollider.synths.Synth;
-import net.alexgraham.thesis.ui.components.ConsoleDialog;
 import net.alexgraham.thesis.ui.connectors.Connection;
 
 import com.illposed.osc.OSCListener;
-import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
-import com.sun.corba.se.spi.activation._ActivatorImplBase;
 
 public class SCLang extends ChangeSender {
 	
@@ -161,13 +155,44 @@ public class SCLang extends ChangeSender {
 		String system = System.getProperty("os.name");
 		String pwd = System.getProperty("user.dir");
 		String scFile;
+		
+		System.out.println(pwd);
+		try {
+			
+	        URL path = App.class.getResource("App.class");
 
+	        if(path.toString().startsWith("jar:")) {
+				pwd = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
+	        } else {
+	            startWithDefaults(onRun);
+	            return;
+	        }
+
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pwd = pwd.replace("\\", "/");
+		if (system.equals("Mac OS X")) {
+			scFile = pwd + "/sc/run.scd";
+			startSCLang(pwd + "/supercollider/mac/SuperCollider.app/Contents/Resources/", "sclang", sendPort, scFile, pwd + "/sc/sclang_conf.yaml", onRun);
+		} else {
+			scFile = pwd + "/sc/run.scd";
+			startSCLang(pwd + "/supercollider/pc/", "sclang.exe", sendPort, scFile, pwd + "/sc/sclang_conf.yaml", onRun);
+		}
+	}
+	
+	private void startWithDefaults(String onRun) throws IOException {
+		String system = System.getProperty("os.name");
+		String pwd = System.getProperty("user.dir");
+		String scFile;
+		
 		if (system.equals("Mac OS X")) {
 			scFile = pwd + "/src/main/sc/run.scd";
-			startSCLang("/Applications/SuperCollider.app/Contents/Resources/", "sclang", sendPort, scFile, onRun);
+			startSCLang("/Applications/SuperCollider.app/Contents/Resources/", "sclang", sendPort, scFile, " ", onRun);
 		} else {
 			scFile = "C:/Users/Alex/Dropbox/Thesis/thesis-code/workspace/agthesis-java/src/main/sc/run.scd";
-			startSCLang("C:/Users/Alex/supercollider/", "sclang.exe", sendPort, scFile, onRun);
+			startSCLang("C:/Users/Alex/supercollider/", "sclang.exe", sendPort, scFile, " ", onRun);
 		}
 	}
 
@@ -180,14 +205,14 @@ public class SCLang extends ChangeSender {
 	 * @param runFile
 	 * @throws IOException
 	 */
-	public void startSCLang(String scDir, String scExec, int scPort, String runFile, String onRun)
+	public void startSCLang(String scDir, String scExec, int scPort, String runFile, String confFile, String onRun)
 			throws IOException {
 		running = true;
 		this.scDir = scDir;
 		
 		// Create Process to run sclang
 		ProcessBuilder pb = new ProcessBuilder(scDir + scExec, "-u",
-				String.valueOf(scPort));// , runFile);
+				String.valueOf(scPort), "-l", confFile);// , runFile);
 		pb.directory(new File(scDir));
 		pb.redirectErrorStream(true);
 

@@ -4,7 +4,7 @@
 	{
 		|lengthMin, lengthMax, scale, root, octaveMin, octaveMax|
 
-		var durations = [[1, 1], [0.5, 0.5, 1], [0.5, 0.5], [0.5, 1, 0.5], [1, 0.5]];
+		var durations = [[1, 1], [0.25, 0.25, 0.25, 0.25], [0.5, 0.5, 1], [0.5, 0.5], [0.5, 1, 0.5], [0.25, 0.25, 0.5]];
 
 		var finalPattern;
 
@@ -32,7 +32,7 @@
 			[notes[i], currentDuration];
 		});
 
-		finalPattern = finalPattern.add([\rest, 2]);
+		finalPattern = finalPattern.add([\rest, 0]);
 		finalPattern;
 	},
 
@@ -78,6 +78,20 @@
 	)
 );
 
+~java.addDefinition(\sawInst, \instrument,
+	{ | outBus = 0, freq = 0, gate = 1, amp = 1, pan = 0, gain = 1 |
+		var sig, env;
+		env = EnvGen.kr(Env.adsr(0.01, 0.3, 0.5, 0.01), gate, doneAction:2);
+		sig = Saw.ar(freq);
+		sig = sig * env * amp;
+		Out.ar(outBus, Pan2.ar(sig, pan, gain));
+	},
+	~java.createParamsList(
+		~java.addFloat(\gain, 0.00, 1.00, 0.00),
+		~java.addFloat(\pan, -1.00, 1.00, 0.00),
+	)
+);
+
 // Effects
 
 ~java.addDefinition(\eq, \effect,
@@ -92,18 +106,30 @@
 		wet = BLowShelf.ar(dry, lofreq, 1, band1);
 		wet = BPeakEQ.ar(wet, midfreq, 1, band2);
 		wet = BHiShelf.ar(wet, hifreq, 1, band3);
-		wet = Clip.ar(wet, -0.1, 0.1);
-		Out.ar(outBus, XFade2.ar(dry * gain, wet * gain, mix));
-	},
-	~java.createParamsList(
-		~java.addFloat(\lofreq, 0.00, 600.00, 80.00),
-		~java.addFloat(\band1, -80.00, 80.00, 0.00),
-		~java.addFloat(\midfreq, 200.00, 1000.00, 800.00),
-		~java.addFloat(\band2, -80.00, 80.00, 0.00),
-		~java.addFloat(\hifreq, 800.00, 5000.00, 2000.00),
-		~java.addFloat(\band3, -80.00, 80.00, 0.00),
-		~java.addFloat(\mix, -1.00, 0.00, 1.00),
-	)
+		// wet = Clip.ar(wet, 0.5, 0.7);
+
+		// wet = Normalizer.ar(wet, 0.8, 0.05);
+
+		wet = Compander.ar(wet, wet,
+			thresh: 0.5,
+			slopeBelow: -1,
+			slopeAbove: 0,
+			clampTime: 0.01,
+			relaxTime: 0.01
+		);
+
+
+		Out.ar(outBus, XFade2.ar(dry * gain, wet * gain, mix), 0.8, 0.5);
+},
+~java.createParamsList(
+	~java.addFloat(\lofreq, 0.00, 600.00, 80.00),
+	~java.addFloat(\band1, -80.00, 80.00, 0.00),
+	~java.addFloat(\midfreq, 200.00, 1000.00, 800.00),
+	~java.addFloat(\band2, -80.00, 80.00, 0.00),
+	~java.addFloat(\hifreq, 800.00, 5000.00, 2000.00),
+	~java.addFloat(\band3, -80.00, 80.00, 0.00),
+	~java.addFloat(\mix, -1.00, 0.00, 1.00),
+)
 );
 
 ~java.addDefinition(\feedbackdelay, \effect,
@@ -131,7 +157,7 @@
 		Out.ar(outBus, sig * gain);
 	},
 	~java.createParamsList(
-		~java.addFloat(\mix, 0.00, 1.00, 0.20),
+		~java.addFloat(\mix, 0.00, 1.00, 1.00),
 		~java.addFloat(\room, 0.00, 1.00, 1.00),
 		~java.addFloat(\damp, 0.00, 1.00, 1.00),
 	)

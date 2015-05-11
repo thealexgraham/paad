@@ -216,7 +216,7 @@ public class DataModel {
 			bw.write(")");
 			bw.close();
 			
-			FileHelper.openIde(fout);
+//			FileHelper.openIde(fout);
 			
 			fos.close();
 			
@@ -270,7 +270,7 @@ public class DataModel {
 				
 				bw.close();
 							
-				FileHelper.openIde(buildSCCode);
+//				FileHelper.openIde(buildSCCode);
 				
 				// Read it into supercollider
 				App.sc.sendCommand("\"" + buildSCCode.getAbsolutePath().replace("\\", "/") + "\"" + ".load.postln");
@@ -340,7 +340,7 @@ public class DataModel {
 				
 				bw.close();
 							
-				FileHelper.openIde(buildSCCode);
+//				FileHelper.openIde(buildSCCode);
 				
 				// Read it into supercollider
 				App.sc.sendCommand("\"" + buildSCCode.getAbsolutePath().replace("\\", "/") + "\"" + ".load.postln");

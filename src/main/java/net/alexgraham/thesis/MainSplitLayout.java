@@ -35,6 +35,8 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 	
 	JSplitPane middleSplitPane;
 	
+	JSplitPane rightSplitPane;
+	
 	TreeLauncherPanel synthSelector;
 	
 	JPanel mainCardPanel;
@@ -74,7 +76,7 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 		lineConnect.addSynthSelectListener(cardsPanel);
 		
 		faderPanel = new FaderPanel();
-		JSplitPane rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, cardsPanel, faderPanel);
+		rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, cardsPanel, faderPanel);
 		rightSplitPane.setDividerLocation(600);
 		
 		JSplitPane wholeSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sideSplitPane, rightSplitPane);
@@ -167,6 +169,8 @@ public class MainSplitLayout extends JPanel implements SCServerListener {
 					faderPanel.setup(faders, masterFader);
 					faderPanel.revalidate();
 					faderPanel.repaint();
+					rightSplitPane.setDividerLocation(450);
+					rightSplitPane.setResizeWeight(0.8f);
 //					lineConnect.addConnectablePanels(faderPanel.getConnectablePanels());
 				}
 			});

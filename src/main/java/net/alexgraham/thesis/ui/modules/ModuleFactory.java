@@ -246,7 +246,7 @@ public class ModuleFactory implements Serializable {
 		leftPanel.add(leftConnectable);
 //		leftPanel.add(Box.createHorizontalStrut(5));
 		leftPanel.add(paramNameLabel);
-//		leftPanel.add(Box.createHorizontalStrut(5));
+		leftPanel.add(Box.createHorizontalStrut(5));
 		
 		rightPanel.add(paramValueLabel);
 		rightPanel.add(rightConnectable);

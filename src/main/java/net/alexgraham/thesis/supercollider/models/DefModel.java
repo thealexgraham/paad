@@ -119,7 +119,6 @@ public class DefModel implements Messenger {
 	}
 	
 	public Def addNewDef(String defName, String type) {
-		System.out.println("Trying " + defName);
 		// Keep existing defs in memory since a Synth might point to it
 		if (defTable.containsKey(defName)) {
 			System.out.println("Already exists");
