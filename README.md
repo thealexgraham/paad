@@ -13,7 +13,9 @@ Create procedural music and sound effects using the power of the SuperCollider s
 ![PAAD](http://alexgraham.net/paad/paad-full.png "PAAD Interface")
 
 ### Create
-Create procedural audio assets in a patch-based interface for Supercollider. PAAD has support for creating modules for  sound generation, effect processing, buffer loading/playback, pattern generation/playback, parameter control and routines.
+Create procedural audio assets in a patch-based interface for Supercollider.
+
+PAAD has support for creating modules for sound generation, effect processing, buffer loading/playback, pattern generation/playback, parameter control and routines.
 
 ### Expand
 Modules in PAAD are comprised of SuperCollider definitions. Anything that can be created in SuperCollider can be used in PAAD.
