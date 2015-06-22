@@ -12,6 +12,36 @@ Create procedural music and sound effects using the power of the SuperCollider s
 
 ![PAAD](http://alexgraham.net/paad/paad-full.png "PAAD Interface")
 
+### Create
+Create procedural audio assets in a patch-based interface for Supercollider. PAAD has support for creating modules for  sound generation, effect processing, buffer loading/playback, pattern generation/playback, parameter control and routines.
+
+### Expand
+Modules in PAAD are comprised of SuperCollider definitions. Anything that can be created in SuperCollider can be used in PAAD.
+```supercollider
+~paad.addDefinition(\sawWave, \synth,
+    { | outBus, frequency, pan, gain |
+        var sig = Saw.ar(frequency) * gain;
+        Out.ar(outBus, Pan2.ar(sig, pan));
+    },
+    [
+        [\frequency, \float, 0, 1000, 440],
+        [\pan, \float, -1.00, 1.00, 0.00],
+        [\gain, \float, 0.00, 1.00, 0.00]
+    ]
+);
+```
+
+Any PAAD definitions that are placed in PAAD’s startup folder will be available for use within the PAAD interface.
+PAAD module definitions can be edited from within the interface and the changes are heard in real time. 
+![Real-time module editing](http://alexgraham.net/paad/edit.png)
+
+###Export
+PAAD assets are self-contained and can be run completely independently from the interface using the SuperCollider server and controlled with OSC messages. This means PAAD assets can easily be implemented into game engines.
+
+PAAD currently is able to create FMOD plugins- which can either be self-contained or control the PAAD interface. Just select which parameters from the asset you’d like to control from FMOD and click export.
+![Export parameters](http://alexgraham.net/paad/exportselect.png)
+![FMOD Patch](http://alexgraham.net/paad/fmodplugin.PNG)
+
 PAAD was developed for my Master's thesis at NYU and will be available in the near future. Please contact me for any questions!
 
 
