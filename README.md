@@ -2,6 +2,7 @@
 by Alex Graham
 
 Please check out this [demo video!](https://www.youtube.com/watch?v=TJlD6vVK9yk)
+
 My master's thesis for the NYU Music Technology program that PAAD was developed for can be found [here](http://alexgraham.net/paad/graham_paad_thesis.pdf).
 
 ## Overview
