@@ -31,7 +31,7 @@ PAAD assets are self-contained and can be run completely independently from the 
 PAAD currently is able to create FMOD plugins- which can either be self-contained or control the PAAD interface. Just select which parameters from the asset you’d like to control from FMOD and click export.
 
 
-![Export parameters](http://alexgraham.net/paad/exportselect.png)
+![Export parameters](http://alexgraham.net/paad/exportselect.png) ![Export](http://alexgraham.net/paad/expor.png)
 ![FMOD Patch](http://alexgraham.net/paad/fmodplugin.PNG)
 
 PAAD was developed for my Master's thesis at NYU and will be available in the near future. Please contact me for any questions!
