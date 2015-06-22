@@ -23,11 +23,11 @@ Modules in PAAD are comprised of SuperCollider definitions. Anything that can be
         var sig = Saw.ar(frequency) * gain;
         Out.ar(outBus, Pan2.ar(sig, pan));
     },
-    [
-        [\frequency, \float, 0, 1000, 440],
-        [\pan, \float, -1.00, 1.00, 0.00],
-        [\gain, \float, 0.00, 1.00, 0.00]
-    ]
+    ~paad.createParamsList(
+        ~paad.addFloat(\freq, \float, 0, 1000, 440),
+        ~paad.addFloat(\pan, \float, -1.00, 1.00, 0.00),
+        ~paad.addFloat(\gain, \float, 0.00, 1.00, 0.00)
+    )
 );
 ```
 
@@ -39,6 +39,8 @@ PAAD module definitions can be edited from within the interface and the changes 
 PAAD assets are self-contained and can be run completely independently from the interface using the SuperCollider server and controlled with OSC messages. This means PAAD assets can easily be implemented into game engines.
 
 PAAD currently is able to create FMOD plugins- which can either be self-contained or control the PAAD interface. Just select which parameters from the asset you’d like to control from FMOD and click export.
+
+
 ![Export parameters](http://alexgraham.net/paad/exportselect.png)
 ![FMOD Patch](http://alexgraham.net/paad/fmodplugin.PNG)
 
