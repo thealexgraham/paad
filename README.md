@@ -3,7 +3,7 @@ by Alex Graham
 
 Please check out this [demo video!](https://www.youtube.com/watch?v=TJlD6vVK9yk)
 
-My master's thesis for the NYU Music Technology program that PAAD was developed for can be found [here](http://alexgraham.net/paad/graham_paad_thesis.pdf).
+This software was developed for my Master's Thesis at NYU's Music Technology program. The document can be found [here](http://alexgraham.net/paad/graham_paad_thesis.pdf).
 
 ## Overview
 PAAD is a tool that allows you to design procedural audio assets and easily export them for use in game engines.
