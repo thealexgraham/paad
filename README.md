@@ -19,22 +19,10 @@ PAAD has support for creating modules for sound generation, effect processing, b
 
 ### Expand
 Modules in PAAD are comprised of SuperCollider definitions. Anything that can be created in SuperCollider can be used in PAAD.
-```supercollider
-~paad.addDefinition(\sawWave, \synth,
-    { | outBus, frequency, pan, gain |
-        var sig = Saw.ar(frequency) * gain;
-        Out.ar(outBus, Pan2.ar(sig, pan));
-    },
-    ~paad.createParamsList(
-        ~paad.addFloat(\freq, \float, 0, 1000, 440),
-        ~paad.addFloat(\pan, \float, -1.00, 1.00, 0.00),
-        ~paad.addFloat(\gain, \float, 0.00, 1.00, 0.00)
-    )
-);
-```
 
 Any PAAD definitions that are placed in PAAD’s startup folder will be available for use within the PAAD interface.
-PAAD module definitions can be edited from within the interface and the changes are heard in real time. 
+PAAD module definitions can be edited from within the interface and the changes are heard in real time.
+
 ![Real-time module editing](http://alexgraham.net/paad/edit.png)
 
 ###Export
