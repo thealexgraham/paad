@@ -36,4 +36,7 @@ PAAD currently is able to create FMOD plugins- which can either be self-containe
 
 PAAD was developed for my Master's thesis at NYU and will be available in the near future. Please contact me for any questions!
 
+Demo video: [Link](https://www.youtube.com/watch?v=TJlD6vVK9yk)
+Research Document: [Link](http://alexgraham.net/paad/graham_paad_thesis.pdf).
+
 
