@@ -1,7 +1,7 @@
 # The Procedural Audio Asset Designer (PAAD)
 by Alex Graham
 
-Please check out this [demo video!](https://www.youtube.com/watch?v=TJlD6vVK9yk)
+**Check out the [demo video!](https://www.youtube.com/watch?v=TJlD6vVK9yk)**
 
 This software was developed for my Master's Thesis at NYU's Music Technology program. The document can be found [here](http://alexgraham.net/paad/graham_paad_thesis.pdf).
 
