@@ -1,7 +1,7 @@
 # The Procedural Audio Asset Designer (PAAD)
-by Alex Graham
+#####by Alex Graham
 
-**Check out the [demo video!](https://www.youtube.com/watch?v=TJlD6vVK9yk)**
+###Check out the [demo video!](https://www.youtube.com/watch?v=TJlD6vVK9yk)
 
 This software was developed for my Master's Thesis at NYU's Music Technology program. The document can be found [here](http://alexgraham.net/paad/graham_paad_thesis.pdf).
 
@@ -36,10 +36,10 @@ PAAD currently is able to create FMOD plugins- which can either be self-containe
 
 PAAD was developed for my Master's thesis at NYU and will be available in the near future. Please contact me for any questions!
 
-Links:
+###Links:
 
-[Demo Video](https://www.youtube.com/watch?v=TJlD6vVK9yk)
+####[Demo Video](https://www.youtube.com/watch?v=TJlD6vVK9yk)
 
-[Research Document](http://alexgraham.net/paad/graham_paad_thesis.pdf).
+####[Research Document](http://alexgraham.net/paad/graham_paad_thesis.pdf).
 
 
